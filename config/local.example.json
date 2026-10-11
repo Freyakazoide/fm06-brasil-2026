@@ -1,0 +1,7 @@
+{
+    "game_dir": "C:\\Games\\Football Manager 2006",
+    "exe": "fm.exe",
+    "launch_args": [
+        "-small_screen"
+    ]
+}

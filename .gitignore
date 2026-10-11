@@ -1,0 +1,46 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Configuração local
+config/local.json
+
+# Arquivos de trabalho
+workspace/
+build/
+dist/
+logs/
+
+# Projetos locais de engenharia reversa
+*.gpr
+*.rep
+*.dd32
+*.dd64
+
+# Executáveis/bibliotecas compiladas
+*.exe
+*.dll
+*.pdb
+
+# Arquivos originais do Football Manager
+*.dat
+*.fm
+*.sav
+
+# Pacotes / imagens / backups
+*.rar
+*.zip
+*.7z
+*.iso
+
+# Atalhos e lixo do Windows
+*.lnk
+Thumbs.db
+Desktop.ini
+
+# IDE
+.vscode/settings.json
+.idea/
