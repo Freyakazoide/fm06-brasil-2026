@@ -31,6 +31,7 @@ Observado com Process Monitor durante um New Game:
 | `SWAP_TEAMS` | `teste.edt` | `"SWAP_TEAMS" "Flamengo" "Figueirense"` | ✅ Flamengo na Série B, Figueirense na Série A |
 | `SWAP_TEAMS` | `harchester.edt` | `"SWAP_TEAMS" "151988" "737"` (linha comentada pela SI) | ❌ o jogo crashou |
 | `FUTURE_TRANSFER` | `teste_transfer.edt` | 10 argumentos (formato do fórum) | ❌ ignorado; o FM06 exige 11 |
+| `FUTURE_TRANSFER` | `teste_transfer.edt` | `"FUTURE_TRANSFER" "Zinedine" "" "Zidane" "Real Madrid" "Flamengo" <dia> <mês> <ano> "0" "50000" "2"` | ✅ transferência para o Flamengo agendada (30.12.2005) |
 
 ## Argumentos de cada comando (extraídos do `fm.exe`)
 
