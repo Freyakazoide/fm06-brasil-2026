@@ -357,9 +357,14 @@ class LivePlayer:
             date = shift_years(dt.date.fromisoformat(spec["birth_date"]), year_shift)
             put("Player", BORN_REL, encode_date(date), f"born {date.isoformat()}")
 
+        # Desloca o byte pela diferença das bases: mantém exato o valor
+        # interno (byte + base), não só o valor exibido.
+        shift = relative_base(old_ca) - relative_base(new_ca)
         for name, value in preserved.items():
             attribute = self.attributes[_norm(name)]
-            put("Playing", attribute.rel, bytes([encode_attribute(attribute, value, new_ca)]),
+            raw = self.read("Playing", attribute.rel, 1)[0]
+            signed = max(-128, min(127, (raw - 256 if raw > 127 else raw) + shift))
+            put("Playing", attribute.rel, bytes([signed & 0xFF]),
                 f"{attribute.name} (mantém {value} com CA {new_ca})")
 
         for name, value in spec.get("attributes", {}).items():

@@ -1,5 +1,9 @@
 # Editor de jogadores na memória
 
+**Validado no jogo (12/10/2026):** Saviola com CA 111, PA 199, altura 201, peso
+99, Finta 1, Cruzamentos 20 e Velocidade 2. Os outros atributos ficaram
+iguais, e tudo continuou igual depois de salvar e carregar o jogo.
+
 Edita jogadores no FM06 aberto, logo depois do New Game. Depois é só salvar o
 jogo: o save guarda tudo.
 
@@ -45,9 +49,9 @@ jogo: o save guarda tudo.
   valores vão de 1 a 20, como o jogo mostra.
 - `year_shift` soma anos a todas as `birth_date`. Use `-21` para escrever datas
   reais de 2026 e o jogador ficar com a idade certa num jogo que começa em 2005.
-- Ao mudar o CA, os atributos técnicos e mentais relativos ao CA são
-  reescritos para continuar mostrando o mesmo valor, a menos que você os
-  defina no JSON.
+- Ao mudar o CA, os atributos relativos ao CA são deslocados pela diferença
+  das bases, o que mantém exato o valor interno (e não só o exibido), a menos
+  que você os defina no JSON.
 
 ## Como os atributos ficam na memória
 
