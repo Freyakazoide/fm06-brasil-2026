@@ -1,0 +1,22 @@
+{
+  "year_shift": 0,
+  "players": [
+    {
+      "uid": 3100367,
+      "name": "Javier Saviola (teste)",
+      "ca": 111,
+      "pa": 199,
+      "height": 201,
+      "weight": 99,
+      "attributes": {
+        "Finta": 1,
+        "Cruzamentos": 20,
+        "Velocidade": 2
+      },
+      "preferred_moves": {
+        "add": ["Curls Ball"],
+        "remove": ["Runs With Ball Down Left"]
+      }
+    }
+  ]
+}
