@@ -45,7 +45,6 @@ Por onde cada alteração é feita:
 | Cores do uniforme | 🟡 | texto | `COLOUR_CHANGE` |
 | Estádio e capacidade | 🟡 | texto | `STADIUM_MOVE`, `STADIUM_CAPACITY_CHANGE`, `GROUND_SHARE` |
 | Dinheiro, reputação, público | 🟡 | texto / injetor | `BOOST_TEAM`; Cash no injetor |
-| Posição na temporada anterior ("ordem" na tabela) | ❌ | banco / injetor | campos `Last Division` / `Last Position` não localizados |
 | Orçamentos, instalações, base | ❌ | injetor | campos do clube não localizados |
 
 ## Competições
@@ -59,6 +58,7 @@ Por onde cada alteração é feita:
 | Acessos e rebaixamentos | ❌ | banco | idem |
 | Criar a Série D | ❌ | banco | maior incógnita do projeto |
 | Vagas em Libertadores e Sul-Americana | ❌ | banco | idem |
+| Histórico de campeões (Séries A–D, pelo menos os últimos) | ❌ | banco | não localizado |
 | Calendário | ❌ | banco / executável | |
 
 ## Jogo
