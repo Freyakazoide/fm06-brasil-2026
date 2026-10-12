@@ -73,17 +73,18 @@ PATCHES = {
         ),
         Patch(
             "serie_a_datas_2026",
-            "Série A de 28/1 a 2/12 (original: 30/4 a 10/12). Dia a partir de 1, mês a partir de 0.",
+            "Série A de 28/1 a 2/12 (original: 30/4 a 10/12). Início validado; fim nos dois pares de datas da fase.",
             (
                 _imm8(0x7BA573, b"\x6A", 3, 0),     # mês de início: abril -> janeiro
                 _imm8(0x7BA575, b"\x6A", 30, 28),   # dia de início
-                _imm8(0x7BA589, b"\x6A", 10, 2),    # dia de fim (mês continua dezembro)
+                _imm8(0x7BA54C, b"\x6A", 10, 2),    # dia de fim, 1º par (é o que a tela mostra)
+                _imm8(0x7BA589, b"\x6A", 10, 2),    # dia de fim, 2º par
             ),
         ),
         Patch(
             "serie_c_64_clubes",
             "Série C com 64 clubes: 8 grupos de 8 e avançam 4 por grupo (original: 128, 16 grupos, 2 avançam). "
-            "Mata-mata continua recebendo 32.",
+            "Mata-mata continua recebendo 32. Validado: grupos de 8, 4 se classificam.",
             (
                 Swap(0x7BFDB7, bytes.fromhex("66c7008000"), bytes.fromhex("66c7004000")),  # total 128 -> 64
                 Swap(0x7BFDF9, bytes.fromhex("c6460810"), bytes.fromhex("c6460808")),      # grupos 16 -> 8

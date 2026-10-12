@@ -50,6 +50,13 @@ de 2026** (grupos + mata-mata).
      Dá para um construtor, uma fase e uma vtable clonados. Se faltar
      espaço, acrescentar uma seção nova ao executável.
 
+## Testes no jogo
+
+| Teste | Resultado |
+|---|---|
+| `serie_c_64_clubes` | ✅ abriu sem travar; Série C com grupos de 8, "as quatro primeiras equipas qualificam-se", últimas 2 rebaixadas, 14 jogos por clube. Falta confirmar quantos grupos e o destino dos 64 clubes que sobraram. |
+| `serie_a_datas_2026` | início 28/1 ✅; fim continuou 10/12 (o patch agora troca os dois pares de datas) |
+
 ## O que ainda falta descobrir
 
 1. **Como o New Game coloca clubes numa divisão.** O ID da competição
