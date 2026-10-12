@@ -209,12 +209,12 @@ class PlayerHistoryRecord:
 
     year: int
 
-    flag_raw: int
+    is_loan: bool
 
     appearances: int
     goals: int
 
-    transfer_fee_raw: int
+    outgoing_transfer_fee_raw: int
 
     club_uid: int
 
@@ -235,7 +235,7 @@ class PlayerHistoryRecord:
         já criado anteriormente.
         """
 
-        return self.transfer_fee_raw
+        return self.outgoing_transfer_fee_raw
 
     # --------------------------------------------------------
     # HELPERS
@@ -277,9 +277,9 @@ class PlayerHistoryRecord:
         """
 
         return (
-            self.transfer_fee_raw
-            != UINT32_NULL
-        )
+        self.outgoing_transfer_fee_raw
+        != UINT32_NULL
+    )
 
     @property
     def expected_next_relative_offset(
@@ -768,9 +768,9 @@ class PlayerHistoryDatabase:
             # Semântica ainda não confirmada.
             # ------------------------------------------------
 
-            flag_raw = data[
+            is_loan = data[
                 2
-            ]
+            ] != 0
 
             # ------------------------------------------------
             # +0x03 APPEARANCES
@@ -796,7 +796,7 @@ class PlayerHistoryDatabase:
             # FFFFFFFF = sem valor.
             # ------------------------------------------------
 
-            transfer_fee_raw = read_u32(
+            outgoing_transfer_fee_raw = read_u32(
                 data,
                 5,
             )
@@ -851,8 +851,8 @@ class PlayerHistoryDatabase:
                     year=
                         year,
 
-                    flag_raw=
-                        flag_raw,
+                    is_loan=
+    is_loan,
 
                     appearances=
                         appearances,
@@ -860,8 +860,8 @@ class PlayerHistoryDatabase:
                     goals=
                         goals,
 
-                    transfer_fee_raw=
-                        transfer_fee_raw,
+                    outgoing_transfer_fee_raw=
+    outgoing_transfer_fee_raw,
 
                     club_uid=
                         club_uid,

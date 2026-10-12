@@ -167,7 +167,7 @@ def main():
             f"{record.club_uid:>8}  "
             f"{record.appearances:>4} "
             f"{record.goals:>4} "
-            f"{record.flag_raw:>6} "
+            f"{"Empr" if record.is_loan else "-":>6} "
             f"{amount_text(record.amount_raw):>14} "
             f"{next_text:>12}"
         )
