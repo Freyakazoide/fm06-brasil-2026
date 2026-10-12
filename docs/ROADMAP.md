@@ -51,16 +51,16 @@ Por onde cada alteração é feita:
 
 | Item | Situação | Caminho | Observação |
 |---|---|---|---|
-| Nome da competição | 🟡 | texto | `COMP_NAME_CHANGE` no `brasil_2026.lnc` (a testar) |
+| Nome da competição | ✅ | texto | `COMP_NAME_CHANGE` no `brasil_2026.lnc` |
 | Quais clubes estão em cada série | ✅ | texto | `SWAP_TEAMS`, limitado à estrutura existente |
 | Número de clubes por divisão | 🟡 | executável | regras ficam no `fm.exe` (módulo Brasil em `0xBB2700`); ver `docs/reversing/competitions.md` |
 | Formato (pontos corridos, turno e returno) | 🟡 | executável | idem |
 | Acessos e rebaixamentos | ✅ | executável | `scripts/patch_exe.py` (campos `+0x11`/`+0x14` da fase); validado: Série A rebaixa 4, Série B sobe 4 |
-| Criar a Série D | ✅ | executável + banco | patch `serie_c_nova` (code cave): nova C de 20 no 3º nível (Taça de Prata), antiga C vira o 4º; times pelo `server_db_teams.py`. Falta: nomes, datas da nova C, tamanho e formato da D, 3 fases da C |
+| Criar a Série D | ✅ | executável + banco | `scripts/aplicar_brasil_2026.py`: Séries A–D com nomes, datas e clubes de 2026. Falta: playoffs da B, fases da C, 6 acessos da D |
 | Vagas em Libertadores e Sul-Americana | ❌ | banco | idem |
 | Classificação da temporada passada | 🟡 | banco | `scripts/server_db_teams.py --pos` / `--last` |
 | Histórico de campeões (Séries A–D, pelo menos os últimos) | ❌ | banco | não localizado |
-| Calendário | 🟡 | executável | datas de A (validado), B, C e D por patch; ver `docs/REGRAS_2026.md` |
+| Calendário | ✅ | executável | datas de A, B, C e D por patch; ver `docs/REGRAS_2026.md` |
 
 ## Jogo
 
