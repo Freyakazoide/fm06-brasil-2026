@@ -90,3 +90,21 @@ em turno único (`0x00BC04E0`, `0x00BC054C`) e 6 acessos (`0x00BC0573`).
   fecha a temporada do país enquanto uma divisão não termina.
 - Correção: fim da fase de liga em 8/11 e sorteio em 13/11. Regra geral:
   deixar pelo menos uma semana entre o fim de uma fase e o início da seguinte.
+
+## Teste 3: a fase seguinte não é gerada em nenhuma série
+
+- C: 1ª fase 8/4–26/8 (o jogo arredonda o fim para o sábado), fase de
+  grupos marcada no "Programa" de 3/9 a 29/10, mas sem jogos. B e D: igual.
+- O "Programa" mostra fases futuras com fases temporárias (`0x00ACEC70`,
+  `0x00ACAC30` chamam o método 71 só para calcular datas). Ou seja, a fase
+  aparecer no calendário não quer dizer que ela foi criada.
+- Competição: `+0x100` = número de fases (gravado por `0x00AC24F0`), `+0x90`
+  = ARRAY das fases criadas (itens em `+0x94`, quantidade em `+0x98`). Só
+  termina quando `+0x98` chega a `+0x100` (`0x00AC6131`).
+- `0x00AC70C0` acrescenta uma fase à competição (chamado pelos módulos de
+  cada país).
+- A ação de qualificação (`LEAGUE_FATE_ACTION_QUALIFICATION`, vtable
+  `0x011178B8`, criada por `0x00B0FF00`) guarda a zona em `+8` e um
+  `NEXT_STAGE_INFO` (vtable `0x01117604`) com o código da próxima fase em
+  `+0x14`.
+- Sondagem na memória: `scripts/probe_stages.py`.
