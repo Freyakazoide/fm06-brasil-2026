@@ -178,11 +178,11 @@ def _jmp(at: int, target: int, length: int) -> bytes:
     return b"\xE9" + u32(target - (at + 5)) + b"\x90" * (length - 5)
 
 
-# "minimum" fica fora do patch padrão: com ele o Brasil some da lista de
-# países (teste no jogo). O mínimo é comparado com uma contagem de clubes
-# que não vem da divisão do registro do time, então a nova C fica sempre
-# abaixo de 20.
-PARTS = ("settings", "comps", "moves")
+# O jogo conta os times de cada divisão (TEAM+0x54, em 0x00AA7B4D) e só deixa
+# o país jogável se a contagem estiver entre o mínimo e o máximo registrados
+# em bra_get_minimum_division_teams (0x00AA7BF0; máximo -2 = igual ao mínimo,
+# -1 = sem máximo). A nova C exige exatamente 20.
+PARTS = ("settings", "comps", "minimum", "moves")
 
 
 def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):

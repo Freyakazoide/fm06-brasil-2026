@@ -198,8 +198,18 @@ Teste: `patch_exe.py serie_c_nova serie_c_64_clubes` +
 | `fm_t3.exe` | `exp_cave_comps` | sim (1ª, 2ª, 3ª) |
 | `fm_t4.exe` | `exp_cave_minimo` | não |
 
-Causa: o mínimo de clubes. `0x00AA7BF0` compara o mínimo pedido com uma
-contagem do registro da competição (`+4`); se faltar, marca o país como não
-jogável (`+0x28 = 1`). Com 40 times na Taça de Prata pelo banco o Brasil
-também sumiu, então essa contagem não vem do campo de divisão do registro do
-time. O desvio do mínimo saiu do `serie_c_nova`.
+Causa: o número de clubes exigido. `0x00AA7B4D` conta os times de cada
+divisão pela lista global de times (`TEAM+0x54`). `0x00AA7BF0` (chamado por
+`bra_get_minimum_division_teams` com `id, 0, mínimo, máximo, 0`) marca o país
+como não jogável (`+0x28 = 1`) se a contagem ficar abaixo do mínimo **ou
+acima do máximo**. Máximo `-2` = igual ao mínimo; `-1` = sem máximo. O
+original exige exatamente 20, 20 e 128.
+
+- t1: antiga C com 128 times e máximo 64 (o `serie_c_64_clubes` mudava só o
+  mínimo, que vale também como máximo).
+- t4: Taça de Prata com 0 times, exige 20.
+- Teste com 40 times na Taça de Prata: acima do máximo 20.
+
+Correção: `serie_c_64_clubes` exige pelo menos 64 e sem máximo
+(`0x00BB286F`: `6A FE 68 80000000` → `6A FF 68 40000000`); a nova C exige
+exatamente 20.

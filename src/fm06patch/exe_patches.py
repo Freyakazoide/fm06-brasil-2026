@@ -91,13 +91,14 @@ PATCHES = {
             "serie_c_64_clubes",
             "Série C com 64 clubes: 8 grupos de 8 e avançam 4 por grupo (original: 128, 16 grupos, 2 avançam). "
             "Mata-mata continua recebendo 32. Validado: grupos de 8, 4 se classificam. "
-            "Também baixa o mínimo de clubes exigido na Série C de 128 para 64.",
+            "Exige pelo menos 64 times na Série C, sem máximo (original: exatamente 128).",
             (
                 Swap(0x7BFDB7, bytes.fromhex("66c7008000"), bytes.fromhex("66c7004000")),  # total 128 -> 64
                 Swap(0x7BFDF9, bytes.fromhex("c6460810"), bytes.fromhex("c6460808")),      # grupos 16 -> 8
                 _zone(0x7BFECB, PROMOTION, 2, 4),                                           # avançam 2 -> 4
-                # mínimo de clubes exigido para o Brasil ser jogável (bra_get_minimum_division_teams)
-                Swap(0x7B2871, bytes.fromhex("6880000000"), bytes.fromhex("6840000000")),  # 128 -> 64
+                # clubes exigidos para o Brasil ser jogável (bra_get_minimum_division_teams):
+                # original mínimo 128 e máximo igual (-2); agora mínimo 64 e sem máximo (-1)
+                Swap(0x7B286F, bytes.fromhex("6afe6880000000"), bytes.fromhex("6aff6840000000")),
             ),
         ),
         Patch(
