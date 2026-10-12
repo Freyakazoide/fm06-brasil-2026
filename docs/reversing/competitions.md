@@ -89,9 +89,9 @@ com o prefixo do país (`bra_`, `eng_`, `arg_`…):
 
 | Série | Método | Clubes | Acesso | Rebaixamento |
 |---|---|---|---|---|
-| A | `0x00BBA400` | 20 (`*param_3 = 0x14`) | — | 2 para a B: `FUN_00b0feb0(0x1A2B7, 2, -1)` |
-| B | `0x00BBA6A0` | 20 | 2 para a A: `FUN_00b0fe50(0x19017, 2, -1)` | 2 para a C: `FUN_00b0feb0(0x1A2B8, 2, -1)` |
-| C | `0x00BBFD00` | 128 em fases | 2 para a B | `FUN_00b0feb0(0x13DBB8, 2, -1)` |
+| A | `0x00BBA400` | 20 (`*param_3 = 0x14`) | +0x11 = 0 | +0x14 = **2** (arquivo 0x7BA4D3) |
+| B | `0x00BBA6A0` | 20 | +0x11 = **2** (arquivo 0x7BA76A) | +0x14 = **2** (arquivo 0x7BA774) |
+| C | `0x00BBFD00` | 128 em fases | +0x11 = **2** na fase final (arquivo 0x7BFECB) | +0x14 = 2 |
 
 API das fases (deduzida comparando com a Championship inglesa, que tem 3
 acessos e 3 rebaixamentos e no código aparece como `(…, 3, -1)`):
@@ -100,7 +100,10 @@ acessos e 3 rebaixamentos e no código aparece como `(…, 3, -1)`):
 |---|---|
 | `FUN_00b164a0(2000, comp, fase)` | cria a fase |
 | `fase+0x0B` | clubes por grupo |
-| `fase+0x14` | turnos (2 = ida e volta) |
+| `fase+0x11` | **quantidade na zona de acesso/título** (lido por `0x00B16FE0`) |
+| `fase+0x12` | zona de cima secundária (playoff?) |
+| `fase+0x13` | zona de baixo secundária (playoff de rebaixamento?) |
+| `fase+0x14` | **quantidade na zona de rebaixamento** |
 | `fase+0x15` | 3 = pontos por vitória (provável) |
 | `FUN_00b0fe50(destino, x, y)` | cria regra de **acesso** para `destino`; guarda x em +0x0D e y em +0x0C (y = x se −1) |
 | `FUN_00b0feb0(destino, x, y)` | idem, regra de **rebaixamento** |
@@ -127,6 +130,17 @@ O que de fato determina a quantidade exibida:
 
 Rodada seguinte do Ghidra: `tools/ghidra/export_list.txt`.
 
+## Como o jogo decide quem sobe e quem cai
+
+1. A montagem da fase grava as quantidades em `fase+0x11` (acesso) e
+   `fase+0x14` (rebaixamento).
+2. `0x00B16FE0` lê os 4 bytes de `fase+0x11` e marca cada linha da tabela
+   (registros de `0x4C` bytes, campo `+0x46`): 1 = acesso, 4 = rebaixamento,
+   além de 2, 3, 5 e 6 para outras zonas.
+3. No fim da temporada, `0x00B0A600` percorre as regras de movimento
+   (`FUN_00b0fe50`/`FUN_00b0feb0`, tipo 1 = acesso, 2 = rebaixamento) e move
+   os clubes marcados com 1 ou 4 para a competição de destino da regra.
+
 ## Patches (`scripts/patch_exe.py`)
 
 Os patches são aplicados numa cópia (`fm_teste.exe`), conferindo o hash do
@@ -134,9 +148,12 @@ original e os bytes antes da troca.
 
 | Nome | Troca |
 |---|---|
-| `serie_a_rebaixa_4` | arquivo 0x7BA4F3: `6A 02 68 B7A20100` → `6A 04 …` (**sem efeito**) |
-| `serie_b_sobe_4` | arquivo 0x7BA795: `6A 02 68 17900100` → `6A 04 …` (**sem efeito**) |
-| `serie_b_rebaixa_4` | arquivo 0x7BA7A8: `6A 02 68 B8A20100` → `6A 04 …` |
+| `serie_a_rebaixa_4` | arquivo 0x7BA4D3: `C6 46 14 02` → `C6 46 14 04` |
+| `serie_b_sobe_4` | arquivo 0x7BA76A: `C6 46 11 02` → `C6 46 11 04` |
+| `serie_b_rebaixa_4` | arquivo 0x7BA774: `C6 46 14 02` → `C6 46 14 04` |
+| `serie_c_sobe_4` | arquivo 0x7BFECB: `C6 46 11 02` → `C6 46 11 04` |
+| `exp_regra_rebaixa_a` | arquivo 0x7BA4F3 (2º argumento da regra de movimento; sem efeito visível) |
+| `exp_regra_sobe_b` | arquivo 0x7BA795 (idem) |
 
 ## Próximos passos
 

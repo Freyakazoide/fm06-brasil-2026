@@ -38,23 +38,48 @@ SERIE_A = (0x19017).to_bytes(4, "little")
 SERIE_B = (0x1A2B7).to_bytes(4, "little")
 SERIE_C = (0x1A2B8).to_bytes(4, "little")
 
+def _zone(offset: int, field: int, old: int, new: int) -> Swap:
+    """`mov byte ptr [esi+field], imm8` (C6 46 field imm8) na montagem da fase."""
+    return Swap(offset, bytes([0xC6, 0x46, field, old]), bytes([0xC6, 0x46, field, new]))
+
+
+# Campos da fase lidos por 0x00B16FE0 para pintar as zonas da tabela e
+# decidir quem sobe e quem desce no fim da temporada.
+PROMOTION = 0x11
+RELEGATION = 0x14
+
 PATCHES = {
     p.name: p
     for p in (
         Patch(
             "serie_a_rebaixa_4",
-            "EXPERIMENTAL, sem efeito no teste: troca o 2º argumento da regra de rebaixamento da Série A.",
-            (_push_count(0x7BA4F3, 2, 4, SERIE_B),),
+            "Série A: zona de rebaixamento com 4 clubes (original: 2). Fase em 0x00BBA400, campo +0x14.",
+            (_zone(0x7BA4D3, RELEGATION, 2, 4),),
         ),
         Patch(
             "serie_b_sobe_4",
-            "EXPERIMENTAL, sem efeito no teste: troca o 2º argumento da regra de acesso da Série B.",
-            (_push_count(0x7BA795, 2, 4, SERIE_A),),
+            "Série B: zona de acesso com 4 clubes (original: 2). Fase em 0x00BBA6A0, campo +0x11.",
+            (_zone(0x7BA76A, PROMOTION, 2, 4),),
         ),
         Patch(
             "serie_b_rebaixa_4",
-            "EXPERIMENTAL, não testado: troca o 2º argumento da regra de rebaixamento da Série B.",
-            (_push_count(0x7BA7A8, 2, 4, SERIE_C),),
+            "Série B: zona de rebaixamento com 4 clubes (original: 2). Fase em 0x00BBA6A0, campo +0x14.",
+            (_zone(0x7BA774, RELEGATION, 2, 4),),
+        ),
+        Patch(
+            "serie_c_sobe_4",
+            "Série C: zona de acesso com 4 clubes (original: 2). Fase final em 0x00BBFD00, campo +0x11.",
+            (_zone(0x7BFECB, PROMOTION, 2, 4),),
+        ),
+        Patch(
+            "exp_regra_rebaixa_a",
+            "EXPERIMENTAL, sem efeito visível: 2º argumento da regra de movimento Série A -> B.",
+            (_push_count(0x7BA4F3, 2, 4, SERIE_B),),
+        ),
+        Patch(
+            "exp_regra_sobe_b",
+            "EXPERIMENTAL, sem efeito visível: 2º argumento da regra de movimento Série B -> A.",
+            (_push_count(0x7BA795, 2, 4, SERIE_A),),
         ),
     )
 }
