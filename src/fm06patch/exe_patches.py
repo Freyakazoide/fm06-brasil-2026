@@ -108,6 +108,21 @@ PATCHES = {
             build=lambda data: _cave_swaps(data),
         ),
         Patch(
+            "exp_cave_settings",
+            "TESTE: só o sistema de ligas com 4 níveis (nova C no nível 2, antiga C no 3).",
+            build=lambda data: _cave_swaps(data, ("settings",)),
+        ),
+        Patch(
+            "exp_cave_comps",
+            "TESTE: só a criação da competição nova em bra_setup_comps.",
+            build=lambda data: _cave_swaps(data, ("comps",)),
+        ),
+        Patch(
+            "exp_cave_minimo",
+            "TESTE: só o mínimo de 20 clubes da nova C em bra_get_minimum_division_teams.",
+            build=lambda data: _cave_swaps(data, ("minimum",)),
+        ),
+        Patch(
             "exp_regra_rebaixa_a",
             "EXPERIMENTAL, sem efeito visível: 2º argumento da regra de movimento Série A -> B.",
             (_push_count(0x7BA4F3, 2, 4, SERIE_B),),
@@ -121,10 +136,10 @@ PATCHES = {
 }
 
 
-def _cave_swaps(data: bytes) -> tuple[Swap, ...]:
-    from .exe_cave import build_swaps
+def _cave_swaps(data: bytes, parts: tuple[str, ...] | None = None) -> tuple[Swap, ...]:
+    from .exe_cave import PARTS, build_swaps
 
-    return build_swaps(data)
+    return build_swaps(data, parts or PARTS)
 
 
 def apply(data: bytes, names: list[str]) -> bytes:

@@ -178,7 +178,12 @@ def _jmp(at: int, target: int, length: int) -> bytes:
     return b"\xE9" + u32(target - (at + 5)) + b"\x90" * (length - 5)
 
 
-def build_swaps(data: bytes):
+PARTS = ("settings", "comps", "minimum", "moves")
+
+
+def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
+    """Trocas do patch. `parts` permite testar cada desvio separadamente;
+    o código novo nas áreas livres entra sempre."""
     from .exe_patches import Swap
 
     builder = _new_builder(data)
@@ -197,17 +202,26 @@ def build_swaps(data: bytes):
 
     settings_hook = bytes.fromhex("6a006a0268b8a20100") + b"\x8b\xce\xe8" + u32(ADD_DIVISION - 0x00BB276C) + b"\x6a\x03"
     min_hook = bytes.fromhex("6a006afe6a146a006817900100") + b"\x8b\xce\xe8" + u32(MIN_TEAMS - 0x00BB2859)
-    return (
+    swaps = [
         header(TEXT_VSIZE),
         header(RDATA_VSIZE),
         fresh(NEW_BUILDER, builder),
         fresh(NEW_CTOR, ctor),
         fresh(HOOKS, hooks),
         fresh(NEW_COL, vtable),
-        Swap(off(0x00BB275C), settings_hook, _jmp(0x00BB275C, entry["settings"], len(settings_hook))),
-        Swap(off(0x00BBA32E), b"\x68\x9c\x01\x00\x00", _jmp(0x00BBA32E, entry["comps"], 5)),
-        Swap(off(0x00BB2845), min_hook, _jmp(0x00BB2845, entry["minimum"], len(min_hook))),
-        Swap(off(0x00BB2ED7), b"\x6a\x02", b"\x6a\x03"),                                  # antiga C: nível 3
-        Swap(off(0x00BBFEFB), b"\x68" + u32(SERIE_B_ID), b"\x68" + u32(NEW_C_ID)),        # antiga C sobe p/ nova C
-        Swap(off(0x00BBA7AA), b"\x68" + u32(OLD_C_ID), b"\x68" + u32(NEW_C_ID)),          # Série B cai p/ nova C
-    )
+    ]
+    if "settings" in parts:
+        swaps += [
+            Swap(off(0x00BB275C), settings_hook, _jmp(0x00BB275C, entry["settings"], len(settings_hook))),
+            Swap(off(0x00BB2ED7), b"\x6a\x02", b"\x6a\x03"),                              # antiga C: nível 3
+        ]
+    if "comps" in parts:
+        swaps.append(Swap(off(0x00BBA32E), b"\x68\x9c\x01\x00\x00", _jmp(0x00BBA32E, entry["comps"], 5)))
+    if "minimum" in parts:
+        swaps.append(Swap(off(0x00BB2845), min_hook, _jmp(0x00BB2845, entry["minimum"], len(min_hook))))
+    if "moves" in parts:
+        swaps += [
+            Swap(off(0x00BBFEFB), b"\x68" + u32(SERIE_B_ID), b"\x68" + u32(NEW_C_ID)),    # antiga C sobe p/ nova C
+            Swap(off(0x00BBA7AA), b"\x68" + u32(OLD_C_ID), b"\x68" + u32(NEW_C_ID)),      # Série B cai p/ nova C
+        ]
+    return tuple(swaps)

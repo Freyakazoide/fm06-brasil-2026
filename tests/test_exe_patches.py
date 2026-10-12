@@ -32,7 +32,8 @@ class ExePatchTest(unittest.TestCase):
             self.assertEqual(changed, expected, name)
 
     def test_all_patches_combine(self) -> None:
-        apply(self.data, list(PATCHES))
+        # exp_cave_* são partes alternativas do serie_c_nova (mesma área livre).
+        apply(self.data, [name for name in PATCHES if not name.startswith("exp_cave_")])
 
     def test_patch_cannot_apply_twice(self) -> None:
         once = apply(self.data, ["serie_a_rebaixa_4"])
