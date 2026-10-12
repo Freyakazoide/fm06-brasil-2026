@@ -33,7 +33,6 @@ public class ExportBrasil extends GhidraScript {
         0x00BB8FD0L, // chamado pelo método [69] da Série A
     };
 
-
     // Métodos chamados só pelas vtables das classes do módulo Brasil; a
     // análise automática do Ghidra não os cria como funções.
     private static final long[] VTABLE_METHODS = {
