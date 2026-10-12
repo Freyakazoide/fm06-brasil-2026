@@ -51,7 +51,7 @@ Por onde cada alteração é feita:
 
 | Item | Situação | Caminho | Observação |
 |---|---|---|---|
-| Nome da competição | 🟡 | texto | `COMP_NAME_CHANGE` |
+| Nome da competição | 🟡 | texto | `COMP_NAME_CHANGE` no `brasil_2026.lnc` (a testar) |
 | Quais clubes estão em cada série | ✅ | texto | `SWAP_TEAMS`, limitado à estrutura existente |
 | Número de clubes por divisão | 🟡 | executável | regras ficam no `fm.exe` (módulo Brasil em `0xBB2700`); ver `docs/reversing/competitions.md` |
 | Formato (pontos corridos, turno e returno) | 🟡 | executável | idem |
@@ -60,7 +60,7 @@ Por onde cada alteração é feita:
 | Vagas em Libertadores e Sul-Americana | ❌ | banco | idem |
 | Classificação da temporada passada | 🟡 | banco | `scripts/server_db_teams.py --pos` / `--last` |
 | Histórico de campeões (Séries A–D, pelo menos os últimos) | ❌ | banco | não localizado |
-| Calendário | ❌ | banco / executável | |
+| Calendário | 🟡 | executável | datas de A (validado), B, C e D por patch; ver `docs/REGRAS_2026.md` |
 
 ## Jogo
 

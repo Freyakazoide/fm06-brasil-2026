@@ -81,15 +81,20 @@ todas as temporadas deixaria o mod errado a partir de 2027.
 - Lista atual em `data/brasil/series_2026.csv` tem 93 clubes: **faltam 3**.
 - Formato detalhado das fases: a registrar.
 
-## O que isso exige do FM06 (avaliação inicial)
+## O que está aplicado (`scripts/aplicar_brasil_2026.py`)
 
 | Regra | Situação |
 |---|---|
-| Série A: datas, 4 rebaixados | ✅ patch validado (`serie_a_datas_2026`, `serie_a_rebaixa_4`) |
-| Série B: 4 rebaixados | 🟡 patch pronto (`serie_b_rebaixa_4`), falta validar |
-| Série B: 2 acessos diretos + playoffs 3×6 e 4×5 sem pênaltis | ❌ exige uma fase de playoff; outras ligas do FM06 têm playoffs para servir de modelo |
-| Série C: 20 clubes, 3 fases, 4 acessos, 2 rebaixados | ❌ nova competição (code cave), com fases de liga, quadrangulares e final |
-| Série C: 24 clubes em 2027, 28 em 2028 | ❌ o tamanho teria de depender do ano; investigar se o código das fases recebe o ano |
-| Série D: 96 clubes, 6 acessos | ❌ reaproveitar a competição de 128 clubes da Série C antiga, redimensionada |
+| Nomes Série A, B, C e D | 🟡 `.lnc` (`COMP_NAME_CHANGE`, idioma `""`), a testar |
+| Clubes de cada série | 🟡 banco; lista em `data/brasil/mapa_2026.csv`; clube que não existe no FM06 vira o brasileiro de maior reputação ainda livre |
+| Série A: 28/01–02/12, 4 rebaixados | ✅ validado |
+| Série B: 21/03–28/11, 4 sobem, 4 caem | 🟡 datas e rebaixamento a testar |
+| Série B: playoffs 3×6 e 4×5 | ❌ por enquanto sobem 1º a 4º direto |
+| Série C: 20 clubes, 4 sobem, 2 caem | ✅ validado (Taça de Prata) |
+| Série C: 05/04–25/10, turno único | 🟡 a testar |
+| Série C: quadrangulares e final | ❌ por enquanto sobem 1º a 4º direto da fase de liga |
+| Série C: 24 clubes em 2027, 28 em 2028 | ❌ |
+| Série D: 96 clubes, 05/04–13/09 | 🟡 16 grupos de 6, 2 avançam, mata-mata de 32, quadrangular final |
+| Série D: 6 acessos | ❌ por enquanto 4 (os do quadrangular final); 6 exige refazer o mata-mata |
 | Vagas na Libertadores e Sul-Americana | ❌ não mapeado |
-| Copa do Brasil e Supercopa | ❌ não mapeado |
+| Copa do Brasil e Supercopa | ❌ a Copa do Brasil (`0x00BB9550`) ainda puxa clubes só das antigas A, B e C |

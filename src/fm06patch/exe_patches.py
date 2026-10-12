@@ -124,6 +124,47 @@ PATCHES = {
             build=lambda data: _cave_swaps(data, ("minimum",)),
         ),
         Patch(
+            "serie_b_datas_2026",
+            "Série B de 21/3 a 28/11 (original: 29/4 a 2/12). Fase em 0x00BBA6A0.",
+            (
+                _imm8(0x7BA825, b"\x6A", 3, 2),       # mês de início: abril -> março
+                _imm8(0x7BA827, b"\x6A", 0x1D, 21),   # dia de início
+                _imm8(0x7BA7FC, b"\x6A", 0x0B, 10),   # mês de fim, 1º par: dezembro -> novembro
+                _imm8(0x7BA7FE, b"\x6A", 2, 28),      # dia de fim, 1º par
+                _imm8(0x7BA839, b"\x6A", 0x0B, 10),   # mês de fim, 2º par
+                _imm8(0x7BA83B, b"\x6A", 2, 28),      # dia de fim, 2º par
+            ),
+        ),
+        Patch(
+            "serie_d_96",
+            "Série D (antiga C, 0x00BBFD00) com 96 clubes: 16 grupos de 6, avançam 2 por grupo para o "
+            "mata-mata de 32; o quadrangular final dá 4 acessos (original: 2). Datas 5/4 a 13/9. "
+            "Exige pelo menos 96 times, sem máximo. Não combina com serie_c_64_clubes.",
+            (
+                Swap(0x7BFDB7, bytes.fromhex("66c7008000"), bytes.fromhex("66c7006000")),  # total 128 -> 96
+                Swap(0x7BFE9D, bytes.fromhex("c6460b08"), bytes.fromhex("c6460b06")),      # 8 -> 6 por grupo
+                _zone(0x7C0573, PROMOTION, 2, 4),                                           # quadrangular: 4 sobem
+                Swap(0x7B286F, bytes.fromhex("6afe6880000000"), bytes.fromhex("6aff6860000000")),
+                # datas (push mês, push dia; mês começa em 0)
+                _imm8(0x7BFF53, b"\x6A", 5, 3),       # grupos, início: 25/6 -> 5/4
+                _imm8(0x7BFF5C, b"\x6A", 0x19, 5),
+                _imm8(0x7BFF90, b"\x6A", 8, 5),       # grupos, fim: 20/9 -> 28/6
+                _imm8(0x7BFF92, b"\x6A", 0x14, 28),
+                _imm8(0x7C01AE, b"\x6A", 8, 6),       # mata-mata: 21/9 -> 5/7
+                _imm8(0x7C01B0, b"\x6A", 0x15, 5),
+                _imm8(0x7C01C8, b"\x6A", 8, 6),       # 1ª rodada: 24/9 -> 8/7
+                _imm8(0x7C01CA, b"\x6A", 0x18, 8),
+                _imm8(0x7C027A, b"\x6A", 9, 6),       # 2ª rodada: 4/10 -> 19/7
+                _imm8(0x7C027C, b"\x6A", 4, 19),
+                _imm8(0x7C03A1, b"\x6A", 9, 6),       # 3ª rodada: 15/10 -> 30/7
+                _imm8(0x7C03A3, b"\x6A", 0x0F, 30),
+                _imm8(0x7C05BA, b"\x6A", 9, 7),       # quadrangular, início: 25/10 -> 9/8
+                _imm8(0x7C05BC, b"\x6A", 0x19, 9),
+                _imm8(0x7C05DF, b"\x6A", 0x0A, 8),    # quadrangular, fim: 26/11 -> 13/9
+                _imm8(0x7C05E1, b"\x6A", 0x1A, 13),
+            ),
+        ),
+        Patch(
             "exp_regra_rebaixa_a",
             "EXPERIMENTAL, sem efeito visível: 2º argumento da regra de movimento Série A -> B.",
             (_push_count(0x7BA4F3, 2, 4, SERIE_B),),

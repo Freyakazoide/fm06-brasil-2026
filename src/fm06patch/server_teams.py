@@ -138,3 +138,57 @@ def find_team(teams: list[TeamRecord], key: str) -> TeamRecord:
 def write_team(buffer: bytearray, team: TeamRecord) -> None:
     struct.pack_into("<B", buffer, team.offset + 2, team.last_position)
     struct.pack_into("<II", buffer, team.offset + 7, team.division, team.last_division)
+
+
+BRAZIL_NATION = 0xBD
+_CLUB_HEADER = re.compile(rb"(....)(....)\x00\xbd\x00\x00\x00\x00", re.S)
+_VALID_DIVISIONS = set(DIVISIONS.values()) | {NONE}
+
+
+def _team_record(data: bytes, uid: int, start: int = 0xE00000, end: int = 0x1600000):
+    """Registro do time de um clube: UID + 0A 00, com campos plausíveis."""
+    needle = struct.pack("<I", uid) + b"\x0a\x00"
+    found = []
+    at = start
+    while True:
+        at = data.find(needle, at, end)
+        if at < 0:
+            break
+        rec = at + 4
+        division, last = struct.unpack_from("<II", data, rec + 7)
+        reputation = struct.unpack_from("<H", data, rec + 3)[0]
+        if (data[rec + 5:rec + 7] == b"\x00\x00" and division in _VALID_DIVISIONS
+                and last in _VALID_DIVISIONS and reputation <= 10000 and data[rec + 2] <= 40):
+            found.append(rec)
+        at += 1
+    return found[0] if len(found) == 1 else None
+
+
+def find_brazil_teams(data: bytes) -> list[TeamRecord]:
+    """Todos os times de clubes brasileiros (nação 0xBD no registro do clube),
+    mais os que estão nas divisões nacionais."""
+    teams = {t.club_uid: t for t in find_teams(data)}
+    for match in _CLUB_HEADER.finditer(data, 0, 0x400000):
+        uid = struct.unpack("<I", match.group(2))[0]
+        if uid == 0 or uid in teams:
+            continue
+        mark = data.find(_DATES, match.end(), match.end() + 0x600)
+        if mark < 0:
+            continue
+        long_name, after = _string(data, mark + len(_DATES))
+        short_name, _ = _string(data, after)
+        rec = _team_record(data, uid) if long_name else None
+        if rec is None:
+            continue
+        division, last = struct.unpack_from("<II", data, rec + 7)
+        teams[uid] = TeamRecord(
+            offset=rec,
+            club_uid=uid,
+            last_position=data[rec + 2],
+            reputation=struct.unpack_from("<H", data, rec + 3)[0],
+            division=division,
+            last_division=last,
+            name=long_name,
+            short_name=short_name,
+        )
+    return list(teams.values())

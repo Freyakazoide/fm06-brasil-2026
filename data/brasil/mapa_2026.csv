@@ -1,0 +1,157 @@
+serie,clube_2026,estado,tipo,fm06_uid,fm06_nome,reputacao
+A,Athletico-PR,PR,equivalente,107205,Atlético Paranaense,6700
+A,Atlético-MG,MG,equivalente,312,Atlético Mineiro,6850
+A,Bahia,BA,equivalente,314,Bahia,5450
+A,Botafogo,RJ,equivalente,315,Botafogo,6000
+A,Chapecoense,SC,equivalente,301302,Chapecoense,2100
+A,Corinthians,SP,equivalente,317,Corinthians,8050
+A,Coritiba,PR,equivalente,104775,Coritiba,5700
+A,Cruzeiro,MG,equivalente,320,Cruzeiro,7650
+A,Flamengo,RJ,equivalente,321,Flamengo,6800
+A,Fluminense,RJ,equivalente,322,Fluminense,6300
+A,Grêmio,RS,equivalente,323,Grêmio,6650
+A,Internacional,RS,equivalente,325,Internacional,6950
+A,Mirassol,SP,equivalente,301342,Mirassol,2050
+A,Palmeiras,SP,equivalente,328,Palmeiras,7250
+A,Red Bull Bragantino,SP,equivalente,316,Bragantino,2750
+A,Remo,PA,equivalente,333,Remo,4000
+A,Santos,SP,equivalente,334,Santos,7800
+A,São Paulo,SP,equivalente,336,São Paulo,8150
+A,Vasco da Gama,RJ,equivalente,338,Vasco,6650
+A,Vitória,BA,equivalente,339,Vitória,5350
+B,América-MG,MG,equivalente,106881,América (MG),5250
+B,Athletic,MG,substituto,301352,São Caetano,7100
+B,Atlético-GO,GO,equivalente,301149,Atlético Goianiense,2600
+B,Avaí,SC,equivalente,107206,Avaí,3550
+B,Botafogo-SP,SP,equivalente,121262,Botafogo (SP),1950
+B,Ceará,CE,equivalente,104653,Ceará,4200
+B,CRB,AL,equivalente,301100,CRB,3250
+B,Criciúma,SC,equivalente,319,Criciúma,4800
+B,Cuiabá,MT,equivalente,318913,Cuiabá,1750
+B,Fortaleza,CE,equivalente,104749,Fortaleza,4700
+B,Goiás,GO,equivalente,102495,Goiás,5700
+B,Juventude,RS,equivalente,326,Juventude,5750
+B,Londrina,PR,equivalente,900204,Londrina,3000
+B,Náutico,PE,equivalente,327,Náutico,4700
+B,Novorizontino,SP,substituto,329,Paraná,4850
+B,Operário-PR,PR,equivalente,311085,Operário (PR),1050
+B,Ponte Preta,SP,equivalente,331,Ponte Preta,5600
+B,São Bernardo,SP,equivalente,2106412,São Bernardo,500
+B,Sport,PE,equivalente,337,Sport Recife,5300
+B,Vila Nova,GO,equivalente,107234,Vila Nova (GO),3900
+C,Amazonas,AM,substituto,301350,Santo André,4850
+C,Anápolis,GO,equivalente,301146,Anápolis,1800
+C,Barra,SC,equivalente,312334,Barra,500
+C,Botafogo-PB,PB,equivalente,301206,Botafogo (PB),2900
+C,Brusque,SC,equivalente,301300,Brusque,1050
+C,Caxias,RS,equivalente,301264,Caxias,3550
+C,Confiança,SE,equivalente,301321,Confiança (SE),2600
+C,Ferroviária,SP,equivalente,302143,Ferroviária (SP),750
+C,Figueirense,SC,equivalente,301304,Figueirense,4950
+C,Floresta,CE,equivalente,313344,Floresta,400
+C,Guarani,SP,equivalente,324,Guarani,5100
+C,Inter de Limeira,SP,equivalente,104978,Inter de Limeira,3100
+C,Itabaiana,SE,equivalente,301323,Itabaiana,2050
+C,Ituano,SP,equivalente,107214,Ituano,3900
+C,Maranhão,MA,equivalente,301169,Maranhão,2650
+C,Maringá,PR,equivalente,303018,Grêmio Maringá,1350
+C,Paysandu,PA,equivalente,330,Paysandu,5150
+C,Santa Cruz,PE,equivalente,107230,Santa Cruz,4700
+C,Volta Redonda,RJ,equivalente,107238,Volta Redonda,3050
+C,Ypiranga,RS,equivalente,319159,Ypiranga (RS),450
+D,Galvez,Acre,substituto,301336,Paulista,4250
+D,Humaitá,Acre,substituto,107203,ABC,3450
+D,Independência,Acre,equivalente,104873,Independência,1800
+D,ASA,Alagoas,equivalente,201666,ASA,2450
+D,CSE,Alagoas,equivalente,313250,CSE,600
+D,Oratório,Amapá,equivalente,313255,Oratório,400
+D,Trem,Amapá,equivalente,313348,Trem Desportivo,1000
+D,Manaus,Amazonas,substituto,301110,São Raimundo (AM),3450
+D,Nacional,Amazonas,equivalente,301107,Nacional (AM),2500
+D,Atlético de Alagoinhas,Bahia,equivalente,301111,Atlético (BA),1400
+D,Jacuipense,Bahia,equivalente,319113,Jacuipense,400
+D,Juazeirense,Bahia,substituto,311024,Marília,3300
+D,Porto,Bahia,substituto,104885,Americano,3250
+D,Atlético Cearense,Ceará,substituto,301357,União Barbarense,3250
+D,Ferroviário,Ceará,equivalente,301127,Ferroviário (CE),2100
+D,Maracanã,Ceará,substituto,107208,CSA,3150
+D,Tirol,Ceará,substituto,107220,Mogi Mirim,3100
+D,Brasiliense,Distrito Federal,equivalente,309656,Brasiliense,4950
+D,Capital,Distrito Federal,substituto,107236,Villa Nova (MG),3050
+D,Ceilândia,Distrito Federal,equivalente,310908,Ceilândia,1350
+D,Gama,Distrito Federal,equivalente,121220,Gama,3800
+D,Real Noroeste,Espírito Santo,substituto,301144,Anapolina,3050
+D,Rio Branco-ES,Espírito Santo,equivalente,301140,Rio Branco (ES),1450
+D,Vitória-ES,Espírito Santo,equivalente,313271,Vitória (ES),2200
+D,ABECAT,Goiás,substituto,107210,Friburguense,2850
+D,Aparecidense,Goiás,equivalente,319139,Aparecidense,550
+D,CRAC,Goiás,equivalente,303016,CRAC,3200
+D,Goiatuba,Goiás,equivalente,301157,Goiatuba,1400
+D,Inhumas,Goiás,equivalente,301159,Inhumas,1350
+D,IAPE,Maranhão,substituto,301258,15 de Novembro,2850
+D,Imperatriz,Maranhão,equivalente,301167,Imperatriz,1850
+D,Moto Club,Maranhão,equivalente,301171,Moto Clube,3200
+D,Sampaio Corrêa,Maranhão,equivalente,107228,Sampaio Corrêa,3250
+D,Luverdense,Mato Grosso,substituto,104979,Vasco (AC),2800
+D,Mixto,Mato Grosso,equivalente,309643,Mixto (MT),1500
+D,Operário VG,Mato Grosso,equivalente,313901,Operário (MT),1600
+D,Primavera,Mato Grosso,equivalente,318905,Primavera,400
+D,União Rondonópolis,Mato Grosso,equivalente,301177,União Rondonópolis,2700
+D,FC Pantanal,Mato Grosso do Sul,equivalente,313245,Pantanal,350
+D,Operário-MS,Mato Grosso do Sul,equivalente,107240,Operário (MS),2250
+D,Betim,Minas Gerais,substituto,303861,Corinthians (AL),2800
+D,Democrata GV,Minas Gerais,equivalente,301182,Democrata,1350
+D,Pouso Alegre,Minas Gerais,equivalente,319168,Guarani de Pouso Alegre,300
+D,Tombense,Minas Gerais,equivalente,317949,Tombense,550
+D,Uberlândia,Minas Gerais,equivalente,301198,Uberlândia,1900
+D,Águia de Marabá,Pará,equivalente,308938,Águia de Marabá,1150
+D,Tuna Luso,Pará,equivalente,107232,Tuna Luso,3350
+D,Serra Branca,Paraíba,substituto,104887,Desportiva,2800
+D,Sousa,Paraíba,equivalente,309640,Sousa,1400
+D,Treze,Paraíba,equivalente,301210,Treze,2750
+D,Azuriz,Paraná,substituto,301142,Serra,2750
+D,FC Cascavel,Paraná,equivalente,301367,Cascavel,800
+D,Cianorte,Paraná,equivalente,314598,Cianorte,1550
+D,PSTC/São Joseense,Paraná,equivalente,319620,Joseense,350
+D,Central,Pernambuco,equivalente,301228,Central (PE),1400
+D,Decisão Goiana,Pernambuco,substituto,301274,Pelotas,2750
+D,Maguary,Pernambuco,substituto,335,União São João,2700
+D,Retrô,Pernambuco,substituto,107224,Rio Branco (SP),2650
+D,Altos,Piauí,substituto,301188,Ipatinga,2650
+D,Fluminense-PI,Piauí,equivalente,319156,Fluminense (PI),500
+D,Parnahyba,Piauí,equivalente,313303,Parnahyba,1950
+D,Piauí,Piauí,equivalente,309639,Piauí,1450
+D,América-RJ,Rio de Janeiro,equivalente,900678,América (RJ),2900
+D,Madureira,Rio de Janeiro,equivalente,107218,Madureira,2550
+D,Maricá,Rio de Janeiro,substituto,301216,Malutrom,2650
+D,Nova Iguaçu,Rio de Janeiro,equivalente,311105,Nova Iguaçu,2400
+D,Portuguesa-RJ,Rio de Janeiro,equivalente,301249,Portuguesa (RJ),1800
+D,Sampaio Corrêa-RJ,Rio de Janeiro,substituto,301245,Cabofriense,2650
+D,América-RN,Rio Grande do Norte,equivalente,107201,América (RN),4050
+D,Laguna,Rio Grande do Norte,substituto,301288,Gênus,2650
+D,Parnamirim/ABC-D,Rio Grande do Norte,equivalente,310905,Parnamirim,600
+D,Brasil de Pelotas,Rio Grande do Sul,equivalente,301262,Brasil de Pelotas,1750
+D,Guarany de Bagé,Rio Grande do Sul,substituto,104776,Rio Branco (AC),2600
+D,São José-RS,Rio Grande do Sul,equivalente,301282,São José (RS),1600
+D,São Luiz,Rio Grande do Sul,equivalente,301284,São Luiz,1050
+D,Gazin Porto Velho,Rondônia,substituto,107222,Portuguesa Santista,2600
+D,Guaporé,Rondônia,substituto,301316,Tubarão,2600
+D,GAS,Roraima,equivalente,301296,GAS,1000
+D,Monte Roraima,Roraima,substituto,301208,Campinense,2550
+D,São Raimundo-RR,Roraima,equivalente,309145,São Raimundo (RR),1250
+D,Blumenau,Santa Catarina,equivalente,316733,Blumenau,300
+D,Joinville,Santa Catarina,equivalente,301308,Joinville,3600
+D,Marcílio Dias,Santa Catarina,equivalente,301314,Marcílio Dias,2050
+D,Santa Catarina,Santa Catarina,equivalente,319164,Santa Catarina,400
+D,Água Santa,São Paulo,substituto,310384,Alegrense,2550
+D,Noroeste,São Paulo,equivalente,303022,Noroeste,1200
+D,Portuguesa,São Paulo,equivalente,332,Portuguesa,4500
+D,Velo Clube,São Paulo,equivalente,318911,Velo Clube,450
+D,XV de Piracicaba,São Paulo,equivalente,104975,XV de Piracicaba,2050
+D,Lagarto,Sergipe,equivalente,309621,Lagartense,1300
+D,Sergipe,Sergipe,equivalente,301318,Sergipe,3150
+D,Araguaína,Tocantins,equivalente,313339,Araguaína,1100
+D,Tocantinópolis,Tocantins,equivalente,301329,Tocantinópolis,1900
+D,,,substituto,301340,Matonense,2550
+D,,,substituto,314755,Hermann Aichinger,2500
+D,,,substituto,104750,Bangu,2500

@@ -12,7 +12,7 @@ O que o patch faz no fm.exe (endereços virtuais; arquivo = endereço - 0x400000
   (montagem da fase) trocado pela cópia abaixo.
 - `.text` livre (0x00E303D0):
   - cópia da montagem da fase da Série B (0x00BBA6A0): acesso para a Série B,
-    rebaixamento para a antiga C, 4 sobem e 2 caem;
+    rebaixamento para a antiga C, 4 sobem e 2 caem, turno único, 5/4 a 25/10;
   - cópia do construtor da Série B (0x00BB2DF0) com o ID 319191, nível 2 e a
     vtable nova;
   - três desvios: sistema de ligas (`bra_get_settings`), criação das
@@ -129,6 +129,18 @@ def _new_builder(data: bytes) -> bytes:
     _replace(code, 0xF7, b"\x68" + u32(SERIE_A_ID), b"\x68" + u32(SERIE_B_ID))  # acesso -> Série B
     _replace(code, 0xCA, b"\xC6\x46\x11\x02", b"\xC6\x46\x11\x04")             # 4 sobem
     # rebaixamento continua para a antiga C (0x1A2B8, em +0x10A); 2 caem (+0x14)
+    _replace(code, 0xAB, b"\xC6\x46\x0A\x02", b"\xC6\x46\x0A\x01")             # turno único
+    # Datas 2026: 5/4 a 25/10 (push mês, push dia; mês começa em 0).
+    for at, old, new in (
+        (0x148, 7, 6),        # 1º par, início: agosto -> julho (dia 5)
+        (0x15C, 0x0B, 9),     # 1º par, fim: mês dezembro -> outubro
+        (0x15E, 2, 25),       #          dia 2 -> 25
+        (0x185, 3, 3),        # 2º par, início: abril
+        (0x187, 0x1D, 5),     #          dia 29 -> 5
+        (0x199, 0x0B, 9),     # 2º par, fim: outubro
+        (0x19B, 2, 25),       #          dia 25
+    ):
+        _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
     return bytes(code)
 
 
