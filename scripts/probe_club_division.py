@@ -57,45 +57,44 @@ def scan(handle, needles: dict[str, bytes], align: int = 4) -> dict[str, list[in
 
 def main() -> None:
     handle = open_process(find_process_id(sys.argv[1] if len(sys.argv) > 1 else "fm.exe"))
-    print("Procurando objetos das séries e clubes...", flush=True)
+    print("Procurando objetos das séries, IDs das competições e clubes...", flush=True)
     hits = scan(handle, {
         **{f"serie_{k}": struct.pack("<I", v["vtable"]) for k, v in SERIES.items()},
+        **{f"id_{k}": struct.pack("<I", v["id"]) for k, v in SERIES.items()},
         "club": CLUB_SIGNATURE,
     })
-    series_ptr = {}
-    for key, info in SERIES.items():
-        objects = hits.get(f"serie_{key}", [])
-        print(f"Série {key}: {len(objects)} objeto(s) {[hex(a) for a in objects[:3]]}")
-        if objects:
-            series_ptr[key] = objects[0]
+    for key in SERIES:
+        print(f"Série {key}: objeto de regras {[hex(a) for a in hits.get(f'serie_{key}', [])[:3]]}, "
+              f"ID aparece em {len(hits.get(f'id_{key}', []))} lugar(es)")
     clubs = hits.get("club", [])
     print(f"Clubes: {len(clubs)}")
 
-    targets = {}
-    for key, address in series_ptr.items():
-        for sub in (0, 4, 8, 12, 16):
-            targets[address + sub] = f"{key}:ptr+{sub}"
-    for key, info in SERIES.items():
-        targets[info["id"]] = f"{key}:id"
+    # Alvos: o objeto de regras (e subobjetos) e qualquer objeto que contenha
+    # o ID da série até 0x80 bytes depois do seu início.
+    targets: dict[int, list[str]] = defaultdict(list)
+    for key in SERIES:
+        for address in hits.get(f"serie_{key}", []):
+            for sub in range(0, 0x20, 4):
+                targets[address + sub].append(f"{key}:regras+{sub:#x}")
+        for address in hits.get(f"id_{key}", []):
+            for back in range(0, 0x80, 4):
+                targets[address - back].append(f"{key}:id@{address:#x}-{back:#x}")
 
     per_offset: dict[int, Counter] = defaultdict(Counter)
     for club in clubs:
         data = read_memory(handle, club, CLUB_SIZE)
         if not data or len(data) < CLUB_SIZE:
             continue
-        for rel in range(0, CLUB_SIZE - 3, 2):
+        for rel in range(0, CLUB_SIZE - 3, 4):
             value = struct.unpack_from("<I", data, rel)[0]
-            if value in targets:
-                per_offset[rel][targets[value]] += 1
-            small = struct.unpack_from("<H", data, rel)[0]
-            for key, info in SERIES.items():
-                if small == info["index"]:
-                    per_offset[rel][f"{key}:index16"] += 1
+            for label in targets.get(value, ()):
+                per_offset[rel][label] += 1
 
-    print("\nCampos do Club que apontam para as séries (deslocamento: contagem):")
-    ranked = sorted(per_offset.items(), key=lambda item: -sum(item[1].values()))
-    for rel, counter in ranked[:25]:
-        print(f"  +0x{rel:03X}: {dict(counter)}")
+    print("\nCampos do Club que apontam para algo ligado às séries (deslocamento: alvo = clubes):")
+    rows = [(rel, label, n) for rel, counter in per_offset.items() for label, n in counter.items()]
+    rows.sort(key=lambda r: -r[2])
+    for rel, label, n in rows[:40]:
+        print(f"  +0x{rel:03X}  {label:28} {n}")
 
 
 if __name__ == "__main__":
