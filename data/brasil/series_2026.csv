@@ -1,64 +1,64 @@
 serie,estado,clube
-A,,Athletico-PR
-A,,Atlético-MG
-A,,Bahia
-A,,Botafogo
-A,,Chapecoense
-A,,Corinthians
-A,,Coritiba
-A,,Cruzeiro
-A,,Flamengo
-A,,Fluminense
-A,,Grêmio
-A,,Internacional
-A,,Mirassol
-A,,Palmeiras
-A,,Red Bull Bragantino
-A,,Remo
-A,,Santos
-A,,São Paulo
-A,,Vasco da Gama
-A,,Vitória
-B,,América-MG
-B,,Athletic
-B,,Atlético-GO
-B,,Avaí
-B,,Botafogo-SP
-B,,Ceará
-B,,CRB
-B,,Criciúma
-B,,Cuiabá
-B,,Fortaleza
-B,,Goiás
-B,,Juventude
-B,,Londrina
-B,,Náutico
-B,,Novorizontino
-B,,Operário-PR
-B,,Ponte Preta
-B,,São Bernardo
-B,,Sport
-B,,Vila Nova
-C,,ABC
-C,,Amazonas
-C,,Barra
-C,,Botafogo-PB
-C,,Brusque
-C,,Caxias
-C,,Confiança
-C,,CSA
-C,,Ferroviária
-C,,Figueirense
-C,,Floresta
-C,,Guarani
-C,,Itabaiana
-C,,Ituano
-C,,Maranhão
-C,,Maringá
-C,,Paysandu
-C,,Santa Cruz
-C,,Volta Redonda
-C,,Ypiranga
+A,PR,Athletico-PR
+A,MG,Atlético-MG
+A,BA,Bahia
+A,RJ,Botafogo
+A,SC,Chapecoense
+A,SP,Corinthians
+A,PR,Coritiba
+A,MG,Cruzeiro
+A,RJ,Flamengo
+A,RJ,Fluminense
+A,RS,Grêmio
+A,RS,Internacional
+A,SP,Mirassol
+A,SP,Palmeiras
+A,SP,Red Bull Bragantino
+A,PA,Remo
+A,SP,Santos
+A,SP,São Paulo
+A,RJ,Vasco da Gama
+A,BA,Vitória
+B,MG,América-MG
+B,MG,Athletic
+B,GO,Atlético-GO
+B,SC,Avaí
+B,SP,Botafogo-SP
+B,CE,Ceará
+B,AL,CRB
+B,SC,Criciúma
+B,MT,Cuiabá
+B,CE,Fortaleza
+B,GO,Goiás
+B,RS,Juventude
+B,PR,Londrina
+B,PE,Náutico
+B,SP,Novorizontino
+B,PR,Operário-PR
+B,SP,Ponte Preta
+B,SP,São Bernardo
+B,PE,Sport
+B,GO,Vila Nova
+C,AM,Amazonas
+C,GO,Anápolis
+C,SC,Barra
+C,PB,Botafogo-PB
+C,SC,Brusque
+C,RS,Caxias
+C,SE,Confiança
+C,SP,Ferroviária
+C,SC,Figueirense
+C,CE,Floresta
+C,SP,Guarani
+C,SP,Inter de Limeira
+C,SE,Itabaiana
+C,SP,Ituano
+C,MA,Maranhão
+C,PR,Maringá
+C,PA,Paysandu
+C,PE,Santa Cruz
+C,RJ,Volta Redonda
+C,RS,Ypiranga
 D,Acre,Galvez
 D,Acre,Humaitá
 D,Acre,Independência
