@@ -1,0 +1,28 @@
+numero,nome_comum,primeiro_nome,sobrenome,nascimento,nacionalidade,posicoes,pe,altura,peso,ca,pa,destaques
+1,,Agustín,Rossi,1995-08-21,Argentina,GK,D,195,88,155,158,Reflexes=17;One on one=16;Handling=16
+42,Andrew,Andrew,,2001-03-01,Brasil,GK,D,191,85,115,140,
+49,Dyogo Alves,Dyogo,Alves,2004-03-01,Brasil,GK,D,190,84,105,145,
+3,Léo Ortiz,Leonardo,Rech Ortiz,1996-01-03,Brasil,CB,D,181,76,152,155,Passe=15;Primeiro Toque=14
+4,Léo Pereira,Leonardo,Pereira,1996-01-31,Brasil,CB,E,189,84,150,153,Cabeceamento=17;Livres=12
+13,Danilo,Danilo Luiz,da Silva,1991-07-15,Brasil,CB RB,D,184,78,145,145,Compostura=16;Decisões=15
+44,Vitão,Vitor Eduardo,da Silva Farias,2000-02-02,Brasil,CB,D,187,82,138,148,
+71,João Victor,João,Victor,2007-03-01,Brasil,CB,D,188,80,108,155,
+2,,Guillermo,Varela,1993-03-24,Uruguai,RB,D,173,70,140,140,Índice Trabalho=17;Determinação=17
+22,Emerson Royal,Emerson,Aparecido Leite,1999-01-14,Brasil,RB,D,183,79,145,150,
+6,Ayrton Lucas,Ayrton Lucas,Dantas de Medeiros,1997-06-19,Brasil,LB,E,180,74,142,146,Velocidade=17
+26,Alex Sandro,Alex Sandro,Lobo Silva,1991-01-26,Brasil,LB,E,180,80,145,145,Cruzamentos=16;Compostura=15
+5,,Erick,Pulgar,1994-01-15,Chile,DM,D,187,76,150,152,Livres=14;Bravura=16
+21,Jorginho,Jorge Luiz,Frello Filho,1991-12-20,Brasil,DM CM,D,180,68,155,155,Passe=18;Decisões=18;Marcação Penalties=19;Posicionamento=16
+52,Evertton Araújo,Evertton,Araújo,2003-03-01,Brasil,DM,D,183,75,128,150,
+8,Saúl,Saúl,Ñíguez,1994-11-21,Espanha,CM DM,E,184,76,155,155,Remates Longe=15;Índice Trabalho=16
+10,Arrascaeta,Giorgian,de Arrascaeta,1994-06-01,Uruguai,AM LW,D,174,67,165,165,Passe=18;Técnica=19;Criatividade=19;Livres=17;Finta=16
+11,Lucas Paquetá,Lucas,Paquetá,1997-08-27,Brasil,AM CM,E,180,72,163,166,Finta=17;Técnica=18;Passe=17
+15,,Jorge,Carrascal,1998-05-25,Colômbia,AM RW,D,180,73,148,152,Finta=17;Técnica=16
+18,De la Cruz,Nicolás,de la Cruz,1997-06-01,Uruguai,CM AM,D,167,64,155,157,Livres=16;Índice Trabalho=16
+7,Luiz Araújo,Luiz Araújo,Guimarães Neto,1996-06-02,Brasil,RW LW,E,175,68,145,147,
+14,,Anthony,Valencia,2003-03-01,Equador,RW,E,175,70,122,150,Velocidade=17
+16,Samuel Lino,Samuel,Lino,1999-12-23,Brasil,LW,D,175,69,150,155,Finta=17;Velocidade=16
+19,,Gonzalo,Plata,2000-11-01,Equador,RW,E,178,72,148,155,Velocidade=18;Finta=17
+30,,Joaquín,Freitas,2007-03-01,Argentina,ST,D,180,74,105,152,
+9,Pedro,Pedro Guilherme,Abreu dos Santos,1997-06-20,Brasil,ST,D,185,80,160,162,Finalização=18;Cabeceamento=16;Compostura=18;Primeiro Toque=17
+27,Bruno Henrique,Bruno Henrique,Pinto,1990-12-30,Brasil,ST LW,D,184,77,140,140,Velocidade=15;Aceleração=15;Finalização=15

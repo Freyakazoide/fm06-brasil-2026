@@ -153,13 +153,23 @@ def cmd_edit(spec_path: Path, apply: bool) -> None:
     year_shift = int(spec.get("year_shift", 0))
     players = spec["players"]
     handle = open_for_write(find_process_id("fm.exe"))
-    donors = {int(p["nationality_like"]) for p in players if "nationality_like" in p}
-    addresses = resolve(handle, sorted({int(p["uid"]) for p in players} | donors))
+    uids = sorted({int(p["uid"]) for p in players})
+    donors = sorted({int(p["nationality_like"]) for p in players if "nationality_like" in p} - set(uids))
+    addresses = resolve(handle, uids)
+    donor_players = find_objects(handle, donors) if donors else {}
     for entry in players:
-        if "nationality_like" in entry:
-            donor = int(entry["nationality_like"])
-            ptr = read_memory(handle, addresses[donor]["Player"] + NATIONALITY_REL, 4)
-            entry["nationality_ptr"] = struct.unpack("<I", ptr)[0]
+        if "nationality_like" not in entry:
+            continue
+        donor = int(entry["nationality_like"])
+        if donor in addresses:
+            player_address = addresses[donor]["Player"]
+        elif len(donor_players.get(donor, {}).get("Player", [])) == 1:
+            player_address = donor_players[donor]["Player"][0]
+        else:
+            print(f"AVISO: doador {donor} não está carregado; nacionalidade de {entry.get('name', entry['uid'])} não muda")
+            continue
+        ptr = read_memory(handle, player_address + NATIONALITY_REL, 4)
+        entry["nationality_ptr"] = struct.unpack("<I", ptr)[0]
 
     backup = {"created": time.strftime("%Y-%m-%d %H:%M:%S"), "spec": str(spec_path), "objects": []}
     for entry in players:

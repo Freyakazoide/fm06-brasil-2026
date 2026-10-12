@@ -69,3 +69,52 @@ Detalhes em `docs/reversing/people-db.md`. Resumo:
   sinal, exibido = `(byte + base) // 5`, com `base = (CA + 9) // 2`.
 - A fórmula da base foi ajustada com 2 jogadores (CA 160 e 185). Por isso o
   script grava sempre no meio da faixa, o que tolera erro de ±2 na base.
+
+## Montar um elenco inteiro
+
+1. New Game. Liste o elenco atual do clube (os "hospedeiros"):
+
+   ```powershell
+   python scripts\live_player_editor.py --squad 322 --out workspace\elenco_flamengo_2005.csv
+   ```
+
+2. Gere os arquivos a partir da planilha do elenco desejado:
+
+   ```powershell
+   python scripts\build_squad.py data\brasil\flamengo_2026.csv workspace\elenco_flamengo_2005.csv
+   ```
+
+   O comando cria, em `workspace\mods\`:
+   - `flamengo_2026.lnc`: os nomes, via `CHANGE_PLAYER_NAME`;
+   - `flamengo_2026.json`: os dados para o injetor;
+   - `flamengo_2026_hospedeiros.csv`: quem virou quem.
+
+3. Copie o `.lnc` para `C:\Games\Football Manager 2006\data\db\lnc\all\` e
+   inicie um **novo** New Game, para os nomes entrarem.
+4. Rode o injetor com o `.json` (primeiro sem `--apply`, depois com) e salve
+   o jogo.
+
+O UID de cada jogador não muda entre partidas, então o `.json` vale para
+qualquer New Game.
+
+### Planilha (`data/brasil/*.csv`)
+
+| Coluna | Exemplo | Observação |
+|---|---|---|
+| numero | 10 | só referência |
+| nome_comum | Arrascaeta | nome mostrado; vazio usa nome + sobrenome |
+| primeiro_nome / sobrenome | Giorgian / de Arrascaeta | |
+| nascimento | 1994-06-01 | data real; o `year_shift` (padrão −21) ajusta a idade |
+| nacionalidade | Uruguai | precisa de doador em `NATIONALITY_DONORS` |
+| posicoes | AM LW | GK CB RB LB DM CM AM RW LW ST; a primeira é a principal |
+| pe | D / E / A | direito, esquerdo, ambos |
+| altura, peso | 174, 67 | cm, kg |
+| ca, pa | 165, 165 | escala 1–200 |
+| destaques | Passe=18;Técnica=19 | substitui a estimativa do perfil |
+
+Os atributos que não estão em "destaques" são estimados por um perfil de
+função escalado pelo CA (`src/fm06patch/squad_builder.py`).
+
+Ainda falta: doadores de nacionalidade para Colômbia e Equador, número da
+camisa e contrato (salário e duração). Os jogadores de 2005 que sobram
+continuam no elenco.
