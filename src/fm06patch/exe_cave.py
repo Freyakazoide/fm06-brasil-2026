@@ -132,15 +132,16 @@ def _new_builder(data: bytes) -> bytes:
     _replace(code, 0xCA, b"\xC6\x46\x11\x02", b"\xC6\x46\x11\x08")
     # rebaixamento continua para a antiga C (0x1A2B8, em +0x10A); 2 caem (+0x14)
     _replace(code, 0xAB, b"\xC6\x46\x0A\x02", b"\xC6\x46\x0A\x01")             # turno único
-    # Datas da 1ª fase: 5/4 a 9/8 (push mês, push dia; mês começa em 0).
+    # Datas da 1ª fase: 5/4 a 2/8 (push mês, push dia; mês começa em 0). O jogo
+    # arredonda para o fim de semana; a fase de grupos começa em 16/8.
     for at, old, new in (
         (0x148, 7, 6),        # 1º par, início: agosto -> julho (dia 5)
         (0x15C, 0x0B, 7),     # 1º par, fim: mês dezembro -> agosto
-        (0x15E, 2, 9),        #          dia 2 -> 9
+        (0x15E, 2, 2),        #          dia 2
         (0x185, 3, 3),        # 2º par, início: abril
         (0x187, 0x1D, 5),     #          dia 29 -> 5
         (0x199, 0x0B, 7),     # 2º par, fim: agosto
-        (0x19B, 2, 9),        #          dia 9
+        (0x19B, 2, 2),        #          dia 2
     ):
         _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
     # Ação "classifica para a fase de grupos" (desvio para a seção nova).
@@ -416,7 +417,10 @@ def _playoff_stubs() -> tuple[bytes, dict[str, int]]:
     asm.raw(b"\x8D\x4C\x24\x10").push(0x640).jmp(0x00BBA7BF)  # instruções originais
 
     entry["date"] = asm.here
-    asm.push(2).push(0x7D0).push(10).push(16).push(0x4B0)   # sorteio: 16/11, 12:00
+    # Sorteio 13/11: depois da última rodada da fase de liga (até 8/11,
+    # arredondada pelo jogo para o fim de semana). Se o sorteio vier antes, o
+    # playoff fica sem times e a temporada do Brasil não fecha.
+    asm.push(2).push(0x7D0).push(10).push(13).push(0x4B0)
     asm.jmp(PLAYOFF_COPY + (0x00C0FF3B - ITA_BUILDER))
     return bytes(asm.code), entry
 

@@ -107,7 +107,7 @@ PATCHES = {
         Patch(
             "serie_c_nova",
             "4ª divisão: nova Série C (registro Taça de Prata 319191, índice 376) entre a B e a antiga C, "
-            "que vira o 4º nível. 1ª fase: liga de 20 em turno único (5/4 a 9/8), 8 avançam, 2 caem; "
+            "que vira o 4º nível. 1ª fase: liga de 20 em turno único (5/4 a 2/8), 8 avançam, 2 caem; "
             "2ª fase: 2 grupos de 4, ida e volta (16/8 a 18/10), os 2 primeiros de cada grupo sobem. "
             "B cai para a nova C; antiga C sobe para a nova C. Acrescenta a seção .fm26 ao executável.",
             build=lambda data: _cave_swaps(data),
@@ -136,15 +136,15 @@ PATCHES = {
         ),
         Patch(
             "serie_b_datas_2026",
-            "Série B de 21/3 a 15/11, fase de pontos corridos (original: 29/4 a 2/12); "
+            "Série B de 21/3 a 8/11, fase de pontos corridos (original: 29/4 a 2/12); "
             "os playoffs (serie_b_playoffs) vão até 28/11. Fase em 0x00BBA6A0.",
             (
                 _imm8(0x7BA825, b"\x6A", 3, 2),       # mês de início: abril -> março
                 _imm8(0x7BA827, b"\x6A", 0x1D, 21),   # dia de início
                 _imm8(0x7BA7FC, b"\x6A", 0x0B, 10),   # mês de fim, 1º par: dezembro -> novembro
-                _imm8(0x7BA7FE, b"\x6A", 2, 15),      # dia de fim, 1º par
+                _imm8(0x7BA7FE, b"\x6A", 2, 8),       # dia de fim, 1º par
                 _imm8(0x7BA839, b"\x6A", 0x0B, 10),   # mês de fim, 2º par
-                _imm8(0x7BA83B, b"\x6A", 2, 15),      # dia de fim, 2º par
+                _imm8(0x7BA83B, b"\x6A", 2, 8),       # dia de fim, 2º par
             ),
         ),
         Patch(

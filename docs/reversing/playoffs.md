@@ -45,9 +45,9 @@ Número de fases da competição: argumento de `0x00AC24F0` no construtor (Séri
   `0x00B0FF00(2, …0x15…)`, como na Championship.
 - Método 71 da vtable da Série B → despachante: fase 1 vai para uma cópia da
   montagem italiana (área livre `0x00E30760`), as outras para a original.
-- Na cópia: sem final (vencedores da semifinal sobem), sorteio 16/11, 1º jogo
+- Na cópia: sem final (vencedores da semifinal sobem), sorteio 13/11, 1º jogo
   21/11, 2º jogo uma semana depois.
-- A fase de pontos corridos da Série B termina em 15/11 (`serie_b_datas_2026`).
+- A fase de pontos corridos da Série B termina em 8/11 (`serie_b_datas_2026`).
 
 ## Como uma fase passa times para a seguinte
 
@@ -76,3 +76,17 @@ Pelas ligas que já funcionam (Championship, Série B italiana, antiga Série C)
 Mata-mata da antiga C sem a 3ª rodada (salto em `0x00BC037C`); os vencedores
 da 2ª rodada (`0x00B45500(8, …)`) vão para a fase final, agora com 8 clubes
 em turno único (`0x00BC04E0`, `0x00BC054C`) e 6 acessos (`0x00BC0573`).
+
+## Teste 1 de `serie_b_playoffs`
+
+- ✅ Regras: "Equipas classificadas entre 3-6 qualificam-se para o Playoff";
+  na classificação, 3º a 6º marcados "Pl".
+- ✅ Calendário: "Playoff - Meia Final" ida 19/11 e volta 22/11.
+- ❌ Os jogos do playoff não aconteceram, e em 31/1/2007 o Brasil estava sem
+  calendário novo, sem acesso e rebaixamento e sem estaduais.
+- Causa provável: a 38ª rodada caiu em 18/11 (o jogo arredonda o fim da fase
+  para o fim de semana) e o sorteio do playoff era em 16/11, antes do fim da
+  liga. O playoff ficou sem times, a Série B nunca terminou, e o jogo não
+  fecha a temporada do país enquanto uma divisão não termina.
+- Correção: fim da fase de liga em 8/11 e sorteio em 13/11. Regra geral:
+  deixar pelo menos uma semana entre o fim de uma fase e o início da seguinte.
