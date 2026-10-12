@@ -72,6 +72,14 @@ de 2026** (grupos + mata-mata).
   entre os dois clubes os campos `+0x54`, `+0x5C`, `+0x60` (byte) e `+0x64`,
   e `+0xDC`/`+0xEA` de um objeto obtido por `0x00A18CD0`. A divisão do clube
   está entre eles.
+- Rodada 5 (decompilado do executor, `0x00AADB90` caso 10):
+  - `0x00AAABD0` acha o clube pelo nome na lista global (`DAT_014EAA84`,
+    item por `0x009E8CF0`).
+  - `0x00A18CD0(clube)` devolve `*(clube+0x38)` se `clube+0x40 == 0`: um
+    segundo objeto X ligado ao clube.
+  - `0x00A18CE0(clube)` devolve `X+0xDC`: **candidato a divisão**.
+  - A troca: `clube+0x54`, `X+0xDC`, `clube+0x5C`, `clube+0x64` (só se os
+    `X+0xDC` forem diferentes), `clube+0x60` (byte) e `X+0xEA` (byte).
 - `PLAY_COMPETITION` (tipo 0x24) em `0x00AA84C0` só grava o `unid` lido em
   `DAT_014EAB2C`.
 - Executor de todos os comandos: `switch` em `0x00AADB90`, tabela em

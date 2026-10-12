@@ -96,6 +96,44 @@ def main() -> None:
     for rel, label, n in rows[:40]:
         print(f"  +0x{rel:03X}  {label:28} {n}")
 
+    # Caminho usado pelo SWAP_TEAMS: clube +0x38 -> objeto X (se +0x40 == 0);
+    # a divisão fica em X+0xDC (acessor 0x00A18CE0). Também mostra X+0xEA.
+    ids_by_raw = {struct.pack("<I", info["id"]): key for key, info in SERIES.items()}
+    rules = {series_ptr.get(k): k for k in series_ptr} if "series_ptr" in dir() else {}
+    rules = {hits[f"serie_{k}"][0]: k for k in SERIES if hits.get(f"serie_{k}")}
+    division = Counter()
+    flag_ea = Counter()
+    for club in clubs:
+        head = read_memory(handle, club + 0x38, 12)
+        if not head or len(head) < 12:
+            continue
+        x, = struct.unpack_from("<I", head, 0)
+        flag = head[8]
+        if flag != 0 or x < 0x10000:
+            division["(sem objeto X)"] += 1
+            continue
+        data = read_memory(handle, x + 0xDC, 0x10)
+        if not data or len(data) < 0x10:
+            continue
+        division[struct.unpack_from("<I", data, 0)[0]] += 1
+        flag_ea[data[0xEA - 0xDC]] += 1
+    print("\nDivisão pelo caminho do SWAP_TEAMS (clube +0x38 -> X, valor em X+0xDC):")
+    for value, count in division.most_common(25):
+        label = ""
+        if isinstance(value, int):
+            if value in rules:
+                label = f"  = objeto de regras da Série {rules[value]}"
+            elif value > 0x10000:
+                target = read_memory(handle, value, 0x400)
+                if target:
+                    found = [f"{key}@+{target.find(raw):#x}" for raw, key in ids_by_raw.items() if target.find(raw) >= 0]
+                    vt = struct.unpack_from("<I", target, 0)[0]
+                    label = f"  vtable {vt:#x}" + (f"  contém ID {found}" if found else "")
+            print(f"  {value:#010x}: {count} clubes{label}")
+        else:
+            print(f"  {value}: {count} clubes")
+    print("  X+0xEA (byte):", dict(flag_ea.most_common(8)))
+
     # Campos trocados pelo SWAP_TEAMS (executor em 0x00AAC550).
     ids = {struct.pack("<I", info["id"]): key for key, info in SERIES.items()}
     print("\nCampos trocados pelo SWAP_TEAMS: valores mais comuns entre os clubes")
