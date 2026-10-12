@@ -163,7 +163,7 @@ Código em `src/fm06patch/exe_cave.py`; aplicado por `scripts/patch_exe.py`.
   376), registro brasileiro que nenhum código do jogo cria. Outras opções:
   Brazilian Champions Cup (309690), Taça Brazil (311872).
 - `bra_get_settings`: nova C no nível 2, antiga C no nível 3, `finalizar(4)`.
-- `bra_setup_comps`: cria a nova C logo depois da antiga C.
+- `bra_setup_comps`: cria a nova C logo antes da antiga C (a ordem de criação define a ordem nas listas).
 - `bra_get_minimum_division_teams`: nova C com 20.
 - Classe: cópia do construtor da Série B (ID 319191, nível 2) com uma cópia
   da vtable da B (150 métodos) cujo método 71 é uma cópia da fase da B:
@@ -213,3 +213,17 @@ original exige exatamente 20, 20 e 128.
 Correção: `serie_c_64_clubes` exige pelo menos 64 e sem máximo
 (`0x00BB286F`: `6A FE 68 80000000` → `6A FF 68 40000000`); a nova C exige
 exatamente 20.
+
+### Teste 3: ✅ funcionou
+
+`serie_c_nova` + `serie_c_64_clubes`, 20 times na nova C pelo banco. Tela de
+Regras da "Taça de Prata Brasileira" (319191):
+
+- 29.4.2006 – 2.12.2006 (datas da Série B, ainda não ajustadas);
+- 38 jogos, turno e returno;
+- "As quatro primeiras equipas sobem à 2ª Divisão Nacional";
+- "Últimas dois equipas são despromovidas à 3ª Divisão Nacional".
+
+A Taça de Prata aparecia depois da 3ª Divisão nas listas: era criada depois
+dela em `bra_setup_comps`. O desvio passou para antes da criação da antiga C
+(`0x00BBA30B`).

@@ -56,7 +56,7 @@ Por onde cada alteração é feita:
 | Número de clubes por divisão | 🟡 | executável | regras ficam no `fm.exe` (módulo Brasil em `0xBB2700`); ver `docs/reversing/competitions.md` |
 | Formato (pontos corridos, turno e returno) | 🟡 | executável | idem |
 | Acessos e rebaixamentos | ✅ | executável | `scripts/patch_exe.py` (campos `+0x11`/`+0x14` da fase); validado: Série A rebaixa 4, Série B sobe 4 |
-| Criar a Série D | 🟡 | executável + banco | patch `serie_c_nova` (code cave): nova C de 20 no 3º nível, antiga C vira o 4º; times pelo `server_db_teams.py`; a testar |
+| Criar a Série D | ✅ | executável + banco | patch `serie_c_nova` (code cave): nova C de 20 no 3º nível (Taça de Prata), antiga C vira o 4º; times pelo `server_db_teams.py`. Falta: nomes, datas da nova C, tamanho e formato da D, 3 fases da C |
 | Vagas em Libertadores e Sul-Americana | ❌ | banco | idem |
 | Classificação da temporada passada | 🟡 | banco | `scripts/server_db_teams.py --pos` / `--last` |
 | Histórico de campeões (Séries A–D, pelo menos os últimos) | ❌ | banco | não localizado |

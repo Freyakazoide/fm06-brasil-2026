@@ -158,13 +158,14 @@ def _hooks() -> tuple[bytes, dict[str, int]]:
     asm.push(0).push(3).push(OLD_C_ID).mov_ecx_esi().call(ADD_DIVISION)
     asm.push(4).jmp(0x00BB276E)
 
-    # bra_setup_comps: cria a nova C logo depois da antiga C.
+    # bra_setup_comps: cria a nova C logo antes da antiga C (a ordem de criação
+    # é a ordem em que as divisões aparecem nas listas do jogo).
     entry["comps"] = asm.here
     asm.push(0x190).call(ALLOC).raw(b"\x83\xC4\x04")       # add esp, 4
     asm.raw(b"\x85\xC0\x74\x09\x8B\xC8")                   # test eax,eax ; je +9 ; mov ecx,eax
     asm.call(NEW_CTOR).raw(b"\xEB\x02\x31\xC0")            # jmp +2 ; xor eax,eax
     asm.raw(b"\x8B\x16\x50\x8B\xCE\xFF\x12")               # mov edx,[esi]; push eax; mov ecx,esi; call [edx]
-    asm.push(0x19C).jmp(0x00BBA333)
+    asm.push(0x190).jmp(0x00BBA310)
 
     # bra_get_minimum_division_teams: nova C com 20.
     entry["minimum"] = asm.here
@@ -220,7 +221,7 @@ def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
             Swap(off(0x00BB2ED7), b"\x6a\x02", b"\x6a\x03"),                              # antiga C: nível 3
         ]
     if "comps" in parts:
-        swaps.append(Swap(off(0x00BBA32E), b"\x68\x9c\x01\x00\x00", _jmp(0x00BBA32E, entry["comps"], 5)))
+        swaps.append(Swap(off(0x00BBA30B), b"\x68\x90\x01\x00\x00", _jmp(0x00BBA30B, entry["comps"], 5)))
     if "minimum" in parts:
         swaps.append(Swap(off(0x00BB2845), min_hook, _jmp(0x00BB2845, entry["minimum"], len(min_hook))))
     if "moves" in parts:
