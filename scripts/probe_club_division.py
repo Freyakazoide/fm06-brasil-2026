@@ -156,5 +156,27 @@ def main() -> None:
         print(f"  {label}: {count}")
     print(f"  CLUB: {class_name(handle, 0x010EFFCC)}  TEAM: {class_name(handle, 0x010EDF6C)}")
 
+    # Campos do TEAM trocados pelo SWAP_TEAMS: qual deles aponta para a divisão?
+    for rel, size in ((0x54, 4), (0x5C, 4), (0x60, 1), (0x64, 4)):
+        values = Counter()
+        for team in teams:
+            data = read_memory(handle, team + rel, size)
+            if data and len(data) == size:
+                values[data[0] if size == 1 else struct.unpack("<I", data)[0]] += 1
+        by_class = Counter()
+        names = {}
+        for value, count in values.items():
+            name = ""
+            if size == 4 and value > 0x10000:
+                head = read_memory(handle, value, 4)
+                if head and len(head) == 4:
+                    name = class_name(handle, struct.unpack("<I", head)[0])
+            names[value] = name
+            by_class[name or "(não é objeto)"] += count
+        print(f"\nTEAM+0x{rel:02X}: {len(values)} valores distintos; por classe: {dict(by_class.most_common(8))}")
+        for value, count in values.most_common(15):
+            note = f"  = regras da Série {rules[value]}" if value in rules else ""
+            print(f"    {value:#010x}: {count} times  {names[value]}{note}")
+
 if __name__ == "__main__":
     main()

@@ -79,7 +79,10 @@ de 2026** (grupos + mata-mata).
     (vtable `0x010EDF6C`), não o `CLUB` (vtable `0x010EFFCC`).
   - `0x00A18CD0(team)` devolve `team+0x38` (o `CLUB`) se `team+0x40 == 0`
     (0 = time de clube; senão, seleção).
-  - `0x00A18CE0(team)` devolve `CLUB+0xDC`: **candidato a divisão**.
+  - `0x00A18CE0(team)` devolve `CLUB+0xDC`. Sondagem: é o **país**
+    (`NATION`) do clube, não a divisão. Por isso `TEAM+0x64` só é trocado
+    quando os países diferem. A divisão deve estar em `TEAM+0x5C` ou
+    `TEAM+0x64`.
   - A troca: `TEAM+0x54`, `CLUB+0xDC`, `TEAM+0x5C`, `TEAM+0x64` (só se os
     `CLUB+0xDC` forem diferentes), `TEAM+0x60` (byte) e `CLUB+0xEA` (byte).
   - 1ª sondagem com essa leitura falhou porque tratou o `CLUB` como `TEAM`
