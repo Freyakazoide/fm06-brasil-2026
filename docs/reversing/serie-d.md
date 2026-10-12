@@ -180,3 +180,11 @@ clubes de A, B e C) não inclui a nova C.
 
 Teste: `patch_exe.py serie_c_nova serie_c_64_clubes` +
 `server_db_teams.py --top "C:20:NOVA_C" --apply`.
+
+### Teste 1 do `serie_c_nova`
+
+- `serie_c_nova` + `serie_c_64_clubes` + 20 times na nova C: **o Brasil sumiu
+  da lista de países do New Game.**
+- Hipótese: `bra_get_minimum_division_teams` exigia 128 clubes na antiga C,
+  que ficou com 108. O `serie_c_64_clubes` agora também baixa esse mínimo para
+  64 (`0x00BB2871`: `push 0x80` → `push 0x40`).
