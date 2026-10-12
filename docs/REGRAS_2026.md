@@ -93,10 +93,11 @@ Validado no jogo com `fm_brasil.exe` (New Game com o Brasil).
 | Série B: 21/03–15/11 (pontos corridos), 4 caem | ✅ (datas da fase de liga ajustadas para os playoffs) |
 | Série B: 1º e 2º sobem; playoffs 3×6 e 4×5 (21 e 28/11), empate passa a melhor campanha | 🟡 patch `serie_b_playoffs`, a testar |
 | Série C: 20 clubes, 4 sobem, 2 caem | ✅ validado (Taça de Prata) |
-| Série C: 05/04–25/10, turno único | ✅ |
-| Série C: quadrangulares e final | ❌ por enquanto sobem 1º a 4º direto da fase de liga |
+| Série C 1ª fase: 05/04–09/08, turno único, 8 avançam, 2 caem | 🟡 a testar (patch `serie_c_nova`) |
+| Série C 2ª fase: 2 grupos de 4, ida e volta, 16/08–18/10, 2 primeiros de cada grupo sobem | 🟡 a testar; grupos sorteados pelo jogo (ainda não 1-4-5-8 / 2-3-6-7) |
+| Série C: final entre os campeões dos grupos | ❌ ainda não; o título fica sem final |
 | Série C: 24 clubes em 2027, 28 em 2028 | ❌ |
 | Série D: 96 clubes, 05/04–13/09 | ✅ 16 grupos de 6, 2 avançam, mata-mata de 32, quadrangular final |
-| Série D: 6 acessos | ❌ por enquanto 4 (os do quadrangular final); 6 exige refazer o mata-mata |
+| Série D: 6 acessos | 🟡 a testar: mata-mata de 32 e de 16; os 8 restantes jogam fase final em turno único e os 6 primeiros sobem |
 | Vagas na Libertadores e Sul-Americana | ❌ não mapeado |
 | Copa do Brasil e Supercopa | ❌ a Copa do Brasil (`0x00BB9550`) ainda puxa clubes só das antigas A, B e C |

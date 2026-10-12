@@ -26,8 +26,9 @@ class ExePatchTest(unittest.TestCase):
     def test_every_patch_matches_original_bytes(self) -> None:
         for name in PATCHES:
             patched = apply(self.data, [name])
-            self.assertEqual(len(patched), len(self.data))
-            changed = sum(a != b for a, b in zip(patched, self.data))
+            self.assertIn(len(patched) - len(self.data), (0, 0x10000))  # seção .fm26
+            original = self.data + bytes(len(patched) - len(self.data))
+            changed = sum(a != b for a, b in zip(patched, original))
             expected = sum(sum(x != y for x, y in zip(s.old, s.new)) for s in PATCHES[name].swaps_for(self.data))
             self.assertEqual(changed, expected, name)
 

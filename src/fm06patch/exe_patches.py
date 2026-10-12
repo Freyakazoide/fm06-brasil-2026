@@ -106,9 +106,10 @@ PATCHES = {
         ),
         Patch(
             "serie_c_nova",
-            "4ª divisão: nova Série C (liga de 20, cópia da B, registro Taça de Prata 319191, índice 376) "
-            "entre a B e a antiga C, que vira o 4º nível. B cai para a nova C; antiga C sobe para a nova C. "
-            "Times entram pela ferramenta server_db_teams (índice 376).",
+            "4ª divisão: nova Série C (registro Taça de Prata 319191, índice 376) entre a B e a antiga C, "
+            "que vira o 4º nível. 1ª fase: liga de 20 em turno único (5/4 a 9/8), 8 avançam, 2 caem; "
+            "2ª fase: 2 grupos de 4, ida e volta (16/8 a 18/10), os 2 primeiros de cada grupo sobem. "
+            "B cai para a nova C; antiga C sobe para a nova C. Acrescenta a seção .fm26 ao executável.",
             build=lambda data: _cave_swaps(data),
         ),
         Patch(
@@ -148,13 +149,18 @@ PATCHES = {
         ),
         Patch(
             "serie_d_96",
-            "Série D (antiga C, 0x00BBFD00) com 96 clubes: 16 grupos de 6, avançam 2 por grupo para o "
-            "mata-mata de 32; o quadrangular final dá 4 acessos (original: 2). Datas 5/4 a 13/9. "
+            "Série D (antiga C, 0x00BBFD00) com 96 clubes: 16 grupos de 6, avançam 2 por grupo; "
+            "mata-mata de 32 e de 16; os 8 restantes jogam a fase final em turno único e os 6 primeiros "
+            "sobem (original: 4 na fase final, 2 sobem). Datas 5/4 a 13/9. "
             "Exige pelo menos 96 times, sem máximo. Não combina com serie_c_64_clubes.",
             (
                 Swap(0x7BFDB7, bytes.fromhex("66c7008000"), bytes.fromhex("66c7006000")),  # total 128 -> 96
                 Swap(0x7BFE9D, bytes.fromhex("c6460b08"), bytes.fromhex("c6460b06")),      # 8 -> 6 por grupo
-                _zone(0x7C0573, PROMOTION, 2, 4),                                           # quadrangular: 4 sobem
+                _zone(0x7C0573, PROMOTION, 2, 6),                                           # fase final: 6 sobem
+                Swap(0x7C037C, bytes.fromhex("6a098d4c244c"), bytes.fromhex("e9d600000090")),  # sem a 3ª rodada
+                _imm8(0x7C0479, b"\x6A", 9, 8),       # vencedores da 2ª rodada vão para a fase final
+                Swap(0x7C04E0, bytes.fromhex("66c7000400"), bytes.fromhex("66c7000800")),  # fase final com 8
+                Swap(0x7C054C, bytes.fromhex("c6460a02"), bytes.fromhex("c6460a01")),      # turno único
                 Swap(0x7B286F, bytes.fromhex("6afe6880000000"), bytes.fromhex("6aff6860000000")),
                 # datas (push mês, push dia; mês começa em 0)
                 _imm8(0x7BFF53, b"\x6A", 5, 3),       # grupos, início: 25/6 -> 5/4
@@ -207,6 +213,8 @@ def apply(data: bytes, names: list[str]) -> bytes:
         if name not in PATCHES:
             raise KeyError(f"Patch desconhecido: {name}. Disponíveis: {', '.join(PATCHES)}")
         for swap in PATCHES[name].swaps_for(data):
+            if swap.offset + len(swap.old) > len(out):        # seção nova no fim do arquivo
+                out.extend(bytes(swap.offset + len(swap.old) - len(out)))
             current = bytes(out[swap.offset:swap.offset + len(swap.old)])
             if swap.shared and current == swap.new:
                 continue

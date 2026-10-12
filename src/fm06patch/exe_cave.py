@@ -127,20 +127,25 @@ def _new_builder(data: bytes) -> bytes:
     code = bytearray(data[off(B_BUILDER):off(B_BUILDER) + B_BUILDER_SIZE])
     _relocate(code, B_BUILDER, NEW_BUILDER, B_BUILDER_CALLS)
     _replace(code, 0xF7, b"\x68" + u32(SERIE_A_ID), b"\x68" + u32(SERIE_B_ID))  # acesso -> Série B
-    _replace(code, 0xCA, b"\xC6\x46\x11\x02", b"\xC6\x46\x11\x04")             # 4 sobem
+    # 1ª fase: os 8 primeiros vão para a fase de grupos (zona 1 + ação 5, como
+    # nos grupos da antiga C); quem sobe sai da 2ª fase.
+    _replace(code, 0xCA, b"\xC6\x46\x11\x02", b"\xC6\x46\x11\x08")
     # rebaixamento continua para a antiga C (0x1A2B8, em +0x10A); 2 caem (+0x14)
     _replace(code, 0xAB, b"\xC6\x46\x0A\x02", b"\xC6\x46\x0A\x01")             # turno único
-    # Datas 2026: 5/4 a 25/10 (push mês, push dia; mês começa em 0).
+    # Datas da 1ª fase: 5/4 a 9/8 (push mês, push dia; mês começa em 0).
     for at, old, new in (
         (0x148, 7, 6),        # 1º par, início: agosto -> julho (dia 5)
-        (0x15C, 0x0B, 9),     # 1º par, fim: mês dezembro -> outubro
-        (0x15E, 2, 25),       #          dia 2 -> 25
+        (0x15C, 0x0B, 7),     # 1º par, fim: mês dezembro -> agosto
+        (0x15E, 2, 9),        #          dia 2 -> 9
         (0x185, 3, 3),        # 2º par, início: abril
         (0x187, 0x1D, 5),     #          dia 29 -> 5
-        (0x199, 0x0B, 9),     # 2º par, fim: outubro
-        (0x19B, 2, 25),       #          dia 25
+        (0x199, 0x0B, 7),     # 2º par, fim: agosto
+        (0x19B, 2, 9),        #          dia 9
     ):
         _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
+    # Ação "classifica para a fase de grupos" (desvio para a seção nova).
+    _replace(code, 0x116, bytes.fromhex("8d4c24106840060000"),
+             b"\xE9" + u32(C_QUALIFY - (NEW_BUILDER + 0x116 + 5)) + b"\x90" * 4)
     return bytes(code)
 
 
@@ -150,12 +155,13 @@ def _new_ctor(data: bytes) -> bytes:
     _replace(code, 0x17, b"\x6A\x01\x6A\x01\x8B\xF1\x68" + u32(SERIE_B_ID),
              b"\x6A\x02\x6A\x01\x8B\xF1\x68" + u32(NEW_C_ID))                    # nível 2, ID novo
     _replace(code, 0x35, b"\xC7\x06" + u32(B_VTABLE), b"\xC7\x06" + u32(NEW_VTABLE))
+    _replace(code, 0x2D, b"\x6A\x01", b"\x6A\x02")                                # 2 fases
     return bytes(code)
 
 
 def _new_vtable(data: bytes) -> bytes:
     raw = bytearray(data[off(B_VTABLE) - 4:off(B_VTABLE) + 4 * VTABLE_SLOTS])
-    struct.pack_into("<I", raw, 4 + 4 * STAGE_SLOT, NEW_BUILDER)
+    struct.pack_into("<I", raw, 4 + 4 * STAGE_SLOT, C_DISPATCH)
     return bytes(raw)
 
 
@@ -197,6 +203,94 @@ def _jmp(at: int, target: int, length: int) -> bytes:
 # -1 = sem máximo). A nova C exige exatamente 20.
 PARTS = ("settings", "comps", "minimum", "moves")
 
+# ---------------------------------------------------------------------------
+# Seção nova no fim do executável (".fm26", 64 KB, código), para o que não
+# cabe nas sobras de .text.
+# ---------------------------------------------------------------------------
+SECTION_RVA = 0x011B4000
+SECTION_VA = IMAGE_BASE + SECTION_RVA
+SECTION_RAW = 0x00F2B000          # fim do arquivo original
+SECTION_SIZE = 0x10000
+NSECTIONS_AT = 0x10E
+SIZE_OF_IMAGE_AT = 0x158
+SECTION_HEADER_AT = 0x2A0
+SIZE_OF_IMAGE = (0x011B379E, SECTION_RVA + SECTION_SIZE)
+
+
+def sec_off(va: int) -> int:
+    return va - SECTION_VA + SECTION_RAW
+
+
+def section_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    header = (b".fm26\0\0\0" + struct.pack("<IIII", SECTION_SIZE, SECTION_RVA, SECTION_SIZE, SECTION_RAW)
+              + bytes(12) + struct.pack("<I", 0xE0000020))
+    return [
+        Swap(NSECTIONS_AT, b"\x04\x00", b"\x05\x00", shared=True),
+        Swap(SIZE_OF_IMAGE_AT, u32(SIZE_OF_IMAGE[0]), u32(SIZE_OF_IMAGE[1]), shared=True),
+        Swap(SECTION_HEADER_AT, data[SECTION_HEADER_AT:SECTION_HEADER_AT + 40], header, shared=True),
+        Swap(SECTION_RAW + SECTION_SIZE - 1, b"\x00", b"\x00", shared=True),   # tamanho do arquivo
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Série C em fases: 1ª fase (cópia da B, liga de 20 em turno único, 8
+# avançam, 2 caem) e 2ª fase com 2 grupos de 4, ida e volta, os 2 primeiros de
+# cada grupo sobem. A 2ª fase é uma cópia da 1ª fase da antiga C
+# (0x00BBFD00, grupos), que o despachante chama com o índice de fase 0.
+# ---------------------------------------------------------------------------
+C_DISPATCH = SECTION_VA + 0x000
+C_QUALIFY = SECTION_VA + 0x020
+OLD_C_COPY = SECTION_VA + 0x100
+OLD_C_BUILDER = 0x00BBFD00
+OLD_C_BUILDER_SIZE = 0x9C8
+OLD_C_BUILDER_CALLS = (
+    0xBE, 0xD7, 0x101, 0x12B, 0x140, 0x15A, 0x17B, 0x1F2, 0x202, 0x212, 0x249, 0x286,
+    0x29D, 0x2AD, 0x2C5, 0x2D5, 0x2F3, 0x308, 0x31C, 0x331, 0x348, 0x359, 0x37B,
+    0x38E, 0x3A2, 0x3F9, 0x416, 0x43E, 0x497, 0x4A2, 0x4BB, 0x4D6, 0x514, 0x527,
+    0x535, 0x547, 0x550, 0x55B, 0x56D, 0x587, 0x5C0, 0x5CF, 0x5DC, 0x5EB, 0x5FA,
+    0x609, 0x618, 0x627, 0x636, 0x645, 0x65B, 0x66E, 0x677, 0x682, 0x694, 0x6AA,
+    0x6DB, 0x6EA, 0x6F7, 0x706, 0x715, 0x724, 0x736, 0x749, 0x752, 0x785, 0x7A8,
+    0x7C3, 0x7EA, 0x804, 0x825, 0x839, 0x8B0, 0x8D5, 0x8EC, 0x8FC, 0x913, 0x923,
+    0x938, 0x94D, 0x964, 0x98B, 0x9A2,
+)
+GROUP_STAGE_NAME = 0x49           # nome usado pela fase de grupos (0x00B4BE40)
+QUALIFY_ACTION = 5                # zona 1 classifica para a fase seguinte
+
+
+def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
+    disp = Asm(C_DISPATCH)
+    disp.raw(b"\x80\x7C\x24\x04\x01")                         # cmp byte ptr [esp+4], 1
+    disp.raw(b"\x0F\x85" + u32(NEW_BUILDER - (disp.here + 6)))   # jne 1ª fase
+    disp.raw(b"\xC6\x44\x24\x04\x00")                         # fase 0 na cópia da antiga C
+    disp.jmp(OLD_C_COPY)
+
+    qual = Asm(C_QUALIFY)
+    qual.raw(b"\x83\xEC\x10")
+    qual.raw(b"\xC7\x04\x24" + u32(FATE_VTABLES[0]))
+    qual.raw(b"\xC7\x44\x24\x04" + u32(FATE_VTABLES[1]))
+    qual.raw(b"\xC7\x44\x24\x08" + u32(GROUP_STAGE_NAME))
+    qual.raw(b"\xC7\x44\x24\x0C" + u32(-1))
+    qual.raw(b"\x8B\xC4\x50")
+    qual.push(QUALIFY_ACTION).mov_ecx_esi().call(STAGE_ACTION)
+    qual.raw(b"\x83\xC4\x10")
+    qual.raw(b"\x8D\x4C\x24\x10").push(0x640).jmp(NEW_BUILDER + 0x11F)
+
+    code = bytearray(data[off(OLD_C_BUILDER):off(OLD_C_BUILDER) + OLD_C_BUILDER_SIZE])
+    _relocate(code, OLD_C_BUILDER, OLD_C_COPY, OLD_C_BUILDER_CALLS)
+    _replace(code, 0xF9, bytes.fromhex("c6460810"), bytes.fromhex("c6460802"))    # 2 grupos
+    _replace(code, 0x19D, bytes.fromhex("c6460b08"), bytes.fromhex("c6460b04"))   # de 4
+    _replace(code, 0x1D5, bytes.fromhex("c6461402"), bytes.fromhex("c6461400"))   # ninguém cai aqui
+    _replace(code, 0x1F7, b"\x6a\xff", b"\xEB\x1E")    # regras de acesso/rebaixamento já estão na 1ª fase
+    _replace(code, 0x21C, b"\xc7\x44", b"\xEB\x30")    # sem ação 5: zona 1 desta fase = sobe
+    for at, old, new in (
+        (0x253, 5, 7), (0x25C, 0x19, 16),     # início: 16/8
+        (0x290, 8, 9), (0x292, 0x14, 18),     # fim: 18/10
+    ):
+        _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
+    return [(C_DISPATCH, bytes(disp.code)), (C_QUALIFY, bytes(qual.code)), (OLD_C_COPY, bytes(code))]
+
 
 def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
     """Trocas do patch. `parts` permite testar cada desvio separadamente;
@@ -219,7 +313,9 @@ def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
 
     settings_hook = bytes.fromhex("6a006a0268b8a20100") + b"\x8b\xce\xe8" + u32(ADD_DIVISION - 0x00BB276C) + b"\x6a\x03"
     min_hook = bytes.fromhex("6a006afe6a146a006817900100") + b"\x8b\xce\xe8" + u32(MIN_TEAMS - 0x00BB2859)
-    swaps = [
+    swaps = section_swaps(data) + [
+        Swap(sec_off(va), bytes(len(blob)), blob) for va, blob in _c_phase_code(data)
+    ] + [
         header(TEXT_VSIZE),
         header(RDATA_VSIZE),
         fresh(NEW_BUILDER, builder),

@@ -48,3 +48,31 @@ Número de fases da competição: argumento de `0x00AC24F0` no construtor (Séri
 - Na cópia: sem final (vencedores da semifinal sobem), sorteio 16/11, 1º jogo
   21/11, 2º jogo uma semana depois.
 - A fase de pontos corridos da Série B termina em 15/11 (`serie_b_datas_2026`).
+
+## Como uma fase passa times para a seguinte
+
+Pelas ligas que já funcionam (Championship, Série B italiana, antiga Série C):
+
+- zona 1 (`+0x11`) **sem** ação = sobe de divisão (destino na regra
+  `0x00B0FE50`, declarada na 1ª fase);
+- zona 1 com a ação `0x00B0FF00(5, {…, nome, -1})` = classifica para a fase
+  seguinte (grupos da antiga C → mata-mata);
+- zona 2 (`+0x12`) com a ação `0x00B0FF00(2, {…, nome, -1})` = playoff
+  (Championship). O "nome" é o nome da fase (`0x00B4BE40`: 0x15 Playoff,
+  0x49 fase de grupos, 0xA7 fase final, 0x12/0x14 semifinal/final).
+- Mata-mata → fase seguinte: `0x00B45500(rodada, 0, {…, nome, -1})`.
+
+## Série C em fases (`serie_c_nova`)
+
+- Seção nova `.fm26` (RVA `0x011B4000`, 64 KB, código) no fim do arquivo.
+- Vtable da nova C, método 71 → despachante (`0x015B4000`): fase 0 → cópia da
+  B (liga de 20, turno único, zona 1 = 8 com ação 5 "fase de grupos", 2 caem);
+  fase 1 → cópia da montagem da antiga C (`0x015B4100`) chamada como fase 0:
+  2 grupos de 4, ida e volta, zona 1 = 2 sobem (sem ação), sem regras próprias.
+- Construtor da nova C: 2 fases.
+
+## Série D com 6 acessos (`serie_d_96`)
+
+Mata-mata da antiga C sem a 3ª rodada (salto em `0x00BC037C`); os vencedores
+da 2ª rodada (`0x00B45500(8, …)`) vão para a fase final, agora com 8 clubes
+em turno único (`0x00BC04E0`, `0x00BC054C`) e 6 acessos (`0x00BC0573`).
