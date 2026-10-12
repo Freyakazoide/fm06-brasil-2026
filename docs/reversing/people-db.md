@@ -55,3 +55,26 @@ Nas duas tabelas, o índice vai de 0 até total−1, sem buracos.
 
 Comparar T3 com os atributos 1–20 que o próprio jogo mostra na ficha do
 jogador, em vez de comparar com os bytes crus da RAM.
+
+## Teste: padrão na T3 do Saviola
+
+Gravamos `(j % 20) + 1` nos 81 bytes do registro T3 do Saviola (`0x0516EA13`).
+O New Game **crashou**:
+
+- Erro de acesso a memória em `fm.exe` `0x009F02C5`, ao ler o endereço 0.
+- O código percorria uma coleção e chamou um método virtual num elemento
+  nulo (índice 0).
+
+Conclusão: a T3 não guarda só valores de 0 a 20. Pelo menos algumas colunas
+são referências ou flags, e o padrão criou referências inválidas. Testes
+futuros na T3 devem alterar uma coluna por vez, mantendo valores plausíveis.
+
+## Atributos na memória (validado com as fichas do Saviola e do Zidane)
+
+- **Absolutos** (físicos e parte dos mentais: Velocidade, Força, Determinação,
+  Instinto, Agressividade…): memória = 5 × valor exibido (+0 ou +1).
+- **Relativos ao CA** (técnicos e parte dos mentais: Finalização, Passe,
+  Decisões, Posicionamento, Compostura…): byte com sinal; o valor exibido é
+  `(memória + base) / 5`, arredondado para baixo e limitado a 20. A base
+  depende do CA: 86 com CA 160 (Saviola), 97 com CA 185 (Zidane).
+- As posições ficam direto na escala 1–20.
