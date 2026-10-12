@@ -1,0 +1,47 @@
+scope,number,label,address,object,relative_offset,inside_expected_target,size,before_hex,after_hex,before_unsigned_le,after_unsigned_le
+player,1,01_nationality,0x09CCF340,Player,64,True,3,e44b74,842872,,
+player,1,01_nationality,0x0BBE45B2,,,,1,f2,f9,242,249
+player,2,02_born,0x09CCF334,Player,52,True,1,58,59,88,89
+player,2,02_born,0x0BBE45B2,,,,1,f9,e7,249,231
+player,4,04_ask_value,0x09CCF240,Player,-192,True,1,58,59,88,89
+player,4,04_ask_value,0x0BBE45B2,,,,1,e7,f5,231,245
+player,5,05_u21_caps,0x09CCF349,Player,73,True,1,00,01,0,1
+player,5,05_u21_caps,0x0BBE45B2,,,,1,f5,e7,245,231
+player,6,06_u21_goals,0x09CCF34B,Player,75,True,1,00,01,0,1
+player,6,06_u21_goals,0x0BBE45B2,,,,1,e7,ec,231,236
+player,7,07_acceleration,0x0A170A47,Playing,67,True,1,60,61,96,97
+player,7,07_acceleration,0x0BBE45B2,,,,1,ec,f9,236,249
+player,8,08_finishing,0x0A170A27,Playing,35,True,1,f7,f6,247,246
+player,8,08_finishing,0x0BBE45B2,,,,1,f9,f5,249,245
+player,9,09_anticipation,0x0A170A36,Playing,50,True,1,fc,fb,252,251
+player,9,09_anticipation,0x0BBE45B2,,,,1,f5,fb,245,251
+player,10,10_pace,0x0A170A4B,Playing,71,True,1,56,55,86,85
+player,10,10_pace,0x0BBE45B2,,,,1,fb,ee,251,238
+player,11,11_left_foot,0x0A170A3D,Playing,57,True,1,38,37,56,55
+player,11,11_left_foot,0x0BBE45B2,,,,1,ee,ff,238,255
+player,12,12_handling,0x0A170A30,Playing,44,True,1,ba,bb,186,187
+player,13,13_ppm_remove_0,0x09CCF2D0,Player,-48,True,1,51,50,81,80
+player,13,13_ppm_remove_0,0x0BBE45B2,,,,1,ff,ed,255,237
+player,14,14_ppm_add_1,0x09CCF2D0,Player,-48,True,1,50,52,80,82
+player,14,14_ppm_add_1,0x0BBE45B2,,,,1,ed,f2,237,242
+player,15,15_ppm_add_31,0x09CCF2D3,Player,-45,True,1,28,a8,40,168
+player,15,15_ppm_add_31,0x0BBE45B2,,,,1,f2,f9,242,249
+player,16,16_ppm_remove_47,0x09CCF2D5,Player,-43,True,1,00,80,0,128
+player,16,16_ppm_remove_47,0x0BBE45B2,,,,1,f9,e7,249,231
+contract,17,17_started,0x09C44A60,Contract root 0x00EB3954 club UID 1708,24,True,1,b5,b6,181,182
+contract,18,18_expires,0x09C44A68,Contract root 0x00EB3954 club UID 1708,32,True,1,b4,b5,180,181
+contract,19,19_squad_status,0x09C44A6D,Contract root 0x00EB3954 club UID 1708,37,True,1,04,05,4,5
+contract,20,20_transfer,0x09C44A6E,Contract root 0x00EB3954 club UID 1708,38,True,1,04,01,4,1
+contract,21,21_loan,0x09C44A6E,Contract root 0x00EB3954 club UID 1708,38,True,1,01,03,1,3
+contract,23,23_happiness,0x09C44A78,Contract root 0x00EB3954 club UID 1708,48,True,1,29,2a,41,42
+contract,24,24_squad_number,0x09C44A79,Contract root 0x00EB3954 club UID 1708,49,True,1,ff,01,255,1
+contract,25,25_appearances,0x09C44A94,Contract root 0x00EB3954 club UID 1708,76,True,1,00,01,0,1
+contract,26,26_goal,0x09C44A98,Contract root 0x00EB3954 club UID 1708,80,True,1,c5,c6,197,198
+contract,27,27_assist,0x09C44A9C,Contract root 0x00EB3954 club UID 1708,84,True,1,6e,6f,110,111
+contract,28,28_clean_sheet,0x09C44AA0,Contract root 0x00EB3954 club UID 1708,88,True,1,00,01,0,1
+contract,30,30_agreed_price,0x09C26C98,Contract root 0x010BAAD4 club UID 1759,56,True,4,ffffffff,01000000,4294967295,1
+club,40,40_cash,0x0854ECF8,Club UID 1759 ordinal 429,248,True,1,d8,d9,216,217
+nation,55,55_league_standard,0x08744CCA,Nation UID 1649 ordinal 187,230,True,2,010d,020e,3329,3586
+nation,56,56_development,0x08744CC8,Nation UID 1649 ordinal 187,228,True,1,02,01,2,1
+nation,57,57_economic_factor,0x08744CCD,Nation UID 1649 ordinal 187,233,True,1,10,11,16,17
+nation,58,58_reputation,0x08744CE0,Nation UID 1649 ordinal 187,252,True,1,28,27,40,39

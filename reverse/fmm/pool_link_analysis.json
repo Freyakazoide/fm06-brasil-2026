@@ -1,0 +1,100 @@
+{
+  "label": "manual_changes_observed_20261012",
+  "contract_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\manual_changes_observed_20261012.json",
+  "club_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\manual_changes_observed_20261012.json",
+  "nation_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\manual_changes_observed_20261012.json",
+  "linked_contracts": [
+    {
+      "player_uid": 3100367,
+      "player_root_address": 264831316,
+      "snapshot": "workspace\\live_memory\\3100367\\manual_changes_observed_20261012.json",
+      "contract_address": 242112120,
+      "contract_root": "0x010BAAD4",
+      "player_pointer_offset": 4,
+      "club_pointer_offset": 8,
+      "club_pointer": 173422032,
+      "club_public_uid": 1759,
+      "club_internal_ordinal": 429,
+      "wages_raw_offset_16": 327582,
+      "wages_if_tagged_x10_plus_2": 32758,
+      "started_offset_24": {
+        "day_of_year_0": 151,
+        "year": 2005
+      },
+      "expires_offset_32": {
+        "day_of_year_0": 180,
+        "year": 2006
+      }
+    },
+    {
+      "player_uid": 3100367,
+      "player_root_address": 264831316,
+      "snapshot": "workspace\\live_memory\\3100367\\manual_changes_observed_20261012.json",
+      "contract_address": 258486720,
+      "contract_root": "0x00EB3954",
+      "player_pointer_offset": 4,
+      "club_pointer_offset": 8,
+      "club_pointer": 173407952,
+      "club_public_uid": 1708,
+      "club_internal_ordinal": 411,
+      "wages_raw_offset_16": 6500012,
+      "wages_if_tagged_x10_plus_2": 650001,
+      "started_offset_24": {
+        "day_of_year_0": 204,
+        "year": 2002
+      },
+      "expires_offset_32": {
+        "day_of_year_0": 163,
+        "year": 2006
+      }
+    },
+    {
+      "player_uid": 8076,
+      "player_root_address": 262214916,
+      "snapshot": "workspace\\live_memory\\8076\\baseline_20261012.json",
+      "contract_address": 262157248,
+      "contract_root": "0x00EB3954",
+      "player_pointer_offset": 4,
+      "club_pointer_offset": 8,
+      "club_pointer": 173414552,
+      "club_public_uid": 1736,
+      "club_internal_ordinal": 422,
+      "wages_raw_offset_16": 79310,
+      "wages_if_tagged_x10_plus_2": null,
+      "started_offset_24": {
+        "day_of_year_0": 60,
+        "year": 2004
+      },
+      "expires_offset_32": {
+        "day_of_year_0": 180,
+        "year": 2007
+      }
+    }
+  ],
+  "known_nations": [
+    {
+      "name": "France",
+      "address": 215369692,
+      "public_uid_offset_20": 769,
+      "internal_ordinal_offset_24": 143
+    },
+    {
+      "name": "Spain",
+      "address": 215518196,
+      "public_uid_offset_20": 796,
+      "internal_ordinal_offset_24": 170
+    },
+    {
+      "name": "Argentina",
+      "address": 215562884,
+      "public_uid_offset_20": 1649,
+      "internal_ordinal_offset_24": 187
+    },
+    {
+      "name": "Brazil",
+      "address": 215564284,
+      "public_uid_offset_20": 1651,
+      "internal_ordinal_offset_24": 189
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "roots": [
+    "0x00EB3954",
+    "0x010BAAD4"
+  ],
+  "record_variants": [
+    {
+      "root": "0x00EB3954",
+      "record_size": 120,
+      "role": "main contract",
+      "confidence": "HIGH"
+    },
+    {
+      "root": "0x010BAAD4",
+      "record_size": 72,
+      "role": "loan contract",
+      "confidence": "HIGH"
+    }
+  ],
+  "common_linkage": {
+    "player_pointer_offset": 4,
+    "player_pointer_target": "Player UID-20",
+    "club_pointer_offset": 8,
+    "club_pointer_target": "Club record start (public UID at +20)",
+    "confidence": "HIGH"
+  },
+  "observed_candidate_arrays": [
+    {
+      "root": "0x00EB3954",
+      "candidate_stride": 120,
+      "hits": 9712
+    },
+    {
+      "root": "0x010BAAD4",
+      "candidate_stride": 72,
+      "hits": 584
+    }
+  ],
+  "fields": [
+    {
+      "fmm_index": 0,
+      "field": "Club",
+      "object": "Contract",
+      "relative_offset": 8,
+      "type": "pointer -> Club record",
+      "confidence": "HIGH",
+      "evidence": "Barcelona/Sevilla/Real Madrid/São Paulo/Zaragoza/Lyon resolvem para Club UID+20."
+    },
+    {
+      "fmm_index": 1,
+      "field": "Wages",
+      "object": "Contract",
+      "relative_offset": 16,
+      "type": "tagged u32: value*10+2",
+      "confidence": "CONFIRMED",
+      "evidence": "Edição 650001 produziu 6500012 no contrato principal de Saviola."
+    },
+    {
+      "fmm_index": 2,
+      "field": "Started",
+      "object": "Contract",
+      "relative_offset": 24,
+      "type": "Date {u16 day_of_year_0, u16 year}",
+      "confidence": "CONFIRMED",
+      "evidence": "Datas exatas em quatro jogadores e diff isolado de +1 dia no contrato principal de Saviola."
+    },
+    {
+      "fmm_index": 3,
+      "field": "Expires",
+      "object": "Contract",
+      "relative_offset": 32,
+      "type": "Date {u16 day_of_year_0, u16 year}",
+      "confidence": "CONFIRMED",
+      "evidence": "Datas exatas em quatro jogadores e diff isolado de +1 dia no contrato principal de Saviola."
+    },
+    {
+      "fmm_index": 4,
+      "field": "Squad Status",
+      "object": "Contract",
+      "relative_offset": 37,
+      "type": "enum u8",
+      "confidence": "CONFIRMED",
+      "evidence": "Mudança isolada de opção gravou 4→5 em +37."
+    },
+    {
+      "fmm_index": 5,
+      "field": "Transfer",
+      "object": "Contract",
+      "relative_offset": 38,
+      "type": "flags u8 (semântica dos bits parcial)",
+      "confidence": "CONFIRMED",
+      "evidence": "Alternância isolada mudou o byte +38 de 0x04 para 0x01; a codificação completa segue parcial."
+    },
+    {
+      "fmm_index": 6,
+      "field": "Loan",
+      "object": "Contract",
+      "relative_offset": 38,
+      "type": "flags u8; bit 1 observado",
+      "confidence": "CONFIRMED",
+      "evidence": "Alternância isolada mudou +38 de 0x01 para 0x03 (xor 0x02)."
+    },
+    {
+      "fmm_index": 7,
+      "field": "Unhappy",
+      "object": "Contract",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED",
+      "evidence": "Registro ligado ao jogador; este campo específico ainda não produziu diff controlado confiável."
+    },
+    {
+      "fmm_index": 8,
+      "field": "Happiness",
+      "object": "Contract",
+      "relative_offset": 48,
+      "type": "u8",
+      "confidence": "CONFIRMED",
+      "evidence": "Alteração isolada 41→42 em +48."
+    },
+    {
+      "fmm_index": 9,
+      "field": "Squad Number",
+      "object": "Contract",
+      "relative_offset": 49,
+      "type": "u8; 0xFF = ausente, transformação de entrada pendente",
+      "confidence": "CONFIRMED",
+      "evidence": "Entrada 0 no FMM alterou +49 de 0xFF para 0x01; offset confirmado, escala de interface não."
+    },
+    {
+      "fmm_index": 10,
+      "field": "Apears",
+      "object": "Contract",
+      "relative_offset": 76,
+      "type": "u32",
+      "confidence": "CONFIRMED",
+      "evidence": "Alteração isolada 0→1 em +76."
+    },
+    {
+      "fmm_index": 11,
+      "field": "Goal",
+      "object": "Contract",
+      "relative_offset": 80,
+      "type": "u32",
+      "confidence": "CONFIRMED",
+      "evidence": "Alteração isolada 2757→2758 em +80."
+    },
+    {
+      "fmm_index": 12,
+      "field": "Assist",
+      "object": "Contract",
+      "relative_offset": 84,
+      "type": "u32",
+      "confidence": "CONFIRMED",
+      "evidence": "Alteração isolada 1390→1391 em +84."
+    },
+    {
+      "fmm_index": 13,
+      "field": "Clean Sheet",
+      "object": "Contract",
+      "relative_offset": 88,
+      "type": "u32",
+      "confidence": "CONFIRMED",
+      "evidence": "Alteração isolada 0→1 em +88."
+    },
+    {
+      "fmm_index": 14,
+      "field": "Mini Release",
+      "object": "Contract",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED",
+      "evidence": "Registro ligado ao jogador; este campo específico ainda não produziu diff controlado confiável."
+    },
+    {
+      "fmm_index": 15,
+      "field": "Agreed Price",
+      "object": "Contract",
+      "relative_offset": 56,
+      "type": "signed u32; -1 = ausente",
+      "confidence": "CONFIRMED",
+      "evidence": "No contrato de empréstimo, alteração isolada gravou -1→1 em +56."
+    }
+  ]
+}

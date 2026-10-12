@@ -1,0 +1,3193 @@
+{
+  "round": "remaining_round_20261012",
+  "manifest_status": "complete",
+  "fmm_sha256": "90f86dd6f4efefecdd29bacc8c86f6201a59a423769aa724834222e2ea3c0aea",
+  "target_build": "6.0.2f72973",
+  "targets": {
+    "player_uid": 3100367,
+    "player_objects": {
+      "Player": "0x09CCF300",
+      "PData": "0x0A077FE8",
+      "Playing": "0x0A170A04"
+    },
+    "player_root_address": "0x09CCF2EC",
+    "sevilla_club_address": "0x0854EC00",
+    "argentina_nation_address": "0x08744BE4",
+    "spain_nation_address": "0x08722884",
+    "linked_contracts": [
+      {
+        "name": "Contract root 0x00EB3954 club UID 1708",
+        "address": "0x09C44A48",
+        "root": "0x00EB3954",
+        "club_uid": 1708
+      },
+      {
+        "name": "Contract root 0x010BAAD4 club UID 1759",
+        "address": "0x09C26C60",
+        "root": "0x010BAAD4",
+        "club_uid": 1759
+      }
+    ]
+  },
+  "steps": {
+    "player": [
+      {
+        "number": 1,
+        "scope": "player",
+        "label": "01_nationality",
+        "instruction": "Personal Info — Nationality: troque Argentina por Spain/Espanha.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_player_baseline.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_01_nationality.json",
+        "changed_byte_count": 4,
+        "change_runs": [
+          {
+            "address": 164426560,
+            "size": 3,
+            "before_hex": "e44b74",
+            "after_hex": "842872",
+            "object": "Player",
+            "relative_offset": 64,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "f2",
+            "after_hex": "f9",
+            "before_unsigned_le": 242,
+            "after_unsigned_le": 249
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "scope": "player",
+        "label": "02_born",
+        "instruction": "Personal Info — Born: avance a data de nascimento exatamente 1 dia.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_01_nationality.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_02_born.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 164426548,
+            "size": 1,
+            "before_hex": "58",
+            "after_hex": "59",
+            "before_unsigned_le": 88,
+            "after_unsigned_le": 89,
+            "object": "Player",
+            "relative_offset": 52,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "f9",
+            "after_hex": "e7",
+            "before_unsigned_le": 249,
+            "after_unsigned_le": 231
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "scope": "player",
+        "label": "04_ask_value",
+        "instruction": "Personal Info — Ask Value: some exatamente 1 ao valor exibido.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_02_born.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_04_ask_value.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 164426304,
+            "size": 1,
+            "before_hex": "58",
+            "after_hex": "59",
+            "before_unsigned_le": 88,
+            "after_unsigned_le": 89,
+            "object": "Player",
+            "relative_offset": -192,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "e7",
+            "after_hex": "f5",
+            "before_unsigned_le": 231,
+            "after_unsigned_le": 245
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "scope": "player",
+        "label": "05_u21_caps",
+        "instruction": "Personal Info — U21 Caps: 0 → 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_04_ask_value.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_05_u21_caps.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 164426569,
+            "size": 1,
+            "before_hex": "00",
+            "after_hex": "01",
+            "before_unsigned_le": 0,
+            "after_unsigned_le": 1,
+            "object": "Player",
+            "relative_offset": 73,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "f5",
+            "after_hex": "e7",
+            "before_unsigned_le": 245,
+            "after_unsigned_le": 231
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "scope": "player",
+        "label": "06_u21_goals",
+        "instruction": "Personal Info — U21 Goals: 0 → 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_05_u21_caps.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_06_u21_goals.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 164426571,
+            "size": 1,
+            "before_hex": "00",
+            "after_hex": "01",
+            "before_unsigned_le": 0,
+            "after_unsigned_le": 1,
+            "object": "Player",
+            "relative_offset": 75,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "e7",
+            "after_hex": "ec",
+            "before_unsigned_le": 231,
+            "after_unsigned_le": 236
+          }
+        ]
+      },
+      {
+        "number": 7,
+        "scope": "player",
+        "label": "07_acceleration",
+        "instruction": "Playing Attrib — Acceleration: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_06_u21_goals.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_07_acceleration.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 169282119,
+            "size": 1,
+            "before_hex": "60",
+            "after_hex": "61",
+            "before_unsigned_le": 96,
+            "after_unsigned_le": 97,
+            "object": "Playing",
+            "relative_offset": 67,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "ec",
+            "after_hex": "f9",
+            "before_unsigned_le": 236,
+            "after_unsigned_le": 249
+          }
+        ]
+      },
+      {
+        "number": 8,
+        "scope": "player",
+        "label": "08_finishing",
+        "instruction": "Playing Attrib — Finishing: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_07_acceleration.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_08_finishing.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 169282087,
+            "size": 1,
+            "before_hex": "f7",
+            "after_hex": "f6",
+            "before_unsigned_le": 247,
+            "after_unsigned_le": 246,
+            "object": "Playing",
+            "relative_offset": 35,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "f9",
+            "after_hex": "f5",
+            "before_unsigned_le": 249,
+            "after_unsigned_le": 245
+          }
+        ]
+      },
+      {
+        "number": 9,
+        "scope": "player",
+        "label": "09_anticipation",
+        "instruction": "Playing Attrib — Anticipation: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_08_finishing.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_09_anticipation.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 169282102,
+            "size": 1,
+            "before_hex": "fc",
+            "after_hex": "fb",
+            "before_unsigned_le": 252,
+            "after_unsigned_le": 251,
+            "object": "Playing",
+            "relative_offset": 50,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "f5",
+            "after_hex": "fb",
+            "before_unsigned_le": 245,
+            "after_unsigned_le": 251
+          }
+        ]
+      },
+      {
+        "number": 10,
+        "scope": "player",
+        "label": "10_pace",
+        "instruction": "Playing Attrib — Pace: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_09_anticipation.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_10_pace.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 169282123,
+            "size": 1,
+            "before_hex": "56",
+            "after_hex": "55",
+            "before_unsigned_le": 86,
+            "after_unsigned_le": 85,
+            "object": "Playing",
+            "relative_offset": 71,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "fb",
+            "after_hex": "ee",
+            "before_unsigned_le": 251,
+            "after_unsigned_le": 238
+          }
+        ]
+      },
+      {
+        "number": 11,
+        "scope": "player",
+        "label": "11_left_foot",
+        "instruction": "Playing Attrib — Left foot: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_10_pace.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_11_left_foot.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 169282109,
+            "size": 1,
+            "before_hex": "38",
+            "after_hex": "37",
+            "before_unsigned_le": 56,
+            "after_unsigned_le": 55,
+            "object": "Playing",
+            "relative_offset": 57,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "ee",
+            "after_hex": "ff",
+            "before_unsigned_le": 238,
+            "after_unsigned_le": 255
+          }
+        ]
+      },
+      {
+        "number": 12,
+        "scope": "player",
+        "label": "12_handling",
+        "instruction": "Playing Attrib — Handling: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_11_left_foot.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_12_handling.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 169282096,
+            "size": 1,
+            "before_hex": "ba",
+            "after_hex": "bb",
+            "before_unsigned_le": 186,
+            "after_unsigned_le": 187,
+            "object": "Playing",
+            "relative_offset": 44,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 13,
+        "scope": "player",
+        "label": "13_ppm_remove_0",
+        "instruction": "Preferred Moves — desative Runs With Ball Down Left.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_12_handling.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_13_ppm_remove_0.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 164426448,
+            "size": 1,
+            "before_hex": "51",
+            "after_hex": "50",
+            "before_unsigned_le": 81,
+            "after_unsigned_le": 80,
+            "object": "Player",
+            "relative_offset": -48,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "ff",
+            "after_hex": "ed",
+            "before_unsigned_le": 255,
+            "after_unsigned_le": 237
+          }
+        ]
+      },
+      {
+        "number": 14,
+        "scope": "player",
+        "label": "14_ppm_add_1",
+        "instruction": "Preferred Moves — ative Runs With Ball Down Right.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_13_ppm_remove_0.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_14_ppm_add_1.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 164426448,
+            "size": 1,
+            "before_hex": "50",
+            "after_hex": "52",
+            "before_unsigned_le": 80,
+            "after_unsigned_le": 82,
+            "object": "Player",
+            "relative_offset": -48,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "ed",
+            "after_hex": "f2",
+            "before_unsigned_le": 237,
+            "after_unsigned_le": 242
+          }
+        ]
+      },
+      {
+        "number": 15,
+        "scope": "player",
+        "label": "15_ppm_add_31",
+        "instruction": "Preferred Moves — ative Arrives Late In Opponents Area.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_14_ppm_add_1.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_15_ppm_add_31.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 164426451,
+            "size": 1,
+            "before_hex": "28",
+            "after_hex": "a8",
+            "before_unsigned_le": 40,
+            "after_unsigned_le": 168,
+            "object": "Player",
+            "relative_offset": -45,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "f2",
+            "after_hex": "f9",
+            "before_unsigned_le": 242,
+            "after_unsigned_le": 249
+          }
+        ]
+      },
+      {
+        "number": 16,
+        "scope": "player",
+        "label": "16_ppm_remove_47",
+        "instruction": "Preferred Moves — desative Likes To Switch Ball To Other Flank.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_15_ppm_add_31.json",
+        "after_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_16_ppm_remove_47.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 164426453,
+            "size": 1,
+            "before_hex": "00",
+            "after_hex": "80",
+            "before_unsigned_le": 0,
+            "after_unsigned_le": 128,
+            "object": "Player",
+            "relative_offset": -43,
+            "inside_expected_target": true
+          },
+          {
+            "address": 197019058,
+            "size": 1,
+            "before_hex": "f9",
+            "after_hex": "e7",
+            "before_unsigned_le": 249,
+            "after_unsigned_le": 231
+          }
+        ]
+      }
+    ],
+    "contract": [
+      {
+        "number": 17,
+        "scope": "contract",
+        "label": "17_started",
+        "instruction": "Contract Sevilla — Started: avance exatamente 1 dia.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_contract_baseline.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_17_started.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859040,
+            "size": 1,
+            "before_hex": "b5",
+            "after_hex": "b6",
+            "before_unsigned_le": 181,
+            "after_unsigned_le": 182,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 24,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 18,
+        "scope": "contract",
+        "label": "18_expires",
+        "instruction": "Contract Sevilla — Expires: avance exatamente 1 dia.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_17_started.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_18_expires.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859048,
+            "size": 1,
+            "before_hex": "b4",
+            "after_hex": "b5",
+            "before_unsigned_le": 180,
+            "after_unsigned_le": 181,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 32,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 19,
+        "scope": "contract",
+        "label": "19_squad_status",
+        "instruction": "Contract Sevilla — Squad Status: selecione outra opção válida.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_18_expires.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_19_squad_status.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859053,
+            "size": 1,
+            "before_hex": "04",
+            "after_hex": "05",
+            "before_unsigned_le": 4,
+            "after_unsigned_le": 5,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 37,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 20,
+        "scope": "contract",
+        "label": "20_transfer",
+        "instruction": "Contract Sevilla — Transfer: alterne o valor/checkbox.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_19_squad_status.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_20_transfer.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859054,
+            "size": 1,
+            "before_hex": "04",
+            "after_hex": "01",
+            "before_unsigned_le": 4,
+            "after_unsigned_le": 1,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 38,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 21,
+        "scope": "contract",
+        "label": "21_loan",
+        "instruction": "Contract Sevilla — Loan: alterne o valor/checkbox.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_20_transfer.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_21_loan.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859054,
+            "size": 1,
+            "before_hex": "01",
+            "after_hex": "03",
+            "before_unsigned_le": 1,
+            "after_unsigned_le": 3,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 38,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 23,
+        "scope": "contract",
+        "label": "23_happiness",
+        "instruction": "Contract Sevilla — Happiness: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_21_loan.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_23_happiness.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859064,
+            "size": 1,
+            "before_hex": "29",
+            "after_hex": "2a",
+            "before_unsigned_le": 41,
+            "after_unsigned_le": 42,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 48,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 24,
+        "scope": "contract",
+        "label": "24_squad_number",
+        "instruction": "Contract Sevilla — Squad Number: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_23_happiness.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_24_squad_number.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859065,
+            "size": 1,
+            "before_hex": "ff",
+            "after_hex": "01",
+            "before_unsigned_le": 255,
+            "after_unsigned_le": 1,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 49,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 25,
+        "scope": "contract",
+        "label": "25_appearances",
+        "instruction": "Contract Sevilla — Apears/Appearances: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_24_squad_number.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_25_appearances.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859092,
+            "size": 1,
+            "before_hex": "00",
+            "after_hex": "01",
+            "before_unsigned_le": 0,
+            "after_unsigned_le": 1,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 76,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 26,
+        "scope": "contract",
+        "label": "26_goal",
+        "instruction": "Contract Sevilla — Goal: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_25_appearances.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_26_goal.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859096,
+            "size": 1,
+            "before_hex": "c5",
+            "after_hex": "c6",
+            "before_unsigned_le": 197,
+            "after_unsigned_le": 198,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 80,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 27,
+        "scope": "contract",
+        "label": "27_assist",
+        "instruction": "Contract Sevilla — Assist: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_26_goal.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_27_assist.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859100,
+            "size": 1,
+            "before_hex": "6e",
+            "after_hex": "6f",
+            "before_unsigned_le": 110,
+            "after_unsigned_le": 111,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 84,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 28,
+        "scope": "contract",
+        "label": "28_clean_sheet",
+        "instruction": "Contract Sevilla — Clean Sheet: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_27_assist.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_28_clean_sheet.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 163859104,
+            "size": 1,
+            "before_hex": "00",
+            "after_hex": "01",
+            "before_unsigned_le": 0,
+            "after_unsigned_le": 1,
+            "object": "Contract root 0x00EB3954 club UID 1708",
+            "relative_offset": 88,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 29,
+        "scope": "contract",
+        "label": "29_min_release",
+        "instruction": "Contrato Barcelona — Mini/Minimum Release: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_28_clean_sheet.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_29_min_release.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      },
+      {
+        "number": 30,
+        "scope": "contract",
+        "label": "30_agreed_price",
+        "instruction": "Contrato Barcelona — Agreed Price: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_29_min_release.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_30_agreed_price.json",
+        "changed_byte_count": 4,
+        "change_runs": [
+          {
+            "address": 163736728,
+            "size": 4,
+            "before_hex": "ffffffff",
+            "after_hex": "01000000",
+            "before_unsigned_le": 4294967295,
+            "after_unsigned_le": 1,
+            "object": "Contract root 0x010BAAD4 club UID 1759",
+            "relative_offset": 56,
+            "inside_expected_target": true
+          }
+        ]
+      }
+    ],
+    "club": [
+      {
+        "number": 39,
+        "scope": "club",
+        "label": "39_maximum_attend",
+        "instruction": "Club Sevilla — Maximum Attend: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_club_baseline.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_39_maximum_attend.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      },
+      {
+        "number": 40,
+        "scope": "club",
+        "label": "40_cash",
+        "instruction": "Club Sevilla — Cash: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_39_maximum_attend.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_40_cash.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 139783416,
+            "size": 1,
+            "before_hex": "d8",
+            "after_hex": "d9",
+            "before_unsigned_le": 216,
+            "after_unsigned_le": 217,
+            "object": "Club UID 1759 ordinal 429",
+            "relative_offset": 248,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 46,
+        "scope": "club",
+        "label": "46_capacity",
+        "instruction": "Club Sevilla — Capacity: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_40_cash.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_46_capacity.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      },
+      {
+        "number": 47,
+        "scope": "club",
+        "label": "47_seating",
+        "instruction": "Club Sevilla — Seating: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_46_capacity.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_47_seating.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      },
+      {
+        "number": 48,
+        "scope": "club",
+        "label": "48_used_capacity",
+        "instruction": "Club Sevilla — Used Cap.: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_47_seating.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_48_used_capacity.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      },
+      {
+        "number": 49,
+        "scope": "club",
+        "label": "49_expansion_capacity",
+        "instruction": "Club Sevilla — Expansion Cap.: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_48_used_capacity.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_49_expansion_capacity.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      },
+      {
+        "number": 50,
+        "scope": "club",
+        "label": "50_pitch_width",
+        "instruction": "Club Sevilla — Pitch Width: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_49_expansion_capacity.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_50_pitch_width.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      },
+      {
+        "number": 51,
+        "scope": "club",
+        "label": "51_pitch_length",
+        "instruction": "Club Sevilla — Pitch Length: aumente exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_50_pitch_width.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_51_pitch_length.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      }
+    ],
+    "nation": [
+      {
+        "number": 54,
+        "scope": "nation",
+        "label": "54_importance",
+        "instruction": "Nation Argentina — Importance: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_nation_baseline.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_54_importance.json",
+        "changed_byte_count": 0,
+        "change_runs": []
+      },
+      {
+        "number": 55,
+        "scope": "nation",
+        "label": "55_league_standard",
+        "instruction": "Nation Argentina — League Standard: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_54_importance.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_55_league_standard.json",
+        "changed_byte_count": 2,
+        "change_runs": [
+          {
+            "address": 141839562,
+            "size": 2,
+            "before_hex": "010d",
+            "after_hex": "020e",
+            "before_unsigned_le": 3329,
+            "after_unsigned_le": 3586,
+            "object": "Nation UID 1649 ordinal 187",
+            "relative_offset": 230,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 56,
+        "scope": "nation",
+        "label": "56_development",
+        "instruction": "Nation Argentina — Development: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_55_league_standard.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_56_development.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 141839560,
+            "size": 1,
+            "before_hex": "02",
+            "after_hex": "01",
+            "before_unsigned_le": 2,
+            "after_unsigned_le": 1,
+            "object": "Nation UID 1649 ordinal 187",
+            "relative_offset": 228,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 57,
+        "scope": "nation",
+        "label": "57_economic_factor",
+        "instruction": "Nation Argentina — Economic Factor: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_56_development.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_57_economic_factor.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 141839565,
+            "size": 1,
+            "before_hex": "10",
+            "after_hex": "11",
+            "before_unsigned_le": 16,
+            "after_unsigned_le": 17,
+            "object": "Nation UID 1649 ordinal 187",
+            "relative_offset": 233,
+            "inside_expected_target": true
+          }
+        ]
+      },
+      {
+        "number": 58,
+        "scope": "nation",
+        "label": "58_reputation",
+        "instruction": "Nation Argentina — Reputation: reduza exatamente 1.",
+        "status": "captured",
+        "before_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_57_economic_factor.json",
+        "after_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_58_reputation.json",
+        "changed_byte_count": 1,
+        "change_runs": [
+          {
+            "address": 141839584,
+            "size": 1,
+            "before_hex": "28",
+            "after_hex": "27",
+            "before_unsigned_le": 40,
+            "after_unsigned_le": 39,
+            "object": "Nation UID 1649 ordinal 187",
+            "relative_offset": 252,
+            "inside_expected_target": true
+          }
+        ]
+      }
+    ]
+  },
+  "restoration": {
+    "player": {
+      "baseline_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_player_baseline.json",
+      "final_snapshot": "workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_restored_final.json",
+      "changed_byte_count": 11,
+      "change_runs": [
+        {
+          "address": 164426300,
+          "size": 1,
+          "before_hex": "69",
+          "after_hex": "68",
+          "before_unsigned_le": 105,
+          "after_unsigned_le": 104,
+          "object": "Player",
+          "relative_offset": -196,
+          "inside_expected_target": true
+        },
+        {
+          "address": 164426560,
+          "size": 3,
+          "before_hex": "e44b74",
+          "after_hex": "842872",
+          "object": "Player",
+          "relative_offset": 64,
+          "inside_expected_target": true
+        },
+        {
+          "address": 169282087,
+          "size": 1,
+          "before_hex": "f7",
+          "after_hex": "f6",
+          "before_unsigned_le": 247,
+          "after_unsigned_le": 246,
+          "object": "Playing",
+          "relative_offset": 35,
+          "inside_expected_target": true
+        },
+        {
+          "address": 169282096,
+          "size": 1,
+          "before_hex": "ba",
+          "after_hex": "bb",
+          "before_unsigned_le": 186,
+          "after_unsigned_le": 187,
+          "object": "Playing",
+          "relative_offset": 44,
+          "inside_expected_target": true
+        },
+        {
+          "address": 169282102,
+          "size": 1,
+          "before_hex": "fc",
+          "after_hex": "fb",
+          "before_unsigned_le": 252,
+          "after_unsigned_le": 251,
+          "object": "Playing",
+          "relative_offset": 50,
+          "inside_expected_target": true
+        },
+        {
+          "address": 169282109,
+          "size": 1,
+          "before_hex": "38",
+          "after_hex": "37",
+          "before_unsigned_le": 56,
+          "after_unsigned_le": 55,
+          "object": "Playing",
+          "relative_offset": 57,
+          "inside_expected_target": true
+        },
+        {
+          "address": 169282119,
+          "size": 1,
+          "before_hex": "60",
+          "after_hex": "61",
+          "before_unsigned_le": 96,
+          "after_unsigned_le": 97,
+          "object": "Playing",
+          "relative_offset": 67,
+          "inside_expected_target": true
+        },
+        {
+          "address": 169282123,
+          "size": 1,
+          "before_hex": "56",
+          "after_hex": "55",
+          "before_unsigned_le": 86,
+          "after_unsigned_le": 85,
+          "object": "Playing",
+          "relative_offset": 71,
+          "inside_expected_target": true
+        },
+        {
+          "address": 197019058,
+          "size": 1,
+          "before_hex": "f2",
+          "after_hex": "e6",
+          "before_unsigned_le": 242,
+          "after_unsigned_le": 230
+        }
+      ]
+    },
+    "contract": {
+      "baseline_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_contract_baseline.json",
+      "final_snapshot": "workspace\\live_memory\\fmm_manual_batch\\contract\\remaining_round_20261012_restored_final.json",
+      "changed_byte_count": 14,
+      "change_runs": [
+        {
+          "address": 163736728,
+          "size": 4,
+          "before_hex": "ffffffff",
+          "after_hex": "01000000",
+          "before_unsigned_le": 4294967295,
+          "after_unsigned_le": 1,
+          "object": "Contract root 0x010BAAD4 club UID 1759",
+          "relative_offset": 56,
+          "inside_expected_target": true
+        },
+        {
+          "address": 163859040,
+          "size": 1,
+          "before_hex": "b5",
+          "after_hex": "b6",
+          "before_unsigned_le": 181,
+          "after_unsigned_le": 182,
+          "object": "Contract root 0x00EB3954 club UID 1708",
+          "relative_offset": 24,
+          "inside_expected_target": true
+        },
+        {
+          "address": 163859048,
+          "size": 1,
+          "before_hex": "b4",
+          "after_hex": "b5",
+          "before_unsigned_le": 180,
+          "after_unsigned_le": 181,
+          "object": "Contract root 0x00EB3954 club UID 1708",
+          "relative_offset": 32,
+          "inside_expected_target": true
+        },
+        {
+          "address": 163859053,
+          "size": 2,
+          "before_hex": "0404",
+          "after_hex": "0503",
+          "before_unsigned_le": 1028,
+          "after_unsigned_le": 773,
+          "object": "Contract root 0x00EB3954 club UID 1708",
+          "relative_offset": 37,
+          "inside_expected_target": true
+        },
+        {
+          "address": 163859064,
+          "size": 2,
+          "before_hex": "29ff",
+          "after_hex": "2a01",
+          "before_unsigned_le": 65321,
+          "after_unsigned_le": 298,
+          "object": "Contract root 0x00EB3954 club UID 1708",
+          "relative_offset": 48,
+          "inside_expected_target": true
+        },
+        {
+          "address": 163859092,
+          "size": 1,
+          "before_hex": "00",
+          "after_hex": "01",
+          "before_unsigned_le": 0,
+          "after_unsigned_le": 1,
+          "object": "Contract root 0x00EB3954 club UID 1708",
+          "relative_offset": 76,
+          "inside_expected_target": true
+        },
+        {
+          "address": 163859096,
+          "size": 1,
+          "before_hex": "c5",
+          "after_hex": "c6",
+          "before_unsigned_le": 197,
+          "after_unsigned_le": 198,
+          "object": "Contract root 0x00EB3954 club UID 1708",
+          "relative_offset": 80,
+          "inside_expected_target": true
+        },
+        {
+          "address": 163859100,
+          "size": 1,
+          "before_hex": "6e",
+          "after_hex": "6f",
+          "before_unsigned_le": 110,
+          "after_unsigned_le": 111,
+          "object": "Contract root 0x00EB3954 club UID 1708",
+          "relative_offset": 84,
+          "inside_expected_target": true
+        },
+        {
+          "address": 163859104,
+          "size": 1,
+          "before_hex": "00",
+          "after_hex": "01",
+          "before_unsigned_le": 0,
+          "after_unsigned_le": 1,
+          "object": "Contract root 0x00EB3954 club UID 1708",
+          "relative_offset": 88,
+          "inside_expected_target": true
+        }
+      ]
+    },
+    "club": {
+      "baseline_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_club_baseline.json",
+      "final_snapshot": "workspace\\live_memory\\fmm_manual_batch\\club\\remaining_round_20261012_restored_final.json",
+      "changed_byte_count": 1,
+      "change_runs": [
+        {
+          "address": 139783416,
+          "size": 1,
+          "before_hex": "d8",
+          "after_hex": "d9",
+          "before_unsigned_le": 216,
+          "after_unsigned_le": 217,
+          "object": "Club UID 1759 ordinal 429",
+          "relative_offset": 248,
+          "inside_expected_target": true
+        }
+      ]
+    },
+    "nation": {
+      "baseline_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_nation_baseline.json",
+      "final_snapshot": "workspace\\live_memory\\fmm_manual_batch\\nation\\remaining_round_20261012_restored_final.json",
+      "changed_byte_count": 0,
+      "change_runs": []
+    }
+  },
+  "decoded_player_restored": false,
+  "decoded_player_baseline": {
+    "snapshot": "C:\\Users\\Pichau\\Desktop\\fm06-brasil-2026\\workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_player_baseline.json",
+    "player_uid": 3100367,
+    "objects": {
+      "Player": [
+        "0x09CCF300"
+      ],
+      "PData": [
+        "0x0A077FE8"
+      ],
+      "Playing": [
+        "0x0A170A04"
+      ]
+    },
+    "player_fields": [
+      {
+        "field": "Fitness",
+        "relative_to_player_uid": -216,
+        "type": "u16",
+        "value": 10000,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Match Exercise",
+        "relative_to_player_uid": -214,
+        "type": "u16",
+        "value": 6000,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Jadedness",
+        "relative_to_player_uid": -212,
+        "type": "u16",
+        "value": 0,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Home Rep.",
+        "relative_to_player_uid": -210,
+        "type": "u16",
+        "value": 8198,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Current Rep.",
+        "relative_to_player_uid": -208,
+        "type": "u16",
+        "value": 7998,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "World Rep.",
+        "relative_to_player_uid": -206,
+        "type": "u16",
+        "value": 5862,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Current Ability",
+        "relative_to_player_uid": -204,
+        "type": "u16",
+        "value": 160,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Potential Ability",
+        "relative_to_player_uid": -202,
+        "type": "u16",
+        "value": 179,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Morale",
+        "relative_to_player_uid": -184,
+        "type": "u8",
+        "value": 20,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Weight",
+        "relative_to_player_uid": -78,
+        "type": "u16",
+        "value": 61,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Height",
+        "relative_to_player_uid": -76,
+        "type": "u16",
+        "value": 168,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Nationality pointer",
+        "relative_to_player_uid": 64,
+        "type": "u32",
+        "value": 141839332,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Int. Caps",
+        "relative_to_player_uid": 72,
+        "type": "u8",
+        "value": 29,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "U21 Caps",
+        "relative_to_player_uid": 73,
+        "type": "u8",
+        "value": 0,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Int. Goals",
+        "relative_to_player_uid": 74,
+        "type": "u8",
+        "value": 1,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "U21 Goals",
+        "relative_to_player_uid": 75,
+        "type": "u8",
+        "value": 0,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Ask Value",
+        "relative_to_player_uid": -192,
+        "type": "u32",
+        "value": 6350936,
+        "confidence": "CONFIRMED"
+      }
+    ],
+    "personality": [
+      {
+        "field": "Adaptability",
+        "relative_to_pdata_uid": 8,
+        "type": "u8",
+        "value": 12,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Ambition",
+        "relative_to_pdata_uid": 9,
+        "type": "u8",
+        "value": 18,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Loyalty",
+        "relative_to_pdata_uid": 10,
+        "type": "u8",
+        "value": 13,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Pressure",
+        "relative_to_pdata_uid": 11,
+        "type": "u8",
+        "value": 14,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Professional",
+        "relative_to_pdata_uid": 12,
+        "type": "u8",
+        "value": 15,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Sportsmanship",
+        "relative_to_pdata_uid": 13,
+        "type": "u8",
+        "value": 5,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Temperament",
+        "relative_to_pdata_uid": 14,
+        "type": "u8",
+        "value": 12,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Controversy",
+        "relative_to_pdata_uid": 15,
+        "type": "u8",
+        "value": 8,
+        "confidence": "HIGH"
+      }
+    ],
+    "playing_attributes": [
+      {
+        "fmm_index": 0,
+        "field": "Crossing",
+        "storage_index": 25,
+        "relative_to_playing_uid": 33,
+        "type": "u8",
+        "raw_value": 247,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 1,
+        "field": "Dribbling",
+        "storage_index": 26,
+        "relative_to_playing_uid": 34,
+        "type": "u8",
+        "raw_value": 11,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 2,
+        "field": "Finishing",
+        "storage_index": 27,
+        "relative_to_playing_uid": 35,
+        "type": "u8",
+        "raw_value": 247,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 3,
+        "field": "Heading",
+        "storage_index": 28,
+        "relative_to_playing_uid": 36,
+        "type": "u8",
+        "raw_value": 227,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 4,
+        "field": "Long Shots",
+        "storage_index": 29,
+        "relative_to_playing_uid": 37,
+        "type": "u8",
+        "raw_value": 242,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 5,
+        "field": "Marking",
+        "storage_index": 30,
+        "relative_to_playing_uid": 38,
+        "type": "u8",
+        "raw_value": 207,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 6,
+        "field": "Passing",
+        "storage_index": 32,
+        "relative_to_playing_uid": 40,
+        "type": "u8",
+        "raw_value": 242,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 7,
+        "field": "Tackling",
+        "storage_index": 34,
+        "relative_to_playing_uid": 42,
+        "type": "u8",
+        "raw_value": 207,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 8,
+        "field": "First Touch",
+        "storage_index": 47,
+        "relative_to_playing_uid": 55,
+        "type": "u8",
+        "raw_value": 11,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 9,
+        "field": "Technique",
+        "storage_index": 48,
+        "relative_to_playing_uid": 56,
+        "type": "u8",
+        "raw_value": 16,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 10,
+        "field": "Penalty",
+        "storage_index": 33,
+        "relative_to_playing_uid": 41,
+        "type": "u8",
+        "raw_value": 81,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 11,
+        "field": "Corner",
+        "storage_index": 52,
+        "relative_to_playing_uid": 60,
+        "type": "u8",
+        "raw_value": 76,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 12,
+        "field": "Set Pieces",
+        "storage_index": 60,
+        "relative_to_playing_uid": 68,
+        "type": "u8",
+        "raw_value": 61,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 13,
+        "field": "Throwing",
+        "storage_index": 55,
+        "relative_to_playing_uid": 63,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 14,
+        "field": "Creativity",
+        "storage_index": 35,
+        "relative_to_playing_uid": 43,
+        "type": "u8",
+        "raw_value": 252,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 15,
+        "field": "Anticipation",
+        "storage_index": 42,
+        "relative_to_playing_uid": 50,
+        "type": "u8",
+        "raw_value": 252,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 16,
+        "field": "Decision",
+        "storage_index": 43,
+        "relative_to_playing_uid": 51,
+        "type": "u8",
+        "raw_value": 242,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 17,
+        "field": "Positioning",
+        "storage_index": 45,
+        "relative_to_playing_uid": 53,
+        "type": "u8",
+        "raw_value": 222,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 18,
+        "field": "Off the ball",
+        "storage_index": 31,
+        "relative_to_playing_uid": 39,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 19,
+        "field": "Composure",
+        "storage_index": 77,
+        "relative_to_playing_uid": 85,
+        "type": "u8",
+        "raw_value": 252,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 20,
+        "field": "Concentration",
+        "storage_index": 78,
+        "relative_to_playing_uid": 86,
+        "type": "u8",
+        "raw_value": 252,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 21,
+        "field": "Flair",
+        "storage_index": 51,
+        "relative_to_playing_uid": 59,
+        "type": "u8",
+        "raw_value": 80,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 22,
+        "field": "Influence",
+        "storage_index": 65,
+        "relative_to_playing_uid": 73,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 23,
+        "field": "Dirtiness",
+        "storage_index": 66,
+        "relative_to_playing_uid": 74,
+        "type": "u8",
+        "raw_value": 25,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 24,
+        "field": "Bravery",
+        "storage_index": 68,
+        "relative_to_playing_uid": 76,
+        "type": "u8",
+        "raw_value": 31,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 25,
+        "field": "Consistency",
+        "storage_index": 69,
+        "relative_to_playing_uid": 77,
+        "type": "u8",
+        "raw_value": 60,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 26,
+        "field": "Aggression",
+        "storage_index": 70,
+        "relative_to_playing_uid": 78,
+        "type": "u8",
+        "raw_value": 20,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 27,
+        "field": "Imp. match",
+        "storage_index": 72,
+        "relative_to_playing_uid": 80,
+        "type": "u8",
+        "raw_value": 70,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 28,
+        "field": "Versatility",
+        "storage_index": 74,
+        "relative_to_playing_uid": 82,
+        "type": "u8",
+        "raw_value": 50,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 29,
+        "field": "Determination",
+        "storage_index": 76,
+        "relative_to_playing_uid": 84,
+        "type": "u8",
+        "raw_value": 75,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 30,
+        "field": "Team work",
+        "storage_index": 53,
+        "relative_to_playing_uid": 61,
+        "type": "u8",
+        "raw_value": 61,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 31,
+        "field": "Work rate",
+        "storage_index": 54,
+        "relative_to_playing_uid": 62,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 32,
+        "field": "Acceleration",
+        "storage_index": 59,
+        "relative_to_playing_uid": 67,
+        "type": "u8",
+        "raw_value": 96,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 33,
+        "field": "Strength",
+        "storage_index": 61,
+        "relative_to_playing_uid": 69,
+        "type": "u8",
+        "raw_value": 31,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 34,
+        "field": "Stamina",
+        "storage_index": 62,
+        "relative_to_playing_uid": 70,
+        "type": "u8",
+        "raw_value": 76,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 35,
+        "field": "Pace",
+        "storage_index": 63,
+        "relative_to_playing_uid": 71,
+        "type": "u8",
+        "raw_value": 86,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 36,
+        "field": "Jumping",
+        "storage_index": 64,
+        "relative_to_playing_uid": 72,
+        "type": "u8",
+        "raw_value": 36,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 37,
+        "field": "Balance",
+        "storage_index": 67,
+        "relative_to_playing_uid": 75,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 38,
+        "field": "Injury prone.",
+        "storage_index": 73,
+        "relative_to_playing_uid": 81,
+        "type": "u8",
+        "raw_value": 40,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 39,
+        "field": "Natural fit.",
+        "storage_index": 75,
+        "relative_to_playing_uid": 83,
+        "type": "u8",
+        "raw_value": 50,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 40,
+        "field": "Agility",
+        "storage_index": 71,
+        "relative_to_playing_uid": 79,
+        "type": "u8",
+        "raw_value": 96,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 41,
+        "field": "Left foot",
+        "storage_index": 49,
+        "relative_to_playing_uid": 57,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 42,
+        "field": "Right foot",
+        "storage_index": 50,
+        "relative_to_playing_uid": 58,
+        "type": "u8",
+        "raw_value": 100,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 43,
+        "field": "Handling",
+        "storage_index": 36,
+        "relative_to_playing_uid": 44,
+        "type": "u8",
+        "raw_value": 186,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 44,
+        "field": "Aer ability",
+        "storage_index": 37,
+        "relative_to_playing_uid": 45,
+        "type": "u8",
+        "raw_value": 186,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 45,
+        "field": "Cmd of area",
+        "storage_index": 38,
+        "relative_to_playing_uid": 46,
+        "type": "u8",
+        "raw_value": 186,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 46,
+        "field": "Communiction",
+        "storage_index": 39,
+        "relative_to_playing_uid": 47,
+        "type": "u8",
+        "raw_value": 201,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 47,
+        "field": "Kicking",
+        "storage_index": 40,
+        "relative_to_playing_uid": 48,
+        "type": "u8",
+        "raw_value": 191,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 48,
+        "field": "Long throws",
+        "storage_index": 41,
+        "relative_to_playing_uid": 49,
+        "type": "u8",
+        "raw_value": 191,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 49,
+        "field": "One on one",
+        "storage_index": 44,
+        "relative_to_playing_uid": 52,
+        "type": "u8",
+        "raw_value": 201,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 50,
+        "field": "Reflexes",
+        "storage_index": 46,
+        "relative_to_playing_uid": 54,
+        "type": "u8",
+        "raw_value": 179,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 51,
+        "field": "Eccentricity",
+        "storage_index": 56,
+        "relative_to_playing_uid": 64,
+        "type": "u8",
+        "raw_value": 35,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 52,
+        "field": "Rushing out",
+        "storage_index": 57,
+        "relative_to_playing_uid": 65,
+        "type": "u8",
+        "raw_value": 75,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 53,
+        "field": "Punch",
+        "storage_index": 58,
+        "relative_to_playing_uid": 66,
+        "type": "u8",
+        "raw_value": 80,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 54,
+        "field": "Goalkeeper",
+        "storage_index": 0,
+        "relative_to_playing_uid": 8,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 55,
+        "field": "Sweeper",
+        "storage_index": 1,
+        "relative_to_playing_uid": 9,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 56,
+        "field": "Defender",
+        "storage_index": 2,
+        "relative_to_playing_uid": 10,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 57,
+        "field": "Def. Mid.",
+        "storage_index": 3,
+        "relative_to_playing_uid": 11,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 58,
+        "field": "Midfielder",
+        "storage_index": 4,
+        "relative_to_playing_uid": 12,
+        "type": "u8",
+        "raw_value": 8,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 59,
+        "field": "Att. Mid.",
+        "storage_index": 5,
+        "relative_to_playing_uid": 13,
+        "type": "u8",
+        "raw_value": 17,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 60,
+        "field": "Attacker",
+        "storage_index": 6,
+        "relative_to_playing_uid": 14,
+        "type": "u8",
+        "raw_value": 20,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 61,
+        "field": "Wing back",
+        "storage_index": 7,
+        "relative_to_playing_uid": 15,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 62,
+        "field": "Free role",
+        "storage_index": 8,
+        "relative_to_playing_uid": 16,
+        "type": "u8",
+        "raw_value": 18,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 63,
+        "field": "Right side",
+        "storage_index": 9,
+        "relative_to_playing_uid": 17,
+        "type": "u8",
+        "raw_value": 17,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 64,
+        "field": "Left side",
+        "storage_index": 10,
+        "relative_to_playing_uid": 18,
+        "type": "u8",
+        "raw_value": 12,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 65,
+        "field": "Center side",
+        "storage_index": 11,
+        "relative_to_playing_uid": 19,
+        "type": "u8",
+        "raw_value": 20,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 66,
+        "field": "Left Def.",
+        "storage_index": 12,
+        "relative_to_playing_uid": 20,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 67,
+        "field": "Center Def.",
+        "storage_index": 13,
+        "relative_to_playing_uid": 21,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 68,
+        "field": "Right Def.",
+        "storage_index": 14,
+        "relative_to_playing_uid": 22,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 69,
+        "field": "Def. C.M.",
+        "storage_index": 15,
+        "relative_to_playing_uid": 23,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 70,
+        "field": "Mid. Left",
+        "storage_index": 16,
+        "relative_to_playing_uid": 24,
+        "type": "u8",
+        "raw_value": 8,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 71,
+        "field": "Mid. Center",
+        "storage_index": 17,
+        "relative_to_playing_uid": 25,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 72,
+        "field": "Mid. Right",
+        "storage_index": 18,
+        "relative_to_playing_uid": 26,
+        "type": "u8",
+        "raw_value": 8,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 73,
+        "field": "Att. M.L.",
+        "storage_index": 19,
+        "relative_to_playing_uid": 27,
+        "type": "u8",
+        "raw_value": 12,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 74,
+        "field": "Att. M.C.",
+        "storage_index": 20,
+        "relative_to_playing_uid": 28,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 75,
+        "field": "Att. M.R.",
+        "storage_index": 21,
+        "relative_to_playing_uid": 29,
+        "type": "u8",
+        "raw_value": 17,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 76,
+        "field": "Att. Center",
+        "storage_index": 22,
+        "relative_to_playing_uid": 30,
+        "type": "u8",
+        "raw_value": 20,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 77,
+        "field": "Wing B.L.",
+        "storage_index": 23,
+        "relative_to_playing_uid": 31,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 78,
+        "field": "Wing B.R.",
+        "storage_index": 24,
+        "relative_to_playing_uid": 32,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      }
+    ]
+  },
+  "decoded_player_final": {
+    "snapshot": "C:\\Users\\Pichau\\Desktop\\fm06-brasil-2026\\workspace\\live_memory\\3100367\\fmm_batch_remaining_round_20261012_restored_final.json",
+    "player_uid": 3100367,
+    "objects": {
+      "Player": [
+        "0x09CCF300"
+      ],
+      "PData": [
+        "0x0A077FE8"
+      ],
+      "Playing": [
+        "0x0A170A04"
+      ]
+    },
+    "player_fields": [
+      {
+        "field": "Fitness",
+        "relative_to_player_uid": -216,
+        "type": "u16",
+        "value": 10000,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Match Exercise",
+        "relative_to_player_uid": -214,
+        "type": "u16",
+        "value": 6000,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Jadedness",
+        "relative_to_player_uid": -212,
+        "type": "u16",
+        "value": 0,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Home Rep.",
+        "relative_to_player_uid": -210,
+        "type": "u16",
+        "value": 8198,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Current Rep.",
+        "relative_to_player_uid": -208,
+        "type": "u16",
+        "value": 7998,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "World Rep.",
+        "relative_to_player_uid": -206,
+        "type": "u16",
+        "value": 5862,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Current Ability",
+        "relative_to_player_uid": -204,
+        "type": "u16",
+        "value": 160,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Potential Ability",
+        "relative_to_player_uid": -202,
+        "type": "u16",
+        "value": 179,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Morale",
+        "relative_to_player_uid": -184,
+        "type": "u8",
+        "value": 20,
+        "confidence": "MEDIUM"
+      },
+      {
+        "field": "Weight",
+        "relative_to_player_uid": -78,
+        "type": "u16",
+        "value": 61,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Height",
+        "relative_to_player_uid": -76,
+        "type": "u16",
+        "value": 168,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Nationality pointer",
+        "relative_to_player_uid": 64,
+        "type": "u32",
+        "value": 141699204,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Int. Caps",
+        "relative_to_player_uid": 72,
+        "type": "u8",
+        "value": 29,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "U21 Caps",
+        "relative_to_player_uid": 73,
+        "type": "u8",
+        "value": 0,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Int. Goals",
+        "relative_to_player_uid": 74,
+        "type": "u8",
+        "value": 1,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "U21 Goals",
+        "relative_to_player_uid": 75,
+        "type": "u8",
+        "value": 0,
+        "confidence": "CONFIRMED"
+      },
+      {
+        "field": "Ask Value",
+        "relative_to_player_uid": -192,
+        "type": "u32",
+        "value": 6350936,
+        "confidence": "CONFIRMED"
+      }
+    ],
+    "personality": [
+      {
+        "field": "Adaptability",
+        "relative_to_pdata_uid": 8,
+        "type": "u8",
+        "value": 12,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Ambition",
+        "relative_to_pdata_uid": 9,
+        "type": "u8",
+        "value": 18,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Loyalty",
+        "relative_to_pdata_uid": 10,
+        "type": "u8",
+        "value": 13,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Pressure",
+        "relative_to_pdata_uid": 11,
+        "type": "u8",
+        "value": 14,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Professional",
+        "relative_to_pdata_uid": 12,
+        "type": "u8",
+        "value": 15,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Sportsmanship",
+        "relative_to_pdata_uid": 13,
+        "type": "u8",
+        "value": 5,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Temperament",
+        "relative_to_pdata_uid": 14,
+        "type": "u8",
+        "value": 12,
+        "confidence": "HIGH"
+      },
+      {
+        "field": "Controversy",
+        "relative_to_pdata_uid": 15,
+        "type": "u8",
+        "value": 8,
+        "confidence": "HIGH"
+      }
+    ],
+    "playing_attributes": [
+      {
+        "fmm_index": 0,
+        "field": "Crossing",
+        "storage_index": 25,
+        "relative_to_playing_uid": 33,
+        "type": "u8",
+        "raw_value": 247,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 1,
+        "field": "Dribbling",
+        "storage_index": 26,
+        "relative_to_playing_uid": 34,
+        "type": "u8",
+        "raw_value": 11,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 2,
+        "field": "Finishing",
+        "storage_index": 27,
+        "relative_to_playing_uid": 35,
+        "type": "u8",
+        "raw_value": 246,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 3,
+        "field": "Heading",
+        "storage_index": 28,
+        "relative_to_playing_uid": 36,
+        "type": "u8",
+        "raw_value": 227,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 4,
+        "field": "Long Shots",
+        "storage_index": 29,
+        "relative_to_playing_uid": 37,
+        "type": "u8",
+        "raw_value": 242,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 5,
+        "field": "Marking",
+        "storage_index": 30,
+        "relative_to_playing_uid": 38,
+        "type": "u8",
+        "raw_value": 207,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 6,
+        "field": "Passing",
+        "storage_index": 32,
+        "relative_to_playing_uid": 40,
+        "type": "u8",
+        "raw_value": 242,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 7,
+        "field": "Tackling",
+        "storage_index": 34,
+        "relative_to_playing_uid": 42,
+        "type": "u8",
+        "raw_value": 207,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 8,
+        "field": "First Touch",
+        "storage_index": 47,
+        "relative_to_playing_uid": 55,
+        "type": "u8",
+        "raw_value": 11,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 9,
+        "field": "Technique",
+        "storage_index": 48,
+        "relative_to_playing_uid": 56,
+        "type": "u8",
+        "raw_value": 16,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 10,
+        "field": "Penalty",
+        "storage_index": 33,
+        "relative_to_playing_uid": 41,
+        "type": "u8",
+        "raw_value": 81,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 11,
+        "field": "Corner",
+        "storage_index": 52,
+        "relative_to_playing_uid": 60,
+        "type": "u8",
+        "raw_value": 76,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 12,
+        "field": "Set Pieces",
+        "storage_index": 60,
+        "relative_to_playing_uid": 68,
+        "type": "u8",
+        "raw_value": 61,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 13,
+        "field": "Throwing",
+        "storage_index": 55,
+        "relative_to_playing_uid": 63,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 14,
+        "field": "Creativity",
+        "storage_index": 35,
+        "relative_to_playing_uid": 43,
+        "type": "u8",
+        "raw_value": 252,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 15,
+        "field": "Anticipation",
+        "storage_index": 42,
+        "relative_to_playing_uid": 50,
+        "type": "u8",
+        "raw_value": 251,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 16,
+        "field": "Decision",
+        "storage_index": 43,
+        "relative_to_playing_uid": 51,
+        "type": "u8",
+        "raw_value": 242,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 17,
+        "field": "Positioning",
+        "storage_index": 45,
+        "relative_to_playing_uid": 53,
+        "type": "u8",
+        "raw_value": 222,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 18,
+        "field": "Off the ball",
+        "storage_index": 31,
+        "relative_to_playing_uid": 39,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 19,
+        "field": "Composure",
+        "storage_index": 77,
+        "relative_to_playing_uid": 85,
+        "type": "u8",
+        "raw_value": 252,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 20,
+        "field": "Concentration",
+        "storage_index": 78,
+        "relative_to_playing_uid": 86,
+        "type": "u8",
+        "raw_value": 252,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 21,
+        "field": "Flair",
+        "storage_index": 51,
+        "relative_to_playing_uid": 59,
+        "type": "u8",
+        "raw_value": 80,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 22,
+        "field": "Influence",
+        "storage_index": 65,
+        "relative_to_playing_uid": 73,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 23,
+        "field": "Dirtiness",
+        "storage_index": 66,
+        "relative_to_playing_uid": 74,
+        "type": "u8",
+        "raw_value": 25,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 24,
+        "field": "Bravery",
+        "storage_index": 68,
+        "relative_to_playing_uid": 76,
+        "type": "u8",
+        "raw_value": 31,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 25,
+        "field": "Consistency",
+        "storage_index": 69,
+        "relative_to_playing_uid": 77,
+        "type": "u8",
+        "raw_value": 60,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 26,
+        "field": "Aggression",
+        "storage_index": 70,
+        "relative_to_playing_uid": 78,
+        "type": "u8",
+        "raw_value": 20,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 27,
+        "field": "Imp. match",
+        "storage_index": 72,
+        "relative_to_playing_uid": 80,
+        "type": "u8",
+        "raw_value": 70,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 28,
+        "field": "Versatility",
+        "storage_index": 74,
+        "relative_to_playing_uid": 82,
+        "type": "u8",
+        "raw_value": 50,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 29,
+        "field": "Determination",
+        "storage_index": 76,
+        "relative_to_playing_uid": 84,
+        "type": "u8",
+        "raw_value": 75,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 30,
+        "field": "Team work",
+        "storage_index": 53,
+        "relative_to_playing_uid": 61,
+        "type": "u8",
+        "raw_value": 61,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 31,
+        "field": "Work rate",
+        "storage_index": 54,
+        "relative_to_playing_uid": 62,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 32,
+        "field": "Acceleration",
+        "storage_index": 59,
+        "relative_to_playing_uid": 67,
+        "type": "u8",
+        "raw_value": 97,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 33,
+        "field": "Strength",
+        "storage_index": 61,
+        "relative_to_playing_uid": 69,
+        "type": "u8",
+        "raw_value": 31,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 34,
+        "field": "Stamina",
+        "storage_index": 62,
+        "relative_to_playing_uid": 70,
+        "type": "u8",
+        "raw_value": 76,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 35,
+        "field": "Pace",
+        "storage_index": 63,
+        "relative_to_playing_uid": 71,
+        "type": "u8",
+        "raw_value": 85,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 36,
+        "field": "Jumping",
+        "storage_index": 64,
+        "relative_to_playing_uid": 72,
+        "type": "u8",
+        "raw_value": 36,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 37,
+        "field": "Balance",
+        "storage_index": 67,
+        "relative_to_playing_uid": 75,
+        "type": "u8",
+        "raw_value": 56,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 38,
+        "field": "Injury prone.",
+        "storage_index": 73,
+        "relative_to_playing_uid": 81,
+        "type": "u8",
+        "raw_value": 40,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 39,
+        "field": "Natural fit.",
+        "storage_index": 75,
+        "relative_to_playing_uid": 83,
+        "type": "u8",
+        "raw_value": 50,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 40,
+        "field": "Agility",
+        "storage_index": 71,
+        "relative_to_playing_uid": 79,
+        "type": "u8",
+        "raw_value": 96,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 41,
+        "field": "Left foot",
+        "storage_index": 49,
+        "relative_to_playing_uid": 57,
+        "type": "u8",
+        "raw_value": 55,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 42,
+        "field": "Right foot",
+        "storage_index": 50,
+        "relative_to_playing_uid": 58,
+        "type": "u8",
+        "raw_value": 100,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 43,
+        "field": "Handling",
+        "storage_index": 36,
+        "relative_to_playing_uid": 44,
+        "type": "u8",
+        "raw_value": 187,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 44,
+        "field": "Aer ability",
+        "storage_index": 37,
+        "relative_to_playing_uid": 45,
+        "type": "u8",
+        "raw_value": 186,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 45,
+        "field": "Cmd of area",
+        "storage_index": 38,
+        "relative_to_playing_uid": 46,
+        "type": "u8",
+        "raw_value": 186,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 46,
+        "field": "Communiction",
+        "storage_index": 39,
+        "relative_to_playing_uid": 47,
+        "type": "u8",
+        "raw_value": 201,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 47,
+        "field": "Kicking",
+        "storage_index": 40,
+        "relative_to_playing_uid": 48,
+        "type": "u8",
+        "raw_value": 191,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 48,
+        "field": "Long throws",
+        "storage_index": 41,
+        "relative_to_playing_uid": 49,
+        "type": "u8",
+        "raw_value": 191,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 49,
+        "field": "One on one",
+        "storage_index": 44,
+        "relative_to_playing_uid": 52,
+        "type": "u8",
+        "raw_value": 201,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 50,
+        "field": "Reflexes",
+        "storage_index": 46,
+        "relative_to_playing_uid": 54,
+        "type": "u8",
+        "raw_value": 179,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 51,
+        "field": "Eccentricity",
+        "storage_index": 56,
+        "relative_to_playing_uid": 64,
+        "type": "u8",
+        "raw_value": 35,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 52,
+        "field": "Rushing out",
+        "storage_index": 57,
+        "relative_to_playing_uid": 65,
+        "type": "u8",
+        "raw_value": 75,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 53,
+        "field": "Punch",
+        "storage_index": 58,
+        "relative_to_playing_uid": 66,
+        "type": "u8",
+        "raw_value": 80,
+        "confidence": "HIGH",
+        "value_transform": "UNRESOLVED_RAW_0_255"
+      },
+      {
+        "fmm_index": 54,
+        "field": "Goalkeeper",
+        "storage_index": 0,
+        "relative_to_playing_uid": 8,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 55,
+        "field": "Sweeper",
+        "storage_index": 1,
+        "relative_to_playing_uid": 9,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 56,
+        "field": "Defender",
+        "storage_index": 2,
+        "relative_to_playing_uid": 10,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 57,
+        "field": "Def. Mid.",
+        "storage_index": 3,
+        "relative_to_playing_uid": 11,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 58,
+        "field": "Midfielder",
+        "storage_index": 4,
+        "relative_to_playing_uid": 12,
+        "type": "u8",
+        "raw_value": 8,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 59,
+        "field": "Att. Mid.",
+        "storage_index": 5,
+        "relative_to_playing_uid": 13,
+        "type": "u8",
+        "raw_value": 17,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 60,
+        "field": "Attacker",
+        "storage_index": 6,
+        "relative_to_playing_uid": 14,
+        "type": "u8",
+        "raw_value": 20,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 61,
+        "field": "Wing back",
+        "storage_index": 7,
+        "relative_to_playing_uid": 15,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 62,
+        "field": "Free role",
+        "storage_index": 8,
+        "relative_to_playing_uid": 16,
+        "type": "u8",
+        "raw_value": 18,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 63,
+        "field": "Right side",
+        "storage_index": 9,
+        "relative_to_playing_uid": 17,
+        "type": "u8",
+        "raw_value": 17,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 64,
+        "field": "Left side",
+        "storage_index": 10,
+        "relative_to_playing_uid": 18,
+        "type": "u8",
+        "raw_value": 12,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 65,
+        "field": "Center side",
+        "storage_index": 11,
+        "relative_to_playing_uid": 19,
+        "type": "u8",
+        "raw_value": 20,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 66,
+        "field": "Left Def.",
+        "storage_index": 12,
+        "relative_to_playing_uid": 20,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 67,
+        "field": "Center Def.",
+        "storage_index": 13,
+        "relative_to_playing_uid": 21,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 68,
+        "field": "Right Def.",
+        "storage_index": 14,
+        "relative_to_playing_uid": 22,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 69,
+        "field": "Def. C.M.",
+        "storage_index": 15,
+        "relative_to_playing_uid": 23,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 70,
+        "field": "Mid. Left",
+        "storage_index": 16,
+        "relative_to_playing_uid": 24,
+        "type": "u8",
+        "raw_value": 8,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 71,
+        "field": "Mid. Center",
+        "storage_index": 17,
+        "relative_to_playing_uid": 25,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 72,
+        "field": "Mid. Right",
+        "storage_index": 18,
+        "relative_to_playing_uid": 26,
+        "type": "u8",
+        "raw_value": 8,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 73,
+        "field": "Att. M.L.",
+        "storage_index": 19,
+        "relative_to_playing_uid": 27,
+        "type": "u8",
+        "raw_value": 12,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 74,
+        "field": "Att. M.C.",
+        "storage_index": 20,
+        "relative_to_playing_uid": 28,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 75,
+        "field": "Att. M.R.",
+        "storage_index": 21,
+        "relative_to_playing_uid": 29,
+        "type": "u8",
+        "raw_value": 17,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 76,
+        "field": "Att. Center",
+        "storage_index": 22,
+        "relative_to_playing_uid": 30,
+        "type": "u8",
+        "raw_value": 20,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 77,
+        "field": "Wing B.L.",
+        "storage_index": 23,
+        "relative_to_playing_uid": 31,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      },
+      {
+        "fmm_index": 78,
+        "field": "Wing B.R.",
+        "storage_index": 24,
+        "relative_to_playing_uid": 32,
+        "type": "u8",
+        "raw_value": 1,
+        "confidence": "HIGH",
+        "value_transform": "DIRECT_1_20"
+      }
+    ]
+  }
+}

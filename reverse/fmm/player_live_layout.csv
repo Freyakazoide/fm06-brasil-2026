@@ -1,0 +1,28 @@
+﻿field,object,relative_to_object_uid,type,confidence,evidence
+Nationality,Player,64,pointer -> Nation record,CONFIRMED,Diff Argentina UID 1649→Espanha UID 796 trocou o ponteiro entre os dois objetos Nation válidos.
+Born,Player,52,"Date {u16 day_of_year_0, u16 year}",CONFIRMED,11/12/1981→12/12/1981 alterou dia 344→345 em UID+52.
+Value,Player,,,UNRESOLVED,Candidato u32 em UID-196 apareceu apenas numa alteração acidental da restauração; não promovido.
+Ask Value,Player,-192,u32,CONFIRMED,Alteração isolada 6350936→6350937.
+Current Ability,Player,-204,u16,CONFIRMED,"Saviola 160→161; mesmo offset em Zidane, Ceni, Sávio e Fred."
+Potential Ability,Player,-202,u16,CONFIRMED,Saviola 179→178; mesmo offset estrutural nos demais âncoras.
+Height,Player,-76,u16,CONFIRMED,Diff manual Saviola 168→169; Zidane 185 no mesmo offset.
+Weight,Player,-78,u16,CONFIRMED,Diff manual Saviola 61→62; Zidane 80 no mesmo offset.
+Home Rep.,Player,-210,u16,CONFIRMED,Diff manual Saviola 8198→8197.
+Current Rep.,Player,-208,u16,CONFIRMED,Diff manual Saviola 7998→7997.
+World Rep.,Player,-206,u16,CONFIRMED,Diff manual Saviola 5862→5861.
+Int. Caps,Player,72,u8,HIGH,Saviola 29 e Zidane 95 exatos na ficha viva.
+Int. Goals,Player,74,u8,HIGH,Saviola 1 e Zidane 26 exatos na ficha viva.
+U21 Caps,Player,73,u8,CONFIRMED,Alteração isolada 0→1 em UID+73.
+U21 Goals,Player,75,u8,CONFIRMED,Alteração isolada 0→1 em UID+75.
+Morale,Player,-184,u8,CONFIRMED,Diff manual Saviola 20→19.
+Fitness,Player,-216,u16,CONFIRMED,Diff manual Saviola 4000→3999.
+Jadedness,Player,-212,u16,CONFIRMED,Diff manual Saviola 0→1.
+Match Exercise,Player,-214,u16,CONFIRMED,Diff manual Saviola 7080→7079.
+Adaptability,PData,8,u8,CONFIRMED,Diff manual Saviola 12→13; sequência PData coerente.
+Ambition,PData,9,u8,HIGH,Sequência FMM completa.
+Loyalty,PData,10,u8,HIGH,Sequência FMM completa; FMM também contém typo Loyality.
+Pressure,PData,11,u8,HIGH,Sequência FMM completa.
+Professional,PData,12,u8,HIGH,Sequência FMM completa.
+Sportsmanship,PData,13,u8,HIGH,Sequência FMM completa.
+Temperament,PData,14,u8,HIGH,Sequência FMM completa.
+Controversy,PData,15,u8,HIGH,Sequência FMM completa.

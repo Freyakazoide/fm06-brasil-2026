@@ -1,0 +1,71 @@
+{
+  "snapshot": "workspace\\live_memory\\104318\\baseline_20261012_r4096.json",
+  "player_uid": 104318,
+  "objects": {
+    "Player": [],
+    "PData": [
+      "0x101B0BBC"
+    ],
+    "Playing": []
+  },
+  "player_fields": [],
+  "personality": [
+    {
+      "field": "Adaptability",
+      "relative_to_pdata_uid": 8,
+      "type": "u8",
+      "value": 13,
+      "confidence": "HIGH"
+    },
+    {
+      "field": "Ambition",
+      "relative_to_pdata_uid": 9,
+      "type": "u8",
+      "value": 13,
+      "confidence": "HIGH"
+    },
+    {
+      "field": "Loyalty",
+      "relative_to_pdata_uid": 10,
+      "type": "u8",
+      "value": 16,
+      "confidence": "HIGH"
+    },
+    {
+      "field": "Pressure",
+      "relative_to_pdata_uid": 11,
+      "type": "u8",
+      "value": 10,
+      "confidence": "HIGH"
+    },
+    {
+      "field": "Professional",
+      "relative_to_pdata_uid": 12,
+      "type": "u8",
+      "value": 14,
+      "confidence": "HIGH"
+    },
+    {
+      "field": "Sportsmanship",
+      "relative_to_pdata_uid": 13,
+      "type": "u8",
+      "value": 11,
+      "confidence": "HIGH"
+    },
+    {
+      "field": "Temperament",
+      "relative_to_pdata_uid": 14,
+      "type": "u8",
+      "value": 1,
+      "confidence": "HIGH"
+    },
+    {
+      "field": "Controversy",
+      "relative_to_pdata_uid": 15,
+      "type": "u8",
+      "value": 9,
+      "confidence": "HIGH"
+    }
+  ],
+  "playing_attributes": []
+}

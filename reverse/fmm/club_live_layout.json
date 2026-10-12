@@ -1,0 +1,211 @@
+{
+  "roots": [
+    "0x010EFFCC",
+    "0x010EFFB8",
+    "0x010EFF90",
+    "0x010EFF84",
+    "0x010EFF70"
+  ],
+  "object_layout": {
+    "record_size": 440,
+    "root_signature_offset": 0,
+    "public_uid_offset": 20,
+    "internal_ordinal_offset": 24,
+    "confidence": "HIGH",
+    "evidence": "São Paulo 337, Lyon 865, Barcelona 1708, Real Madrid 1736, Zaragoza 1749 e Sevilla 1759."
+  },
+  "fields": [
+    {
+      "fmm_index": 0,
+      "field": "Last Division",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 1,
+      "field": "Last Position",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 2,
+      "field": "Match Day",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 3,
+      "field": "Prof. Status",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 4,
+      "field": "Reputation",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 5,
+      "field": "Facilites",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 6,
+      "field": "Youth Setup",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 7,
+      "field": "Average Attend",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 8,
+      "field": "Minimum Attend",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 9,
+      "field": "Maximum Attend",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 10,
+      "field": "Cash",
+      "relative_offset": 248,
+      "type": "u32",
+      "confidence": "CONFIRMED",
+      "evidence": "Sevilla UID 1759: alteração isolada 55000→55001 em +248."
+    },
+    {
+      "fmm_index": 11,
+      "field": "Transfer Budget",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 12,
+      "field": "Budget Remain",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 13,
+      "field": "Available(%)",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 14,
+      "field": "Wage Budget",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 15,
+      "field": "Used",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 16,
+      "field": "Name",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 17,
+      "field": "Capacity",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 18,
+      "field": "Seating",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 19,
+      "field": "Used Cap.",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 20,
+      "field": "Expansion Cap.",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 21,
+      "field": "Pitch Width",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    },
+    {
+      "fmm_index": 22,
+      "field": "Pitch Length",
+      "relative_offset": null,
+      "type": null,
+      "confidence": "UNRESOLVED"
+    }
+  ],
+  "database_crosscheck": [
+    {
+      "club": "São Paulo",
+      "public_uid": 337,
+      "field_a": 212,
+      "field_b": 336,
+      "nation_internal_id": 189
+    },
+    {
+      "club": "Lyon",
+      "public_uid": 865,
+      "field_a": 589,
+      "field_b": 864,
+      "nation_internal_id": 143
+    },
+    {
+      "club": "Real Madrid",
+      "public_uid": 1736,
+      "field_a": 1313,
+      "field_b": 1733,
+      "nation_internal_id": 170
+    },
+    {
+      "club": "Zaragoza",
+      "public_uid": 1749,
+      "field_a": 1324,
+      "field_b": 1746,
+      "nation_internal_id": 170
+    }
+  ]
+}
