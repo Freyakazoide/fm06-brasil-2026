@@ -73,6 +73,7 @@ PLAYER_FIELDS = {
 }
 
 BORN_REL = 52
+NATIONALITY_REL = 64  # ponteiro para o objeto Nation
 
 PERSONALITY = (
     "Adaptability", "Ambition", "Loyalty", "Pressure",
@@ -352,6 +353,10 @@ class LivePlayer:
                 if not field.low <= value <= field.high:
                     raise ValueError(f"{name}: {value} fora de {field.low}..{field.high}")
                 put(field.obj, field.rel, struct.pack(field.fmt, value), name)
+
+        if "nationality_ptr" in spec:
+            put("Player", NATIONALITY_REL, struct.pack("<I", int(spec["nationality_ptr"])),
+                f"nacionalidade = a do UID {spec.get('nationality_like')}")
 
         if "birth_date" in spec:
             date = shift_years(dt.date.fromisoformat(spec["birth_date"]), year_shift)

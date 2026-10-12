@@ -6,6 +6,8 @@ Fluxo: New Game -> rodar este script -> conferir no jogo -> salvar o jogo.
     python scripts/live_player_editor.py data/live_edits/teste_saviola.json --apply
     python scripts/live_player_editor.py --restore workspace/live_edits/<arquivo>.json
     python scripts/live_player_editor.py --show 3100367
+    python scripts/live_player_editor.py --club-of 3100367
+    python scripts/live_player_editor.py --squad 337 --out workspace/elenco_337.csv
 
 Sem --apply nada é gravado: o script só mostra o que mudaria.
 Cada --apply salva os bytes originais em workspace/live_edits/ para --restore.
@@ -14,8 +16,10 @@ Cada --apply salva os bytes originais em workspace/live_edits/ para --restore.
 from __future__ import annotations
 
 import argparse
+import csv
 import ctypes
 import json
+import struct
 import sys
 import time
 from ctypes import wintypes
@@ -27,7 +31,9 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from fm06patch.live_player import (  # noqa: E402
+    NATIONALITY_REL,
     OBJECT_SPAN,
+    SIGNATURES,
     LivePlayer,
     signature_needle,
 )
@@ -75,10 +81,9 @@ def write_memory(handle, address: int, data: bytes) -> None:
         raise OSError(ctypes.get_last_error(), f"WriteProcessMemory falhou em 0x{address:08X}")
 
 
-def find_objects(handle, uids: list[int]) -> dict[int, dict[str, list[int]]]:
-    """Endereço do UID de cada objeto (Player, PData, Playing) de cada jogador."""
-    needles = {(uid, kind): signature_needle(kind, uid) for uid in uids for kind in OBJECT_SPAN}
-    found: dict[int, dict[str, list[int]]] = {uid: {kind: [] for kind in OBJECT_SPAN} for uid in uids}
+def scan(handle, needles: dict) -> dict:
+    """Endereço de início de cada ocorrência de cada agulha."""
+    found = {key: set() for key in needles}
     chunk = 4 * 1024 * 1024
     keep = max(len(n) for n in needles.values()) - 1
     for base, size in iter_regions(handle):
@@ -88,15 +93,23 @@ def find_objects(handle, uids: list[int]) -> dict[int, dict[str, list[int]]]:
             if not data:
                 break
             blob, blob_base = tail + data, base + offset - len(tail)
-            for (uid, kind), needle in needles.items():
+            for key, needle in needles.items():
                 pos = blob.find(needle)
                 while pos >= 0:
-                    address = blob_base + pos + 20  # endereço do UID
-                    if address not in found[uid][kind]:
-                        found[uid][kind].append(address)
+                    found[key].add(blob_base + pos)
                     pos = blob.find(needle, pos + 1)
-            tail = blob[-keep:]
+            tail = blob[-keep:] if keep else b""
             offset += len(data)
+    return {key: sorted(addresses) for key, addresses in found.items()}
+
+
+def find_objects(handle, uids: list[int]) -> dict[int, dict[str, list[int]]]:
+    """Endereço do UID de cada objeto (Player, PData, Playing) de cada jogador."""
+    needles = {(uid, kind): signature_needle(kind, uid) for uid in uids for kind in OBJECT_SPAN}
+    hits = scan(handle, needles)
+    found: dict[int, dict[str, list[int]]] = {uid: {kind: [] for kind in OBJECT_SPAN} for uid in uids}
+    for (uid, kind), starts in hits.items():
+        found[uid][kind] = [start + 20 for start in starts]  # assinatura tem 20 bytes
     return found
 
 
@@ -140,7 +153,13 @@ def cmd_edit(spec_path: Path, apply: bool) -> None:
     year_shift = int(spec.get("year_shift", 0))
     players = spec["players"]
     handle = open_for_write(find_process_id("fm.exe"))
-    addresses = resolve(handle, [int(p["uid"]) for p in players])
+    donors = {int(p["nationality_like"]) for p in players if "nationality_like" in p}
+    addresses = resolve(handle, sorted({int(p["uid"]) for p in players} | donors))
+    for entry in players:
+        if "nationality_like" in entry:
+            donor = int(entry["nationality_like"])
+            ptr = read_memory(handle, addresses[donor]["Player"] + NATIONALITY_REL, 4)
+            entry["nationality_ptr"] = struct.unpack("<I", ptr)[0]
 
     backup = {"created": time.strftime("%Y-%m-%d %H:%M:%S"), "spec": str(spec_path), "objects": []}
     for entry in players:
@@ -195,14 +214,108 @@ def cmd_show(uid: int) -> None:
     show_summary("ATUAL", load_player(handle, uid, resolve(handle, [uid])[uid]))
 
 
+# ------------------------------------------------------------------
+# Contratos -> elenco de um clube
+# ------------------------------------------------------------------
+
+CONTRACT_ROOTS = {"contrato": 0x00EB3954, "empréstimo": 0x010BAAD4}
+PLAYER_SIG = struct.pack("<5I", *SIGNATURES["Player"])
+
+
+def u32_at(handle, address: int) -> int | None:
+    data = read_memory(handle, address, 4)
+    return struct.unpack("<I", data)[0] if data and len(data) == 4 else None
+
+
+def contracts(handle) -> list[dict]:
+    """Todos os contratos: tipo, endereço, UID do jogador e UID do clube."""
+    starts = scan(handle, {kind: struct.pack("<I", root) for kind, root in CONTRACT_ROOTS.items()})
+    club_uid_cache: dict[int, int | None] = {}
+    result = []
+    for kind, addresses in starts.items():
+        for address in addresses:
+            head = read_memory(handle, address, 12)
+            if not head or len(head) != 12:
+                continue
+            player_ptr, club_ptr = struct.unpack_from("<II", head, 4)
+            sig = read_memory(handle, player_ptr, 24)
+            if not sig or sig[:20] != PLAYER_SIG:
+                continue
+            if club_ptr not in club_uid_cache:
+                club_uid_cache[club_ptr] = u32_at(handle, club_ptr + 20)
+            result.append({
+                "kind": kind,
+                "address": address,
+                "player_uid": struct.unpack_from("<I", sig, 20)[0],
+                "club_uid": club_uid_cache[club_ptr],
+            })
+    return result
+
+
+def cmd_club_of(uid: int) -> None:
+    handle = open_for_write(find_process_id("fm.exe"))
+    print("Lendo contratos...", flush=True)
+    rows = [c for c in contracts(handle) if c["player_uid"] == uid]
+    if not rows:
+        print(f"Nenhum contrato encontrado para o UID {uid}.")
+    for c in rows:
+        print(f"UID {uid}: {c['kind']} com o clube UID {c['club_uid']}")
+
+
+def cmd_squad(club_uid: int, out: Path | None) -> None:
+    handle = open_for_write(find_process_id("fm.exe"))
+    print("Lendo contratos...", flush=True)
+    rows = [c for c in contracts(handle) if c["club_uid"] == club_uid]
+    if not rows:
+        print(f"Nenhum contrato com o clube UID {club_uid}.")
+        return
+    uids = sorted({c["player_uid"] for c in rows})
+    kinds = {c["player_uid"]: c["kind"] for c in rows}
+    addresses = resolve(handle, uids)
+    table = []
+    for uid in uids:
+        s = load_player(handle, uid, addresses[uid]).summary()
+        positions = [n for n, v in s["attributes"].items() if v >= 15 and n in POSITION_NAMES]
+        table.append({
+            "uid": uid, "vinculo": kinds[uid], "nascido": s["born"],
+            "ca": s["ca"], "pa": s["pa"], "altura": s["height"], "peso": s["weight"],
+            "posicoes": " ".join(positions),
+        })
+    table.sort(key=lambda r: -r["ca"])
+    print(f"\nClube UID {club_uid}: {len(table)} jogadores")
+    print(f"{'UID':>9}  {'vínculo':10} {'nascido':10}  CA  PA  alt  peso  posições")
+    for r in table:
+        print(f"{r['uid']:>9}  {r['vinculo']:10} {r['nascido']:10} {r['ca']:3} {r['pa']:3}  {r['altura']:3}  {r['peso']:3}   {r['posicoes']}")
+    if out:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        with out.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=list(table[0]))
+            writer.writeheader()
+            writer.writerows(table)
+        print(f"\nSalvo em {out}")
+
+
+POSITION_NAMES = {
+    "Goalkeeper", "Sweeper", "Defender", "Def. Mid.", "Midfielder", "Att. Mid.",
+    "Attacker", "Wing back", "Free role", "Right side", "Left side", "Center side",
+}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("spec", nargs="?", type=Path, help="JSON com os jogadores a editar")
     parser.add_argument("--apply", action="store_true", help="grava de verdade")
     parser.add_argument("--restore", type=Path, help="desfaz usando um backup")
     parser.add_argument("--show", type=int, metavar="UID", help="só mostra os dados atuais")
+    parser.add_argument("--club-of", type=int, metavar="UID", help="mostra o clube do jogador")
+    parser.add_argument("--squad", type=int, metavar="CLUB_UID", help="lista o elenco de um clube")
+    parser.add_argument("--out", type=Path, help="CSV de saída para --squad")
     args = parser.parse_args()
-    if args.restore:
+    if args.club_of:
+        cmd_club_of(args.club_of)
+    elif args.squad:
+        cmd_squad(args.squad, args.out)
+    elif args.restore:
         cmd_restore(args.restore)
     elif args.show:
         cmd_show(args.show)
