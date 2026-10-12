@@ -188,3 +188,18 @@ Teste: `patch_exe.py serie_c_nova serie_c_64_clubes` +
 - Hipótese: `bra_get_minimum_division_teams` exigia 128 clubes na antiga C,
   que ficou com 108. O `serie_c_64_clubes` agora também baixa esse mínimo para
   64 (`0x00BB2871`: `push 0x80` → `push 0x40`).
+
+### Teste 2: patch por partes (banco original)
+
+| Arquivo | Patches | Brasil na lista? |
+|---|---|---|
+| `fm_t1.exe` | `serie_c_nova` + `serie_c_64_clubes` | não |
+| `fm_t2.exe` | `exp_cave_settings` | **sim**: 1ª, 2ª, Taça de Prata, 3ª divisão |
+| `fm_t3.exe` | `exp_cave_comps` | sim (1ª, 2ª, 3ª) |
+| `fm_t4.exe` | `exp_cave_minimo` | não |
+
+Causa: o mínimo de clubes. `0x00AA7BF0` compara o mínimo pedido com uma
+contagem do registro da competição (`+4`); se faltar, marca o país como não
+jogável (`+0x28 = 1`). Com 40 times na Taça de Prata pelo banco o Brasil
+também sumiu, então essa contagem não vem do campo de divisão do registro do
+time. O desvio do mínimo saiu do `serie_c_nova`.

@@ -178,7 +178,11 @@ def _jmp(at: int, target: int, length: int) -> bytes:
     return b"\xE9" + u32(target - (at + 5)) + b"\x90" * (length - 5)
 
 
-PARTS = ("settings", "comps", "minimum", "moves")
+# "minimum" fica fora do patch padrão: com ele o Brasil some da lista de
+# países (teste no jogo). O mínimo é comparado com uma contagem de clubes
+# que não vem da divisão do registro do time, então a nova C fica sempre
+# abaixo de 20.
+PARTS = ("settings", "comps", "moves")
 
 
 def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
