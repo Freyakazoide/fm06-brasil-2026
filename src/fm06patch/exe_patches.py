@@ -43,17 +43,17 @@ PATCHES = {
     for p in (
         Patch(
             "serie_a_rebaixa_4",
-            "Série A rebaixa 4 clubes para a Série B (original: 2). Método de fase em 0x00BBA400.",
+            "EXPERIMENTAL, sem efeito no teste: troca o 2º argumento da regra de rebaixamento da Série A.",
             (_push_count(0x7BA4F3, 2, 4, SERIE_B),),
         ),
         Patch(
             "serie_b_sobe_4",
-            "Série B sobe 4 clubes para a Série A (original: 2). Método de fase em 0x00BBA6A0.",
+            "EXPERIMENTAL, sem efeito no teste: troca o 2º argumento da regra de acesso da Série B.",
             (_push_count(0x7BA795, 2, 4, SERIE_A),),
         ),
         Patch(
             "serie_b_rebaixa_4",
-            "Série B rebaixa 4 clubes para a Série C (original: 2). Método de fase em 0x00BBA6A0.",
+            "EXPERIMENTAL, não testado: troca o 2º argumento da regra de rebaixamento da Série B.",
             (_push_count(0x7BA7A8, 2, 4, SERIE_C),),
         ),
     )

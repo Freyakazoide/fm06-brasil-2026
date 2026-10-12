@@ -102,11 +102,30 @@ acessos e 3 rebaixamentos e no código aparece como `(…, 3, -1)`):
 | `fase+0x0B` | clubes por grupo |
 | `fase+0x14` | turnos (2 = ida e volta) |
 | `fase+0x15` | 3 = pontos por vitória (provável) |
-| `FUN_00b0fe50(destino, n, -1)` | **sobem n** clubes para `destino` |
-| `FUN_00b0feb0(destino, n, -1)` | **descem n** clubes para `destino` |
+| `FUN_00b0fe50(destino, x, y)` | cria regra de **acesso** para `destino`; guarda x em +0x0D e y em +0x0C (y = x se −1) |
+| `FUN_00b0feb0(destino, x, y)` | idem, regra de **rebaixamento** |
 | `FUN_00b08360(tipo, dia, mês, 2000)` / `FUN_00b08470(...)` | início e fim (datas; o ano 2000 é base relativa) |
-| `FUN_00b08d90(...)` | vagas para outras competições (a decodificar) |
+| `FUN_00b085f0(dia, hora)` / `FUN_00b08d90(...)` / `FUN_00b0f650(...)` | **horários dos jogos**: 0x640 = 16:00, 0x708 = 18:00, 0x7EE = 20:30, 0x861 = 21:45 (formato HHMM) |
 | `FUN_00b0ee30(...)` | registra a fase |
+
+## Teste que falhou: x **não** é a quantidade
+
+O patch `serie_a_rebaixa_4` + `serie_b_sobe_4` (x de 2 para 4) foi aplicado
+e rodado pelo `fm_teste.exe` (confirmado pelo nome do processo). A tela de
+Regras continuou dizendo "Últimas dois equipas são despromovidas", e a zona
+continuou com 2 linhas.
+
+O que de fato determina a quantidade exibida:
+
+- O texto vem de `0x00B6E27F` (modelo `"Bottom <%number#1-text> teams are relegated to <%comp#1-short>"`, em `.rdata` `0x0112514C`).
+- Ele lê um objeto de zona: `+0x504` posição inicial, `+0x505` posição
+  final, `+0x506` total de clubes (word), `+0x508` competição de destino,
+  `+0x534` tipo.
+- A quantidade é `final − inicial + 1`. Falta descobrir quem preenche
+  `+0x504/+0x505`; não há escrita direta desses campos no código, então
+  provavelmente é uma cópia de estrutura.
+
+Rodada seguinte do Ghidra: `tools/ghidra/export_list.txt`.
 
 ## Patches (`scripts/patch_exe.py`)
 
@@ -115,8 +134,8 @@ original e os bytes antes da troca.
 
 | Nome | Troca |
 |---|---|
-| `serie_a_rebaixa_4` | arquivo 0x7BA4F3: `6A 02 68 B7A20100` → `6A 04 …` |
-| `serie_b_sobe_4` | arquivo 0x7BA795: `6A 02 68 17900100` → `6A 04 …` |
+| `serie_a_rebaixa_4` | arquivo 0x7BA4F3: `6A 02 68 B7A20100` → `6A 04 …` (**sem efeito**) |
+| `serie_b_sobe_4` | arquivo 0x7BA795: `6A 02 68 17900100` → `6A 04 …` (**sem efeito**) |
 | `serie_b_rebaixa_4` | arquivo 0x7BA7A8: `6A 02 68 B8A20100` → `6A 04 …` |
 
 ## Próximos passos
