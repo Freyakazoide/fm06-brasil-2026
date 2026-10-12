@@ -28,7 +28,11 @@ class ExePatchTest(unittest.TestCase):
             patched = apply(self.data, [name])
             self.assertEqual(len(patched), len(self.data))
             changed = sum(a != b for a, b in zip(patched, self.data))
-            self.assertEqual(changed, 1, name)
+            expected = sum(sum(x != y for x, y in zip(s.old, s.new)) for s in PATCHES[name].swaps)
+            self.assertEqual(changed, expected, name)
+
+    def test_all_patches_combine(self) -> None:
+        apply(self.data, list(PATCHES))
 
     def test_patch_cannot_apply_twice(self) -> None:
         once = apply(self.data, ["serie_a_rebaixa_4"])

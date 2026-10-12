@@ -43,6 +43,11 @@ def _zone(offset: int, field: int, old: int, new: int) -> Swap:
     return Swap(offset, bytes([0xC6, 0x46, field, old]), bytes([0xC6, 0x46, field, new]))
 
 
+def _imm8(offset: int, opcode: bytes, old: int, new: int) -> Swap:
+    """Instrução cujo último byte é um imediato de 8 bits (ex.: `push imm8` = 6A xx)."""
+    return Swap(offset, opcode + bytes([old]), opcode + bytes([new]))
+
+
 # Campos da fase lidos por 0x00B16FE0 para pintar as zonas da tabela e
 # decidir quem sobe e quem desce no fim da temporada.
 PROMOTION = 0x11
@@ -67,9 +72,23 @@ PATCHES = {
             (_zone(0x7BA774, RELEGATION, 2, 4),),
         ),
         Patch(
-            "serie_c_sobe_4",
-            "Série C: zona de acesso com 4 clubes (original: 2). Fase final em 0x00BBFD00, campo +0x11.",
-            (_zone(0x7BFECB, PROMOTION, 2, 4),),
+            "serie_a_datas_2026",
+            "Série A de 28/1 a 2/12 (original: 30/4 a 10/12). Dia a partir de 1, mês a partir de 0.",
+            (
+                _imm8(0x7BA573, b"\x6A", 3, 0),     # mês de início: abril -> janeiro
+                _imm8(0x7BA575, b"\x6A", 30, 28),   # dia de início
+                _imm8(0x7BA589, b"\x6A", 10, 2),    # dia de fim (mês continua dezembro)
+            ),
+        ),
+        Patch(
+            "serie_c_64_clubes",
+            "Série C com 64 clubes: 8 grupos de 8 e avançam 4 por grupo (original: 128, 16 grupos, 2 avançam). "
+            "Mata-mata continua recebendo 32.",
+            (
+                Swap(0x7BFDB7, bytes.fromhex("66c7008000"), bytes.fromhex("66c7004000")),  # total 128 -> 64
+                Swap(0x7BFDF9, bytes.fromhex("c6460810"), bytes.fromhex("c6460808")),      # grupos 16 -> 8
+                _zone(0x7BFECB, PROMOTION, 2, 4),                                           # avançam 2 -> 4
+            ),
         ),
         Patch(
             "exp_regra_rebaixa_a",
