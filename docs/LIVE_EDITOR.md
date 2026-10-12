@@ -72,6 +72,10 @@ Detalhes em `docs/reversing/people-db.md`. Resumo:
 
 ## Montar um elenco inteiro
 
+**Validado no jogo (12/10/2026):** os 27 jogadores do Flamengo 2026 aplicados
+sobre o elenco de 2005 (clube UID 322), com nomes, idades, atributos e
+posições corretos no jogo.
+
 1. New Game. Liste o elenco atual do clube (os "hospedeiros"):
 
    ```powershell
