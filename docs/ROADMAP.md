@@ -41,7 +41,7 @@ Por onde cada alteração é feita:
 | Item | Situação | Caminho | Observação |
 |---|---|---|---|
 | Nome, nome curto e longo | ✅ | texto | `CLUB_NAME_CHANGE` etc. |
-| Divisão em que joga | ✅ | texto | `SWAP_TEAMS` (troca 1 por 1) |
+| Divisão em que joga | ✅ | texto / banco | `SWAP_TEAMS` (troca 1 por 1); no banco, `scripts/server_db_teams.py --set` (a testar no jogo) |
 | Cores do uniforme | 🟡 | texto | `COLOUR_CHANGE` |
 | Estádio e capacidade | 🟡 | texto | `STADIUM_MOVE`, `STADIUM_CAPACITY_CHANGE`, `GROUND_SHARE` |
 | Dinheiro, reputação, público | 🟡 | texto / injetor | `BOOST_TEAM`; Cash no injetor |
@@ -58,6 +58,7 @@ Por onde cada alteração é feita:
 | Acessos e rebaixamentos | ✅ | executável | `scripts/patch_exe.py` (campos `+0x11`/`+0x14` da fase); validado: Série A rebaixa 4, Série B sobe 4 |
 | Criar a Série D | ❌ | executável | 4º nível no sistema de ligas + reaproveitar uma competição existente; exige code cave |
 | Vagas em Libertadores e Sul-Americana | ❌ | banco | idem |
+| Classificação da temporada passada | 🟡 | banco | `scripts/server_db_teams.py --pos` / `--last` |
 | Histórico de campeões (Séries A–D, pelo menos os últimos) | ❌ | banco | não localizado |
 | Calendário | ❌ | banco / executável | |
 

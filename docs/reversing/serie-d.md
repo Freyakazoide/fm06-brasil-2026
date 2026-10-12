@@ -112,3 +112,45 @@ de 2026** (grupos + mata-mata).
 2. **O que acontece quando a divisão tem mais clubes no banco do que vagas.**
    O teste `serie_c_64_clubes` responde isso: 128 clubes cadastrados, 64 vagas.
 3. Regras da antiga C para quem vem de baixo: hoje rebaixa para `0x13DBB8`.
+
+## Divisão inicial no banco (`server_db.dat`)
+
+Sondagem com o jogo aberto (New Game Brasil, `fm_teste.exe`):
+
+| Campo | Conteúdo |
+|---|---|
+| `CLUB+0xDC` | país do clube (`NATION`), não a divisão |
+| `TEAM+0x54` | **divisão atual**: 20 times → `BRA_NAT_FIRST`, 20 → `BRA_NAT_SECOND`, 128 → `BRA_NAT_THIRD` |
+| `TEAM+0x5C` | divisão da temporada passada |
+| `TEAM+0x60` | classificação na temporada passada (byte) |
+| `TEAM+0x64` | estadual (`BRA_STATE_*`) |
+
+O objeto de regras de cada série é a própria competição (classe derivada de
+`COMP`). Mesmo com a Série C em 64, os 128 times continuam apontando para ela;
+o jogo só monta grupos para os primeiros.
+
+Leitura do banco: o método 10 da vtable do `TEAM` (`0x00A1FA30`) lê, em
+ordem, byte `+0x60`, word `+0x6C` (reputação), word, u32 `+0x54`, u32
+`+0x5C`… O método 11 (`0x00A20760`) converte esses u32 em ponteiros com
+`0x009E8280` (índice na lista de competições; `FFFFFFFF` = nenhuma).
+
+No arquivo, o registro do time é:
+
+```
+u32 UID do clube | 0A 00 | u8 classificação anterior | u16 reputação | 00 00 |
+u32 divisão atual | u32 divisão anterior
+```
+
+Índices: Série A = 73, B = 85, C = 86 (os mesmos da tabela de competições).
+O padrão acha exatamente 20, 20 e 128 registros. A classificação anterior
+bate com o Brasileirão 2004 (Santos 1º, São Paulo 3º, Palmeiras 4º; Grêmio,
+Guarani, Vitória e Paysandu rebaixados).
+
+Ferramenta: `scripts/server_db_teams.py` (`--list`, `--set "TIME=SÉRIE"`,
+`--pos`, `--last`, `--apply`, `--restore`). Código em
+`src/fm06patch/server_teams.py`.
+
+Consequência para a Série D: os times entram numa série pelo índice gravado
+no banco. A Série D precisa de um objeto de competição novo (code cave em
+`bra_setup_comps`) ligado a um registro da tabela de competições; depois basta
+gravar esse índice nos times dela.
