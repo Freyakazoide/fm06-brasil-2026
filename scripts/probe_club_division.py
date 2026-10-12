@@ -30,6 +30,7 @@ from live_player_memory import find_process_id, iter_regions, open_process, read
 
 CLUB_SIGNATURE = struct.pack("<II", 0x010EFFCC, 0x010EFFB8)
 CLUB_SIZE = 440
+TEAM_SIGNATURE = struct.pack("<II", 0x010EDF6C, 0x010EDF5C)
 SERIES = {
     "A": {"vtable": 0x0113B2FC, "id": 0x19017, "index": 73},
     "B": {"vtable": 0x0113B5B4, "id": 0x1A2B7, "index": 85},
@@ -55,6 +56,17 @@ def scan(handle, needles: dict[str, bytes], align: int = 4) -> dict[str, list[in
     return found
 
 
+def class_name(handle, vtable: int) -> str:
+    """Nome da classe C++ pelo RTTI do MSVC (vtable-4 -> COL -> TypeDescriptor)."""
+    try:
+        col, = struct.unpack("<I", read_memory(handle, vtable - 4, 4))
+        td, = struct.unpack("<I", read_memory(handle, col + 12, 4))
+        raw = read_memory(handle, td + 8, 80)
+        return raw.split(b"\0", 1)[0].decode("latin1")
+    except Exception:
+        return f"vtable {vtable:#x}"
+
+
 def main() -> None:
     handle = open_process(find_process_id(sys.argv[1] if len(sys.argv) > 1 else "fm.exe"))
     print("Procurando objetos das séries, IDs das competições e clubes...", flush=True)
@@ -62,6 +74,7 @@ def main() -> None:
         **{f"serie_{k}": struct.pack("<I", v["vtable"]) for k, v in SERIES.items()},
         **{f"id_{k}": struct.pack("<I", v["id"]) for k, v in SERIES.items()},
         "club": CLUB_SIGNATURE,
+        "team": TEAM_SIGNATURE,
     })
     for key in SERIES:
         print(f"Série {key}: objeto de regras {[hex(a) for a in hits.get(f'serie_{key}', [])[:3]]}, "
@@ -96,63 +109,52 @@ def main() -> None:
     for rel, label, n in rows[:40]:
         print(f"  +0x{rel:03X}  {label:28} {n}")
 
-    # Caminho usado pelo SWAP_TEAMS: clube +0x38 -> objeto X (se +0x40 == 0);
-    # a divisão fica em X+0xDC (acessor 0x00A18CE0). Também mostra X+0xEA.
+    # Caminho usado pelo SWAP_TEAMS (0x00AAC550): o nome leva a um TEAM;
+    # TEAM+0x38 é o CLUB (se TEAM+0x40 == 0) e a divisão fica em CLUB+0xDC
+    # (acessor 0x00A18CE0). Os objetos achados aqui já são CLUB.
     ids_by_raw = {struct.pack("<I", info["id"]): key for key, info in SERIES.items()}
     rules = {addr: k for k in SERIES for addr in hits.get(f"serie_{k}", [])}
     division = Counter()
     flag_ea = Counter()
     for club in clubs:
-        head = read_memory(handle, club + 0x38, 12)
-        if not head or len(head) < 12:
-            continue
-        x, = struct.unpack_from("<I", head, 0)
-        flag = head[8]
-        if flag != 0 or x < 0x10000:
-            division["(sem objeto X)"] += 1
-            continue
-        data = read_memory(handle, x + 0xDC, 0x10)
+        data = read_memory(handle, club + 0xDC, 0x10)
         if not data or len(data) < 0x10:
             continue
         division[struct.unpack_from("<I", data, 0)[0]] += 1
         flag_ea[data[0xEA - 0xDC]] += 1
-    print("\nDivisão pelo caminho do SWAP_TEAMS (clube +0x38 -> X, valor em X+0xDC):")
-    for value, count in division.most_common(25):
+    print("\nDivisão de cada clube (CLUB+0xDC): valor = clubes, classe do objeto apontado")
+    for value, count in division.most_common(40):
         label = ""
-        if isinstance(value, int):
-            if value in rules:
-                label = f"  = objeto de regras da Série {rules[value]}"
-            elif value > 0x10000:
-                target = read_memory(handle, value, 0x400)
-                if target:
-                    found = [f"{key}@+{target.find(raw):#x}" for raw, key in ids_by_raw.items() if target.find(raw) >= 0]
-                    found += [f"regras {key}@+{target.find(struct.pack('<I', ptr)):#x}" for ptr, key in rules.items()
-                              if target.find(struct.pack("<I", ptr)) >= 0]
-                    vt = struct.unpack_from("<I", target, 0)[0]
-                    label = f"  vtable {vt:#x}" + (f"  contém ID {found}" if found else "")
-            print(f"  {value:#010x}: {count} clubes{label}")
-        else:
-            print(f"  {value}: {count} clubes")
-    print("  X+0xEA (byte):", dict(flag_ea.most_common(8)))
+        if value in rules:
+            label = f"  = objeto de regras da Série {rules[value]}"
+        if value > 0x10000:
+            target = read_memory(handle, value, 0x400)
+            if target and len(target) >= 4:
+                label += f"  {class_name(handle, struct.unpack_from('<I', target, 0)[0])}"
+                found = [f"ID {key}@+{target.find(raw):#x}" for raw, key in ids_by_raw.items() if target.find(raw) >= 0]
+                found += [f"regras {key}@+{target.find(struct.pack('<I', ptr)):#x}" for ptr, key in rules.items()
+                          if target.find(struct.pack("<I", ptr)) >= 0]
+                if found:
+                    label += f"  contém {found}"
+        print(f"  {value:#010x}: {count} clubes{label}")
+    print("  CLUB+0xEA (byte):", dict(flag_ea.most_common(8)))
 
-    # Campos trocados pelo SWAP_TEAMS (executor em 0x00AAC550).
-    ids = {struct.pack("<I", info["id"]): key for key, info in SERIES.items()}
-    print("\nCampos trocados pelo SWAP_TEAMS: valores mais comuns entre os clubes")
-    for rel in (0x54, 0x5C, 0x60, 0x64):
-        values = Counter()
-        for club in clubs:
-            data = read_memory(handle, club + rel, 4)
-            if data and len(data) == 4:
-                values[struct.unpack("<I", data)[0]] += 1
-        print(f"  +0x{rel:02X}: {len(values)} valores distintos")
-        for value, count in values.most_common(12):
-            note = ""
-            target = read_memory(handle, value, 0x200) if value > 0x10000 else None
-            if target:
-                found = [f"{key}@+{target.find(raw):#x}" for raw, key in ids.items() if target.find(raw) >= 0]
-                note = f"  objeto contém ID {found}" if found else ""
-            print(f"      {value:#010x}: {count} clubes{note}")
-
+    # Objetos TEAM (Principal, Reservas, Sub-20…): o SWAP_TEAMS troca os
+    # campos +0x54, +0x5C, +0x60 (byte) e +0x64 deles.
+    teams = hits.get("team", [])
+    club_set = set(clubs)
+    links = Counter()
+    for team in teams:
+        data = read_memory(handle, team + 0x38, 12)
+        if not data or len(data) < 12:
+            continue
+        club = struct.unpack_from("<I", data, 0)[0]
+        links["TEAM+0x38 é um CLUB" if club in club_set else "TEAM+0x38 não é CLUB"] += 1
+        links[f"TEAM+0x40 = {data[8]}"] += 1
+    print(f"\nTimes (TEAM): {len(teams)}")
+    for label, count in sorted(links.items()):
+        print(f"  {label}: {count}")
+    print(f"  CLUB: {class_name(handle, 0x010EFFCC)}  TEAM: {class_name(handle, 0x010EDF6C)}")
 
 if __name__ == "__main__":
     main()
