@@ -1,7 +1,17 @@
-# Rodada 4: como o New Game coloca clubes nas competições e níveis.
+# Rodada 5: onde fica a divisão de cada clube/time.
 
-# Base de competições e sistema de ligas da nação:
-# FUN_00acf2f0 (construtor base), FUN_00ad0050 (adicionar divisão),
-# FUN_00ad1410 (finalizar), FUN_00ad4220 (sistema de ligas), e o código que
-# chama o método 71 (montagem da fase) passando o número de clubes.
-range 00AC0000 00AD6000
+# Executor do SWAP_TEAMS (troca a divisão de dois clubes).
+00AAC550
+# Busca de clube pelo nome usada pelo SWAP_TEAMS.
+00AAABD0
+# Acessores chamados pelo SWAP_TEAMS (objeto ligado ao clube).
+00A18CD0
+00A18CE0
+# Leitura dos argumentos do comando.
+00C60E00
+00C72910
+00C726F0
+# Executor do PLAY_COMPETITION (grava um unid em DAT_014EAB2C).
+00AA84C0
+# Vizinhança dos acessores do clube.
+range 00A18000 00A19000

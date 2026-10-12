@@ -76,6 +76,12 @@ de 2026** (grupos + mata-mata).
   `DAT_014EAB2C`.
 - Executor de todos os comandos: `switch` em `0x00AADB90`, tabela em
   `0x00AADC5C`.
+- Medição na memória (objetos com assinatura `0x010EFFCC 0x010EFFB8`,
+  2.103 clubes): `+0x54` só vale 0–3 (1.409 clubes com 2); `+0x5C` e `+0x60`
+  são ponteiros únicos por clube; `+0x64` é igual para todos. Nenhum desses
+  campos é a divisão. O objeto que o `SWAP_TEAMS` troca deve ser outro tipo,
+  provavelmente o "time" do clube (`[Club Team]` no FMM). Rodada 5 do Ghidra
+  investiga isso.
 - Ferramenta para achar o campo "divisão" do clube na memória:
   `scripts/probe_club_division.py`.
 
