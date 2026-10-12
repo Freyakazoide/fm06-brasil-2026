@@ -68,6 +68,14 @@ de 2026** (grupos + mata-mata).
 - `0x00ACAC30`: monta as fases chamando o método 71 de cada competição; a
   primeira fase recebe −1 (usa o tamanho padrão do código), as seguintes
   recebem a quantidade que veio da fase anterior.
+- O executor do `SWAP_TEAMS` (tipo 0xA) está em `0x00AAC550`. Ele troca
+  entre os dois clubes os campos `+0x54`, `+0x5C`, `+0x60` (byte) e `+0x64`,
+  e `+0xDC`/`+0xEA` de um objeto obtido por `0x00A18CD0`. A divisão do clube
+  está entre eles.
+- `PLAY_COMPETITION` (tipo 0x24) em `0x00AA84C0` só grava o `unid` lido em
+  `DAT_014EAB2C`.
+- Executor de todos os comandos: `switch` em `0x00AADB90`, tabela em
+  `0x00AADC5C`.
 - Ferramenta para achar o campo "divisão" do clube na memória:
   `scripts/probe_club_division.py`.
 

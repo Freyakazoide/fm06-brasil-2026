@@ -96,6 +96,24 @@ def main() -> None:
     for rel, label, n in rows[:40]:
         print(f"  +0x{rel:03X}  {label:28} {n}")
 
+    # Campos trocados pelo SWAP_TEAMS (executor em 0x00AAC550).
+    ids = {struct.pack("<I", info["id"]): key for key, info in SERIES.items()}
+    print("\nCampos trocados pelo SWAP_TEAMS: valores mais comuns entre os clubes")
+    for rel in (0x54, 0x5C, 0x60, 0x64):
+        values = Counter()
+        for club in clubs:
+            data = read_memory(handle, club + rel, 4)
+            if data and len(data) == 4:
+                values[struct.unpack("<I", data)[0]] += 1
+        print(f"  +0x{rel:02X}: {len(values)} valores distintos")
+        for value, count in values.most_common(12):
+            note = ""
+            target = read_memory(handle, value, 0x200) if value > 0x10000 else None
+            if target:
+                found = [f"{key}@+{target.find(raw):#x}" for raw, key in ids.items() if target.find(raw) >= 0]
+                note = f"  objeto contém ID {found}" if found else ""
+            print(f"      {value:#010x}: {count} clubes{note}")
+
 
 if __name__ == "__main__":
     main()
