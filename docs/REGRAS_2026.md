@@ -90,14 +90,25 @@ Validado no jogo com `fm_brasil.exe` (New Game com o Brasil).
 | Nomes Série A, B, C e D | ✅ `.lnc` (`COMP_NAME_CHANGE`, idioma `""`) |
 | Clubes de cada série | ✅ banco; lista em `data/brasil/mapa_2026.csv`; clube que não existe no FM06 vira o brasileiro de maior reputação ainda livre |
 | Série A: 28/01–02/12, 4 rebaixados | ✅ validado |
-| Série B: 21/03–08/11 (pontos corridos), 4 caem | ✅ (fase de liga termina antes do sorteio do playoff, 13/11) |
-| Série B: 1º e 2º sobem; playoffs 3×6 e 4×5, empate passa a melhor campanha | 🟡 zona e calendário validados; jogos não aconteceram no 1º teste (sorteio antes do fim da liga), corrigido |
+| Série B: 21/03–15/11 (pontos corridos), 4 caem | 🟡 fim com folga; playoff sorteado em 20/11, jogos a partir de 22/11 |
+| Série B: 1º e 2º sobem; playoffs 3×6 e 4×5, empate passa a melhor campanha | 🟡 zona validada; nos 2 testes o playoff ficou sem times (fase de liga terminou depois da data de fim) |
 | Série C: 20 clubes, 4 sobem, 2 caem | ✅ validado (Taça de Prata) |
-| Série C 1ª fase: 05/04–02/08, turno único, 8 avançam, 2 caem | 🟡 regras validadas; falta simular (patch `serie_c_nova`) |
-| Série C 2ª fase: 2 grupos de 4, ida e volta, 16/08–18/10, 2 primeiros de cada grupo sobem | 🟡 a testar; grupos sorteados pelo jogo (ainda não 1-4-5-8 / 2-3-6-7) |
+| Série C 1ª fase: 05/04–23/08, turno único, 8 avançam, 2 caem | 🟡 regras validadas; 2ª fase não foi gerada no teste |
+| Série C 2ª fase: 2 grupos de 4, ida e volta, 06/09–01/11 (CBF: até 25/10), 2 primeiros de cada grupo sobem | 🟡 a testar; grupos sorteados pelo jogo (ainda não 1-4-5-8 / 2-3-6-7) |
 | Série C: final entre os campeões dos grupos | ❌ ainda não; o título fica sem final |
 | Série C: 24 clubes em 2027, 28 em 2028 | ❌ |
-| Série D: 96 clubes, 05/04–13/09 | ✅ 16 grupos de 6, 2 avançam, mata-mata de 32, quadrangular final |
+| Série D: 96 clubes, 05/04–04/10 (CBF: até 13/09) | 🟡 16 grupos de 6 até 19/07, mata-mata de 32 e 16, fase final 26/08–04/10; mata-mata não foi gerado no teste |
 | Série D: 6 acessos | 🟡 a testar: mata-mata de 32 e de 16; os 8 restantes jogam fase final em turno único e os 6 primeiros sobem |
 | Vagas na Libertadores e Sul-Americana | ❌ não mapeado |
 | Copa do Brasil e Supercopa | ❌ a Copa do Brasil (`0x00BB9550`) ainda puxa clubes só das antigas A, B e C |
+
+## Lição dos testes: datas e estaduais
+
+No FM06 os estaduais vão até abril ou maio. Começar B, C e D em março e abril
+põe rodadas em cima dos estaduais, e o jogo empurra jogos para depois da data
+de fim da fase (B: fim marcado em 8/11, últimos jogos em 11 e 12/11). Se a
+fase não terminou na data de fim, ninguém passa para a fase seguinte, a
+competição nunca termina e a temporada do Brasil não vira (em fevereiro de
+2007 não havia calendário, acesso nem estaduais). Regra: data de fim com
+folga e pelo menos uma semana até a fase seguinte. Por isso C e D terminam
+algumas semanas depois das datas da CBF.

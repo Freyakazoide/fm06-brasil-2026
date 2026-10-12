@@ -132,16 +132,17 @@ def _new_builder(data: bytes) -> bytes:
     _replace(code, 0xCA, b"\xC6\x46\x11\x02", b"\xC6\x46\x11\x08")
     # rebaixamento continua para a antiga C (0x1A2B8, em +0x10A); 2 caem (+0x14)
     _replace(code, 0xAB, b"\xC6\x46\x0A\x02", b"\xC6\x46\x0A\x01")             # turno único
-    # Datas da 1ª fase: 5/4 a 2/8 (push mês, push dia; mês começa em 0). O jogo
-    # arredonda para o fim de semana; a fase de grupos começa em 16/8.
+    # Datas da 1ª fase: 5/4 a 23/8 (push mês, push dia; mês começa em 0). Com
+    # folga: os estaduais empurram rodadas para depois da data de fim, e se a
+    # fase não terminou na data de fim, ninguém passa para a fase seguinte.
     for at, old, new in (
         (0x148, 7, 6),        # 1º par, início: agosto -> julho (dia 5)
         (0x15C, 0x0B, 7),     # 1º par, fim: mês dezembro -> agosto
-        (0x15E, 2, 2),        #          dia 2
+        (0x15E, 2, 23),       #          dia 23
         (0x185, 3, 3),        # 2º par, início: abril
         (0x187, 0x1D, 5),     #          dia 29 -> 5
         (0x199, 0x0B, 7),     # 2º par, fim: agosto
-        (0x19B, 2, 2),        #          dia 2
+        (0x19B, 2, 23),       #          dia 23
     ):
         _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
     # Ação "classifica para a fase de grupos" (desvio para a seção nova).
@@ -286,8 +287,8 @@ def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
     _replace(code, 0x1F7, b"\x6a\xff", b"\xEB\x1E")    # regras de acesso/rebaixamento já estão na 1ª fase
     _replace(code, 0x21C, b"\xc7\x44", b"\xEB\x30")    # sem ação 5: zona 1 desta fase = sobe
     for at, old, new in (
-        (0x253, 5, 7), (0x25C, 0x19, 16),     # início: 16/8
-        (0x290, 8, 9), (0x292, 0x14, 18),     # fim: 18/10
+        (0x253, 5, 8), (0x25C, 0x19, 6),      # início: 6/9
+        (0x290, 8, 10), (0x292, 0x14, 1),     # fim: 1/11
     ):
         _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
     return [(C_DISPATCH, bytes(disp.code)), (C_QUALIFY, bytes(qual.code)), (OLD_C_COPY, bytes(code))]
@@ -384,7 +385,7 @@ def _playoff_copy(data: bytes, date_stub: int) -> bytes:
     jump = b"\xE9" + u32(date_stub - (PLAYOFF_COPY + at(0x00C0FF2C) + 5))
     _replace(code, at(0x00C0FF2C), old, jump + b"\x90" * (len(old) - 5))
     # 1º jogo: 21/11 (push ano; push mês; push dia)
-    _replace(code, at(0x00C0FF47), bytes.fromhex("68d10700006a056a0a"), bytes.fromhex("68d00700006a0a6a15"))
+    _replace(code, at(0x00C0FF47), bytes.fromhex("68d10700006a056a0a"), bytes.fromhex("68d00700006a0a6a16"))
     # Sem final: salta a montagem da 2ª rodada (0x14) até as ações de destino.
     target = PLAYOFF_COPY + at(0x00C10052)
     _replace(code, at(0x00C0FFBA), bytes.fromhex("6a148d4c2454"),
@@ -417,10 +418,10 @@ def _playoff_stubs() -> tuple[bytes, dict[str, int]]:
     asm.raw(b"\x8D\x4C\x24\x10").push(0x640).jmp(0x00BBA7BF)  # instruções originais
 
     entry["date"] = asm.here
-    # Sorteio 13/11: depois da última rodada da fase de liga (até 8/11,
-    # arredondada pelo jogo para o fim de semana). Se o sorteio vier antes, o
-    # playoff fica sem times e a temporada do Brasil não fecha.
-    asm.push(2).push(0x7D0).push(10).push(13).push(0x4B0)
+    # Sorteio 20/11 e 1º jogo 22/11: depois do fim da fase de liga (15/11),
+    # com folga para rodadas empurradas pelos estaduais. Se a fase de liga não
+    # tiver terminado, o playoff fica sem times e a temporada do Brasil não fecha.
+    asm.push(2).push(0x7D0).push(10).push(20).push(0x4B0)
     asm.jmp(PLAYOFF_COPY + (0x00C0FF3B - ITA_BUILDER))
     return bytes(asm.code), entry
 
