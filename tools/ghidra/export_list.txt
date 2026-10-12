@@ -1,0 +1,13 @@
+# Rodada 3: de onde vem a quantidade de rebaixados/promovidos.
+
+# Gerador do texto "Bottom N teams are relegated" e a classe da zona.
+range 00B6C000 00B6F000
+
+# Construção das fases de liga (FUN_00b164a0, FUN_00b0ee30, SOBE/REBAIXA,
+# datas, horários) e vizinhança.
+range 00B08000 00B1A000
+
+# Regras de movimento: setter e validação.
+00C48830
+00C48020
+00C47D80
