@@ -99,8 +99,7 @@ def main() -> None:
     # Caminho usado pelo SWAP_TEAMS: clube +0x38 -> objeto X (se +0x40 == 0);
     # a divisão fica em X+0xDC (acessor 0x00A18CE0). Também mostra X+0xEA.
     ids_by_raw = {struct.pack("<I", info["id"]): key for key, info in SERIES.items()}
-    rules = {series_ptr.get(k): k for k in series_ptr} if "series_ptr" in dir() else {}
-    rules = {hits[f"serie_{k}"][0]: k for k in SERIES if hits.get(f"serie_{k}")}
+    rules = {addr: k for k in SERIES for addr in hits.get(f"serie_{k}", [])}
     division = Counter()
     flag_ea = Counter()
     for club in clubs:
@@ -127,6 +126,8 @@ def main() -> None:
                 target = read_memory(handle, value, 0x400)
                 if target:
                     found = [f"{key}@+{target.find(raw):#x}" for raw, key in ids_by_raw.items() if target.find(raw) >= 0]
+                    found += [f"regras {key}@+{target.find(struct.pack('<I', ptr)):#x}" for ptr, key in rules.items()
+                              if target.find(struct.pack("<I", ptr)) >= 0]
                     vt = struct.unpack_from("<I", target, 0)[0]
                     label = f"  vtable {vt:#x}" + (f"  contém ID {found}" if found else "")
             print(f"  {value:#010x}: {count} clubes{label}")
