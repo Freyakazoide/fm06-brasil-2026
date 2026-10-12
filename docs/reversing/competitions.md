@@ -148,8 +148,8 @@ original e os bytes antes da troca.
 
 | Nome | Troca |
 |---|---|
-| `serie_a_rebaixa_4` | arquivo 0x7BA4D3: `C6 46 14 02` → `C6 46 14 04` |
-| `serie_b_sobe_4` | arquivo 0x7BA76A: `C6 46 11 02` → `C6 46 11 04` |
+| `serie_a_rebaixa_4` | arquivo 0x7BA4D3: `C6 46 14 02` → `C6 46 14 04` — ✅ **validado no jogo** |
+| `serie_b_sobe_4` | arquivo 0x7BA76A: `C6 46 11 02` → `C6 46 11 04` — ✅ **validado no jogo** |
 | `serie_b_rebaixa_4` | arquivo 0x7BA774: `C6 46 14 02` → `C6 46 14 04` |
 | `serie_c_sobe_4` | arquivo 0x7BFECB: `C6 46 11 02` → `C6 46 11 04` |
 | `exp_regra_rebaixa_a` | arquivo 0x7BA4F3 (2º argumento da regra de movimento; sem efeito visível) |
