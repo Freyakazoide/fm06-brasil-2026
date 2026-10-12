@@ -34,7 +34,7 @@ EXE_PATCHES = [
     "serie_a_datas_2026",
     "serie_a_rebaixa_4",
     "serie_b_datas_2026",
-    "serie_b_sobe_4",
+    "serie_b_playoffs",
     "serie_b_rebaixa_4",
     "serie_c_nova",
     "serie_d_96",

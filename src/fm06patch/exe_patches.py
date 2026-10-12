@@ -21,6 +21,9 @@ class Swap:
     offset: int
     old: bytes
     new: bytes
+    # Troca usada por mais de um patch (ex.: ampliar a seção .text): se já
+    # estiver aplicada, segue em frente.
+    shared: bool = False
 
 
 @dataclass(frozen=True)
@@ -109,6 +112,13 @@ PATCHES = {
             build=lambda data: _cave_swaps(data),
         ),
         Patch(
+            "serie_b_playoffs",
+            "Série B: 1º e 2º sobem direto; playoffs 3º×6º e 4º×5º, ida e volta (21/11 e 28/11), "
+            "empate: passa a melhor campanha, sem prorrogação nem pênaltis; vencedores sobem. "
+            "Cópia do playoff da Série B italiana (0x00C0FAC0). Não combina com serie_b_sobe_4.",
+            build=lambda data: _playoff_swaps(data),
+        ),
+        Patch(
             "exp_cave_settings",
             "TESTE: só o sistema de ligas com 4 níveis (nova C no nível 2, antiga C no 3).",
             build=lambda data: _cave_swaps(data, ("settings",)),
@@ -125,14 +135,15 @@ PATCHES = {
         ),
         Patch(
             "serie_b_datas_2026",
-            "Série B de 21/3 a 28/11 (original: 29/4 a 2/12). Fase em 0x00BBA6A0.",
+            "Série B de 21/3 a 15/11, fase de pontos corridos (original: 29/4 a 2/12); "
+            "os playoffs (serie_b_playoffs) vão até 28/11. Fase em 0x00BBA6A0.",
             (
                 _imm8(0x7BA825, b"\x6A", 3, 2),       # mês de início: abril -> março
                 _imm8(0x7BA827, b"\x6A", 0x1D, 21),   # dia de início
                 _imm8(0x7BA7FC, b"\x6A", 0x0B, 10),   # mês de fim, 1º par: dezembro -> novembro
-                _imm8(0x7BA7FE, b"\x6A", 2, 28),      # dia de fim, 1º par
+                _imm8(0x7BA7FE, b"\x6A", 2, 15),      # dia de fim, 1º par
                 _imm8(0x7BA839, b"\x6A", 0x0B, 10),   # mês de fim, 2º par
-                _imm8(0x7BA83B, b"\x6A", 2, 28),      # dia de fim, 2º par
+                _imm8(0x7BA83B, b"\x6A", 2, 15),      # dia de fim, 2º par
             ),
         ),
         Patch(
@@ -184,6 +195,12 @@ def _cave_swaps(data: bytes, parts: tuple[str, ...] | None = None) -> tuple[Swap
     return build_swaps(data, parts or PARTS)
 
 
+def _playoff_swaps(data: bytes) -> tuple[Swap, ...]:
+    from .exe_cave import build_playoff_swaps
+
+    return build_playoff_swaps(data)
+
+
 def apply(data: bytes, names: list[str]) -> bytes:
     out = bytearray(data)
     for name in names:
@@ -191,6 +208,8 @@ def apply(data: bytes, names: list[str]) -> bytes:
             raise KeyError(f"Patch desconhecido: {name}. Disponíveis: {', '.join(PATCHES)}")
         for swap in PATCHES[name].swaps_for(data):
             current = bytes(out[swap.offset:swap.offset + len(swap.old)])
+            if swap.shared and current == swap.new:
+                continue
             if current != swap.old:
                 raise ValueError(
                     f"{name}: em 0x{swap.offset:08X} esperava {swap.old.hex(' ')}, achei {current.hex(' ')}"

@@ -90,8 +90,8 @@ Validado no jogo com `fm_brasil.exe` (New Game com o Brasil).
 | Nomes Série A, B, C e D | ✅ `.lnc` (`COMP_NAME_CHANGE`, idioma `""`) |
 | Clubes de cada série | ✅ banco; lista em `data/brasil/mapa_2026.csv`; clube que não existe no FM06 vira o brasileiro de maior reputação ainda livre |
 | Série A: 28/01–02/12, 4 rebaixados | ✅ validado |
-| Série B: 21/03–28/11, 4 sobem, 4 caem | ✅ |
-| Série B: playoffs 3×6 e 4×5 | ❌ por enquanto sobem 1º a 4º direto |
+| Série B: 21/03–15/11 (pontos corridos), 4 caem | ✅ (datas da fase de liga ajustadas para os playoffs) |
+| Série B: 1º e 2º sobem; playoffs 3×6 e 4×5 (21 e 28/11), empate passa a melhor campanha | 🟡 patch `serie_b_playoffs`, a testar |
 | Série C: 20 clubes, 4 sobem, 2 caem | ✅ validado (Taça de Prata) |
 | Série C: 05/04–25/10, turno único | ✅ |
 | Série C: quadrangulares e final | ❌ por enquanto sobem 1º a 4º direto da fase de liga |

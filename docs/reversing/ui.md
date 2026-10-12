@@ -18,3 +18,12 @@ Hipótese a testar: um botão num XML de painel com `hyperlink` apontando para
 um endereço local (página ou programa nosso) abre esse programa de dentro do
 jogo. O programa altera a memória do jogo (como o injetor) e o efeito fica no
 save quando o usuário salva.
+
+## Arquivos de tela recebidos (`panels`, `menus`, `screens`)
+
+- 325 XML. Os menus usam códigos de evento de 4 letras (`<flags id="event_id" value="SAVE"/>`),
+  tratados dentro do `fm.exe` (ex.: `INFO` em `0x004CBA1F` abre um painel).
+- `screens/preferences.xml` tem a opção "Enable Media Hyperlinks" (`emhy`).
+- `panels/html help.xml` é o tutorial em HTML (evento `IURL`, alvo `htmp`):
+  candidato para uma página com link para um programa nosso.
+- Nenhum XML usa `hyperlink` diretamente; a propriedade existe no leitor.

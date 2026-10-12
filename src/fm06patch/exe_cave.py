@@ -215,7 +215,7 @@ def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
 
     def header(field: tuple[int, int, int]) -> Swap:
         at, old, new = field
-        return Swap(at, u32(old), u32(new))
+        return Swap(at, u32(old), u32(new), shared=True)
 
     settings_hook = bytes.fromhex("6a006a0268b8a20100") + b"\x8b\xce\xe8" + u32(ADD_DIVISION - 0x00BB276C) + b"\x6a\x03"
     min_hook = bytes.fromhex("6a006afe6a146a006817900100") + b"\x8b\xce\xe8" + u32(MIN_TEAMS - 0x00BB2859)
@@ -242,3 +242,104 @@ def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
             Swap(off(0x00BBA7AA), b"\x68" + u32(OLD_C_ID), b"\x68" + u32(NEW_C_ID)),      # Série B cai p/ nova C
         ]
     return tuple(swaps)
+
+
+# ---------------------------------------------------------------------------
+# Playoffs da Série B (3º×6º e 4º×5º, ida e volta, empate: melhor campanha)
+#
+# - Fase 1 (liga, 0x00BBA6A0): zona de playoff do 3º ao 6º (+0x12 = 4) ligada
+#   à fase seguinte (ação 0x00B0FF00 com o código 0x15), como na Championship
+#   inglesa (0x00C15480). Os 2 primeiros sobem direto (+0x11 = 2).
+# - Fase 2: cópia da montagem da Série B italiana (0x00C0FAC0), cujo playoff
+#   já usa o desempate pela posição na liga (bit 0x100 no 2º jogo). Na cópia:
+#   sem final (os 2 vencedores das semifinais sobem), datas 21/11 e 28/11.
+# - Construtor da Série B: 2 fases (0x00BB2E1D); método 71 da vtable da Série
+#   B aponta para um despachante (fase 1 -> cópia italiana, senão original).
+# ---------------------------------------------------------------------------
+
+ITA_BUILDER = 0x00C0FAC0
+ITA_BUILDER_SIZE = 0x7EC
+ITA_BUILDER_CALLS = (
+    0x48, 0x61, 0x7E, 0xEE, 0xFD, 0x130, 0x15E, 0x17A, 0x18E, 0x1A2, 0x1B6, 0x1C2,
+    0x1EC, 0x203, 0x213, 0x22E, 0x23D, 0x25E, 0x279, 0x294, 0x2AF, 0x2CA, 0x2E4,
+    0x2FF, 0x310, 0x325, 0x33A, 0x34F, 0x364, 0x37C, 0x399, 0x3C4, 0x3E1, 0x3FB,
+    0x40F, 0x467, 0x47F, 0x499, 0x4DC, 0x4EC, 0x4F5, 0x500, 0x518, 0x532, 0x574,
+    0x584, 0x58D, 0x5A3, 0x5BA, 0x5D1, 0x5F8, 0x623, 0x640, 0x66B, 0x6D6, 0x6F1,
+    0x70E, 0x74F, 0x763, 0x76F, 0x785, 0x79C, 0x7C6,
+)
+PLAYOFF_COPY = 0x00E30760
+PLAYOFF_STUBS = 0x00E30F50
+STAGE_ACTION = 0x00B0FF00
+FATE_VTABLES = (0x01117604, 0x011175F8)
+PLAYOFF_STAGE_CODE = 0x15
+
+
+def _playoff_copy(data: bytes, date_stub: int) -> bytes:
+    code = bytearray(data[off(ITA_BUILDER):off(ITA_BUILDER) + ITA_BUILDER_SIZE])
+    _relocate(code, ITA_BUILDER, PLAYOFF_COPY, ITA_BUILDER_CALLS)
+
+    def at(va: int) -> int:
+        return va - ITA_BUILDER
+
+    # Semifinal: data do sorteio (push 2; push ano; push mês; push ebp(dia); push hora)
+    # vai para um trecho próprio, porque o dia vinha de um registrador.
+    old = bytes.fromhex("6a0268d10700006a055568b0040000")
+    jump = b"\xE9" + u32(date_stub - (PLAYOFF_COPY + at(0x00C0FF2C) + 5))
+    _replace(code, at(0x00C0FF2C), old, jump + b"\x90" * (len(old) - 5))
+    # 1º jogo: 21/11 (push ano; push mês; push dia)
+    _replace(code, at(0x00C0FF47), bytes.fromhex("68d10700006a056a0a"), bytes.fromhex("68d00700006a0a6a15"))
+    # Sem final: salta a montagem da 2ª rodada (0x14) até as ações de destino.
+    target = PLAYOFF_COPY + at(0x00C10052)
+    _replace(code, at(0x00C0FFBA), bytes.fromhex("6a148d4c2454"),
+             b"\xE9" + u32(target - (PLAYOFF_COPY + at(0x00C0FFBA) + 5)) + b"\x90")
+    # Vencedores da semifinal (rodada 0x12) sobem; perdedores ficam.
+    _replace(code, at(0x00C1005F), b"\x6a\x14", b"\x6a\x12")
+    _replace(code, at(0x00C10068), b"\x8b\x07", b"\xEB\x15")   # pula o destino do perdedor da final
+    return bytes(code)
+
+
+def _playoff_stubs() -> tuple[bytes, dict[str, int]]:
+    asm = Asm(PLAYOFF_STUBS)
+    entry = {}
+
+    entry["dispatch"] = asm.here
+    asm.raw(b"\x80\x7C\x24\x04\x01")                       # cmp byte ptr [esp+4], 1
+    asm.raw(b"\x0F\x84" + u32(PLAYOFF_COPY - (asm.here + 6)))  # je cópia italiana
+    asm.jmp(B_BUILDER)
+
+    entry["zone"] = asm.here
+    asm.raw(b"\xC6\x46\x12\x04")                            # mov byte ptr [esi+0x12], 4
+    asm.raw(b"\x83\xEC\x10")                                 # sub esp, 16
+    asm.raw(b"\xC7\x04\x24" + u32(FATE_VTABLES[0]))
+    asm.raw(b"\xC7\x44\x24\x04" + u32(FATE_VTABLES[1]))
+    asm.raw(b"\xC7\x44\x24\x08" + u32(PLAYOFF_STAGE_CODE))
+    asm.raw(b"\xC7\x44\x24\x0C" + u32(-1))
+    asm.raw(b"\x8B\xC4\x50")                                 # mov eax, esp ; push eax
+    asm.push(2).mov_ecx_esi().call(STAGE_ACTION)
+    asm.raw(b"\x83\xC4\x10")                                 # add esp, 16
+    asm.raw(b"\x8D\x4C\x24\x10").push(0x640).jmp(0x00BBA7BF)  # instruções originais
+
+    entry["date"] = asm.here
+    asm.push(2).push(0x7D0).push(10).push(16).push(0x4B0)   # sorteio: 16/11, 12:00
+    asm.jmp(PLAYOFF_COPY + (0x00C0FF3B - ITA_BUILDER))
+    return bytes(asm.code), entry
+
+
+def build_playoff_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    stubs, entry = _playoff_stubs()
+    copy = _playoff_copy(data, entry["date"])
+    if PLAYOFF_COPY + len(copy) > PLAYOFF_STUBS or PLAYOFF_STUBS + len(stubs) > TEXT_FREE[1]:
+        raise ValueError("playoffs não cabem na área livre")
+
+    slot = off(B_VTABLE + 4 * STAGE_SLOT)
+    return (
+        Swap(TEXT_VSIZE[0], u32(TEXT_VSIZE[1]), u32(TEXT_VSIZE[2]), shared=True),
+        Swap(off(PLAYOFF_COPY), bytes(len(copy)), copy),
+        Swap(off(PLAYOFF_STUBS), bytes(len(stubs)), stubs),
+        Swap(slot, u32(B_BUILDER), u32(entry["dispatch"])),                      # método 71 da Série B
+        Swap(off(0x00BB2E1D), b"\x6a\x01", b"\x6a\x02"),                         # Série B: 2 fases
+        Swap(off(0x00BBA7B6), bytes.fromhex("8d4c24106840060000"),
+             _jmp(0x00BBA7B6, entry["zone"], 9)),                                # zona de playoff
+    )
