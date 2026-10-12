@@ -53,10 +53,10 @@ Por onde cada alteração é feita:
 |---|---|---|---|
 | Nome da competição | 🟡 | texto | `COMP_NAME_CHANGE` |
 | Quais clubes estão em cada série | ✅ | texto | `SWAP_TEAMS`, limitado à estrutura existente |
-| Número de clubes por divisão | ❌ | banco | regras no `server_db`, não mapeadas |
-| Formato (pontos corridos, turno e returno) | ❌ | banco | idem |
-| Acessos e rebaixamentos | ❌ | banco | idem |
-| Criar a Série D | ❌ | banco | maior incógnita do projeto |
+| Número de clubes por divisão | 🟡 | executável | regras ficam no `fm.exe` (módulo Brasil em `0xBB2700`); ver `docs/reversing/competitions.md` |
+| Formato (pontos corridos, turno e returno) | 🟡 | executável | idem |
+| Acessos e rebaixamentos | 🟡 | executável | idem |
+| Criar a Série D | ❌ | executável | 4º nível no sistema de ligas + reaproveitar uma competição existente; exige code cave |
 | Vagas em Libertadores e Sul-Americana | ❌ | banco | idem |
 | Histórico de campeões (Séries A–D, pelo menos os últimos) | ❌ | banco | não localizado |
 | Calendário | ❌ | banco / executável | |
