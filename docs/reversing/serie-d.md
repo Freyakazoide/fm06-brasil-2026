@@ -54,8 +54,22 @@ de 2026** (grupos + mata-mata).
 
 | Teste | Resultado |
 |---|---|
-| `serie_c_64_clubes` | ✅ abriu sem travar; Série C com grupos de 8, "as quatro primeiras equipas qualificam-se", últimas 2 rebaixadas, 14 jogos por clube. Falta confirmar quantos grupos e o destino dos 64 clubes que sobraram. |
-| `serie_a_datas_2026` | início 28/1 ✅; fim continuou 10/12 (o patch agora troca os dois pares de datas) |
+| `serie_c_64_clubes` | ✅ 8 grupos de 8, "as quatro primeiras equipas qualificam-se", últimas 2 rebaixadas, 14 jogos por clube. Os 64 clubes que sobram continuam **cadastrados** na 3ª Divisão (ex.: Tubarão), mas sem grupo nem jogos. |
+| `serie_a_datas_2026` | ✅ 29.1.2006 – 3.12.2006: o jogo arredonda para o domingo seguinte (28/1 e 2/12 de 2006 não são domingo) |
+
+## Como a competição se liga ao banco
+
+- Construtor base `FUN_00acf2f0(id, tipo, nível)`: chama `FUN_009ed0a0(id)`,
+  que liga o objeto ao registro da competição no banco pelo ID. Guarda o tipo
+  em `+0xAD` e o nível em `+0xB8`. Série A = (0x19017, 0, 0),
+  B = (0x1A2B7, 1, 1), C = (0x1A2B8, 1, 2).
+- `FUN_00ad0050(id, nível, flag)`: só registra o par no sistema de ligas da
+  nação (lista em `+0x28`).
+- `0x00ACAC30`: monta as fases chamando o método 71 de cada competição; a
+  primeira fase recebe −1 (usa o tamanho padrão do código), as seguintes
+  recebem a quantidade que veio da fase anterior.
+- Ferramenta para achar o campo "divisão" do clube na memória:
+  `scripts/probe_club_division.py`.
 
 ## O que ainda falta descobrir
 
