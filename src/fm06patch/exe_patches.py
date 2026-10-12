@@ -10,6 +10,7 @@ Conversão: offset no arquivo = endereço virtual - 0x400000 (seção .text).
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Callable, Optional
 
 
 EXE_SHA256 = "3C20470AE0C730D03EB548BC9A80B56E06AB653BBCA89C95F1BD38481FAE5B90"
@@ -26,7 +27,12 @@ class Swap:
 class Patch:
     name: str
     description: str
-    swaps: tuple[Swap, ...]
+    swaps: tuple[Swap, ...] = ()
+    # Patches com código novo: as trocas dependem dos bytes do original.
+    build: Optional[Callable[[bytes], tuple[Swap, ...]]] = None
+
+    def swaps_for(self, data: bytes) -> tuple[Swap, ...]:
+        return self.build(data) if self.build else self.swaps
 
 
 def _push_count(offset: int, old: int, new: int, target: bytes) -> Swap:
@@ -92,6 +98,13 @@ PATCHES = {
             ),
         ),
         Patch(
+            "serie_c_nova",
+            "4ª divisão: nova Série C (liga de 20, cópia da B, registro Taça de Prata 319191, índice 376) "
+            "entre a B e a antiga C, que vira o 4º nível. B cai para a nova C; antiga C sobe para a nova C. "
+            "Times entram pela ferramenta server_db_teams (índice 376).",
+            build=lambda data: _cave_swaps(data),
+        ),
+        Patch(
             "exp_regra_rebaixa_a",
             "EXPERIMENTAL, sem efeito visível: 2º argumento da regra de movimento Série A -> B.",
             (_push_count(0x7BA4F3, 2, 4, SERIE_B),),
@@ -105,12 +118,18 @@ PATCHES = {
 }
 
 
+def _cave_swaps(data: bytes) -> tuple[Swap, ...]:
+    from .exe_cave import build_swaps
+
+    return build_swaps(data)
+
+
 def apply(data: bytes, names: list[str]) -> bytes:
     out = bytearray(data)
     for name in names:
         if name not in PATCHES:
             raise KeyError(f"Patch desconhecido: {name}. Disponíveis: {', '.join(PATCHES)}")
-        for swap in PATCHES[name].swaps:
+        for swap in PATCHES[name].swaps_for(data):
             current = bytes(out[swap.offset:swap.offset + len(swap.old)])
             if current != swap.old:
                 raise ValueError(

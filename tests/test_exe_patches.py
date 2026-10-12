@@ -28,7 +28,7 @@ class ExePatchTest(unittest.TestCase):
             patched = apply(self.data, [name])
             self.assertEqual(len(patched), len(self.data))
             changed = sum(a != b for a, b in zip(patched, self.data))
-            expected = sum(sum(x != y for x, y in zip(s.old, s.new)) for s in PATCHES[name].swaps)
+            expected = sum(sum(x != y for x, y in zip(s.old, s.new)) for s in PATCHES[name].swaps_for(self.data))
             self.assertEqual(changed, expected, name)
 
     def test_all_patches_combine(self) -> None:
@@ -38,6 +38,11 @@ class ExePatchTest(unittest.TestCase):
         once = apply(self.data, ["serie_a_rebaixa_4"])
         with self.assertRaises(ValueError):
             apply(once, ["serie_a_rebaixa_4"])
+
+    def test_cave_cannot_apply_twice(self) -> None:
+        once = apply(self.data, ["serie_c_nova"])
+        with self.assertRaises(ValueError):
+            apply(once, ["serie_c_nova"])
 
 
 if __name__ == "__main__":

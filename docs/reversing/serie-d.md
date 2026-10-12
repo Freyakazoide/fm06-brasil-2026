@@ -154,3 +154,29 @@ Consequência para a Série D: os times entram numa série pelo índice gravado
 no banco. A Série D precisa de um objeto de competição novo (code cave em
 `bra_setup_comps`) ligado a um registro da tabela de competições; depois basta
 gravar esse índice nos times dela.
+
+## Patch `serie_c_nova` (code cave, a testar)
+
+Código em `src/fm06patch/exe_cave.py`; aplicado por `scripts/patch_exe.py`.
+
+- Competição do banco reaproveitada: **Taça de Prata** (ID 319191, índice
+  376), registro brasileiro que nenhum código do jogo cria. Outras opções:
+  Brazilian Champions Cup (309690), Taça Brazil (311872).
+- `bra_get_settings`: nova C no nível 2, antiga C no nível 3, `finalizar(4)`.
+- `bra_setup_comps`: cria a nova C logo depois da antiga C.
+- `bra_get_minimum_division_teams`: nova C com 20.
+- Classe: cópia do construtor da Série B (ID 319191, nível 2) com uma cópia
+  da vtable da B (150 métodos) cujo método 71 é uma cópia da fase da B:
+  20 clubes, acesso de 4 para a Série B, rebaixamento de 2 para a antiga C.
+- Série B rebaixa para a nova C; antiga C sobe para a nova C; antiga C passa
+  ao nível 3 no construtor.
+- Áreas livres usadas: `.text` 0x00E303D0–0x00E30750, `.rdata`
+  0x012BA610–0x012BA86C. VirtualSize das duas seções ampliado até o fim dos
+  dados crus.
+
+Ainda iguais à Série B na nova C: datas, horários, ID de tipo da classe e o
+resto dos métodos. A função `0x00BB9550` (provável Copa do Brasil, até 64
+clubes de A, B e C) não inclui a nova C.
+
+Teste: `patch_exe.py serie_c_nova serie_c_64_clubes` +
+`server_db_teams.py --top "C:20:NOVA_C" --apply`.

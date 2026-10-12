@@ -23,7 +23,7 @@ class ServerTeamsTest(unittest.TestCase):
 
     def test_divisions_have_the_expected_sizes(self) -> None:
         counts = {key: sum(t.division == value for t in self.teams) for key, value in DIVISIONS.items()}
-        self.assertEqual(counts, {"A": 20, "B": 20, "C": 128})
+        self.assertEqual(counts, {"A": 20, "B": 20, "C": 128, "NOVA_C": 0})
 
     def test_known_clubs(self) -> None:
         santos = find_team(self.teams, "Santos")

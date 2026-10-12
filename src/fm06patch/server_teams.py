@@ -11,6 +11,8 @@ e conferido no banco: Série A, B e C dão 20, 20 e 128 registros.
     u32 divisão atual                       -> TEAM+0x54
     u32 divisão da temporada passada        -> TEAM+0x5C (FFFFFFFF = nenhuma)
 
+Com o patch `serie_c_nova`, o índice 376 (Taça de Prata) é a nova Série C.
+
 As divisões são índices da tabela de competições do server_db (0x005B85C0),
 resolvidos para ponteiros por 0x009E8280.
 """
@@ -21,7 +23,9 @@ import re
 import struct
 from dataclasses import dataclass
 
-DIVISIONS = {"A": 73, "B": 85, "C": 86}
+# NOVA_C: registro "Taça de Prata" (ID 319191), usado como nova Série C pelo
+# patch serie_c_nova do fm.exe; com ele, a antiga C (86) é o 4º nível.
+DIVISIONS = {"A": 73, "B": 85, "C": 86, "NOVA_C": 376}
 NONE = 0xFFFFFFFF
 
 _RECORD = re.compile(rb"\x0a\x00(.)(..)\x00\x00(....)(....)", re.S)

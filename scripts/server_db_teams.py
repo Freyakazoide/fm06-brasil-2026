@@ -15,7 +15,10 @@ Opções de alteração (podem repetir):
     --set  "TIME=SÉRIE"     divisão em que o time começa (A, B, C)
     --pos  "TIME=N"         classificação na temporada passada (0 = nenhuma)
     --last "TIME=SÉRIE"     divisão da temporada passada (A, B, C ou -)
+    --top  "C:20:NOVA_C"    move os 20 times de maior reputação da C para a NOVA_C
 TIME é o nome curto, o nome longo ou o UID do clube.
+NOVA_C é a nova Série C criada pelo patch serie_c_nova do fm.exe (índice 376).
+Com esse patch, a C antiga (índice 86) passa a ser o 4º nível.
 """
 
 from __future__ import annotations
@@ -69,6 +72,7 @@ def main() -> None:
     parser.add_argument("--set", action="append", default=[])
     parser.add_argument("--pos", action="append", default=[])
     parser.add_argument("--last", action="append", default=[])
+    parser.add_argument("--top", action="append", default=[])
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--restore", action="store_true")
     args = parser.parse_args()
@@ -86,7 +90,7 @@ def main() -> None:
     teams = find_teams(bytes(data))
     teams.sort(key=lambda t: (t.serie, t.last_position or 99, t.short_name))
 
-    if args.list or not (args.set or args.pos or args.last):
+    if args.list or not (args.set or args.pos or args.last or args.top):
         print(f"{'Série':5} {'UID':>8}  {'Clube':26} {'Pos ant.':>8} {'Série ant.':>10} {'Reput.':>6}")
         for team in teams:
             if args.serie and team.serie != args.serie:
@@ -103,6 +107,12 @@ def main() -> None:
             team = find_team(teams, key)
             changes.append((team, "divisão", team.serie, value.upper()))
             team.division = division_index(value)
+        for spec in args.top:
+            source, count, dest = spec.split(":")
+            pool = [t for t in teams if t.serie == source.upper()]
+            for team in sorted(pool, key=lambda t: -t.reputation)[:int(count)]:
+                changes.append((team, "divisão", team.serie, dest.upper()))
+                team.division = division_index(dest)
         for key, value in pairs(args.pos, "--pos"):
             team = find_team(teams, key)
             changes.append((team, "classificação anterior", team.last_position, int(value)))
