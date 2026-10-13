@@ -150,3 +150,18 @@ Correção: nova C com zona 1 = 0 e zona 2 = 8 (ação 2, código 0x49); o méto
 72 confere se vieram exatamente 8 times e, se não vierem, fecha a fase com
 uma fase vazia (como a Série B italiana faz), em vez de criar grupos com
 vagas vazias.
+
+## Teste 5: ✅ as fases são criadas e a temporada vira
+
+Sondagem (`probe_stages.py`) em um jogo novo:
+
+| Data | A | B | C | D |
+|---|---|---|---|---|
+| 15/08/2006 | 1/1 | 1/2 | 1/2 | 1/3 |
+| 01/09/2006 | 1/1 | 1/2 | **2/2** (GROUP_STAGE, 8 times) | 1/3 |
+| 25/11/2006 | 1/1 | **2/2** (CUP_STAGE, playoff) | 2/2 | **3/3** (mata-mata e fase final) |
+| 2007 | 1/1 | 1/2 | 1/2 | 1/3 (ano `+0x9C` = 2007: temporada nova criada) |
+
+Pendente: na Série D, a 10ª rodada dos grupos ficou para 20/9, depois do
+início do mata-mata (20/8): a fase só terminou em setembro e o mata-mata foi
+criado atrasado. Precisa de mais folga ou de menos conflito com os estaduais.

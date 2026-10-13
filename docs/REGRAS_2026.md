@@ -91,13 +91,14 @@ Validado no jogo com `fm_brasil.exe` (New Game com o Brasil).
 | Clubes de cada série | ✅ banco; lista em `data/brasil/mapa_2026.csv`; clube que não existe no FM06 vira o brasileiro de maior reputação ainda livre |
 | Série A: 28/01–02/12, 4 rebaixados | ✅ validado |
 | Série B: 21/03–15/11 (pontos corridos), 4 caem | 🟡 fim com folga; playoff sorteado em 20/11, jogos a partir de 22/11 |
-| Série B: 1º e 2º sobem; playoffs 3×6 e 4×5, empate passa a melhor campanha | 🟡 zona validada; nos 2 testes o playoff ficou sem times (fase de liga terminou depois da data de fim) |
+| Série B: 1º e 2º sobem; playoffs 3×6 e 4×5, empate passa a melhor campanha | ✅ playoff criado e jogado (teste 5); falta confirmar o desempate na tela |
 | Série C: 20 clubes, 4 sobem, 2 caem | ✅ validado (Taça de Prata) |
-| Série C 1ª fase: 05/04–23/08, turno único, 8 avançam, 2 caem | 🟡 regras validadas; 2ª fase não foi gerada no teste |
-| Série C 2ª fase: 2 grupos de 4, ida e volta, 06/09–01/11 (CBF: até 25/10), 2 primeiros de cada grupo sobem | 🟡 a testar; grupos sorteados pelo jogo (ainda não 1-4-5-8 / 2-3-6-7) |
+| Virada de temporada (2006 → 2007) | ✅ as quatro séries recomeçam em 2007; falta conferir quem subiu e quem caiu |
+| Série C 1ª fase: 05/04–23/08, turno único, 8 avançam, 2 caem | ✅ |
+| Série C 2ª fase: 2 grupos de 4, ida e volta, 06/09–01/11 (CBF: até 25/10), 2 primeiros de cada grupo sobem | ✅ criada (teste 5); grupos sorteados pelo jogo (ainda não 1-4-5-8 / 2-3-6-7) |
 | Série C: final entre os campeões dos grupos | ❌ ainda não; o título fica sem final |
 | Série C: 24 clubes em 2027, 28 em 2028 | ❌ |
-| Série D: 96 clubes, 05/04–28/10 (CBF: até 13/09) | 🟡 16 grupos de 6 até 09/08, mata-mata de 32 e 16 a partir de 16/08, fase final 16/09–28/10 |
+| Série D: 96 clubes, 05/04–28/10 (CBF: até 13/09) | 🟡 as 3 fases são criadas, mas a 10ª rodada dos grupos caiu em 20/09, depois do mata-mata: calendário a ajustar |
 | Série D: 6 acessos | 🟡 a testar: mata-mata de 32 e de 16; os 8 restantes jogam fase final em turno único e os 6 primeiros sobem |
 | Vagas na Libertadores e Sul-Americana | ❌ não mapeado |
 | Copa do Brasil e Supercopa | ❌ a Copa do Brasil (`0x00BB9550`) ainda puxa clubes só das antigas A, B e C |
