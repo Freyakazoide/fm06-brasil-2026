@@ -127,9 +127,10 @@ def _new_builder(data: bytes) -> bytes:
     code = bytearray(data[off(B_BUILDER):off(B_BUILDER) + B_BUILDER_SIZE])
     _relocate(code, B_BUILDER, NEW_BUILDER, B_BUILDER_CALLS)
     _replace(code, 0xF7, b"\x68" + u32(SERIE_A_ID), b"\x68" + u32(SERIE_B_ID))  # acesso -> Série B
-    # 1ª fase: os 8 primeiros vão para a fase de grupos (zona 1 + ação 5, como
-    # nos grupos da antiga C); quem sobe sai da 2ª fase.
-    _replace(code, 0xCA, b"\xC6\x46\x11\x02", b"\xC6\x46\x11\x08")
+    # 1ª fase: ninguém sobe direto (zona 1 = 0); os 8 primeiros vão para a fase
+    # de grupos pela zona 2 (gravada no desvio C_QUALIFY), o padrão das fases
+    # de liga com playoff (Championship, Série B italiana).
+    _replace(code, 0xCA, b"\xC6\x46\x11\x02", b"\xC6\x46\x11\x00")
     # rebaixamento continua para a antiga C (0x1A2B8, em +0x10A); 2 caem (+0x14)
     _replace(code, 0xAB, b"\xC6\x46\x0A\x02", b"\xC6\x46\x0A\x01")             # turno único
     # Datas da 1ª fase: 5/4 a 23/8 (push mês, push dia; mês começa em 0). Com
@@ -299,12 +300,19 @@ def _c_next_stage() -> bytes:
     a.raw(b"\x8D\x54\x24\x04\x52")              # lea edx, [esp+4] (lista) ; push edx
     a.raw(b"\x8D\x54\x24\x18\x52")              # lea edx, [esp+0x18] (NEXT_STAGE_INFO) ; push edx
     a.call(LEAGUE_QUALIFIED)
+    # Trava (como a Série B italiana): sem exatamente 8 classificados, fecha a
+    # competição com uma fase vazia em vez de criar grupos com vagas sem time.
+    a.raw(b"\x66\x83\x7C\x24\x08" + bytes([QUALIFIED]))   # cmp word ptr [esp+8], 8
+    jne3 = len(a.code); a.raw(b"\x75\x00")
     a.push(0x34).call(STAGE_ALLOC).raw(b"\x83\xC4\x04")
     a.raw(b"\x85\xC0")                          # test eax, eax
     je1 = len(a.code); a.raw(b"\x74\x00")
     a.raw(b"\x8B\xC8")                          # mov ecx, eax
     a.push(0).raw(b"\x8D\x54\x24\x04\x52").push(1).call(GROUP_STAGE_NEW)   # (1, lista, 0)
     a.push(1).raw(b"\x50\x8B\xCE").call(ADD_STAGE)                         # acrescenta(fase, 1)
+    jmp_free = len(a.code); a.raw(b"\xEB\x00")
+    empty = len(a.code)
+    a.push(1).push(0).raw(b"\x8B\xCE").call(ADD_STAGE)                      # acrescenta(nada, 1)
     free = len(a.code)
     a.raw(b"\x8D\x0C\x24").call(TEAM_LIST_FREE)  # lea ecx, [esp] ; libera a lista
     a.raw(b"\x83\xC4\x20\x5E")                  # add esp, 0x20 ; pop esi
@@ -314,6 +322,8 @@ def _c_next_stage() -> bytes:
     struct.pack_into("<i", code, jne1 + 2, ret - (jne1 + 6))
     struct.pack_into("<i", code, jne2 + 2, ret - (jne2 + 6))
     code[je1 + 1] = free - (je1 + 2)
+    code[jne3 + 1] = empty - (jne3 + 2)
+    code[jmp_free + 1] = free - (jmp_free + 2)
     return bytes(code)
 
 
@@ -331,7 +341,8 @@ def _b_next_stage() -> bytes:
     code[jne1 + 1] = ret - (jne1 + 2)
     code[jne2 + 1] = ret - (jne2 + 2)
     return bytes(code)
-QUALIFY_ACTION = 5                # zona 1 classifica para a fase seguinte
+QUALIFY_ZONE = 2                  # zona 2 da fase de liga classifica para a fase seguinte
+QUALIFIED = 8                     # quantos vão para a fase de grupos
 
 
 def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
@@ -342,13 +353,14 @@ def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
     disp.jmp(OLD_C_COPY)
 
     qual = Asm(C_QUALIFY)
+    qual.raw(b"\xC6\x46\x12" + bytes([QUALIFIED]))   # mov byte ptr [esi+0x12], 8 (zona 2)
     qual.raw(b"\x83\xEC\x10")
     qual.raw(b"\xC7\x04\x24" + u32(FATE_VTABLES[0]))
     qual.raw(b"\xC7\x44\x24\x04" + u32(FATE_VTABLES[1]))
     qual.raw(b"\xC7\x44\x24\x08" + u32(GROUP_STAGE_NAME))
     qual.raw(b"\xC7\x44\x24\x0C" + u32(-1))
     qual.raw(b"\x8B\xC4\x50")
-    qual.push(QUALIFY_ACTION).mov_ecx_esi().call(STAGE_ACTION)
+    qual.push(QUALIFY_ZONE).mov_ecx_esi().call(STAGE_ACTION)
     qual.raw(b"\x83\xC4\x10")
     qual.raw(b"\x8D\x4C\x24\x10").push(0x640).jmp(NEW_BUILDER + 0x11F)
 

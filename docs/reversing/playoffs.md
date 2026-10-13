@@ -136,3 +136,17 @@ Correção:
 - Série D: a antiga C já tinha o método 72, mas os jogos dos grupos foram até
   1/8 com o mata-mata marcado para 26/7. Datas com mais folga: grupos até 9/8,
   mata-mata 16/8, fase final 16/9 a 28/10.
+
+## Teste 4: crash em 21/08/2006
+
+Dump: acesso a endereço nulo em `0x00B07E4A`, comparador do `qsort`
+(`0x00D7E7C0`) chamado por `0x00B0D8CC` para ordenar a tabela (linhas de
+0x4C bytes): uma linha sem time. Suspeita: a fase de grupos da nova C foi
+criada com a lista de classificados vazia. A 1ª fase marcava os 8 com zona 1
++ ação 5 (padrão de fase de grupos); numa fase de liga o coletor
+(`0x00B18D50`) usa zona 2 + ação 2 (Championship, Série B italiana).
+
+Correção: nova C com zona 1 = 0 e zona 2 = 8 (ação 2, código 0x49); o método
+72 confere se vieram exatamente 8 times e, se não vierem, fecha a fase com
+uma fase vazia (como a Série B italiana faz), em vez de criar grupos com
+vagas vazias.
