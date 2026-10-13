@@ -383,6 +383,9 @@ def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
     # a de rebaixamento sai (quem cai sai da 1ª fase).
     _replace(code, 0x207, b"\x6a\xff", b"\xEB\x0E")
     _replace(code, 0x21C, b"\xc7\x44", b"\xEB\x30")    # sem ação 5: zona 1 desta fase = sobe
+    # Tipo da zona 1 (+0x0C, lido em 0x00B17836): 4 marca "Q" (classificado,
+    # marca 5), 2 marca "P" (acesso, marca 1). Só a marca 1 entra no acesso.
+    _replace(code, 0x1EC, bytes.fromhex("66c7460c0400"), bytes.fromhex("66c7460c0200"))
     for at, old, new in (
         (0x253, 5, 8), (0x25C, 0x19, 6),      # início: 6/9
         (0x290, 8, 10), (0x292, 0x14, 1),     # fim: 1/11

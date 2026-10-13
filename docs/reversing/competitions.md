@@ -162,6 +162,12 @@ Teste de 2006 → 2007 antes da correção: A↔B andou (4 e 4); B↔C, C↔D n�
 andaram, porque a nova C sobe pela fase de grupos e a D pela fase final.
 Correção em `src/fm06patch/exe_cave.py` (seção "Acesso e rebaixamento").
 
+Teste 2 (com a correção): C↔D andou (6 sobem, 2 caem, C com 24); B↔C ainda
+não. A zona 1 da fase é marcada por `0x00B16FE0` conforme `fase+0x0C`: bit 2
+→ marca 1 ("P", acesso), bit 4 → marca 5 ("Q", classificado), bit 1 → o 1º
+é campeão. Os grupos da nova C vinham da antiga C com `+0x0C = 4` ("Q") e o
+acesso só conta a marca 1. Agora `+0x0C = 2`.
+
 ## Patches (`scripts/patch_exe.py`)
 
 Os patches são aplicados numa cópia (`fm_teste.exe`), conferindo o hash do
