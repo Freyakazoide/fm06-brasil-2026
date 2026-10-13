@@ -94,11 +94,11 @@ Validado no jogo com `fm_brasil.exe` (New Game com o Brasil).
 | Série B: 1º e 2º sobem; playoffs 3×6 e 4×5, empate passa a melhor campanha | ✅ playoff criado e jogado (teste 5); falta confirmar o desempate na tela |
 | Série C: 20 clubes, 4 sobem, 2 caem | ✅ validado (Taça de Prata) |
 | Virada de temporada (2006 → 2007) | ✅ as quatro séries recomeçam em 2007 |
-| Acesso e rebaixamento na virada | 🟡 teste 7: A↔B e C↔D ✅ (C com 24 em 2007); B↔C não andou porque os grupos da C marcavam "Q" e não "P". Corrigido, a testar |
+| Acesso e rebaixamento na virada | ✅ teste 8 (2006 → 2007): A↔B 4 e 4 (2 direto + 2 do playoff), B↔C 4 e 4 (2 primeiros de cada grupo da C), C↔D 2 e 6 |
 | Série C 1ª fase: 05/04–23/08, turno único, 8 avançam, 2 caem | ✅ |
 | Série C 2ª fase: 2 grupos de 4, ida e volta, 06/09–01/11 (CBF: até 25/10), 2 primeiros de cada grupo sobem | ✅ criada (teste 5); grupos sorteados pelo jogo (ainda não 1-4-5-8 / 2-3-6-7) |
 | Série C: final entre os campeões dos grupos | ❌ ainda não; o título fica sem final |
-| Série C: 24 clubes em 2027, 28 em 2028 | 🟡 24 em 2007 ✅; 28 a testar: cresce 4 por temporada até 28 (sobem 6 da D, caem 2); com 28 caem 6. A D completa as vagas com clubes de baixo e fica em 96 |
+| Série C: 24 clubes em 2027, 28 em 2028 | 🟡 24 em 2007 ✅ (teste 8); 28 a testar: cresce 4 por temporada até 28 (sobem 6 da D, caem 2); com 28 caem 6. A D completa as vagas com clubes de baixo e fica em 96 |
 | Série D: 96 clubes, 05/04–28/10 (CBF: até 13/09) | 🟡 as 3 fases são criadas, mas a 10ª rodada dos grupos caiu em 20/09, depois do mata-mata: calendário a ajustar |
 | Série D: 6 acessos | 🟡 a testar: mata-mata de 32 e de 16; os 8 restantes jogam fase final em turno único e os 6 primeiros sobem |
 | Vagas na Libertadores e Sul-Americana | ❌ não mapeado |

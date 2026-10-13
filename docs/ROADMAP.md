@@ -74,8 +74,11 @@ Meta do **primeiro teste de viabilidade**: um New Game com competições, clubes
 jogadores de 2026, jogado por uma temporada inteira, com a virada para a
 seguinte funcionando.
 
-1. **Fechar as classificações.** Calendário da Série D (a 10ª rodada dos
-   grupos caiu depois do mata-mata); conferir no jogo quem subiu e caiu em 2007.
+1. ~~**Fechar as classificações.**~~ ✅ Acesso e rebaixamento entre as quatro
+   séries validados na virada 2006 → 2007 (Série C com 24).
+1b. **Calendário completo:** estaduais (e a vaga deles na Série D), Séries A–D,
+   Copa do Brasil, Libertadores e Sul-Americana sem conflito; virada da
+   temporada em 01/01; 10ª rodada dos grupos da D depois do mata-mata.
 2. **Investigar o ano de início 2026.** Antes de criar jogadores em massa.
    Os dados dos jogadores ficam com as datas reais de 2026; o injetor aplica
    `year_shift` = ano do motor − 2026 (hoje −21, com 2026 de verdade vira 0).
