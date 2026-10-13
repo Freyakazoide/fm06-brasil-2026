@@ -66,19 +66,31 @@ Por onde cada alteração é feita:
 
 | Item | Situação | Caminho | Observação |
 |---|---|---|---|
-| Ano de início 2026 | ❌ | banco / executável | |
+| Ano de início 2026 | ❌ | banco / executável | hoje o jogo começa em 2005/06; as idades ficam certas com o `year_shift` do injetor. Investigar de onde vem a data inicial |
 
 ## Ordem sugerida
 
-1. **Investigar as regras de competição no `server_db`.** É o maior risco: decide
-   se a Série D e o formato de 2026 são possíveis. Melhor descobrir cedo.
-2. **Fechar o jogador no injetor:** nacionalidade por UID da nação,
-   contrato completo, número da camisa, seleção, retirar as sobras de 2005 e
-   atributos ocultos na planilha. Tudo já está mapeado; é implementação.
-3. **Histórico de carreira:** escritor para `pl_hist_*.dat`, que seria a
-   primeira escrita de verdade no banco.
-4. **Ano de início 2026.**
-5. **Jogadores novos sem hospedeiro**, só se os hospedeiros não bastarem.
+Meta do **primeiro teste de viabilidade**: um New Game com competições, clubes e
+jogadores de 2026, jogado por uma temporada inteira, com a virada para a
+seguinte funcionando.
+
+1. **Fechar as classificações.** Calendário da Série D (a 10ª rodada dos
+   grupos caiu depois do mata-mata); conferir no jogo quem subiu e caiu em 2007.
+2. **Investigar o ano de início 2026.** Antes de criar jogadores em massa.
+   Os dados dos jogadores ficam com as datas reais de 2026; o injetor aplica
+   `year_shift` = ano do motor − 2026 (hoje −21, com 2026 de verdade vira 0).
+   Se não der, o jogo continua em 2005/06 com idades certas e só o ano
+   exibido fica errado.
+3. **Regras restantes:** grupos da Série C por posição e final; Copa do Brasil
+   com a nova C; vagas continentais; crescimento da C (24 e 28 clubes),
+   contado por temporada desde o início e não por ano fixo; reposição da
+   Série D.
+4. **Criar os clubes que hoje são substitutos.**
+5. **Jogadores de 2026:** fechar o injetor (nacionalidade por UID, contrato,
+   camisa, seleção, sobras de 2005, atributos ocultos) e montar os elencos.
+6. **Teste de viabilidade:** temporada 2026 completa e virada.
+7. Depois: regens (nomes, critérios, Preferred Moves), base e instalações,
+   entrevistas.
 
 Legenda: ✅ feito e testado no jogo · 🟡 mapeado ou com comando, falta
 implementar ou testar · ⚠️ funciona com limitação · ❌ não mapeado.
