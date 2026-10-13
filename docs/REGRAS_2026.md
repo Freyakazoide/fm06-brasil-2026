@@ -97,7 +97,7 @@ Validado no jogo com `fm_brasil.exe` (New Game com o Brasil).
 | Série C 2ª fase: 2 grupos de 4, ida e volta, 06/09–01/11 (CBF: até 25/10), 2 primeiros de cada grupo sobem | 🟡 a testar; grupos sorteados pelo jogo (ainda não 1-4-5-8 / 2-3-6-7) |
 | Série C: final entre os campeões dos grupos | ❌ ainda não; o título fica sem final |
 | Série C: 24 clubes em 2027, 28 em 2028 | ❌ |
-| Série D: 96 clubes, 05/04–04/10 (CBF: até 13/09) | 🟡 16 grupos de 6 até 19/07, mata-mata de 32 e 16, fase final 26/08–04/10; mata-mata não foi gerado no teste |
+| Série D: 96 clubes, 05/04–28/10 (CBF: até 13/09) | 🟡 16 grupos de 6 até 09/08, mata-mata de 32 e 16 a partir de 16/08, fase final 16/09–28/10 |
 | Série D: 6 acessos | 🟡 a testar: mata-mata de 32 e de 16; os 8 restantes jogam fase final em turno único e os 6 primeiros sobem |
 | Vagas na Libertadores e Sul-Americana | ❌ não mapeado |
 | Copa do Brasil e Supercopa | ❌ a Copa do Brasil (`0x00BB9550`) ainda puxa clubes só das antigas A, B e C |
@@ -112,3 +112,9 @@ competição nunca termina e a temporada do Brasil não vira (em fevereiro de
 2007 não havia calendário, acesso nem estaduais). Regra: data de fim com
 folga e pelo menos uma semana até a fase seguinte. Por isso C e D terminam
 algumas semanas depois das datas da CBF.
+
+## Lição dos testes: a fase seguinte precisa ser criada (método 72)
+
+Mesmo com as datas certas, a fase 2 não existia: no FM06 cada liga tem um
+método que, quando uma fase termina, cria a seguinte. A Série B e a nova C
+usavam o padrão, que não faz nada. Ver `docs/reversing/playoffs.md`.

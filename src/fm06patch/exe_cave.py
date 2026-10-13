@@ -164,6 +164,7 @@ def _new_ctor(data: bytes) -> bytes:
 def _new_vtable(data: bytes) -> bytes:
     raw = bytearray(data[off(B_VTABLE) - 4:off(B_VTABLE) + 4 * VTABLE_SLOTS])
     struct.pack_into("<I", raw, 4 + 4 * STAGE_SLOT, C_DISPATCH)
+    struct.pack_into("<I", raw, 4 + 4 * NEXT_STAGE_SLOT, C_NEXT)
     return bytes(raw)
 
 
@@ -258,6 +259,78 @@ OLD_C_BUILDER_CALLS = (
     0x938, 0x94D, 0x964, 0x98B, 0x9A2,
 )
 GROUP_STAGE_NAME = 0x49           # nome usado pela fase de grupos (0x00B4BE40)
+C_NEXT = SECTION_VA + 0xB00
+B_NEXT = SECTION_VA + 0xC00
+
+# Método 72 da competição: chamado pelo motor (0x00AC5BD9) quando uma fase
+# termina; é ele que cria a fase seguinte. A e B usam o padrão (0x007560A0,
+# não faz nada); a antiga C tem o próprio (0x00BBA900). Sem ele a fase 2 nunca
+# é criada, a competição nunca termina e a temporada do país não vira.
+NEXT_STAGE_SLOT = 72
+DEFAULT_NEXT_STAGE = 0x007560A0
+LEAGUE_STAGE_GET = 0x00AC7320     # fase de liga pelo índice (this = competição)
+LEAGUE_QUALIFIED = 0x00B18D50     # (NEXT_STAGE_INFO*, lista*, -1): classificados da fase
+GROUP_STAGE_NEW = 0x00B5ADC0      # GROUP_STAGE(índice, lista*, 0), objeto de 0x34 bytes
+ADD_STAGE = 0x00AC5150            # competição.acrescenta(fase, 1)
+TEAM_LIST_VTABLE = 0x00EB4ECC
+TEAM_LIST_FREE = 0x00558550       # destrutor da lista (this = lista)
+ITA_PLAYOFF_NEW = 0x00C0A810      # Série B italiana: playoff com os 4 de código 0x75
+STAGE_ALLOC = 0x00C4E070          # alocador usado na criação das fases
+
+
+def _c_next_stage() -> bytes:
+    """Método 72 da nova C: terminou a fase 0 -> cria a fase de grupos com os
+    classificados (código GROUP_STAGE_NAME) da fase de liga."""
+    a = Asm(C_NEXT)
+    a.raw(b"\x8B\x44\x24\x04")                  # mov eax, [esp+4]   (fase que terminou)
+    a.raw(b"\x80\x78\x08\x00")                  # cmp byte [eax+8], 0
+    jne1 = len(a.code); a.raw(b"\x0F\x85" + u32(0))   # jne fim (salto longo)
+    a.raw(b"\x80\xB9\x98\x00\x00\x00\x01")      # cmp byte [ecx+0x98], 1 (só a fase 0 criada)
+    jne2 = len(a.code); a.raw(b"\x0F\x85" + u32(0))
+    a.raw(b"\x56\x8B\xF1")                      # push esi ; mov esi, ecx
+    a.raw(b"\x83\xEC\x20")                      # sub esp, 0x20: lista em [esp], NEXT_STAGE_INFO em [esp+0x10]
+    a.raw(b"\xC7\x04\x24" + u32(TEAM_LIST_VTABLE))
+    for off_, val in ((4, 0), (8, 0), (0xC, 0), (0x10, FATE_VTABLES[0]), (0x14, FATE_VTABLES[1]),
+                      (0x18, GROUP_STAGE_NAME), (0x1C, -1)):
+        a.raw(b"\xC7\x44\x24" + bytes([off_]) + u32(val))
+    a.push(0).push(-1).push(0).raw(b"\x8B\xCE").call(LEAGUE_STAGE_GET)
+    a.raw(b"\x8B\xC8")                          # mov ecx, eax (fase de liga)
+    a.push(-1)
+    a.raw(b"\x8D\x54\x24\x04\x52")              # lea edx, [esp+4] (lista) ; push edx
+    a.raw(b"\x8D\x54\x24\x18\x52")              # lea edx, [esp+0x18] (NEXT_STAGE_INFO) ; push edx
+    a.call(LEAGUE_QUALIFIED)
+    a.push(0x34).call(STAGE_ALLOC).raw(b"\x83\xC4\x04")
+    a.raw(b"\x85\xC0")                          # test eax, eax
+    je1 = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x8B\xC8")                          # mov ecx, eax
+    a.push(0).raw(b"\x8D\x54\x24\x04\x52").push(1).call(GROUP_STAGE_NEW)   # (1, lista, 0)
+    a.push(1).raw(b"\x50\x8B\xCE").call(ADD_STAGE)                         # acrescenta(fase, 1)
+    free = len(a.code)
+    a.raw(b"\x8D\x0C\x24").call(TEAM_LIST_FREE)  # lea ecx, [esp] ; libera a lista
+    a.raw(b"\x83\xC4\x20\x5E")                  # add esp, 0x20 ; pop esi
+    ret = len(a.code)
+    a.raw(b"\xC2\x04\x00")                      # ret 4
+    code = bytearray(a.code)
+    struct.pack_into("<i", code, jne1 + 2, ret - (jne1 + 6))
+    struct.pack_into("<i", code, jne2 + 2, ret - (jne2 + 6))
+    code[je1 + 1] = free - (je1 + 2)
+    return bytes(code)
+
+
+def _b_next_stage() -> bytes:
+    """Método 72 da Série B: terminou a fase 0 -> playoff (função da Série B italiana)."""
+    a = Asm(B_NEXT)
+    a.raw(b"\x8B\x44\x24\x04\x80\x78\x08\x00")    # mov eax,[esp+4] ; cmp byte [eax+8], 0
+    jne1 = len(a.code); a.raw(b"\x75\x00")
+    a.raw(b"\x80\xB9\x98\x00\x00\x00\x01")       # cmp byte [ecx+0x98], 1
+    jne2 = len(a.code); a.raw(b"\x75\x00")
+    a.call(ITA_PLAYOFF_NEW)
+    ret = len(a.code)
+    a.raw(b"\xC2\x04\x00")
+    code = bytearray(a.code)
+    code[jne1 + 1] = ret - (jne1 + 2)
+    code[jne2 + 1] = ret - (jne2 + 2)
+    return bytes(code)
 QUALIFY_ACTION = 5                # zona 1 classifica para a fase seguinte
 
 
@@ -291,7 +364,8 @@ def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
         (0x290, 8, 10), (0x292, 0x14, 1),     # fim: 1/11
     ):
         _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
-    return [(C_DISPATCH, bytes(disp.code)), (C_QUALIFY, bytes(qual.code)), (OLD_C_COPY, bytes(code))]
+    return [(C_DISPATCH, bytes(disp.code)), (C_QUALIFY, bytes(qual.code)), (OLD_C_COPY, bytes(code)),
+            (C_NEXT, _c_next_stage())]
 
 
 def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
@@ -369,7 +443,7 @@ PLAYOFF_COPY = 0x00E30760
 PLAYOFF_STUBS = 0x00E30F50
 STAGE_ACTION = 0x00B0FF00
 FATE_VTABLES = (0x01117604, 0x011175F8)
-PLAYOFF_STAGE_CODE = 0x15
+PLAYOFF_STAGE_CODE = 0x75        # código usado pela Série B italiana (zona 2 -> playoff)
 
 
 def _playoff_copy(data: bytes, date_stub: int) -> bytes:
@@ -435,7 +509,11 @@ def build_playoff_swaps(data: bytes):
         raise ValueError("playoffs não cabem na área livre")
 
     slot = off(B_VTABLE + 4 * STAGE_SLOT)
-    return (
+    next_slot = off(B_VTABLE + 4 * NEXT_STAGE_SLOT)
+    b_next = _b_next_stage()
+    return tuple(section_swaps(data)) + (
+        Swap(sec_off(B_NEXT), bytes(len(b_next)), b_next),
+        Swap(next_slot, u32(DEFAULT_NEXT_STAGE), u32(B_NEXT)),                 # método 72 da Série B
         Swap(TEXT_VSIZE[0], u32(TEXT_VSIZE[1]), u32(TEXT_VSIZE[2]), shared=True),
         Swap(off(PLAYOFF_COPY), bytes(len(copy)), copy),
         Swap(off(PLAYOFF_STUBS), bytes(len(stubs)), stubs),

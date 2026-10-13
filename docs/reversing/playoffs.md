@@ -108,3 +108,31 @@ em turno único (`0x00BC04E0`, `0x00BC054C`) e 6 acessos (`0x00BC0573`).
   `NEXT_STAGE_INFO` (vtable `0x01117604`) com o código da próxima fase em
   `+0x14`.
 - Sondagem na memória: `scripts/probe_stages.py`.
+
+## Causa: ninguém criava a fase seguinte (método 72)
+
+Sondagem no save travado (`probe_stages.py`): A 1/1 fases, B 1/2, C 1/2, D 1/3.
+
+- O motor (`0x00AC5BD9`) percorre as fases criadas e, quando uma termina,
+  chama o **método 72** da competição (vtable `+0x120`), passando a fase.
+- Cada liga implementa o próprio método 72; o padrão (`0x007560A0`) não faz
+  nada. A e B usavam o padrão. A antiga C tem `0x00BBA900`: fase 0 terminou →
+  `0x00BB90D0` (mata-mata com os 32 do código 7); fase 1 → `0x00BB5B60`
+  (fase final com os do código 0xA7).
+- Criar uma fase: lista de times (vtable `0x00EB4ECC`), classificados da fase
+  anterior pelo código (`NEXT_STAGE_INFO`; liga: `0x00B18D50`, grupos:
+  `0x00B577B0`, mata-mata: `0x00B3E6E0`), fase nova (liga `0x00B16BC0`,
+  grupos `0x00B5ADC0`, mata-mata `0x00B44060`) e `0x00AC5150` (acrescenta).
+- Championship: método 72 `0x00C13C80` → `0x00C122F0` (código 0x15). Série B
+  italiana: `0x00C0CB60` → `0x00C0A810` (código 0x75; se não vierem 4 times,
+  acrescenta uma fase vazia).
+
+Correção:
+- Série B: zona de playoff com o código 0x75 e método 72 próprio
+  (`0x015B4C00`) que chama `0x00C0A810`, a criação do playoff italiano (o
+  mesmo conjunto da cópia da montagem italiana).
+- Nova C: método 72 próprio (`0x015B4B00`): fase 0 terminou → classificados
+  com o código 0x49 → `GROUP_STAGE(1, lista, 0)` → acrescenta.
+- Série D: a antiga C já tinha o método 72, mas os jogos dos grupos foram até
+  1/8 com o mata-mata marcado para 26/7. Datas com mais folga: grupos até 9/8,
+  mata-mata 16/8, fase final 16/9 a 28/10.
