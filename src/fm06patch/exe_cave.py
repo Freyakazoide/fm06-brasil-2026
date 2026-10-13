@@ -18,8 +18,11 @@ O que o patch faz no fm.exe (endereços virtuais; arquivo = endereço - 0x400000
   - três desvios: sistema de ligas (`bra_get_settings`), criação das
     competições (`bra_setup_comps`) e mínimo de clubes por divisão
     (`bra_get_minimum_division_teams`).
-- Antiga C: nível 2 -> 3 no construtor; acesso passa a ir para a nova C.
+- Antiga C: nível 2 -> 3 no construtor; acesso passa a sair da fase final e
+  ir para a nova C.
 - Série B: rebaixamento passa a ir para a nova C.
+- Virada da temporada: nova C e D juntam acesso e rebaixamento de todas as
+  fases e informam a variação de tamanho (ver "Acesso e rebaixamento").
 - Cabeçalho: tamanho virtual de `.text` e `.rdata` cobre as áreas novas.
 
 Os times entram na nova C pelo banco: índice 376 no registro do time
@@ -166,6 +169,8 @@ def _new_vtable(data: bytes) -> bytes:
     raw = bytearray(data[off(B_VTABLE) - 4:off(B_VTABLE) + 4 * VTABLE_SLOTS])
     struct.pack_into("<I", raw, 4 + 4 * STAGE_SLOT, C_DISPATCH)
     struct.pack_into("<I", raw, 4 + 4 * NEXT_STAGE_SLOT, C_NEXT)
+    struct.pack_into("<I", raw, 4 + MOVES_OFFSET, MOVES_COLLECT)
+    struct.pack_into("<I", raw, 4 + SIZE_CHANGE_OFFSET, C_SIZE_CHANGE)
     return bytes(raw)
 
 
@@ -189,10 +194,11 @@ def _hooks() -> tuple[bytes, dict[str, int]]:
     asm.raw(b"\x8B\x16\x50\x8B\xCE\xFF\x12")               # mov edx,[esi]; push eax; mov ecx,esi; call [edx]
     asm.push(0x190).jmp(0x00BBA310)
 
-    # bra_get_minimum_division_teams: nova C com 20.
+    # bra_get_minimum_division_teams: nova C com pelo menos 20 (cresce para
+    # 24 e 28, sem máximo).
     entry["minimum"] = asm.here
     asm.push(0).push(-2).push(20).push(0).push(SERIE_A_ID).mov_ecx_esi().call(MIN_TEAMS)
-    asm.push(0).push(-2).push(20).push(0).push(NEW_C_ID).mov_ecx_esi().call(MIN_TEAMS)
+    asm.push(0).push(-1).push(20).push(0).push(NEW_C_ID).mov_ecx_esi().call(MIN_TEAMS)
     asm.jmp(0x00BB2859)
     return bytes(asm.code), entry
 
@@ -204,7 +210,7 @@ def _jmp(at: int, target: int, length: int) -> bytes:
 # O jogo conta os times de cada divisão (TEAM+0x54, em 0x00AA7B4D) e só deixa
 # o país jogável se a contagem estiver entre o mínimo e o máximo registrados
 # em bra_get_minimum_division_teams (0x00AA7BF0; máximo -2 = igual ao mínimo,
-# -1 = sem máximo). A nova C exige exatamente 20.
+# -1 = sem máximo). A nova C exige pelo menos 20.
 PARTS = ("settings", "comps", "minimum", "moves")
 
 # ---------------------------------------------------------------------------
@@ -354,6 +360,10 @@ def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
 
     qual = Asm(C_QUALIFY)
     qual.raw(b"\xC6\x46\x12" + bytes([QUALIFIED]))   # mov byte ptr [esi+0x12], 8 (zona 2)
+    # Com 28 clubes (tamanho final) caem 6, para a Série D poder subir 6.
+    qual.raw(b"\x80\x7E\x0B" + bytes([C_FINAL_SIZE]))  # cmp byte ptr [esi+0xB], 28 (clubes)
+    qual.raw(b"\x72\x04")                                # jb +4
+    qual.raw(b"\xC6\x46\x14\x06")                      # mov byte ptr [esi+0x14], 6
     qual.raw(b"\x83\xEC\x10")
     qual.raw(b"\xC7\x04\x24" + u32(FATE_VTABLES[0]))
     qual.raw(b"\xC7\x44\x24\x04" + u32(FATE_VTABLES[1]))
@@ -369,7 +379,9 @@ def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
     _replace(code, 0xF9, bytes.fromhex("c6460810"), bytes.fromhex("c6460802"))    # 2 grupos
     _replace(code, 0x19D, bytes.fromhex("c6460b08"), bytes.fromhex("c6460b04"))   # de 4
     _replace(code, 0x1D5, bytes.fromhex("c6461402"), bytes.fromhex("c6461400"))   # ninguém cai aqui
-    _replace(code, 0x1F7, b"\x6a\xff", b"\xEB\x1E")    # regras de acesso/rebaixamento já estão na 1ª fase
+    # Regra de acesso para a Série B fica (os 2 primeiros de cada grupo sobem);
+    # a de rebaixamento sai (quem cai sai da 1ª fase).
+    _replace(code, 0x207, b"\x6a\xff", b"\xEB\x0E")
     _replace(code, 0x21C, b"\xc7\x44", b"\xEB\x30")    # sem ação 5: zona 1 desta fase = sobe
     for at, old, new in (
         (0x253, 5, 8), (0x25C, 0x19, 6),      # início: 6/9
@@ -377,7 +389,114 @@ def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
     ):
         _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
     return [(C_DISPATCH, bytes(disp.code)), (C_QUALIFY, bytes(qual.code)), (OLD_C_COPY, bytes(code)),
-            (C_NEXT, _c_next_stage())]
+            (C_NEXT, _c_next_stage())] + _moves_code()
+
+
+# ---------------------------------------------------------------------------
+# Acesso e rebaixamento na virada da temporada
+#
+# 0x00AFAF30 junta os movimentos de todas as competições do país (método
+# 0x228 de cada uma) e processa um par de divisões por vez (de cima, de baixo).
+# O par só anda se `sobem == caem + tamanho_de_cima.método_0x140()`; se não
+# bater, ninguém do par se mexe. O método 0x140 é a variação de tamanho da
+# divisão de cima na temporada seguinte (padrão 0x0084E950 = 0).
+#
+# O método 0x228 padrão (0x00AC58B0) só olha a PRIMEIRA fase de liga ou de
+# grupos. Na nova C quem sobe sai da fase de grupos (2ª fase) e na D sai da
+# fase final (3ª fase): o jogo não via ninguém subindo, os pares B/C e C/D não
+# batiam e nada andava. MOVES_COLLECT olha todas as fases.
+#
+# Tamanhos: a nova C cresce 4 por temporada até 28 (20 - 4 - 2 + 4 + 6 = 24;
+# 24 -> 28) e depois rebaixa 6. A D fica em 96: perde 6 para a C, ganha os
+# que caem da C e completa com clubes de baixo (estaduais) a diferença.
+# ---------------------------------------------------------------------------
+MOVES_COLLECT = SECTION_VA + 0xD00
+C_SIZE_CHANGE = SECTION_VA + 0xD80
+D_SIZE_CHANGE = SECTION_VA + 0xDC0
+D_FINAL_RULE = SECTION_VA + 0xE00
+SIZE_CACHE = SECTION_VA + 0xF00   # variação da C calculada na virada (lida pela D)
+MOVES_OFFSET = 0x228
+SIZE_CHANGE_OFFSET = 0x140
+OLD_C_VTABLE = 0x0113B86C
+DEFAULT_MOVES = 0x00AC58B0
+DEFAULT_SIZE_CHANGE = 0x0084E950
+LEAGUE_MOVES = 0x00B0A600         # fase de liga: (lista) -> quantidade
+GROUP_MOVES = 0x00B55F50          # fase de grupos: idem para cada grupo
+PROMOTION_RULE = 0x00B0FE50       # (destino, x, -1)
+C_FINAL_SIZE = 28
+C_GROWTH = 4
+D_PROMOTED = 6
+D_FINAL_HOOK = 0x00BC0652         # fase final da D, antes de registrar a fase
+D_FINAL_HOOK_OLD = bytes.fromhex("8d94241401000052")   # lea edx, [esp+0x114] ; push edx
+
+
+def _moves_collect() -> bytes:
+    """Método 0x228: movimentos de todas as fases de liga e de grupos."""
+    a = Asm(MOVES_COLLECT)
+    a.raw(b"\x53\x56\x57\x55\x8B\xE9\x33\xFF\x33\xDB")  # push ebx/esi/edi/ebp ; ebp = comp ; edi = bl = 0
+    loop = len(a.code)
+    a.raw(b"\x3A\x9D\x98\x00\x00\x00")                # cmp bl, [ebp+0x98] (fases criadas)
+    jge_done = len(a.code); a.raw(b"\x7D\x00")
+    a.raw(b"\x8D\x8D\x90\x00\x00\x00\x8B\x01\x53\xFF\x50\x28")  # fase = fases.get(bl)
+    a.raw(b"\x85\xC0")
+    je_next1 = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x8B\xF0\x8B\x16\x8B\xCE\xFF\x52\x58\x84\xC0")   # é liga?
+    jne_league = len(a.code); a.raw(b"\x75\x00")
+    a.raw(b"\x8B\x16\x8B\xCE\xFF\x52\x5C\x84\xC0")            # é grupos?
+    je_next2 = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\xFF\x74\x24\x14\x8B\xCE").call(GROUP_MOVES)
+    jmp_add = len(a.code); a.raw(b"\xEB\x00")
+    league = len(a.code)
+    a.raw(b"\xFF\x74\x24\x14\x8B\xCE").call(LEAGUE_MOVES)
+    add = len(a.code)
+    a.raw(b"\x0F\xBF\xC0\x03\xF8")                      # movsx eax, ax ; add edi, eax
+    nxt = len(a.code)
+    a.raw(b"\xFE\xC3")                                     # inc bl
+    jmp_loop = len(a.code); a.raw(b"\xEB\x00")
+    done = len(a.code)
+    a.raw(b"\x8B\xC7\x5D\x5F\x5E\x5B\xC2\x04\x00")
+    code = bytearray(a.code)
+    for at, target in ((jge_done, done), (je_next1, nxt), (jne_league, league), (je_next2, nxt),
+                       (jmp_add, add), (jmp_loop, loop)):
+        rel = target - (at + 2)
+        if not -128 <= rel <= 127:
+            raise ValueError("salto curto fora do alcance")
+        code[at + 1] = rel & 0xFF
+    return bytes(code)
+
+
+def _c_size_change() -> bytes:
+    """Método 0x140 da nova C: +4 enquanto tiver menos de 28 clubes."""
+    a = Asm(C_SIZE_CHANGE)
+    a.push(0).push(-1).push(0).call(LEAGUE_STAGE_GET)     # 1ª fase de liga
+    a.raw(b"\xB1" + bytes([C_GROWTH]))                    # mov cl, 4
+    a.raw(b"\x85\xC0\x74\x0B")                           # test eax, eax ; je guarda
+    a.raw(b"\x8B\x40\x24")                                # mov eax, [eax+0x24]
+    a.raw(b"\x80\x78\x0B" + bytes([C_FINAL_SIZE]))        # cmp byte [eax+0xB], 28
+    a.raw(b"\x72\x02\x32\xC9")                           # jb guarda ; xor cl, cl
+    a.raw(b"\x88\x0D" + u32(SIZE_CACHE))                   # guarda: mov [SIZE_CACHE], cl
+    a.raw(b"\x8A\xC1\xC3")                                # mov al, cl ; ret
+    return bytes(a.code)
+
+
+def _d_size_change() -> bytes:
+    """Método 0x140 da D: completa com clubes de baixo o que a C cresceu."""
+    return b"\xA0" + u32(SIZE_CACHE) + b"\xC3"            # mov al, [SIZE_CACHE] ; ret
+
+
+def _d_final_rule() -> bytes:
+    """Fase final da D: regra de acesso para a nova C (os 6 primeiros sobem)."""
+    a = Asm(D_FINAL_RULE)
+    a.push(-1).push(D_PROMOTED).push(NEW_C_ID).mov_ecx_esi().call(PROMOTION_RULE)
+    a.raw(D_FINAL_HOOK_OLD)
+    a.jmp(D_FINAL_HOOK + len(D_FINAL_HOOK_OLD))
+    return bytes(a.code)
+
+
+def _moves_code() -> list[tuple[int, bytes]]:
+    return [(MOVES_COLLECT, _moves_collect()), (C_SIZE_CHANGE, _c_size_change()),
+            (D_SIZE_CHANGE, _d_size_change()), (D_FINAL_RULE, _d_final_rule()),
+            (SIZE_CACHE, bytes([C_GROWTH]))]
 
 
 def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
@@ -422,8 +541,12 @@ def build_swaps(data: bytes, parts: tuple[str, ...] = PARTS):
         swaps.append(Swap(off(0x00BB2845), min_hook, _jmp(0x00BB2845, entry["minimum"], len(min_hook))))
     if "moves" in parts:
         swaps += [
-            Swap(off(0x00BBFEFB), b"\x68" + u32(SERIE_B_ID), b"\x68" + u32(NEW_C_ID)),    # antiga C sobe p/ nova C
             Swap(off(0x00BBA7AA), b"\x68" + u32(OLD_C_ID), b"\x68" + u32(NEW_C_ID)),      # Série B cai p/ nova C
+            # D: quem sobe é a fase final, não os grupos (que só classificam)
+            Swap(off(0x00BBFEF7), b"\x6a\xff", b"\xEB\x0E"),                             # grupos sem regra de acesso
+            Swap(off(D_FINAL_HOOK), D_FINAL_HOOK_OLD, _jmp(D_FINAL_HOOK, D_FINAL_RULE, len(D_FINAL_HOOK_OLD))),
+            Swap(off(OLD_C_VTABLE + MOVES_OFFSET), u32(DEFAULT_MOVES), u32(MOVES_COLLECT)),
+            Swap(off(OLD_C_VTABLE + SIZE_CHANGE_OFFSET), u32(DEFAULT_SIZE_CHANGE), u32(D_SIZE_CHANGE)),
         ]
     return tuple(swaps)
 

@@ -141,6 +141,27 @@ Rodada seguinte do Ghidra: `tools/ghidra/export_list.txt`.
    (`FUN_00b0fe50`/`FUN_00b0feb0`, tipo 1 = acesso, 2 = rebaixamento) e move
    os clubes marcados com 1 ou 4 para a competição de destino da regra.
 
+### Virada da temporada: quem de fato muda de divisão
+
+- `0x00AFAF30` chama o método `0x228` de cada competição do país, que devolve
+  uma lista de movimentos `{time, competição de origem, destino, sobe?}`.
+- O método `0x228` padrão (`0x00AC58B0`) só olha a **primeira** fase de liga
+  (`0x00B0A600`) ou de grupos (`0x00B55F50`, que chama `0x00B0A600` em cada
+  grupo). Regras e marcas de acesso em fases posteriores são ignoradas.
+- Os movimentos são processados por par de divisões (de cima, de baixo). O par
+  só anda se `sobem == caem + de_cima.método_0x140()`; se não bater, as duas
+  listas são apagadas e **ninguém** do par muda. O método `0x140` é a variação
+  de tamanho da divisão de cima na temporada seguinte (padrão `0x0084E950`
+  devolve 0; outros países usam o ano, por exemplo `0x00BA4B60`: −4 em 2005).
+- Se não há ninguém subindo e a divisão de baixo não é nacional (estaduais),
+  o jogo completa a divisão de cima com `caem + método_0x140()` clubes de baixo.
+- Uma regra de rebaixamento sem nenhum clube marcado gera um movimento com
+  time nulo: é o que cria o par para esse preenchimento.
+
+Teste de 2006 → 2007 antes da correção: A↔B andou (4 e 4); B↔C, C↔D não
+andaram, porque a nova C sobe pela fase de grupos e a D pela fase final.
+Correção em `src/fm06patch/exe_cave.py` (seção "Acesso e rebaixamento").
+
 ## Patches (`scripts/patch_exe.py`)
 
 Os patches são aplicados numa cópia (`fm_teste.exe`), conferindo o hash do
