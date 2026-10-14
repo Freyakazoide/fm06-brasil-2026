@@ -150,6 +150,12 @@ PATCHES = {
             ),
         ),
         Patch(
+            "virada_1_janeiro",
+            "Temporada do Brasil vira em 1º/1 (original: 2/1). bra_get_settings chama "
+            "0x00ACFFF0(dia, mês) em 0x00BB272F.",
+            (_imm8(0x7B272F, b"\x6A", 2, 1),),
+        ),
+        Patch(
             "serie_d_96",
             "Série D (antiga C, 0x00BBFD00) com 96 clubes: 16 grupos de 6, avançam 2 por grupo; "
             "mata-mata de 32 e de 16; os 8 restantes jogam a fase final em turno único e os 6 primeiros "

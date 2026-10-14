@@ -23,9 +23,22 @@ funções do módulo que ela chama, procurando chamadas com `2000`/`2001`.
 
 ## Virada da temporada
 
-`bra_get_settings` (`0x00BB2710`) chama `0x00ACFFF0(2, 0)`: a temporada do
-Brasil vira em **2 de janeiro**. Trocar para 1º de janeiro é um byte
+`bra_get_settings` (`0x00BB2710`) chama `0x00ACFFF0(dia, mês)`: a temporada
+do Brasil vira em **2 de janeiro** (a Alemanha, para comparar, em 20 de
+junho: `0x00ACFFF0(20, 5)`). Patch `virada_1_janeiro`: 1º de janeiro
 (`0x00BB272F`: `6A 02` → `6A 01`).
+
+## Como uma liga distribui as rodadas
+
+A montagem da fase registra "janelas" de datas com `0x00B0EE30`, cada uma
+com início (`0x00B08360`), fim (`0x00B08470`) e dias/horários dos jogos
+(`0x00B085F0`, `0x00B08D90`). A Série A original registra duas: 6/8–10/12
+(com o campo `+0x20` = 26) e 30/4–10/12 (com o número de turnos,
+`0x00B08440`). A Bundesliga registra uma só (5/8–19/5 do ano seguinte) e
+mesmo assim tem pausa de inverno, então a pausa vem de outro lugar (a
+investigar: `0x00B0EE30` monta as datas e consulta o país, métodos
+`0x208`). Para a pausa da Copa: primeiro ver no jogo se a Série A já para
+durante a Copa do Mundo de 2006 do FM06.
 
 ## O que o FM06 tem hoje (temporada 2006, sem o mod)
 
