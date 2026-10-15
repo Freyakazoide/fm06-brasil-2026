@@ -56,6 +56,57 @@ número de rodadas). Exemplos da tabela original:
 | AM | 8 | 1 | 1 | 2 | 1 |
 | AP | 8 | 1 | 2 | 0 | 1 |
 
+Tabela original completa (emulação de `0x00BB3330` para os 27 IDs; os
+estados de classe própria também têm entrada):
+
+| UF | Clubes | Grupos | Turnos | Avançam | Caem | 2ª fase (+0x18) | Divisão de baixo |
+|---|---|---|---|---|---|---|---|
+| AC | 6 | 1 | 3 | 0 | 1 | 7 | 0x1A2B4 |
+| AL | 10 | 1 | 2 | 0 | 1 | 7 | 0x1A2B3 |
+| AM | 8 | 1 | 1 | 2 | 1 | 0 | 0x49C80 |
+| AP | 8 | 1 | 2 | 0 | 1 | 7 | 0x4C769 |
+| BA | 13 | 1 | 1 | 8 | 2 | 0 | 0x4B9AF |
+| CE | 10 | 1 | 1 | 2 | 2 | 0 | 0x4C76B |
+| DF | 12 | 2 | 2 | 4 | 2 | 1 | 0x4C76D |
+| ES | 10 | 1 | 2 | 0 | 2 | 7 | 0x4C76F |
+| GO | 12 | 1 | 1 | 8 | 3 | 0 | 0x4B9B1 |
+| MA | 8 | 1 | 1 | 2 | 2 | 0 | 0x4C771 |
+| MG | 12 | 1 | 1 | 4 | 2 | 0 | 0x4B9B3 |
+| MS | 8 | 1 | 2 | 0 | 2 | 7 | 0x4C773 |
+| MT | 14 | 1 | 1 | 0 | 3 | 7 | 0x4C775 |
+| PA | 10 | 1 | 1 | 2 | 2 | 0 | 0x4C785 |
+| PB | 10 | 1 | 2 | 2 | 1 | 0 | 0x4C777 |
+| PE | 10 | 1 | 1 | 2 | 2 | 1 | 0x4B9B5 |
+| PI | 8 | 1 | 2 | 0 | 2 | 7 | 0x4C779 |
+| PR | 16 | 2 | 1 | 4 | 2 | 0 | 0x4B9B7 |
+| RJ | 12 | 2 | 1 | 4 | 1 | 0 | 0x4CD6B |
+| RN | 14 | 1 | 1 | 8 | 2 | 0 | 0x4C77B |
+| RO | 8 | 1 | 2 | 0 | 2 | 7 | 0x4C77D |
+| RR | 8 | 1 | 2 | 0 | 1 | 7 | 0x4C77F |
+| RS | 18 | 2 | 1 | 4 | 2 | 0 | 0x49C7E |
+| SC | 12 | 2 | 2 | 4 | 1 | 0 | 0x4B9B9 |
+| SE | 10 | 1 | 2 | 0 | 2 | 7 | 0x4C781 |
+| SP | 20 | 1 | 1 | 0 | 4 | 7 | 0x4CD6C |
+| TO | 10 | 1 | 2 | 0 | 1 | 7 | 0x4C783 |
+
+2ª fase (+0x18): 0 = mata-mata, 1 = liga final, 7 = nenhuma.
+
+## Mata-mata do genérico
+
+Com +0x18 = 0, a 2ª fase é um mata-mata dos `0x1AB` classificados: 8 →
+quartas (rodada 0x11), semifinal (0x12) e final (0x14); 4 → semifinal e
+final; 2 → final. As datas derivam do fim da fase de liga (`0x00BB3DF0`):
+quartas `0x00BB4200` = fim + 1 semana; semifinal `0x00BB42B0` = quartas + 1
+(ou fim + 1); final `0x00BB4370` = semifinal + 2 (ou fim + 1).
+
+## Patch `estaduais_2026`
+
+`src/fm06patch/estaduais.py`: todos os estados no genérico (14 chamadas de
+construtor trocadas no contêiner), formato de 2026 gravado depois da tabela
+original e fase de liga de 11/1 até 8/2 (8 classificados), 15/2 (4), 1/3 (2)
+ou 8/3 (nenhum), para a final cair em 8/3. Emulação conferida para SP, RJ,
+PR, AC e MS.
+
 Isso cobre direto os modelos M1 e M3 de `docs/REGRAS_2026_ESTADUAIS_E_COPAS.md`
 (liga única + mata-mata de 4 ou 8). Para os demais modelos falta ver o que o
 mata-mata do genérico suporta (6 classificados, 1º e 2º direto à semi) e se

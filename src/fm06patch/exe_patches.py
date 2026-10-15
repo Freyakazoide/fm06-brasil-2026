@@ -57,6 +57,12 @@ def _imm8(offset: int, opcode: bytes, old: int, new: int) -> Swap:
     return Swap(offset, opcode + bytes([old]), opcode + bytes([new]))
 
 
+def _estaduais_swaps(data: bytes):
+    from .estaduais import build
+
+    return build(data)
+
+
 def _calendario_swaps(data: bytes):
     from .calendario import build
 
@@ -174,6 +180,13 @@ PATCHES = {
                 _imm8(0x7BA7E8, b"\x6A", 7, 6),       # início do 1º par (returno): agosto -> julho
                 _imm8(0x7BA7EA, b"\x6A", 5, 15),      #          dia 5 -> 15
             ),
+        ),
+        Patch(
+            "estaduais_2026",
+            "Estaduais de 2026: todos no estadual genérico, com o formato de 2026 por estado "
+            "(clubes, grupos, turnos, classificados, rebaixados), de 11/1 a 8/3. "
+            "Ver src/fm06patch/estaduais.py.",
+            build=_estaduais_swaps,
         ),
         Patch(
             "serie_a_calendario_copa",
