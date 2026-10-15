@@ -113,3 +113,27 @@ Pontos a decidir:
   também reduzir o formato para caber em 11 datas, como a CBF fez?
 - Libertadores e Sul-Americana: mudar agora ou depois, junto com as vagas
   continentais?
+
+## Pausa da Copa do Mundo (Série A)
+
+Testes no jogo (temporada 2006, Copa do FM06 de 07/06 a 09/07):
+
+| Versão | Resultado |
+|---|---|
+| original do mod (12 rodadas espalhadas até 06/08, 26 na janela final) | jogos em 10/06, 24–25/06, 28/06, 15–16/07: o jogo **não** pausa sozinho |
+| `exp_a_copa_1`: janela final de 19 rodadas a partir de 22/07 | jogos em 21/05, 04/06, 11/06, 25/06, 02/07, 16/07: o turno se espalha até a janela final |
+| `exp_a_copa_2`: igual, e a janela da temporada termina em 31/05 | último jogo do turno em 28/05, volta em 23/07: **funciona** |
+
+Conclusão: a janela final recebe as últimas N rodadas (word em `+0x20` do
+modelo de datas) e as demais ficam entre o início e o fim da janela da
+temporada.
+
+Patch `serie_a_calendario_copa` (`src/fm06patch/calendario.py`), no lugar
+de `serie_a_datas_2026`: escolhe as datas pelo ano da temporada
+(competição `+0x9C`, ano % 4 == 2 = ano de Copa: 2006, 2010… no FM06, os
+mesmos de 2026, 2030…):
+
+| | Turno (19 rodadas) | Returno (19 rodadas) |
+|---|---|---|
+| Ano de Copa | 28/01–31/05 | 22/07–02/12 |
+| Outros anos | 28/01–14/06 | 21/06–02/12 |

@@ -31,7 +31,7 @@ from fm06patch.brasil_2026 import SERIES, apply as apply_db, lnc_text, plan, wri
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 
 EXE_PATCHES = [
-    "serie_a_datas_2026",
+    "serie_a_calendario_copa",
     "serie_a_rebaixa_4",
     "serie_b_datas_2026",
     "serie_b_playoffs",
@@ -72,7 +72,7 @@ def main() -> None:
     args = parser.parse_args()
     patches = list(EXE_PATCHES)
     if args.teste_copa:
-        patches[patches.index("serie_a_datas_2026")] = f"exp_a_copa_{args.teste_copa}"
+        patches[patches.index("serie_a_calendario_copa")] = f"exp_a_copa_{args.teste_copa}"
 
     game = game_dir()
     server = game / "data" / "db" / "server_db.dat"

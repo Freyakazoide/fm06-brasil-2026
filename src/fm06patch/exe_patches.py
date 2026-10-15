@@ -57,6 +57,12 @@ def _imm8(offset: int, opcode: bytes, old: int, new: int) -> Swap:
     return Swap(offset, opcode + bytes([old]), opcode + bytes([new]))
 
 
+def _calendario_swaps(data: bytes):
+    from .calendario import build
+
+    return build(data)
+
+
 def _serie_a_copa(window2_end):
     """Série A com pausa da Copa (teste). Janela 1 (0x00BBA531..0x00BBA569):
     as últimas N rodadas (word em +0x20 do modelo de datas); janela 2
@@ -168,6 +174,13 @@ PATCHES = {
                 _imm8(0x7BA7E8, b"\x6A", 7, 6),       # início do 1º par (returno): agosto -> julho
                 _imm8(0x7BA7EA, b"\x6A", 5, 15),      #          dia 5 -> 15
             ),
+        ),
+        Patch(
+            "serie_a_calendario_copa",
+            "Série A de 28/1 a 2/12 com turno e returno de 19 rodadas. Ano de Copa (ano % 4 == 2): "
+            "turno até 31/5, returno a partir de 22/7. Outros anos: turno até 14/6, returno a partir "
+            "de 21/6. Substitui serie_a_datas_2026. Ver src/fm06patch/calendario.py.",
+            build=_calendario_swaps,
         ),
         Patch(
             "exp_a_copa_1",
