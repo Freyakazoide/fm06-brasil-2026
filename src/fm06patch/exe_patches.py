@@ -57,6 +57,12 @@ def _imm8(offset: int, opcode: bytes, old: int, new: int) -> Swap:
     return Swap(offset, opcode + bytes([old]), opcode + bytes([new]))
 
 
+def _copa_swaps(data: bytes):
+    from .copa_do_brasil import build
+
+    return build(data)
+
+
 def _estaduais_swaps(data: bytes):
     from .estaduais import build
 
@@ -179,6 +185,35 @@ PATCHES = {
                 _imm8(0x7BA83B, b"\x6A", 2, 15),      # dia de fim, 2º par
                 _imm8(0x7BA7E8, b"\x6A", 7, 6),       # início do 1º par (returno): agosto -> julho
                 _imm8(0x7BA7EA, b"\x6A", 5, 15),      #          dia 5 -> 15
+            ),
+        ),
+        Patch(
+            "copa_do_brasil_2026",
+            "Copa do Brasil em duas fases: 48 clubes sem a Série A (11/3 e 18/3); depois os 12 "
+            "classificados + os 20 da Série A da 5ª fase à final (22/4, 1/8, 26/8, 1/11, 6/12). "
+            "Ver src/fm06patch/copa_do_brasil.py.",
+            build=_copa_swaps,
+        ),
+        Patch(
+            "copa_do_brasil_datas_2026",
+            "Copa do Brasil (0x00BBAD30, mata-mata de 64 em 6 rodadas) nas datas de 2026, cada rodada "
+            "na fase de 2026 com o mesmo número de clubes: 64 em 18/3 (4ª fase), 32 em 22/4 (5ª), "
+            "16 em 1/8 (oitavas), 8 em 26/8 (quartas), 4 em 1/11 (semifinal), final em 6/12. "
+            "Original: 2/2, 2/3, 30/3, 20/4, 25/5, 15/6.",
+            tuple(
+                swap
+                for va_month, va_day, old_day, old_month, day, month in (
+                    (0xBBAE15, 0xBBAE17, 2, 1, 18, 2),
+                    (0xBBAE9F, 0xBBAEA1, 2, 2, 22, 3),
+                    (0xBBAF16, 0xBBAF18, 30, 2, 1, 7),
+                    (0xBBAF90, 0xBBAF92, 20, 3, 26, 7),
+                    (0xBBAFF9, 0xBBAFFB, 25, 4, 1, 10),
+                    (0xBBB06D, 0xBBB06F, 15, 5, 6, 11),
+                )
+                for swap in (
+                    _imm8(va_month - 0x400000, b"\x6A", old_month, month),
+                    _imm8(va_day - 0x400000, b"\x6A", old_day, day),
+                )
             ),
         ),
         Patch(

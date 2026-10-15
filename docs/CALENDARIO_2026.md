@@ -137,3 +137,28 @@ mesmos de 2026, 2030…):
 |---|---|---|
 | Ano de Copa | 28/01–31/05 | 22/07–02/12 |
 | Outros anos | 28/01–14/06 | 21/06–02/12 |
+
+## Copa do Brasil
+
+FM06 original (`BRA_CUP`, montagem `0x00BBAD30`): mata-mata de 64 em 6
+rodadas (2/2, 2/3, 30/3, 20/4, 25/5, 15/6). Participantes (`0x00BB9430`):
+classificados da temporada anterior (ou lista inicial), clubes dos
+estaduais e, para completar 64, Séries A, B e antiga C (`0x00ACD160`, cdecl
+`(ID, lista, máximo, -1, 1, -1, 1)`).
+
+Patch `copa_do_brasil_2026` (`src/fm06patch/copa_do_brasil.py`), da 3ª fase
+de 2026 em diante:
+
+| Fase no jogo | Rodadas | Clubes | Datas |
+|---|---|---|---|
+| 1 (sem a Série A) | 3ª fase (código 6), 4ª fase (código 7) | 48 → 24 → 12 | 11/3, 18/3 |
+| 2 | 5ª fase, oitavas, quartas, semifinal, final | 12 + 20 da Série A = 32 | 22/4, 1/8, 26/8, 1/11, 6/12 |
+
+- Participantes da fase 1: os mesmos critérios, filtrando os clubes da Série
+  A (`TEAM+0x54`), até 48, completando com Série B, nova C e Série D.
+- Vencedores da rodada 7 da fase 1 → fase seguinte (`0x00B45500(7, 0, {…0xA7…})`).
+- Método 72: com a fase 1 terminada, `0x00AC73D0(0, 0)` + `0x00B3E6E0` juntam
+  os 12; `0x00ACD160(Série A, lista, 20, …)` acrescenta a Série A;
+  `0x00B3EF00` + `0x00B44060(1, …)` criam o mata-mata da fase 2.
+- Ainda como no FM06: ida e volta em todas as rodadas (inclusive as que em
+  2026 são jogo único) e a regra do 2º jogo de cada rodada.
