@@ -13,7 +13,11 @@
 Limites do estadual genérico (pequenas liberdades em relação a 2026):
 - o mata-mata tem 8, 4 ou 2 classificados (sem 1º e 2º direto à semifinal);
 - grupos jogam dentro do grupo (não contra o outro grupo);
-- clubes por estado nunca acima do original (o banco pode não ter mais clubes);
+- clubes por estado nunca acima do original (o banco pode não ter mais clubes)
+  e, por enquanto, também não abaixo nos estados em que o corte tirou os
+  grandes: o jogo pega os N primeiros da lista do estado (teste: SP com 16,
+  RS e PR com 12 ficaram sem os grandes). Os participantes de 2026 entram com
+  os clubes, no banco;
 - rebaixados como no original, para o par estadual/divisão de acesso continuar
   equilibrado na virada (sobe = cai).
 """
@@ -48,21 +52,21 @@ ID = {
 # UF: (clubes, grupos, turnos, classificados ao mata-mata, rebaixados)
 # Modelo de 2026 entre parênteses (docs/REGRAS_2026_ESTADUAIS_E_COPAS.md).
 FORMATO_2026 = {
-    "SP": (16, 2, 1, 8, 4),   # M5: fase de liga de 16, 8 às quartas
+    "SP": (20, 2, 1, 8, 4),   # M5 (16 no real): 2 grupos de 10, 8 às quartas
     "RJ": (12, 2, 1, 8, 1),   # M4: 2 grupos de 6, quartas
     "MG": (12, 2, 1, 4, 2),   # M5: 3 grupos de 4, semifinal
     "ES": (10, 1, 1, 8, 2),   # M3: turno único, 8 às quartas
-    "PR": (12, 2, 1, 8, 2),   # M4
+    "PR": (16, 2, 1, 8, 2),   # M4 (12 no real): 2 grupos de 8
     "SC": (12, 2, 1, 8, 1),   # M4
-    "RS": (12, 2, 1, 8, 2),   # M4
+    "RS": (18, 2, 1, 8, 2),   # M4 (12 no real): 2 grupos de 9
     "GO": (12, 2, 1, 8, 3),   # M5: 8 às quartas
-    "DF": (10, 1, 1, 4, 2),   # M1
+    "DF": (12, 2, 1, 4, 2),   # M1 (10 no real): 2 grupos de 6
     "MT": (10, 1, 1, 4, 3),   # M2 (6 classificados no real)
     "MS": (8, 1, 1, 4, 2),    # M2 (10 clubes no real; banco do FM06 tem 8)
     "BA": (10, 1, 1, 4, 2),   # M1
     "PE": (8, 1, 1, 4, 2),    # M2
     "CE": (10, 1, 1, 4, 2),   # M6 (grupos + 2ª fase no real)
-    "RN": (8, 1, 1, 4, 2),    # M2
+    "RN": (14, 2, 1, 4, 2),   # M2 (8 no real): 2 grupos de 7
     "PB": (10, 1, 1, 4, 1),   # M1
     "AL": (8, 1, 1, 4, 1),    # M1
     "SE": (10, 1, 1, 4, 2),   # M2 (7 classificados no real)
@@ -70,9 +74,9 @@ FORMATO_2026 = {
     "PI": (8, 1, 1, 4, 2),    # M1
     "PA": (10, 1, 1, 4, 2),   # M5 (12 clubes no real; banco do FM06 tem 10)
     "AM": (8, 1, 1, 4, 1),    # M6 (dois turnos no real)
-    "TO": (8, 1, 1, 4, 1),    # M1
+    "TO": (10, 1, 1, 4, 1),   # M1 (8 no real)
     "AC": (6, 1, 2, 4, 1),    # M1 (8 clubes no real; banco do FM06 tem 6)
-    "RO": (7, 1, 1, 4, 2),    # M6 (ida e volta no real)
+    "RO": (8, 1, 1, 4, 2),    # M6 (7 clubes, ida e volta no real)
     "RR": (8, 1, 1, 4, 1),    # M1 (9 clubes no real)
     "AP": (8, 1, 1, 4, 1),    # M1
 }

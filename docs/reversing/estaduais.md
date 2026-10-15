@@ -107,6 +107,12 @@ original e fase de liga de 11/1 até 8/2 (8 classificados), 15/2 (4), 1/3 (2)
 ou 8/3 (nenhum), para a final cair em 8/3. Emulação conferida para SP, RJ,
 PR, AC e MS.
 
+Teste no jogo (New Game 2006): Carioca em 2 grupos; Baiano, Acreano,
+Catarinense, Pernambucano, Cearense, Alagoano, Maranhense, Mato-Grossense e
+Goiano gerados. Paulista (16), Gaúcho (12) e Paranaense (12) sem os grandes:
+com menos vagas que clubes no estado, o jogo usa os primeiros da lista. Esses
+voltaram ao número original (20, 18, 16), assim como RN, TO, DF e RO.
+
 Isso cobre direto os modelos M1 e M3 de `docs/REGRAS_2026_ESTADUAIS_E_COPAS.md`
 (liga única + mata-mata de 4 ou 8). Para os demais modelos falta ver o que o
 mata-mata do genérico suporta (6 classificados, 1º e 2º direto à semi) e se
