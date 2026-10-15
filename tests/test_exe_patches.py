@@ -34,9 +34,10 @@ class ExePatchTest(unittest.TestCase):
 
     def test_all_patches_combine(self) -> None:
         # exp_cave_* são partes alternativas do serie_c_nova (mesma área livre);
-        # serie_c_64_clubes é alternativa ao serie_d_96 (mesmos bytes).
+        # serie_c_64_clubes é alternativa ao serie_d_96 (mesmos bytes);
+        # exp_a_copa_* são alternativas ao serie_a_datas_2026.
         apply(self.data, [name for name in PATCHES
-                          if not name.startswith("exp_cave_") and name != "serie_c_64_clubes"])
+                          if not name.startswith(("exp_cave_", "exp_a_copa_")) and name != "serie_c_64_clubes"])
 
     def test_patch_cannot_apply_twice(self) -> None:
         once = apply(self.data, ["serie_a_rebaixa_4"])

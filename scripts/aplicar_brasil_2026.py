@@ -67,7 +67,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--restore", action="store_true")
+    parser.add_argument("--teste-copa", type=int, choices=(1, 2),
+                        help="troca as datas da Série A pelo teste de pausa da Copa (exp_a_copa_1 ou _2)")
     args = parser.parse_args()
+    patches = list(EXE_PATCHES)
+    if args.teste_copa:
+        patches[patches.index("serie_a_datas_2026")] = f"exp_a_copa_{args.teste_copa}"
 
     game = game_dir()
     server = game / "data" / "db" / "server_db.dat"
@@ -102,9 +107,9 @@ def main() -> None:
     if sha256(exe_data) != EXE_SHA256:
         sys.exit(f"[ERRO] {exe} não é o fm.exe 6.0.2 original.")
     target = game / "fm_brasil.exe"
-    target.write_bytes(apply_exe(exe_data, EXE_PATCHES))
+    target.write_bytes(apply_exe(exe_data, patches))
     print(f"\n[OK] criado {target}")
-    for name in EXE_PATCHES:
+    for name in patches:
         print(f"     + {name}")
 
     if not BACKUP.exists():

@@ -57,6 +57,26 @@ def _imm8(offset: int, opcode: bytes, old: int, new: int) -> Swap:
     return Swap(offset, opcode + bytes([old]), opcode + bytes([new]))
 
 
+def _serie_a_copa(window2_end):
+    """Série A com pausa da Copa (teste). Janela 1 (0x00BBA531..0x00BBA569):
+    as últimas N rodadas (word em +0x20 do modelo de datas); janela 2
+    (0x00BBA56E..0x00BBA591): a temporada."""
+    swaps = [
+        _imm8(0x7BA536, b"\x6A", 7, 6),       # janela final, início: agosto -> julho
+        _imm8(0x7BA538, b"\x6A", 6, 22),      # dia 22
+        _imm8(0x7BA54C, b"\x6A", 10, 2),      # janela final, fim: 2/12
+        Swap(0x7BA562, bytes.fromhex("66c744245c1a00"), bytes.fromhex("66c744245c1300")),  # 26 -> 19 rodadas
+        _imm8(0x7BA573, b"\x6A", 3, 0),       # temporada, início: 28/1
+        _imm8(0x7BA575, b"\x6A", 30, 28),
+    ]
+    if window2_end is None:
+        swaps.append(_imm8(0x7BA589, b"\x6A", 10, 2))           # temporada, fim: 2/12
+    else:
+        day, month = window2_end
+        swaps += [_imm8(0x7BA589, b"\x6A", 10, day), _imm8(0x7BA587, b"\x6A", 11, month)]
+    return tuple(swaps)
+
+
 # Campos da fase lidos por 0x00B16FE0 para pintar as zonas da tabela e
 # decidir quem sobe e quem desce no fim da temporada.
 PROMOTION = 0x11
@@ -148,6 +168,18 @@ PATCHES = {
                 _imm8(0x7BA7E8, b"\x6A", 7, 6),       # início do 1º par (returno): agosto -> julho
                 _imm8(0x7BA7EA, b"\x6A", 5, 15),      #          dia 5 -> 15
             ),
+        ),
+        Patch(
+            "exp_a_copa_1",
+            "TESTE (alternativa a serie_a_datas_2026): Série A de 28/1 a 2/12 com a janela final "
+            "(returno, 19 rodadas: campo 0x1A -> 0x13) começando em 22/7. Turno espalhado de 28/1 a 22/7.",
+            _serie_a_copa(window2_end=None),
+        ),
+        Patch(
+            "exp_a_copa_2",
+            "TESTE (alternativa a serie_a_datas_2026): como exp_a_copa_1, e a janela da temporada "
+            "termina em 31/5 (para ver se o turno fica antes da Copa).",
+            _serie_a_copa(window2_end=(31, 4)),
         ),
         Patch(
             "virada_1_janeiro",

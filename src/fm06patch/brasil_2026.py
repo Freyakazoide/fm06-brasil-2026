@@ -23,6 +23,10 @@ SIZES = {"A": 20, "B": 20, "C": 20, "D": 96}
 # (com os patches serie_c_nova e serie_d_96 no fm.exe).
 INDEX = {"A": DIVISIONS["A"], "B": DIVISIONS["B"], "C": DIVISIONS["NOVA_C"], "D": DIVISIONS["C"]}
 COMP_ID = {"A": 102423, "B": 107191, "C": 319191, "D": 107192}
+# Outros nomes atualizados (ID da competição -> nome, nome curto, nome longo)
+OTHER_NAMES = {
+    1301385: ("Copa do Mundo da FIFA", "Copa do Mundo", "Copa do Mundo da FIFA"),   # WC_WORLD_CUP
+}
 
 
 @dataclass
@@ -113,5 +117,11 @@ def lnc_text() -> str:
             f'"COMP_NAME_CHANGE"\t{comp}\t"Série {serie}"\t""',
             f'"COMP_SHORT_NAME_CHANGE"\t{comp}\t"Série {serie}"\t""',
             f'"COMP_LONG_NAME_CHANGE"\t{comp}\t"Campeonato Brasileiro Série {serie}"\t""',
+        ]
+    for comp, (name, short, long) in OTHER_NAMES.items():
+        lines += [
+            f'"COMP_NAME_CHANGE"\t{comp}\t"{name}"\t""',
+            f'"COMP_SHORT_NAME_CHANGE"\t{comp}\t"{short}"\t""',
+            f'"COMP_LONG_NAME_CHANGE"\t{comp}\t"{long}"\t""',
         ]
     return "\r\n".join(lines) + "\r\n"
