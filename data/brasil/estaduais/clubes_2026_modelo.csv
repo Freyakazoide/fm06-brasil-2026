@@ -1,4 +1,269 @@
-uf,clube,cidade
+﻿uf,clube,cidade
+AC,ADESG,Senador Guiomard
+AC,Galvez,Rio Branco
+AC,Humaitá,Porto Acre
+AC,Independência,Rio Branco
+AC,Rio Branco-AC,Rio Branco
+AC,Santa Cruz-AC,Rio Branco
+AC,São Francisco-AC,Rio Branco
+AC,Vasco-AC,Rio Branco
+AL,ASA,Arapiraca
+AL,Coruripe,Coruripe
+AL,CRB,Maceió
+AL,Cruzeiro de Arapiraca,Arapiraca
+AL,CSA,Maceió
+AL,CSE,Palmeira dos Índios
+AL,Murici SC,Murici
+AL,Penedense,Penedo
+AP,Cristal,Macapá
+AP,Independente,Santana
+AP,Macapá,Macapá
+AP,Oratório,Macapá
+AP,Santos-AP,Macapá
+AP,São José-AP,Macapá
+AP,Trem,Macapá
+AP,Ypiranga-AP,Macapá
+AM,Amazonas,Manaus
+AM,Itacoatiara,Itacoatiara
+AM,Manauara,Manaus
+AM,Manaus,Manaus
+AM,Nacional-AM,Manaus
+AM,Parintins,Parintins
+AM,Princesa do Solimões,Manacapuru
+AM,São Raimundo-AM,Manaus
+BA,Atlético de Alagoinhas,Alagoinhas
 BA,Bahia,Salvador
-BA,Vitória,Salvador
+BA,Bahia de Feira,Feira de Santana
+BA,Barcelona de Ilhéus,Ilhéus
+BA,Galícia,Salvador
 BA,Jacuipense,Riachão do Jacuípe
+BA,Jequié,Jequié
+BA,Juazeirense,Juazeiro
+BA,Porto,Porto Seguro
+BA,Vitória,Salvador
+CE,Ceará,Fortaleza
+CE,Ferroviário,Fortaleza
+CE,Floresta,Fortaleza
+CE,Fortaleza,Fortaleza
+CE,Horizonte,Horizonte
+CE,Iguatu,Iguatu
+CE,Maracanã,Maracanaú
+CE,Maranguape,Maranguape
+CE,Quixadá,Quixadá
+CE,Tirol,Fortaleza
+DF,ARUC,Cruzeiro
+DF,Brasília,Brasília
+DF,Brasiliense,Taguatinga
+DF,Capital-DF,Paranoá
+DF,Ceilândia,Ceilândia
+DF,Gama,Gama
+DF,Paranoá,Paranoá
+DF,Real Brasília,Brasília
+DF,Samambaia,Samambaia
+DF,Sobradinho,Sobradinho
+ES,Capixaba,Vila Velha
+ES,Desportiva Ferroviária,Cariacica
+ES,Forte,Castelo
+ES,Porto Vitória,Serra
+ES,Real Noroeste,Águia Branca
+ES,Rio Branco-ES,Vitória
+ES,Rio Branco de Venda Nova,Venda Nova do Imigrante
+ES,Serra,Serra
+ES,Vilavelhense,Vila Velha
+ES,Vitória-ES,Vitória
+GO,Abecat,Ouvidor
+GO,Anapolina,Anápolis
+GO,Anápolis,Anápolis
+GO,Aparecidense,Aparecida de Goiânia
+GO,Atlético-GO,Goiânia
+GO,Centro Oeste,Senador Canedo
+GO,CRAC,Catalão
+GO,Goiás,Goiânia
+GO,Goiatuba,Goiatuba
+GO,Inhumas,Inhumas
+GO,Jataiense,Jataí
+GO,Vila Nova,Goiânia
+MA,IAPE,São Luís
+MA,Imperatriz,Imperatriz
+MA,ITZ Sport,Imperatriz
+MA,Luminense,Paço do Lumiar
+MA,Maranhão,São Luís
+MA,Moto Club,São Luís
+MA,Sampaio Corrêa,São Luís
+MA,Tuntum,Tuntum
+MT,Chapada,Chapada dos Guimarães
+MT,Cuiabá,Cuiabá
+MT,Luverdense,Lucas do Rio Verde
+MT,Mixto,Cuiabá
+MT,Nova Mutum,Nova Mutum
+MT,Operário-VG,Várzea Grande
+MT,Primavera,Primavera do Leste
+MT,Sport Sinop,Sinop
+MT,União Rondonópolis,Rondonópolis
+MT,Várzea Grande,Várzea Grande
+MS,Águia Negra,Rio Brilhante
+MS,Bataguassu,Bataguassu
+MS,Corumbaense,Corumbá
+MS,Costa Rica,Costa Rica
+MS,CRA,Aquidauana
+MS,Dourados,Dourados
+MS,Ivinhema,Ivinhema
+MS,Naviraiense,Naviraí
+MS,Operário-MS,Campo Grande
+MS,Pantanal,Campo Grande
+MG,América-MG,Belo Horizonte
+MG,Athletic,São João del-Rei
+MG,Atlético-MG,Belo Horizonte
+MG,Betim,Betim
+MG,Cruzeiro,Belo Horizonte
+MG,Democrata-GV,Governador Valadares
+MG,Itabirito,Itabirito
+MG,North,Montes Claros
+MG,Pouso Alegre,Pouso Alegre
+MG,Tombense,Tombos
+MG,Uberlândia,Uberlândia
+MG,URT,Patos de Minas
+PA,Águia de Marabá,Marabá
+PA,Amazônia,Belterra
+PA,Bragantino-PA,Bragança
+PA,Cametá,Cametá
+PA,Capitão Poço,Capitão Poço
+PA,Castanhal,Castanhal
+PA,Paysandu,Belém
+PA,Remo,Belém
+PA,Santa Rosa,Belém
+PA,São Francisco-PA,Santarém
+PA,São Raimundo-PA,Santarém
+PA,Tuna Luso,Belém
+PB,Atlético de Cajazeiras,Cajazeiras
+PB,Botafogo-PB,João Pessoa
+PB,Campinense,Campina Grande
+PB,Confiança de Sapé,Sapé
+PB,Esporte de Patos,Patos
+PB,Nacional de Patos,Patos
+PB,Pombal,Pombal
+PB,Serra Branca,Campina Grande
+PB,Sousa,Sousa
+PB,Treze,Campina Grande
+PR,Andraus,Campo Largo
+PR,Athletico-PR,Curitiba
+PR,Azuriz,Pato Branco
+PR,Cascavel,Cascavel
+PR,Cianorte,Cianorte
+PR,Coritiba,Curitiba
+PR,Foz do Iguaçu,Foz do Iguaçu
+PR,Galo Maringá,Maringá
+PR,Londrina,Londrina
+PR,Maringá,Maringá
+PR,Operário-PR,Ponta Grossa
+PR,São Joseense,São José dos Pinhais
+PE,Decisão,Goiana
+PE,Jaguar,Jaboatão dos Guararapes
+PE,Maguary,Bonito
+PE,Náutico,Recife
+PE,Retrô,Camaragibe
+PE,Santa Cruz,Recife
+PE,Sport,Recife
+PE,Vitória das Tabocas,Vitória de Santo Antão
+PI,Altos,Altos
+PI,Atlético Piauiense,Teresina
+PI,Corisabbá,Floriano
+PI,Fluminense-PI,Teresina
+PI,Oeirense,Oeiras
+PI,Parnahyba,Parnaíba
+PI,Piauí,Teresina
+PI,Teresina,Teresina
+RJ,Bangu,Rio de Janeiro
+RJ,Boavista,Saquarema
+RJ,Botafogo,Rio de Janeiro
+RJ,Flamengo,Rio de Janeiro
+RJ,Fluminense,Rio de Janeiro
+RJ,Madureira,Rio de Janeiro
+RJ,Maricá,Maricá
+RJ,Nova Iguaçu,Nova Iguaçu
+RJ,Portuguesa-RJ,Rio de Janeiro
+RJ,Sampaio Corrêa-RJ,Saquarema
+RJ,Vasco,Rio de Janeiro
+RJ,Volta Redonda,Volta Redonda
+RN,ABC,Natal
+RN,América-RN,Natal
+RN,Globo,Ceará-Mirim
+RN,Laguna,Tibau do Sul
+RN,Potiguar de Mossoró,Mossoró
+RN,Potyguar Seridoense,Currais Novos
+RN,QFC,Parnamirim
+RN,Santa Cruz de Natal,Natal
+RS,Avenida,Santa Cruz do Sul
+RS,Caxias,Caxias do Sul
+RS,Grêmio,Porto Alegre
+RS,Guarany de Bagé,Bagé
+RS,Internacional,Porto Alegre
+RS,Internacional de Santa Maria,Santa Maria
+RS,Juventude,Caxias do Sul
+RS,Monsoon,Porto Alegre
+RS,Novo Hamburgo,Novo Hamburgo
+RS,São José-RS,Porto Alegre
+RS,São Luiz,Ijuí
+RS,Ypiranga,Erechim
+RO,Barcelona-RO,Porto Velho
+RO,Gazin Porto Velho,Porto Velho
+RO,Genus,Porto Velho
+RO,Guaporé,Rolim de Moura
+RO,Ji-Paraná,Ji-Paraná
+RO,Rondoniense,Porto Velho
+RO,União Cacoalense,Cacoal
+RR,Atlético Roraima,Boa Vista
+RR,Baré,Boa Vista
+RR,GAS,Boa Vista
+RR,Monte Roraima,Boa Vista
+RR,Náutico-RR,Boa Vista
+RR,Progresso,Mucajaí
+RR,Rio Negro-RR,Boa Vista
+RR,River-RR,Boa Vista
+RR,São Raimundo-RR,Boa Vista
+SC,Avaí,Florianópolis
+SC,Barra,Balneário Camboriú
+SC,Brusque,Brusque
+SC,Camboriú,Camboriú
+SC,Carlos Renaux,Brusque
+SC,Chapecoense,Chapecó
+SC,Concórdia,Concórdia
+SC,Criciúma,Criciúma
+SC,Figueirense,Florianópolis
+SC,Joinville,Joinville
+SC,Marcílio Dias,Itajaí
+SC,Santa Catarina,Rio do Sul
+SP,Botafogo-SP,Ribeirão Preto
+SP,Capivariano,Capivari
+SP,Corinthians,São Paulo
+SP,Guarani,Campinas
+SP,Mirassol,Mirassol
+SP,Noroeste,Bauru
+SP,Novorizontino,Novo Horizonte
+SP,Palmeiras,São Paulo
+SP,Ponte Preta,Campinas
+SP,Portuguesa,São Paulo
+SP,Primavera-SP,Indaiatuba
+SP,Red Bull Bragantino,Bragança Paulista
+SP,Santos,Santos
+SP,São Bernardo,São Bernardo do Campo
+SP,São Paulo,São Paulo
+SP,Velo Clube,Rio Claro
+SE,América de Propriá,Propriá
+SE,Atlético Gloriense,Nossa Senhora da Glória
+SE,Confiança,Aracaju
+SE,Desportiva Aracaju,Aracaju
+SE,Dorense,Nossa Senhora das Dores
+SE,Falcon,Barra dos Coqueiros
+SE,Guarany de Porto da Folha,Porto da Folha
+SE,Itabaiana,Itabaiana
+SE,Lagarto,Lagarto
+SE,Sergipe,Aracaju
+TO,Araguaína,Araguaína
+TO,Bela Vista,Cachoeirinha
+TO,Capital-TO,Palmas
+TO,Guaraí,Guaraí
+TO,Gurupi,Gurupi
+TO,Palmas,Palmas
+TO,Tocantinópolis,Tocantinópolis
+TO,União-TO,Araguaína
