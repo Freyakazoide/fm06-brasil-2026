@@ -11,8 +11,12 @@ Participantes (0x00C06FE0 -> 0x00C068C0): Brasil 8 -> 6 (7º a 12º da Série A,
 sem quem está na Libertadores), México e EUA 0; o campeão anterior não é
 inscrito à parte (em 2026 ele vai à Libertadores) e pode entrar pela tabela;
 a exclusão de quem está na Libertadores vale para Brasil, Argentina e Peru.
-A competição passa a ser montada em 25/1 (era 1/8), para as datas de abril
-existirem; o chaveamento da 1ª fase (0x00C05FD0) vira uma tabela fixa.
+A competição continua montada em 1/8 (temporada de julho a dezembro): com
+25/1 e temporada de janeiro, o New Game (1/7/2005) montava na hora a edição
+de 2005 com datas de abril já passadas e a de 2006 nunca era montada. Datas
+de agosto a novembro (1ª fase 9/8, 2ª 23/8, oitavas 13/9, quartas 4/10,
+semifinal 25/10, final 21/11). O chaveamento da 1ª fase (0x00C05FD0) vira
+uma tabela fixa.
 """
 
 from __future__ import annotations
@@ -48,9 +52,6 @@ CHANGES = (
     (0xC06BD6, "7458", "eb58"),
     (0xC06C4D, "83e802", "83e8fe"),        # exclusão da Libertadores: Brasil, Argentina, Peru
     (0xC06C52, "83e803", "83e807"),
-    # montada em 25/1, temporada a partir de janeiro
-    (0xC05F6A, "6a076a01", "6a006a19"),
-    (0xC05F7D, "06", "00"),
     # mata-mata (0x00C07380)
     (0xC073B1, "22", "1c"),                # 28 clubes
     (0xC07479, "1c", "10"),                # 1ª fase: 16 clubes
@@ -65,13 +66,13 @@ CHANGES = (
     (0xC077AD, "6a06", "6a05"),
     (0xC077BC, "6a07", "6a06"),
     (0xC078EF, "55", "53"),                # final na data exata
-    # datas (push mês, push dia; mês começa em 0)
-    (0xC0744B, "6a06", "6a03"), (0xC0744D, "6a13", "6a01"),   # sorteio 1/4
-    (0xC07465, "6a07", "6a03"), (0xC07467, "6a09", "6a0f"),   # 1ª fase 15/4
-    (0xC0765C, "6a07", "6a06"), (0xC0765E, "6a17", "6a16"),   # 2ª fase 22/7
-    (0xC077F4, "6a09", "6a08"), (0xC077F6, "6a12", "6a10"),   # quartas 16/9
-    (0xC0788D, "6a0a", "6a09"), (0xC0788F, "6a16", "6a15"),   # semifinal 21/10
-    (0xC078F5, "6a0b", "6a0a"), (0xC078F7, "6a06", "6a15"),   # final 21/11
+    # datas (push mês, push dia; mês começa em 0). A competição é montada em
+    # 1/8 (construtor 0x00C05F10, temporada de julho a dezembro): tudo depois
+    # disso. 1ª fase 9/8 e 2ª fase 23/8 ficam como no original.
+    (0xC0744B, "6a06", "6a07"), (0xC0744D, "6a13", "6a03"),   # sorteio 19/7 -> 3/8
+    (0xC077F6, "6a12", "6a04"),                               # quartas 18/10 -> 4/10
+    (0xC0788D, "6a0a", "6a09"), (0xC0788F, "6a16", "6a19"),   # semifinal 22/11 -> 25/10
+    (0xC078F5, "6a0b", "6a0a"), (0xC078F7, "6a06", "6a15"),   # final 6/12 -> 21/11
     (0xC0745E, "6a04", "6a05"), (0xC07655, "6a04", "6a05"),   # quinta: 1ª e 2ª fases
     (0xC077ED, "6a04", "6a05"),                               # quinta: quartas
 )
@@ -108,8 +109,8 @@ def _final_stub() -> bytes:
 
 def _r16_date() -> bytes:
     a = Asm(R16_DATE)
-    # (hora 19:30, dia 12, agosto, 2000, quinta, 0) -> 0x00B3B760 em 0x00C076C5
-    a.raw(b"\x53\x6A" + bytes([THURSDAY]) + b"\x68" + u32(2000) + b"\x6A\x07\x6A\x0C\x68" + u32(0x78A))
+    # (hora 19:30, dia 13, setembro, 2000, quinta, 0) -> 0x00B3B760 em 0x00C076C5
+    a.raw(b"\x53\x6A" + bytes([THURSDAY]) + b"\x68" + u32(2000) + b"\x6A\x08\x6A\x0D\x68" + u32(0x78A))
     a.raw(b"\xEB" + bytes([(R16_DATE_BACK - (a.here + 2)) & 0xFF]))
     return bytes(a.code)
 

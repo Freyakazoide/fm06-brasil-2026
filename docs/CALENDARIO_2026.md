@@ -218,13 +218,14 @@ IDs: Libertadores 0x1900F, Sul-Americana 0x4D87F, Recopa 0x19012.
   semi e final única. Brasil 6 pela tabela da Série A, sem quem está na
   Libertadores (exclusão em `0x00C06C42` passa a valer para BRA, ARG e PER);
   México e EUA 0; o campeão anterior não é inscrito à parte. O construtor
-  (`0x00C05F10`) montava a competição em 1/8 com a temporada de julho: as
-  datas de abril do patch antigo `sul_americana_datas_2026` caíam antes de a
-  competição existir. Agora é montada em 25/1 (temporada a partir de
-  janeiro). Chaveamento da 1ª fase (`0x00C05FD0`) por tabela fixa
-  (SECTION_VA+0x4200/0x4240). Datas: sorteio 1/4, 1ª fase ~20/4, 2ª fase
-  ~27/7, oitavas ~17/8, quartas ~21/9 (quintas), semifinal ~25/10, final
-  21/11 (jogo único, SECTION_VA+0x4280).
+  (`0x00C05F10`) monta a competição em 1/8 com temporada de julho a
+  dezembro. Teste: montar em 25/1 com temporada de janeiro fez o New Game
+  (1/7/2005) montar na hora a edição de 2005 com datas de abril já
+  passadas; a de 2006 nunca foi montada. Por isso fica de agosto a novembro:
+  sorteio 3/8, 1ª fase 9/8, 2ª fase 23/8, oitavas 13/9 (+7 dias), quartas
+  4/10, semifinal 25/10, final 21/11 (jogo único, SECTION_VA+0x4280),
+  rodadas na quinta. Chaveamento da 1ª fase (`0x00C05FD0`) por tabela fixa
+  (SECTION_VA+0x4200/0x4240).
 - Datas da Libertadores: a competição é montada em 21/1 (`0x00C0639C`). A
   tabela do calendário internacional (`[0x014EB678]+0x60C`, entradas de
   0x18 bytes por `0x00AF6490`) é preenchida pelo método 0x124 de cada
