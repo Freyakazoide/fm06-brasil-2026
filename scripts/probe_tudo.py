@@ -60,7 +60,7 @@ def team_row(handle, db: bytes, team: int) -> tuple[str, str, str]:
 
 def participants(handle, comp: bytes) -> list[int]:
     ptr, count = u32(comp, 0x194), struct.unpack_from("<H", comp, 0x198)[0]
-    if ptr < 0x10000 or not count:
+    if ptr < 0x10000 or not count or count > 64:    # Recopa e outras classes: +0x190 não é a lista
         return []
     raw = read_memory(handle, ptr, 4 * count) or b""
     return [u32(raw, 4 * i) for i in range(len(raw) // 4)]
