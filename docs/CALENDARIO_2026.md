@@ -172,3 +172,7 @@ Testes:
   Copa não tinha data de sorteio (no original os 64 já são conhecidos no
   início). Correção: sorteio `0x00B3B550(0x4B0, 18, abril, 2000, 4)` na 1ª
   rodada da fase 2, como no mata-mata da antiga C.
+- Teste com o sorteio em 18/4: ainda sem sorteio até 10/5. Hipótese: a 1ª
+  rodada da fase 2 usava a configuração da 2ª rodada original (flags 0x401,
+  `+0x46` = 0, "clubes vêm da rodada anterior"); voltou à de 1ª rodada
+  (0x8403, `+0x46` = clubes da fase), com o sorteio mantido.

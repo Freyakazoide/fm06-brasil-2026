@@ -114,12 +114,12 @@ def _stage1(data: bytes, tail: int) -> bytes:
 def _stage2(data: bytes, draw: int) -> bytes:
     code = _builder_copy(data, S1)
     _replace(code, TEAMS_AT, b"\xBD" + u32(0x40), b"\xBD" + u32(STAGE2_TEAMS))
-    # 1ª rodada da cópia vira a 5ª fase (32 -> 16), com a configuração da 2ª rodada original
+    # 1ª rodada da cópia vira a 5ª fase (32 -> 16). Mantém a configuração de 1ª
+    # rodada (flags 0x8403, +0x46 = clubes da fase): a da 2ª rodada (0x401,
+    # +0x46 = 0) pega os clubes dos vencedores da rodada anterior, que não
+    # existe na fase 2, e a rodada nunca era sorteada (teste 3).
     _replace(code, R1_CODE_AT, b"\x6A\x06", b"\x6A\x07")
-    _replace(code, R1_LEG2_AT, b"\x6A\x04", b"\x6A\x03")
-    _replace(code, R1_FLAGS_AT, b"\x66\xC7\x44\x24\x3C" + _word(0x8403), b"\x66\xC7\x44\x24\x3C" + _word(0x0401))
     _replace(code, R1_OUT_AT, b"\x66\xC7\x44\x24\x44" + _word(0x20), b"\x66\xC7\x44\x24\x44" + _word(0x10))
-    _replace(code, R1_EXTRA_AT, b"\x66\x89\x6C\x24\x46", b"\x66\x89\x5C\x24\x46")
     _date(code, R1_DATE, 26, 3)                                   # 5ª fase: 26/4 (quarta em 2006)
     # nome da rodada + sorteio (desvio): push 7 ; lea ecx,[esp+0x14] ; call 0x00B43720
     _replace(code, R1_CODE_AT + 2, b"\x8D\x4C\x24\x14\xE8", b"\x8D\x4C\x24\x14\xE8")
