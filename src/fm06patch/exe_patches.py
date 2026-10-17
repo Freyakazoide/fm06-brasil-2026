@@ -69,6 +69,12 @@ def _libertadores_swaps(data: bytes):
     return build(data)
 
 
+def _libertadores_datas_swaps(data: bytes):
+    from .libertadores import build_dates
+
+    return build_dates(data)
+
+
 def _estaduais_swaps(data: bytes):
     from .estaduais import build
 
@@ -219,6 +225,14 @@ PATCHES = {
             "o Brasil leva 6 aos grupos e os 2 brasileiros piores vão do pote 1 ao 2. "
             "Ver src/fm06patch/libertadores.py.",
             build=_libertadores_swaps,
+        ),
+        Patch(
+            "libertadores_datas_2026",
+            "Libertadores no calendário de 2026: preliminar 22/2 e 1/3; grupos em 6 rodadas de 5/4 a "
+            "24/5; oitavas 9 e 16/8; quartas 13 e 20/9; semifinal 18 e 25/10; final em jogo único "
+            "em 28/11 (original: grupos fev–abr, oitavas e quartas em maio, semi e final em "
+            "junho/julho, final em dois jogos). Ver src/fm06patch/libertadores.py.",
+            build=_libertadores_datas_swaps,
         ),
         Patch(
             "copa_do_brasil_2026",

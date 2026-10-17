@@ -73,3 +73,48 @@ def build(data: bytes):
                       b"\xE9" + u32(POTS_STUB - (POTS_HOOK + 5)) + b"\x90"))
     swaps += [Swap(off(va), old, new) for va, old, new in IMMEDIATES]
     return tuple(swaps)
+
+
+# Datas de 2026. A tabela do calendário internacional (0x00C047D0, Libertadores) guarda
+# cada rodada como data de 2000 com dia da semana (quarta, 21h); o jogo mantém a semana
+# e o dia da semana em cada ano. Mata-mata e final ficam em 0x00C07980.
+# (endereço do byte, original, novo) — imediatos de push imm8.
+DATES_2026 = (
+    # preliminar: 2/2 e 9/2 -> 23/2 e 1/3 (2006: qua 22/2 e qua 1/3)
+    (0xC047EF, 0x02, 0x17), (0xC0480E, 0x01, 0x02), (0xC04810, 0x09, 0x01),
+    # grupos, 10 datas (A–D usam 0, 2, 4, 5, 7, 9; E–H usam 1, 3, 4, 6, 8, 9):
+    # abril e maio, 6 rodadas: 5, 12, 19/4, 3, 10, 24/5 (E–H na quinta: 6, 13/4, 4, 11/5)
+    (0xC0482F, 0x01, 0x03), (0xC04831, 0x17, 0x05),
+    (0xC04850, 0x02, 0x03), (0xC04852, 0x01, 0x06), (0xC04854, 0x04, 0x05),
+    (0xC04871, 0x02, 0x03), (0xC04873, 0x08, 0x0C),
+    (0xC04892, 0x02, 0x03), (0xC04894, 0x0F, 0x0D), (0xC04896, 0x04, 0x05),
+    (0xC048B3, 0x02, 0x03), (0xC048B5, 0x16, 0x13),
+    (0xC048D4, 0x02, 0x04), (0xC048D6, 0x1D, 0x03),
+    (0xC048F5, 0x03, 0x04), (0xC048F7, 0x05, 0x04), (0xC048F9, 0x04, 0x05),
+    (0xC04916, 0x03, 0x04), (0xC04918, 0x0C, 0x0A),
+    (0xC04937, 0x03, 0x04), (0xC04939, 0x13, 0x0B), (0xC0493B, 0x04, 0x05),
+    (0xC04958, 0x03, 0x04), (0xC0495A, 0x1A, 0x18),
+    # oitavas: 3/5 e 10/5 -> 9/8 e 16/8; sorteio 18/3 -> 3/6
+    (0xC04979, 0x04, 0x07), (0xC0497B, 0x03, 0x09), (0xC0499A, 0x04, 0x07), (0xC0499C, 0x0A, 0x10),
+    (0xC07EFE, 0x02, 0x05), (0xC07F00, 0x12, 0x03),
+    # quartas: 17/5 e 24/5 -> 13/9 e 20/9
+    (0xC049BB, 0x04, 0x08), (0xC049BD, 0x11, 0x0D), (0xC049DC, 0x04, 0x08), (0xC049DE, 0x18, 0x14),
+    # semifinal (ano de Copa: 5/7; outros: 7/6) -> 18/10 e 25/10 nos dois casos
+    (0xC08036, 0x06, 0x09), (0xC08038, 0x05, 0x12), (0xC0803C, 0x05, 0x09), (0xC0803E, 0x07, 0x12),
+    # final (ano de Copa: 19/7; outros: 21/6) -> 28/11 nos dois casos, sem ajuste de dia
+    (0xC080CE, 0x06, 0x0A), (0xC080D0, 0x13, 0x1C), (0xC080D4, 0x05, 0x0A), (0xC080D6, 0x15, 0x1C),
+)
+FINAL_WEEKDAY = (0xC080C1, b"\x57", b"\x53")      # push edi (quarta) -> push ebx (0: data exata)
+# final em jogo único: a conta do ano de Copa (já sem efeito) vira legs = 1 na rodada
+FINAL_LEGS = (0xC080A6,
+              bytes.fromhex("0FB7959C00000081EACE07000081E20300008079054A83CAFC42"),
+              b"\xC6\x44\x24\x6C\x01" + b"\x90" * 21)   # mov byte [esp+0x6C], 1 (rodada +0x34)
+FINAL_BRANCH = (0xC080CB, b"\x75\x06", b"\xEB\x06")
+
+
+def build_dates(data: bytes):
+    from .exe_patches import Swap
+
+    swaps = [Swap(off(va), bytes([old]), bytes([new])) for va, old, new in DATES_2026]
+    swaps += [Swap(off(va), old, new) for va, old, new in (FINAL_WEEKDAY, FINAL_LEGS, FINAL_BRANCH)]
+    return tuple(swaps)

@@ -215,7 +215,17 @@ IDs: Libertadores 0x1900F, Sul-Americana 0x4D87F, Recopa 0x19012.
   Fica como está: a 1ª fase (`0x00C05FD0`) monta o chaveamento à mão pelos
   índices dos argentinos e brasileiros (até o 8º brasileiro); mudar as vagas
   exige reescrever esse chaveamento.
-- Datas da Libertadores: sorteio 15/1 e rodadas por semana (`0x00B3B9F0`), a
-  decifrar.
+- Datas da Libertadores: a competição é montada em 21/1 (`0x00C0639C`). A
+  tabela do calendário internacional (`[0x014EB678]+0x60C`, entradas de
+  0x18 bytes por `0x00AF6490`) é preenchida pelo método 0x124 de cada
+  competição; na Libertadores `0x00C047D0`: preliminar (rodada 0x1C), 10
+  datas de grupo (0x49, tipos 0–9; grupos A–D usam 0, 2, 4, 5, 7, 9 e E–H
+  1, 3, 4, 6, 8, 9), oitavas (7) e quartas (0x11), todas quarta 21h em
+  datas de 2000. O jogo guarda a semana e o dia da semana (a data anda
+  ~1 dia por ano). Semifinal e final ficam em `0x00C07980` com datas fixas e
+  troca em ano de Copa. Patch `libertadores_datas_2026`: preliminar 22/2 e
+  1/3; grupos 5, 12, 19/4, 3, 10, 24/5 (E–H na quinta); oitavas 9 e 16/8
+  (sorteio 3/6); quartas 13 e 20/9; semifinal 18 e 25/10; final única em
+  28/11 (rodada +0x34 = 1 no lugar da conta do ano de Copa).
 - Patch `sul_americana_datas_2026`: mata-mata de 6 rodadas em 15/4, 12/8,
   9/9, 14/10, 4/11 e final 21/11 (sorteio 1/4).
