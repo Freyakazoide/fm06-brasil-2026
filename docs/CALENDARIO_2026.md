@@ -176,3 +176,24 @@ Testes:
   rodada da fase 2 usava a configuração da 2ª rodada original (flags 0x401,
   `+0x46` = 0, "clubes vêm da rodada anterior"); voltou à de 1ª rodada
   (0x8403, `+0x46` = clubes da fase), com o sorteio mantido.
+- Teste com a 1ª rodada da fase 2 na configuração de 1ª rodada: **funciona**
+  (Vasco na Copa do Brasil em 26/4 e 10/5). O nome da rodada aparece como
+  "2ª Elim." (código 7).
+
+## Libertadores e Sul-Americana
+
+IDs: Libertadores 0x1900F, Sul-Americana 0x4D87F, Recopa 0x19012.
+
+- Participantes da Libertadores (`0x00C06710`, método 69): `0x00C06440(país,
+  lista, N)` pega, de cada país, os clubes com `TEAM+0xB4` = Libertadores
+  (gravado por `0x00A1CE70(competição, byte)`). N: Argentina (0x671) 5,
+  **Brasil (0x673) 5**, demais 3, inclusive **México (0x17B)**. IDs de país em
+  ordem alfabética: 0x671 ARG, 0x672 BOL, 0x673 BRA, 0x674 CHI, 0x675 COL,
+  0x676 ECU, 0x677 PAR, 0x678 PER, 0x679 URU.
+- Quem marca os clubes brasileiros: ainda não encontrado (o código do Brasil
+  não cita a Libertadores; pode vir do banco). Probe
+  `scripts/probe_continental.py` lista os clubes marcados.
+- Datas da Libertadores: sorteio 15/1 e rodadas por semana (`0x00B3B9F0`), a
+  decifrar.
+- Patch `sul_americana_datas_2026`: mata-mata de 6 rodadas em 15/4, 12/8,
+  9/9, 14/10, 4/11 e final 21/11 (sorteio 1/4).
