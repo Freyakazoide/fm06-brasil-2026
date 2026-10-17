@@ -57,7 +57,7 @@ Por onde cada alteração é feita:
 | Formato (pontos corridos, turno e returno) | 🟡 | executável | idem |
 | Acessos e rebaixamentos | ✅ | executável | `scripts/patch_exe.py` (campos `+0x11`/`+0x14` da fase); validado: Série A rebaixa 4, Série B sobe 4 |
 | Criar a Série D | ✅ | executável + banco | `scripts/aplicar_brasil_2026.py`: Séries A–D com nomes, datas e clubes de 2026. Falta: playoffs da B, fases da C, 6 acessos da D |
-| Vagas em Libertadores e Sul-Americana | ❌ | banco | idem |
+| Vagas em Libertadores e Sul-Americana | ⚠️ | executável | Libertadores: Brasil 7, Argentina 6, sem México, calendário de 2026 com final única (validado). Sul-Americana: ainda 8 brasileiros + México/EUA (chaveamento fixo da 1ª fase) |
 | Classificação da temporada passada | 🟡 | banco | `scripts/server_db_teams.py --pos` / `--last` |
 | Histórico de campeões (Séries A–D, pelo menos os últimos) | ❌ | banco | não localizado |
 | Calendário | ✅ | executável | datas de A, B, C e D por patch; ver `docs/REGRAS_2026.md` |
@@ -66,7 +66,7 @@ Por onde cada alteração é feita:
 
 | Item | Situação | Caminho | Observação |
 |---|---|---|---|
-| Ano de início 2026 | 🟡 | executável | motor em 2005/06 e ano exibido + 20 (`ano_exibido_mais_20`); idades pelo `year_shift` −20 do injetor. Ver `docs/reversing/ano_inicio.md` |
+| Ano de início 2026 | ✅ | executável | motor em 2005/06 e ano exibido + 20 (`ano_exibido_mais_20`); idades pelo `year_shift` −20 do injetor. Ver `docs/reversing/ano_inicio.md` |
 
 ## Ordem sugerida
 
@@ -79,7 +79,8 @@ seguinte funcionando.
 1b. **Calendário completo:** estaduais (e a vaga deles na Série D), Séries A–D,
    Copa do Brasil, Libertadores e Sul-Americana sem conflito; virada da
    temporada em 01/01; 10ª rodada dos grupos da D depois do mata-mata.
-2. **Investigar o ano de início 2026.** Antes de criar jogadores em massa.
+2. ~~**Investigar o ano de início 2026.**~~ ✅ Motor em 2005/06, ano exibido + 20
+   (`ano_exibido_mais_20`), validado no jogo. Antes de criar jogadores em massa.
    Os dados dos jogadores ficam com as datas reais de 2026; o injetor aplica
    `year_shift` = ano do motor − 2026 (hoje −21, com 2026 de verdade vira 0).
    Se não der, o jogo continua em 2005/06 com idades certas e só o ano
