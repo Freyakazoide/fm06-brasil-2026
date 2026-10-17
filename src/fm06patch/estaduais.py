@@ -13,11 +13,12 @@
 Limites do estadual genérico (pequenas liberdades em relação a 2026):
 - o mata-mata tem 8, 4 ou 2 classificados (sem 1º e 2º direto à semifinal);
 - grupos jogam dentro do grupo (não contra o outro grupo);
-- clubes por estado nunca acima do original (o banco pode não ter mais clubes)
-  e, por enquanto, também não abaixo nos estados em que o corte tirou os
-  grandes: o jogo pega os N primeiros da lista do estado (teste: SP com 16,
-  RS e PR com 12 ficaram sem os grandes). Os participantes de 2026 entram com
-  os clubes, no banco;
+- clubes por estado = clubes do estado no banco. Com menos, o jogo pega os N
+  primeiros da lista (teste: SP com 16, RS e PR com 12 ficaram sem os
+  grandes) ou põe todos na tabela com o calendário de N (BA, PA e MT com 10:
+  13 e 14 clubes na tabela, 9 rodadas, a fase de liga nunca terminou e a
+  virada dos estaduais travou). Os participantes de 2026 entram com os
+  clubes, no banco;
 - rebaixados como no original, para o par estadual/divisão de acesso continuar
   equilibrado na virada (sobe = cai).
 """
@@ -61,9 +62,9 @@ FORMATO_2026 = {
     "RS": (18, 2, 1, 8, 2),   # M4 (12 no real): 2 grupos de 9
     "GO": (12, 2, 1, 8, 3),   # M5: 8 às quartas
     "DF": (12, 2, 1, 4, 2),   # M1 (10 no real): 2 grupos de 6
-    "MT": (10, 1, 1, 4, 3),   # M2 (6 classificados no real)
+    "MT": (14, 1, 1, 4, 3),   # M2 (10 clubes e 6 classificados no real; banco tem 14)
     "MS": (8, 1, 1, 4, 2),    # M2 (10 clubes no real; banco do FM06 tem 8)
-    "BA": (10, 1, 1, 4, 2),   # M1
+    "BA": (13, 1, 1, 4, 2),   # M1 (10 no real; banco tem 13)
     "PE": (8, 1, 1, 4, 2),    # M2
     "CE": (10, 1, 1, 4, 2),   # M6 (grupos + 2ª fase no real)
     "RN": (14, 2, 1, 4, 2),   # M2 (8 no real): 2 grupos de 7
@@ -72,7 +73,7 @@ FORMATO_2026 = {
     "SE": (10, 1, 1, 4, 2),   # M2 (7 classificados no real)
     "MA": (8, 1, 1, 4, 2),    # M1
     "PI": (8, 1, 1, 4, 2),    # M1
-    "PA": (10, 1, 1, 4, 2),   # M5 (12 clubes no real; banco do FM06 tem 10)
+    "PA": (14, 1, 1, 4, 2),   # M5 (12 clubes no real; banco tem 14)
     "AM": (8, 1, 1, 4, 1),    # M6 (dois turnos no real)
     "TO": (10, 1, 1, 4, 1),   # M1 (8 no real)
     "AC": (6, 1, 2, 4, 1),    # M1 (8 clubes no real; banco do FM06 tem 6)

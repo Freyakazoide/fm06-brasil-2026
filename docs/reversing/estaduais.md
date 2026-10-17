@@ -117,7 +117,11 @@ Virada 2006 → 2007 (probe em 16/1/2007): séries e Copa do Brasil em 2007,
 mas o contêiner dos estaduais ficou em 2006 e nenhum estadual de 2007 foi
 criado. Baiano, Mato-Grossense e Paraense com 1/2 fases: a fase de liga
 (10 clubes, 9 rodadas, 11/1 a 15/2) não terminou a tempo e o mata-mata não
-nasceu. Correção: início em 7/1.
+nasceu. Início em 7/1 não resolveu: no jogo o Baiano tinha 13 clubes na
+tabela, o Paraense e o Mato-Grossense 14, com calendário de 10 (9 rodadas;
+times com 10 ou 11 jogos de 12 ou 13). O número de clubes do formato tem de
+ser o do banco: BA 13, PA 14, MT 14 (a tabela original dizia PA 10, mas o
+Paraense tinha classe própria).
 
 Isso cobre direto os modelos M1 e M3 de `docs/REGRAS_2026_ESTADUAIS_E_COPAS.md`
 (liga única + mata-mata de 4 ou 8). Para os demais modelos falta ver o que o
