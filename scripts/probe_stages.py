@@ -28,6 +28,13 @@ COMPS = {
     "Série D (antiga C)": 0x0113B86C,
     "Copa do Brasil": 0x0113BB24,
 }
+STATE_VTABLE = 0x0113BDDC          # BRA_STATE_LEAGUE (todos os estaduais com estaduais_2026)
+CONTAINER_VTABLE = 0x0113D98C      # BRA_STATE (contêiner dos estaduais)
+UF = {0x1901A: "SP", 0x19018: "RJ", 0x1A2B2: "AC", 0x1A2B1: "AL", 0x49C7F: "AM", 0x4B9AE: "BA",
+      0x4C76A: "CE", 0x4C76C: "DF", 0x4C76E: "ES", 0x4B9B0: "GO", 0x4C770: "MA", 0x4C774: "MT",
+      0x4C772: "MS", 0x4B9B2: "MG", 0x4C784: "PA", 0x4C776: "PB", 0x4B9B6: "PR", 0x4B9B4: "PE",
+      0x4C778: "PI", 0x4C77A: "RN", 0x49C7D: "RS", 0x4C77C: "RO", 0x4C77E: "RR", 0x4B9B8: "SC",
+      0x4C780: "SE", 0x4C782: "TO", 0x4C768: "AP"}
 
 
 def u32(data: bytes, at: int) -> int:
@@ -98,9 +105,32 @@ def show_actions(handle, stage: bytes) -> None:
               f"próxima fase {u32(data, 0x14):#x}, {u32(data, 0x18):#x}")
 
 
+def show_states(handle) -> None:
+    found = find_objects(handle, {"estadual": STATE_VTABLE, "contêiner": CONTAINER_VTABLE})
+    print(f"\n=== Estaduais: {len(found['estadual'])} objeto(s); contêiner: {len(found['contêiner'])}")
+    for address in found["contêiner"]:
+        comp = read_memory(handle, address, 0x200) or b""
+        if len(comp) >= 0x200:
+            print(f"  contêiner {address:#x}: ano {struct.unpack_from('<H', comp, 0x9C)[0]}, "
+                  f"fases {comp[0x98]}/{comp[0x100]}")
+    rows = []
+    for address in found["estadual"]:
+        comp = read_memory(handle, address, 0x1C4) or b""
+        if len(comp) < 0x1C4:
+            continue
+        sid = u32(comp, 0x1A4)
+        if sid not in UF:
+            continue
+        rows.append((UF[sid], struct.unpack_from("<H", comp, 0x9C)[0], comp[0x98], comp[0x100]))
+    for uf, year, made, total in sorted(rows):
+        mark = "" if year >= max(r[1] for r in rows) else "   <-- ano atrasado"
+        print(f"  {uf}: ano {year}, fases {made}/{total}{mark}")
+
+
 def main() -> None:
     handle = open_process(find_process_id(sys.argv[1] if len(sys.argv) > 1 else "fm_brasil.exe"))
     print("Procurando as séries na memória...", flush=True)
+    show_states(handle)
     found = find_objects(handle, COMPS)
     for name, addresses in found.items():
         print(f"\n=== {name}: {len(addresses)} objeto(s)")
