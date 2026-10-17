@@ -90,18 +90,21 @@ def main() -> None:
         if target not in comps:
             continue
         club = u32(data, 0x38)
-        head = read_memory(handle, club, 0x20) or b""
+        head = read_memory(handle, club, 0xE0) or b""
         uid = u32(head, 0x14) if len(head) >= 0x18 else 0
+        nation = u32(head, 0xDC) if len(head) >= 0xE0 else 0
+        nation_head = read_memory(handle, nation, 0x18) or b"" if nation else b""
+        nation_uid = u32(nation_head, 0x14) if len(nation_head) >= 0x18 else 0
         name = club_names(db, uid)[1] if db and uid else ""
         division = u32(data, 0x54)
         div_vt = u32(read_memory(handle, division, 4) or b"\0\0\0\0", 0) if division else 0
         rows.append((comps[target], name or f"clube {uid}", class_name(handle, div_vt) if div_vt else "-",
-                     data[0x60], data[0xB8]))
+                     data[0x60], data[0xB8], nation_uid))
     for comp in COMPS:
         mine = [r for r in rows if r[0] == comp]
         print(f"\n=== {comp}: {len(mine)} clube(s) marcados")
-        for _, name, division, last_pos, flag in sorted(mine, key=lambda r: (r[2], r[3])):
-            print(f"  {name:28} divisão {division:28} pos. anterior {last_pos:3}  +0xB8 = {flag}")
+        for _, name, division, last_pos, flag, nation in sorted(mine, key=lambda r: (r[5], r[2], r[3])):
+            print(f"  país {nation:#06x}  {name:28} divisão {division:28} pos. anterior {last_pos:3}  +0xB8 = {flag}")
 
 
 if __name__ == "__main__":
