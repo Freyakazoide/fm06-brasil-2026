@@ -161,14 +161,14 @@ def _new_ctor(data: bytes) -> bytes:
     _replace(code, 0x17, b"\x6A\x01\x6A\x01\x8B\xF1\x68" + u32(SERIE_B_ID),
              b"\x6A\x02\x6A\x01\x8B\xF1\x68" + u32(NEW_C_ID))                    # nível 2, ID novo
     _replace(code, 0x35, b"\xC7\x06" + u32(B_VTABLE), b"\xC7\x06" + u32(NEW_VTABLE))
-    _replace(code, 0x2D, b"\x6A\x01", b"\x6A\x02")                                # 2 fases
+    _replace(code, 0x2D, b"\x6A\x01", b"\x6A\x03")                                # 3 fases
     return bytes(code)
 
 
 def _new_vtable(data: bytes) -> bytes:
     raw = bytearray(data[off(B_VTABLE) - 4:off(B_VTABLE) + 4 * VTABLE_SLOTS])
     struct.pack_into("<I", raw, 4 + 4 * STAGE_SLOT, C_DISPATCH)
-    struct.pack_into("<I", raw, 4 + 4 * NEXT_STAGE_SLOT, C_NEXT)
+    struct.pack_into("<I", raw, 4 + 4 * NEXT_STAGE_SLOT, C_FINAL_NEXT)
     struct.pack_into("<I", raw, 4 + MOVES_OFFSET, MOVES_COLLECT)
     struct.pack_into("<I", raw, 4 + SIZE_CHANGE_OFFSET, C_SIZE_CHANGE)
     return bytes(raw)
@@ -268,6 +268,13 @@ OLD_C_BUILDER_CALLS = (
 GROUP_STAGE_NAME = 0x49           # nome usado pela fase de grupos (0x00B4BE40)
 C_NEXT = SECTION_VA + 0xB00
 B_NEXT = SECTION_VA + 0xC00
+C_FINAL_NEXT = SECTION_VA + 0x5000   # método 72: grupos terminaram -> final
+GROUP_ORDER = SECTION_VA + 0x5100    # classificados na ordem 1,4,5,8 | 2,3,6,7
+GROUP_STAGE_VTABLE = 0x011228C4
+GROUPS_QUALIFIED = 0x00B577B0     # (NEXT_STAGE_INFO*, lista*, -1): classificados de cada grupo
+KNOCKOUT_NEW = 0x00B44060         # mata-mata(índice, lista*, cabeças*, 0), objeto de 0x30 bytes
+QUALIFY_OFFSET = 0x00B0FF70       # ação "o n-ésimo da zona classifica" (marca, NSI*, n)
+FINAL_CODE = 0x14                 # rodada "Final"
 
 # Método 72 da competição: chamado pelo motor (0x00AC5BD9) quando uma fase
 # termina; é ele que cria a fase seguinte. A e B usam o padrão (0x007560A0,
@@ -310,6 +317,7 @@ def _c_next_stage() -> bytes:
     # competição com uma fase vazia em vez de criar grupos com vagas sem time.
     a.raw(b"\x66\x83\x7C\x24\x08" + bytes([QUALIFIED]))   # cmp word ptr [esp+8], 8
     jne3 = len(a.code); a.raw(b"\x75\x00")
+    a.call(GROUP_ORDER)                         # grupos pela posição (sem sorteio)
     a.push(0x34).call(STAGE_ALLOC).raw(b"\x83\xC4\x04")
     a.raw(b"\x85\xC0")                          # test eax, eax
     je1 = len(a.code); a.raw(b"\x74\x00")
@@ -347,18 +355,77 @@ def _b_next_stage() -> bytes:
     code[jne1 + 1] = ret - (jne1 + 2)
     code[jne2 + 1] = ret - (jne2 + 2)
     return bytes(code)
+def _group_order() -> bytes:
+    """Reordena os 8 classificados (em ordem de classificação) para os grupos
+    sem sorteio: grupo 1 = 1º, 4º, 5º, 8º; grupo 2 = 2º, 3º, 6º, 7º (2026)."""
+    g = Asm(GROUP_ORDER)
+    g.raw(b"\x56\x8B\x74\x24\x0C")                   # push esi ; mov esi, [esp+0xC] (itens da lista)
+    g.raw(b"\x8B\x46\x04\x8B\x4E\x08\x8B\x56\x0C")   # eax = 2º ; ecx = 3º ; edx = 4º
+    g.raw(b"\x89\x56\x04\x8B\x56\x10\x89\x56\x08")   # [1] = 4º ; [2] = 5º
+    g.raw(b"\x8B\x56\x1C\x89\x56\x0C\x89\x46\x10")   # [3] = 8º ; [4] = 2º
+    g.raw(b"\x8B\x56\x14\x8B\x46\x18")               # edx = 6º ; eax = 7º
+    g.raw(b"\x89\x4E\x14\x89\x56\x18\x89\x46\x1C")   # [5] = 3º ; [6] = 6º ; [7] = 7º
+    g.raw(b"\x5E\xC3")
+    return bytes(g.code)
+
+
+def _c_final_next() -> bytes:
+    """Método 72 da nova C. Fase 1 (grupos) terminou -> final em ida e volta com o
+    1º de cada grupo; sem 2 classificados, fecha com uma fase vazia. Outras fases
+    -> C_NEXT."""
+    a = Asm(C_FINAL_NEXT)
+    a.raw(b"\x8B\x44\x24\x04\x80\x78\x08\x01")       # mov eax, [esp+4] ; cmp byte [eax+8], 1
+    a.raw(b"\x0F\x85" + u32(C_NEXT - (a.here + 6)))  # jne C_NEXT
+    a.raw(b"\x80\xB9\x98\x00\x00\x00\x02")           # cmp byte [ecx+0x98], 2
+    jne_ret = len(a.code); a.raw(b"\x0F\x85" + u32(0))
+    a.raw(b"\x56\x8B\xF1\x83\xEC\x20")               # push esi ; mov esi, ecx ; sub esp, 0x20
+    a.raw(b"\xC7\x04\x24" + u32(TEAM_LIST_VTABLE))
+    for o, v in ((4, 0), (8, 0), (0xC, 0), (0x10, FATE_VTABLES[0]), (0x14, FATE_VTABLES[1]),
+                 (0x18, FINAL_CODE), (0x1C, -1)):
+        a.raw(b"\xC7\x44\x24" + bytes([o]) + u32(v))
+    a.raw(b"\x8B\x4C\x24\x28")                       # mov ecx, [esp+0x28] (fase que terminou)
+    a.raw(b"\x81\x39" + u32(GROUP_STAGE_VTABLE))     # cmp dword [ecx], GROUP_STAGE
+    jne_e1 = len(a.code); a.raw(b"\x75\x00")
+    a.push(-1).raw(b"\x8D\x54\x24\x04\x52\x8D\x54\x24\x18\x52").call(GROUPS_QUALIFIED)
+    a.raw(b"\x66\x83\x7C\x24\x08\x02")               # cmp word [esp+8], 2
+    jne_e2 = len(a.code); a.raw(b"\x75\x00")
+    a.push(0x30).call(STAGE_ALLOC).raw(b"\x83\xC4\x04\x85\xC0")
+    je_free = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x8B\xC8").push(0).push(0)               # mov ecx, eax ; 0 ; cabeças = NULL
+    a.raw(b"\x8D\x54\x24\x08\x52").push(2).call(KNOCKOUT_NEW)   # mata-mata(2, lista, 0, 0)
+    a.push(1).raw(b"\x50\x8B\xCE").call(ADD_STAGE)
+    jmp_free = len(a.code); a.raw(b"\xEB\x00")
+    empty = len(a.code)
+    a.push(1).push(0).raw(b"\x8B\xCE").call(ADD_STAGE)
+    free = len(a.code)
+    a.raw(b"\x8D\x0C\x24").call(TEAM_LIST_FREE)
+    a.raw(b"\x83\xC4\x20\x5E")
+    ret = len(a.code)
+    a.raw(b"\xC2\x04\x00")
+    code = bytearray(a.code)
+    struct.pack_into("<i", code, jne_ret + 2, ret - (jne_ret + 6))
+    for at, target in ((jne_e1, empty), (jne_e2, empty), (je_free, free), (jmp_free, free)):
+        code[at + 1] = (target - (at + 2)) & 0xFF
+    return bytes(code)
+
+
 QUALIFY_ZONE = 2                  # zona 2 da fase de liga classifica para a fase seguinte
 QUALIFIED = 8                     # quantos vão para a fase de grupos
 
 
 def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
+    # fase 0 -> 1ª fase (cópia da B); 1 -> grupos (fase 0 da cópia da antiga C);
+    # 2 -> final (mata-mata, fase 1 da cópia); 3+ -> cópia da B (devolve 0)
     disp = Asm(C_DISPATCH)
-    disp.raw(b"\x80\x7C\x24\x04\x01")                         # cmp byte ptr [esp+4], 1
-    disp.raw(b"\x0F\x85" + u32(NEW_BUILDER - (disp.here + 6)))   # jne 1ª fase
-    disp.raw(b"\xC6\x44\x24\x04\x00")                         # fase 0 na cópia da antiga C
+    disp.raw(b"\x8A\x44\x24\x04\x3C\x01")                      # mov al, [esp+4] ; cmp al, 1
+    disp.raw(b"\x0F\x82" + u32(NEW_BUILDER - (disp.here + 6)))   # jb 1ª fase
+    disp.raw(b"\x3C\x02")                                     # cmp al, 2
+    disp.raw(b"\x0F\x87" + u32(NEW_BUILDER - (disp.here + 6)))   # ja
+    disp.raw(b"\xFE\xC8\x88\x44\x24\x04")                      # dec al ; mov [esp+4], al
     disp.jmp(OLD_C_COPY)
 
     qual = Asm(C_QUALIFY)
+    qual.raw(b"\x66\xC7\x46\x0C\x00\x00")             # +0x0C = 0: o líder da 1ª fase não é campeão
     qual.raw(b"\xC6\x46\x12" + bytes([QUALIFIED]))   # mov byte ptr [esi+0x12], 8 (zona 2)
     # Com 28 clubes (tamanho final) caem 6, para a Série D poder subir 6.
     qual.raw(b"\x80\x7E\x0B" + bytes([C_FINAL_SIZE]))  # cmp byte ptr [esi+0xB], 28 (clubes)
@@ -382,17 +449,42 @@ def _c_phase_code(data: bytes) -> list[tuple[int, bytes]]:
     # Regra de acesso para a Série B fica (os 2 primeiros de cada grupo sobem);
     # a de rebaixamento sai (quem cai sai da 1ª fase).
     _replace(code, 0x207, b"\x6a\xff", b"\xEB\x0E")
-    _replace(code, 0x21C, b"\xc7\x44", b"\xEB\x30")    # sem ação 5: zona 1 desta fase = sobe
+    _replace(code, 0x109, bytes.fromhex("66c7460a0020"), bytes.fromhex("66c7460a0000"))   # sem sorteio
+    # No lugar da ação 5: o 1º de cada grupo (marca 1, posição 0) vai para a
+    # final (rodada 0x14). A zona 1 continua sendo o acesso (2 por grupo).
+    final = Asm(OLD_C_COPY + 0x21C)
+    final.raw(b"\xC7\x44\x24\x30" + u32(FATE_VTABLES[0]) + b"\xC7\x44\x24\x34" + u32(FATE_VTABLES[1]))
+    final.raw(b"\xC7\x44\x24\x38" + u32(FINAL_CODE) + b"\xC7\x44\x24\x3C" + u32(-1))
+    final.push(0).raw(b"\x8D\x44\x24\x34\x50").push(1).raw(b"\x8B\xCE").call(QUALIFY_OFFSET)
+    final.raw(b"\x66\x90")
+    assert len(final.code) == 0x32
+    code[0x21C:0x24E] = final.code
     # Tipo da zona 1 (+0x0C, lido em 0x00B17836): 4 marca "Q" (classificado,
     # marca 5), 2 marca "P" (acesso, marca 1). Só a marca 1 entra no acesso.
     _replace(code, 0x1EC, bytes.fromhex("66c7460c0400"), bytes.fromhex("66c7460c0200"))
     for at, old, new in (
         (0x253, 5, 8), (0x25C, 0x19, 6),      # início: 6/9
-        (0x290, 8, 10), (0x292, 0x14, 1),     # fim: 1/11
+        (0x290, 8, 9), (0x292, 0x14, 18),     # fim: 18/10
     ):
         _replace(code, at, bytes([0x6A, old]), bytes([0x6A, new]))
+    # Fase 1 da cópia (mata-mata da antiga C) vira a final: 2 clubes, ida e volta,
+    # empate direto nos pênaltis (+0x2E = 2), sorteio 21/10, jogos 25/10 e 1/11,
+    # vencedor = campeão (posição final 0), perdedor = 2º; termina na final.
+    for at, old, new in (
+        (0x3ED, "bd20000000", "bd02000000"),                         # 2 clubes
+        (0x469, "66c78424820000000e00", "66c78424820000000200"),     # só pênaltis
+        (0x49C, "6a07", "6a14"),                                     # nome "Final"
+        (0x4AE, "6a08", "6a09"),                                     # sorteio: outubro
+        (0x4C8, "6a08", "6a09"), (0x4CA, "6a18", "6a19"),            # 1º jogo 25/10
+        (0x502, "66c78424880000001000", "66c78424880000000100"),     # 1 vencedor
+        (0x52D, "6a05", "6aff"),                                     # vencedor: posição 0
+        (0x53F, "6a06", "6a01"),                                     # perdedor: posição 1
+        (0x555, "6a088d4c244c", "e93002000090"),                     # pula as rodadas seguintes
+    ):
+        _replace(code, at, bytes.fromhex(old), bytes.fromhex(new))
     return [(C_DISPATCH, bytes(disp.code)), (C_QUALIFY, bytes(qual.code)), (OLD_C_COPY, bytes(code)),
-            (C_NEXT, _c_next_stage())] + _moves_code()
+            (C_NEXT, _c_next_stage()), (C_FINAL_NEXT, _c_final_next()),
+            (GROUP_ORDER, _group_order())] + _moves_code()
 
 
 # ---------------------------------------------------------------------------

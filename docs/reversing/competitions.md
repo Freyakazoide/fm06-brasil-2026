@@ -189,3 +189,19 @@ original e os bytes antes da troca.
 2. Primeiro teste de patch numa **cópia** do `fm.exe`: trocar uma constante
    simples (por exemplo, a quantidade de rebaixados) e confirmar no jogo.
 3. Planejar o 4º nível (Série D) com code cave.
+
+## Série C 2026: grupos pela posição e final (patch `serie_c_nova`)
+
+- 3 fases (`NEW_CTOR` +0x2D = 3). Despachante: 0 → cópia da B (fase de liga);
+  1 → grupos (fase 0 da cópia da antiga C); 2 → final (fase 1 da cópia).
+- Grupos sem sorteio: flags +0xA da configuração = 0 (era 0x2000) faz
+  `0x00B5B970` repartir a lista em ordem; `GROUP_ORDER` (SECTION_VA+0x5100)
+  reordena os 8 classificados (que vêm na ordem da tabela, `0x00B18D50`) para
+  1º, 4º, 5º, 8º | 2º, 3º, 6º, 7º. Grupos de 6/9 a 18/10.
+- Final: ação `0x00B0FF70(1, NSI 0x14, 0)` = o 1º de cada grupo (a zona 1
+  continua sendo o acesso, 2 por grupo). `C_FINAL_NEXT` (SECTION_VA+0x5000,
+  método 72) cria o mata-mata `0x00B44060(2, lista, 0, 0)` com os 2; a cópia
+  do mata-mata da antiga C vira a final: 2 clubes, ida e volta, empate direto
+  nos pênaltis (+0x2E = 2), sorteio 21/10, jogos 25/10 e 1/11, vencedor com
+  posição final 0 (campeão), perdedor 1.
+- +0x0C da fase de liga = 0: o líder da 1ª fase não é mais marcado campeão.
