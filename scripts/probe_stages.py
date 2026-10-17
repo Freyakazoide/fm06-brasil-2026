@@ -3,7 +3,7 @@
 Uso (com o jogo aberto e o save carregado; uma linha só):
     python -u scripts\\probe_stages.py fm_brasil.exe
 
-Para cada série (A, B, C nova, D = antiga C) mostra quantas fases a
+Para cada série (A, B, C nova, D = antiga C) e a Copa do Brasil mostra quantas fases a
 competição deve ter (+0x100), quantas já foram criadas (+0x98) e, para cada
 fase criada, a classe (RTTI) e os primeiros bytes. Serve para ver se a fase
 seguinte (playoff, grupos, mata-mata) foi criada e se tem times.
@@ -26,6 +26,7 @@ COMPS = {
     "Série B": 0x0113B5B4,
     "Série C (nova)": 0x012BA614,
     "Série D (antiga C)": 0x0113B86C,
+    "Copa do Brasil": 0x0113BB24,
 }
 
 
