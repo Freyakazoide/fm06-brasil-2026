@@ -45,7 +45,7 @@ PARAMS_ORIGINAL = 0x00BB3330
 DATES = 0x00BB3DF0                # (início dia*, início mês*, fim dia*, fim mês*), ret 0x10
 
 MINIMUM_TEAMS = 0x00BB2840       # bra_get_minimum_division_teams
-MINIMUM_TEAMS_SIZE = 0x300
+MINIMUM_TEAMS_SIZE = 0x600
 PARAMS_STUB = SECTION_VA + 0x2000
 DATES_STUB = SECTION_VA + 0x2080
 TABLE = SECTION_VA + 0x2100
@@ -229,6 +229,15 @@ def build(data: bytes):
             raise ValueError(f"estaduais: mínimo de clubes de {uf} não encontrado")
         if uf in counts:
             swaps.append(Swap(at + 3, data[at + 3:at + 4], bytes([counts[uf]])))
+    # 2ª divisões estaduais (não são disputadas; recebem os rebaixados): mínimo 0,
+    # porque completar a lista de 2026 tira clubes delas (ex.: Acre 4 -> 2, Roraima 1 -> 0)
+    from .estaduais_clubes import LOWER_ID
+    for uf, cid in LOWER_ID.items():
+        needle = b"\x6A\x00\x68" + u32(cid)
+        at = data.find(needle, base, base + MINIMUM_TEAMS_SIZE)
+        if at < 4 or data[at - 4:at - 2] != b"\x6A\xFF" or data[at - 2] != 0x6A:
+            raise ValueError(f"estaduais: mínimo da 2ª divisão de {uf} não encontrado")
+        swaps.append(Swap(at - 1, data[at - 1:at], b"\x00"))
     # construtores especiais -> genérico
     base = off(CONTAINER)
     for at in range(base, base + CONTAINER_SIZE - 5):

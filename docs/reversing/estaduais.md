@@ -159,4 +159,6 @@ os grupos podem jogar contra o outro grupo.
   `estaduais_2026` grava agora o número da lista. O leitor por cabeçalho de
   clube (`server_teams.find_brazil_teams`) perdia 53 times de estadual;
   `estaduais_clubes.state_teams` varre o banco inteiro (724 times, as
-  contagens batem com as registradas no exe original).
+  contagens batem com as registradas no exe original). As 2ª divisões
+  estaduais têm mínimo registrado (3 ou 4, sem máximo); completar as listas
+  tira clubes delas (Acre 4 -> 2, Roraima 1 -> 0), então o mínimo delas vai a 0.
