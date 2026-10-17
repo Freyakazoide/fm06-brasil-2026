@@ -11,7 +11,9 @@ os 20 da Série A), oitavas, quartas, semifinal e final. O patch reproduz da
 
 - fase 1 (cópia da montagem, 48 clubes): rodadas 6 (48 → 24, 11/3) e 7
   (24 → 12, 18/3); os vencedores da rodada 7 vão para a fase seguinte;
-- fase 2 (cópia da montagem, 32 clubes): 5ª fase (rodada 7, 22/4), oitavas
+- fase 2 (cópia da montagem, 32 clubes): sorteio em 18/4 (a fase nasce no
+  meio da temporada; sem data de sorteio ninguém sorteia os confrontos, teste
+  3), 5ª fase (rodada 7, 26/4), oitavas
   (rodada 8, 1/8), quartas (26/8), semifinal (1/11) e final (6/12);
 - método 72: quando a fase 1 termina, junta os 12 vencedores e os 20 clubes
   da Série A e cria a fase 2;
@@ -44,6 +46,8 @@ KNOCKOUT_QUALIFIED = 0x00B3E6E0    # mata_mata.classificados(NEXT_STAGE_INFO*, l
 ADD_COMP_TEAMS = 0x00ACD160        # cdecl (ID, lista*, máximo, -1, 1, -1, 1)
 SEEDING = 0x00B3EF00               # cdecl (lista*, cabeças de chave*)
 KNOCKOUT_NEW = 0x00B44060          # KNOCKOUT(índice, lista*, cabeças*, 0), 0x30 bytes
+ROUND_NAME = 0x00B43720            # rodada.nome(código)
+ROUND_DRAW = 0x00B3B550            # rodada.sorteio(hora, dia, mês, 2000, tipo), ret 0x14
 COMP_BY_ID = 0x00582440            # this = [0x014EAA34]
 COMPS = 0x014EAA34
 
@@ -107,7 +111,7 @@ def _stage1(data: bytes, tail: int) -> bytes:
     return bytes(code)
 
 
-def _stage2(data: bytes) -> bytes:
+def _stage2(data: bytes, draw: int) -> bytes:
     code = _builder_copy(data, S1)
     _replace(code, TEAMS_AT, b"\xBD" + u32(0x40), b"\xBD" + u32(STAGE2_TEAMS))
     # 1ª rodada da cópia vira a 5ª fase (32 -> 16), com a configuração da 2ª rodada original
@@ -116,7 +120,10 @@ def _stage2(data: bytes) -> bytes:
     _replace(code, R1_FLAGS_AT, b"\x66\xC7\x44\x24\x3C" + _word(0x8403), b"\x66\xC7\x44\x24\x3C" + _word(0x0401))
     _replace(code, R1_OUT_AT, b"\x66\xC7\x44\x24\x44" + _word(0x20), b"\x66\xC7\x44\x24\x44" + _word(0x10))
     _replace(code, R1_EXTRA_AT, b"\x66\x89\x6C\x24\x46", b"\x66\x89\x5C\x24\x46")
-    _date(code, R1_DATE, 22, 3)                                   # 5ª fase: 22/4
+    _date(code, R1_DATE, 26, 3)                                   # 5ª fase: 26/4 (quarta em 2006)
+    # nome da rodada + sorteio (desvio): push 7 ; lea ecx,[esp+0x14] ; call 0x00B43720
+    _replace(code, R1_CODE_AT + 2, b"\x8D\x4C\x24\x14\xE8", b"\x8D\x4C\x24\x14\xE8")
+    code[R1_CODE_AT:R1_CODE_AT + 11] = (b"\xE9" + u32(draw - (S1 + R1_CODE_AT + 5))) + b"\x90" * 6
     # pula a 2ª rodada original (mantém o mov ebp, 7 que as seguintes usam)
     _replace(code, R2_SKIP_AT, code[R2_SKIP_AT:R2_SKIP_AT + 5],
              b"\xE9" + u32((S1 + R3_AT) - (S1 + R2_SKIP_AT + 5)))
@@ -191,6 +198,12 @@ def _stubs() -> tuple[bytes, dict[str, int]]:
     ret = len(a.code)
     a.raw(b"\xC2\x04\x00")
 
+    # 1ª rodada da fase 2: nome (7) e sorteio em 18/4, depois volta à cópia
+    entry["draw"] = a.here
+    a.push(7).raw(b"\x8D\x4C\x24\x14").call(ROUND_NAME)
+    a.push(4).push(0x7D0).push(3).push(18).push(0x4B0).raw(b"\x8D\x4C\x24\x24").call(ROUND_DRAW)
+    a.jmp(S1 + R1_CODE_AT + 11)
+
     # participantes da fase 1: tira os clubes da Série A da lista (lista em [esp+8])
     entry["filter"] = a.here
     a.raw(b"\x60")                                          # pushad (lista passa a [esp+0x28])
@@ -227,7 +240,7 @@ def build(data: bytes):
     from .exe_patches import Swap
 
     stubs, entry = _stubs()
-    s0, s1 = _stage1(data, entry["tail"]), _stage2(data)
+    s0, s1 = _stage1(data, entry["tail"]), _stage2(data, entry["draw"])
     if S0 + len(s0) > S1 or S1 + len(s1) > STUBS or len(stubs) > 0x400:
         raise ValueError("copa do brasil: código não cabe")
 

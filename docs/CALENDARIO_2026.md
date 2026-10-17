@@ -152,7 +152,7 @@ de 2026 em diante:
 | Fase no jogo | Rodadas | Clubes | Datas |
 |---|---|---|---|
 | 1 (sem a Série A) | 3ª fase (código 6), 4ª fase (código 7) | 48 → 24 → 12 | 11/3, 18/3 |
-| 2 | 5ª fase, oitavas, quartas, semifinal, final | 12 + 20 da Série A = 32 | 22/4, 1/8, 26/8, 1/11, 6/12 |
+| 2 | 5ª fase, oitavas, quartas, semifinal, final | 12 + 20 da Série A = 32 | sorteio 18/4; 26/4, 1/8, 26/8, 1/11, 6/12 |
 
 - Participantes da fase 1: os mesmos critérios, filtrando os clubes da Série
   A (`TEAM+0x54`), até 48, completando com Série B, nova C e Série D.
@@ -162,3 +162,13 @@ de 2026 em diante:
   `0x00B3EF00` + `0x00B44060(1, …)` criam o mata-mata da fase 2.
 - Ainda como no FM06: ida e volta em todas as rodadas (inclusive as que em
   2026 são jogo único) e a regra do 2º jogo de cada rodada.
+
+Testes:
+
+- Teste 1: fase 1 jogada (48 clubes, sem a Série A): 8/3 e 22/3, 25/3 e 8/4
+  (ida e volta; jogos adiados por finais de estadual em 9, 11 e 21/3).
+- Probe em 16/4: fases previstas 2, criadas 2; fase 2 com 32 clubes, mas sem
+  jogos até 6/5. Causa: a fase 2 nasce no meio da temporada e a 1ª rodada da
+  Copa não tinha data de sorteio (no original os 64 já são conhecidos no
+  início). Correção: sorteio `0x00B3B550(0x4B0, 18, abril, 2000, 4)` na 1ª
+  rodada da fase 2, como no mata-mata da antiga C.
