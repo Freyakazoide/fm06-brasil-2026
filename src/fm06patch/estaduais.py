@@ -6,7 +6,7 @@
 2. O construtor genérico chama a tabela original de parâmetros (0x00BB3330)
    e, em seguida, um desvio grava o formato de 2026 de cada estado: clubes,
    grupos, turnos, quantos vão ao mata-mata e quantos caem.
-3. As datas da fase de liga (0x00BB3DF0) passam a ser: início 11/1; fim
+3. As datas da fase de liga (0x00BB3DF0) passam a ser: início 7/1; fim
    calculado para a final cair em 8/3 (quartas, semifinal e final são
    marcadas pelo jogo uma ou duas semanas depois do fim da fase de liga).
 
@@ -83,7 +83,10 @@ FORMATO_2026 = {
 SEM_SEGUNDA_FASE = 7              # +0x18 da tabela: 7 = sem 2ª fase, 0 = mata-mata, 1 = liga final
 MATA_MATA = 0
 
-START = (11, 0)                   # 11/1
+START = (7, 0)                    # 7/1: com 11/1, Baiano, Mato-Grossense e Paraense (10 clubes,
+                                  # clubes da Série A jogando desde 28/1) não terminaram a fase de
+                                  # liga até 15/2, o mata-mata não nasceu e os estaduais de 2007
+                                  # não foram criados (teste da virada 2006 -> 2007)
 # fim da fase de liga conforme os classificados, para a final cair em 8/3
 END_8 = (8, 1)                    # 8/2: quartas 15/2, semi 22/2, final 8/3
 END_4 = (15, 1)                   # 15/2: semi 22/2, final 8/3

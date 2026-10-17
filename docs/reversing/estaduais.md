@@ -113,6 +113,12 @@ Goiano gerados. Paulista (16), Gaúcho (12) e Paranaense (12) sem os grandes:
 com menos vagas que clubes no estado, o jogo usa os primeiros da lista. Esses
 voltaram ao número original (20, 18, 16), assim como RN, TO, DF e RO.
 
+Virada 2006 → 2007 (probe em 16/1/2007): séries e Copa do Brasil em 2007,
+mas o contêiner dos estaduais ficou em 2006 e nenhum estadual de 2007 foi
+criado. Baiano, Mato-Grossense e Paraense com 1/2 fases: a fase de liga
+(10 clubes, 9 rodadas, 11/1 a 15/2) não terminou a tempo e o mata-mata não
+nasceu. Correção: início em 7/1.
+
 Isso cobre direto os modelos M1 e M3 de `docs/REGRAS_2026_ESTADUAIS_E_COPAS.md`
 (liga única + mata-mata de 4 ou 8). Para os demais modelos falta ver o que o
 mata-mata do genérico suporta (6 classificados, 1º e 2º direto à semi) e se
