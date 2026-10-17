@@ -211,10 +211,20 @@ IDs: Libertadores 0x1900F, Sul-Americana 0x4D87F, Recopa 0x19012.
   só com as vagas: a preliminar ficou com 11 clubes, o 11º foi pareado com
   lixo e o jogo caiu em janeiro de 2006 (dump: `0x00C05260` -> ... ->
   `0x00B007C0` lendo o visitante do jogo).
-- Sul-Americana (`0x00C06FE0`): ARG 6, BRA 8, MEX 2, EUA (0x186) 1, demais 2.
-  Fica como está: a 1ª fase (`0x00C05FD0`) monta o chaveamento à mão pelos
-  índices dos argentinos e brasileiros (até o 8º brasileiro); mudar as vagas
-  exige reescrever esse chaveamento.
+- Sul-Americana: patch `sul_americana_2026` (`src/fm06patch/sul_americana.py`),
+  mata-mata de 28 clubes em 6 rodadas no lugar dos 34: 1ª fase com 16 clubes
+  dos 8 países menores (2 por país, confronto do mesmo país), 2ª fase com os
+  8 vencedores, oitavas com Argentina 6 + Brasil 6 + 4 da 2ª fase, quartas,
+  semi e final única. Brasil 6 pela tabela da Série A, sem quem está na
+  Libertadores (exclusão em `0x00C06C42` passa a valer para BRA, ARG e PER);
+  México e EUA 0; o campeão anterior não é inscrito à parte. O construtor
+  (`0x00C05F10`) montava a competição em 1/8 com a temporada de julho: as
+  datas de abril do patch antigo `sul_americana_datas_2026` caíam antes de a
+  competição existir. Agora é montada em 25/1 (temporada a partir de
+  janeiro). Chaveamento da 1ª fase (`0x00C05FD0`) por tabela fixa
+  (SECTION_VA+0x4200/0x4240). Datas: sorteio 1/4, 1ª fase ~20/4, 2ª fase
+  ~27/7, oitavas ~17/8, quartas ~21/9 (quintas), semifinal ~25/10, final
+  21/11 (jogo único, SECTION_VA+0x4280).
 - Datas da Libertadores: a competição é montada em 21/1 (`0x00C0639C`). A
   tabela do calendário internacional (`[0x014EB678]+0x60C`, entradas de
   0x18 bytes por `0x00AF6490`) é preenchida pelo método 0x124 de cada

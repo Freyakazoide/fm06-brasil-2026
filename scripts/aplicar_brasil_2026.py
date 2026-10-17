@@ -41,7 +41,7 @@ EXE_PATCHES = [
     "virada_1_janeiro",
     "estaduais_2026",
     "copa_do_brasil_2026",
-    "sul_americana_datas_2026", "libertadores_vagas_2026", "libertadores_datas_2026",
+    "sul_americana_2026", "libertadores_vagas_2026", "libertadores_datas_2026",
     "ano_exibido_mais_20",
 ]
 SERVER_SHA256 = "9FB7A4A2B87798120BF4D9DA9E86E7DABB99C668802B2FB9ECB035230F66BE62"
