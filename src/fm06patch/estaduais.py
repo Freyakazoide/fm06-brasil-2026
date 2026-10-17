@@ -8,7 +8,9 @@
    grupos, turnos, quantos vão ao mata-mata e quantos caem.
 3. As datas da fase de liga (0x00BB3DF0) passam a ser: início 7/1; fim
    calculado para a final cair em 8/3 (quartas, semifinal e final são
-   marcadas pelo jogo uma ou duas semanas depois do fim da fase de liga).
+   marcadas pelo jogo uma ou duas semanas depois do fim da fase de liga) ou,
+   se as rodadas não cabem até lá, depois da última rodada (fim por estado,
+   na tabela).
 
 Limites do estadual genérico (pequenas liberdades em relação a 2026):
 - o mata-mata tem 8, 4 ou 2 classificados (sem 1º e 2º direto à semifinal);
@@ -26,6 +28,7 @@ Limites do estadual genérico (pequenas liberdades em relação a 2026):
 from __future__ import annotations
 
 import struct
+from datetime import date, timedelta
 
 from .exe_cave import SECTION_VA, Asm, off, sec_off, section_swaps, u32
 
@@ -84,22 +87,41 @@ FORMATO_2026 = {
 SEM_SEGUNDA_FASE = 7              # +0x18 da tabela: 7 = sem 2ª fase, 0 = mata-mata, 1 = liga final
 MATA_MATA = 0
 
-START = (7, 0)                    # 7/1: com 11/1, Baiano, Mato-Grossense e Paraense (10 clubes,
-                                  # clubes da Série A jogando desde 28/1) não terminaram a fase de
-                                  # liga até 15/2, o mata-mata não nasceu e os estaduais de 2007
-                                  # não foram criados (teste da virada 2006 -> 2007)
+START = (7, 0)                    # 7/1 (1ª rodada no domingo seguinte)
 # fim da fase de liga conforme os classificados, para a final cair em 8/3
 END_8 = (8, 1)                    # 8/2: quartas 15/2, semi 22/2, final 8/3
 END_4 = (15, 1)                   # 15/2: semi 22/2, final 8/3
 END_2 = (1, 2)                    # 1/3: final 8/3
 END_0 = (8, 2)                    # 8/3: só a fase de liga
+END_DEFAULT = (8, 2)              # estado fora da tabela
+# O jogo só marca as rodadas que cabem até o fim da fase de liga (duas por semana,
+# domingo e quarta); as que não cabem nunca acontecem e a fase não termina (teste:
+# Baiano com 13 clubes, 13 rodadas e só 11 marcadas até 12/2). Se as rodadas não
+# cabem, o fim vai para depois da última, com folga; o mata-mata vem em seguida.
+FIRST_ROUND = date(2006, 1, 8)
+MARGIN_DAYS = 7
+
+
+def rounds(teams: int, groups: int, legs: int) -> int:
+    per_group = -(-teams // groups)
+    return (per_group + per_group % 2 - 1) * legs
+
+
+def league_end(teams: int, groups: int, legs: int, qualified: int) -> tuple[int, int]:
+    """(dia, mês 0-based) do fim da fase de liga."""
+    target = END_0 if qualified == 0 else END_2 if qualified <= 2 else END_4 if qualified <= 4 else END_8
+    wanted = date(2006, target[1] + 1, target[0])
+    needed = FIRST_ROUND + timedelta(days=-(-7 * (rounds(teams, groups, legs) - 1) // 2) + MARGIN_DAYS)
+    end = max(wanted, needed)
+    return end.day, end.month - 1
 
 
 def table_bytes() -> bytes:
     out = bytearray()
     for uf, (teams, groups, legs, qualified, relegated) in FORMATO_2026.items():
         stage2 = MATA_MATA if qualified else SEM_SEGUNDA_FASE
-        out += struct.pack("<I6Bxx", ID[uf], teams, groups, legs, qualified, relegated, stage2)
+        day, month = league_end(teams, groups, legs, qualified)
+        out += struct.pack("<I8B", ID[uf], teams, groups, legs, qualified, relegated, stage2, day, month)
     out += struct.pack("<I", 0)
     return bytes(out)
 
@@ -133,27 +155,29 @@ def _params_stub() -> bytes:
 
 def _dates_stub() -> bytes:
     a = Asm(DATES_STUB)
-    a.raw(b"\x8B\x44\x24\x04\x66\xC7\x00" + struct.pack("<H", START[0]))   # *início dia = 11
-    a.raw(b"\x8B\x44\x24\x08\xC6\x00" + bytes([START[1]]))                 # *início mês = 0
-    a.raw(b"\x8A\x51\x07")                                                  # mov dl, [ecx+7] (classificados)
-    ends = []
-    for limit, (day, month) in ((0, END_0), (2, END_2), (4, END_4)):
-        a.raw(b"\x80\xFA" + bytes([limit]))                                 # cmp dl, limit
-        ja = len(a.code); a.raw(b"\x77\x00")                                # ja próximo
-        a.raw(b"\xB0" + bytes([day]) + b"\xB4" + bytes([month]))            # mov al, dia ; mov ah, mês
-        jmp = len(a.code); a.raw(b"\xEB\x00")
-        ends.append((ja, jmp))
-    last = len(a.code)
-    a.raw(b"\xB0" + bytes([END_8[0]]) + b"\xB4" + bytes([END_8[1]]))
+    a.raw(b"\x8B\x44\x24\x04\x66\xC7\x00" + struct.pack("<H", START[0]))   # *início dia
+    a.raw(b"\x8B\x44\x24\x08\xC6\x00" + bytes([START[1]]))                 # *início mês
+    a.raw(b"\x8B\x11")                                                    # mov edx, [ecx] (ID)
+    a.raw(b"\xB8" + u32(TABLE))                                            # mov eax, TABLE
+    loop = len(a.code)
+    a.raw(b"\x8B\x08\x85\xC9")                                            # mov ecx, [eax] ; test ecx, ecx
+    je_missing = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x3B\xCA")                                                    # cmp ecx, edx
+    je_hit = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x83\xC0\x0C")                                                # add eax, 12
+    jmp_loop = len(a.code); a.raw(b"\xEB\x00")
+    missing = len(a.code)
+    a.raw(b"\xB1" + bytes([END_DEFAULT[0]]) + b"\xB5" + bytes([END_DEFAULT[1]]))   # mov cl, dia ; mov ch, mês
+    jmp_write = len(a.code); a.raw(b"\xEB\x00")
+    hit = len(a.code)
+    a.raw(b"\x8A\x48\x0A\x8A\x68\x0B")                                    # mov cl, [eax+10] ; mov ch, [eax+11]
     write = len(a.code)
-    a.raw(b"\x8B\x54\x24\x0C\x0F\xB6\xC8\x66\x89\x0A")                      # *fim dia = al
-    a.raw(b"\x8B\x54\x24\x10\x88\x22")                                      # *fim mês = ah
+    a.raw(b"\x8B\x44\x24\x0C\x0F\xB6\xD1\x66\x89\x10")                      # *fim dia = cl
+    a.raw(b"\x8B\x44\x24\x10\x88\x28")                                      # *fim mês = ch
     a.raw(b"\xC2\x10\x00")
     code = bytearray(a.code)
-    for i, (ja, jmp) in enumerate(ends):
-        nxt = ends[i + 1][0] - 3 if i + 1 < len(ends) else last
-        code[ja + 1] = (nxt - (ja + 2)) & 0xFF
-        code[jmp + 1] = (write - (jmp + 2)) & 0xFF
+    for at, target in ((je_missing, missing), (je_hit, hit), (jmp_loop, loop), (jmp_write, write)):
+        code[at + 1] = (target - (at + 2)) & 0xFF
     return bytes(code)
 
 

@@ -121,7 +121,13 @@ nasceu. Início em 7/1 não resolveu: no jogo o Baiano tinha 13 clubes na
 tabela, o Paraense e o Mato-Grossense 14, com calendário de 10 (9 rodadas;
 times com 10 ou 11 jogos de 12 ou 13). O número de clubes do formato tem de
 ser o do banco: BA 13, PA 14, MT 14 (a tabela original dizia PA 10, mas o
-Paraense tinha classe própria).
+Paraense tinha classe própria). Com 13 e 14 clubes o teste seguinte
+mostrou a causa real: o jogo só marca as rodadas que cabem até o fim da
+fase de liga (domingo e quarta). Com fim em 15/2, o Baiano (13 rodadas)
+teve só 11 marcadas, de 8/1 a 12/2, e as outras 2 nunca aconteceram. Agora o
+fim é por estado (bytes 10 e 11 da entrada da tabela): o fim do formato
+(8/2, 15/2, 1/3 ou 8/3) ou, se as rodadas não cabem, 7 dias depois da
+última (BA, PA e MT: 26/2).
 
 Isso cobre direto os modelos M1 e M3 de `docs/REGRAS_2026_ESTADUAIS_E_COPAS.md`
 (liga única + mata-mata de 4 ou 8). Para os demais modelos falta ver o que o
