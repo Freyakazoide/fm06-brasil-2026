@@ -190,9 +190,24 @@ IDs: Libertadores 0x1900F, Sul-Americana 0x4D87F, Recopa 0x19012.
   **Brasil (0x673) 5**, demais 3, inclusive **México (0x17B)**. IDs de país em
   ordem alfabética: 0x671 ARG, 0x672 BOL, 0x673 BRA, 0x674 CHI, 0x675 COL,
   0x676 ECU, 0x677 PAR, 0x678 PER, 0x679 URU.
-- Quem marca os clubes brasileiros: ainda não encontrado (o código do Brasil
-  não cita a Libertadores; pode vir do banco). Probe
-  `scripts/probe_continental.py` lista os clubes marcados.
+- Como `0x00C06440` completa cada país: (1) os marcados com `TEAM+0xB4`
+  (só URU, CHI, PER e COL marcam, no fim do campeonato deles); (2) México:
+  `0x00C05000`, que espera a competição mexicana 0x21329 terminar (se não
+  terminou, a Libertadores adia a montagem); (3) **Brasil: `0x00C05180`, o
+  campeão da Copa do Brasil (0x1901B)**; (4) participantes antigos do país
+  (+0x118); (5) o resto por `0x00ACD160(-1, lista, falta, país, …)`, que
+  ordena pelo nível da divisão e pela posição final (`TEAM+0x60`,
+  comparador `0x00A1D110`), ou seja, **os primeiros da Série A anterior**.
+  O campeão da Libertadores entra antes, fora da conta do país. Total: 38.
+- Patch `libertadores_vagas_2026`: Brasil 5 -> 7 (campeão da Copa do Brasil
+  + primeiros da Série A, como o G6 + Copa de 2026), Argentina 5 -> 6,
+  México 3 -> 0; total continua 38. Com 0 vagas, `0x00C05000` sai sem
+  esperar a competição mexicana. A semeadura (`0x00C05260`, 1 cabeça por
+  país) não depende do número de vagas.
+- Sul-Americana (`0x00C06FE0`): ARG 6, BRA 8, MEX 2, EUA (0x186) 1, demais 2.
+  Fica como está: a 1ª fase (`0x00C05FD0`) monta o chaveamento à mão pelos
+  índices dos argentinos e brasileiros (até o 8º brasileiro); mudar as vagas
+  exige reescrever esse chaveamento.
 - Datas da Libertadores: sorteio 15/1 e rodadas por semana (`0x00B3B9F0`), a
   decifrar.
 - Patch `sul_americana_datas_2026`: mata-mata de 6 rodadas em 15/4, 12/8,

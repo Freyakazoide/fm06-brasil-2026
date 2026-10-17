@@ -207,6 +207,22 @@ PATCHES = {
             ),
         ),
         Patch(
+            "libertadores_vagas_2026",
+            "Libertadores (SAM_LIBER_CUP, participantes em 0x00C06710): vagas por país como em 2026, "
+            "mantendo os 38 clubes do FM06: Brasil 5 -> 7, Argentina 5 -> 6, México 3 -> 0 (sem o "
+            "México a Libertadores também não espera a competição mexicana, 0x00C05000). No Brasil "
+            "(0x00C05180) entram o campeão da Copa do Brasil e, até fechar as vagas, os primeiros da "
+            "Série A anterior; o campeão da Libertadores entra à parte.",
+            tuple(
+                _imm8(va - 0x400000, b"\x6A", old, new)
+                for va, old, new in (
+                    (0xC06773, 5, 6),                             # Argentina (0x671)
+                    (0xC067A1, 5, 7),                             # Brasil (0x673)
+                    (0xC067F5, 3, 0),                             # México (0x17B)
+                )
+            ),
+        ),
+        Patch(
             "copa_do_brasil_2026",
             "Copa do Brasil em duas fases: 48 clubes sem a Série A (11/3 e 18/3); depois os 12 "
             "classificados + os 20 da Série A da 5ª fase à final (22/4, 1/8, 26/8, 1/11, 6/12). "
