@@ -63,6 +63,12 @@ def _copa_swaps(data: bytes):
     return build(data)
 
 
+def _libertadores_swaps(data: bytes):
+    from .libertadores import build
+
+    return build(data)
+
+
 def _estaduais_swaps(data: bytes):
     from .estaduais import build
 
@@ -208,19 +214,11 @@ PATCHES = {
         ),
         Patch(
             "libertadores_vagas_2026",
-            "Libertadores (SAM_LIBER_CUP, participantes em 0x00C06710): vagas por país como em 2026, "
-            "mantendo os 38 clubes do FM06: Brasil 5 -> 7, Argentina 5 -> 6, México 3 -> 0 (sem o "
-            "México a Libertadores também não espera a competição mexicana, 0x00C05000). No Brasil "
-            "(0x00C05180) entram o campeão da Copa do Brasil e, até fechar as vagas, os primeiros da "
-            "Série A anterior; o campeão da Libertadores entra à parte.",
-            tuple(
-                _imm8(va - 0x400000, b"\x6A", old, new)
-                for va, old, new in (
-                    (0xC06773, 5, 6),                             # Argentina (0x671)
-                    (0xC067A1, 5, 7),                             # Brasil (0x673)
-                    (0xC067F5, 3, 0),                             # México (0x17B)
-                )
-            ),
+            "Libertadores com as vagas de 2026, mantendo os 38 clubes do FM06: Brasil 5 -> 7, "
+            "Argentina 5 -> 6, México 3 -> 0. A vaga do México na preliminar vai para a Argentina, "
+            "o Brasil leva 6 aos grupos e os 2 brasileiros piores vão do pote 1 ao 2. "
+            "Ver src/fm06patch/libertadores.py.",
+            build=_libertadores_swaps,
         ),
         Patch(
             "copa_do_brasil_2026",

@@ -199,11 +199,18 @@ IDs: Libertadores 0x1900F, Sul-Americana 0x4D87F, Recopa 0x19012.
   ordena pelo nível da divisão e pela posição final (`TEAM+0x60`,
   comparador `0x00A1D110`), ou seja, **os primeiros da Série A anterior**.
   O campeão da Libertadores entra antes, fora da conta do país. Total: 38.
-- Patch `libertadores_vagas_2026`: Brasil 5 -> 7 (campeão da Copa do Brasil
-  + primeiros da Série A, como o G6 + Copa de 2026), Argentina 5 -> 6,
-  México 3 -> 0; total continua 38. Com 0 vagas, `0x00C05000` sai sem
-  esperar a competição mexicana. A semeadura (`0x00C05260`, 1 cabeça por
-  país) não depende do número de vagas.
+- Montagem da 1ª fase: preliminar (`0x00C05260`) com 12 clubes, o pior de
+  cada país (México incluído) + 1 do país do campeão; grupos (`0x00C05430`,
+  m72 com a preliminar terminada) com o resto por país (ARG 4, BRA 4, demais
+  2) + os 6 vencedores, em 4 potes de 8 pelo país (pote 1 ARG/BRA e o
+  campeão; 2 COL, MEX, PAR, URU; 3 BOL, CHI, ECU, PER; 4 VEN + preliminar).
+- Patch `libertadores_vagas_2026` (`src/fm06patch/libertadores.py`): Brasil
+  5 -> 7, Argentina 5 -> 6, México 3 -> 0 (total 38). Preliminar: a vaga do
+  México vai para a Argentina. Grupos: Brasil 6, México 0; um desvio passa
+  os 2 brasileiros piores do pote 1 (10) para o pote 2 (6). Primeira versão
+  só com as vagas: a preliminar ficou com 11 clubes, o 11º foi pareado com
+  lixo e o jogo caiu em janeiro de 2006 (dump: `0x00C05260` -> ... ->
+  `0x00B007C0` lendo o visitante do jogo).
 - Sul-Americana (`0x00C06FE0`): ARG 6, BRA 8, MEX 2, EUA (0x186) 1, demais 2.
   Fica como está: a 1ª fase (`0x00C05FD0`) monta o chaveamento à mão pelos
   índices dos argentinos e brasileiros (até o 8º brasileiro); mudar as vagas
