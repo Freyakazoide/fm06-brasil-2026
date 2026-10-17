@@ -36,21 +36,21 @@ AC,Humaitá,Porto Acre,substituto,313242,Juventus (AC),950
 AC,Santa Cruz-AC,Rio Branco,substituto,309635,Andirá,850
 AC,São Francisco-AC,Rio Branco,substituto,313343,Grêmio Acreano,600
 AL,ASA,Arapiraca,equivalente,201666,ASA,2450
+AL,Coruripe,Coruripe,equivalente,8832325,Coruripe,1550
 AL,CRB,Maceió,equivalente,301100,CRB,3250
 AL,CSA,Maceió,equivalente,107208,CSA,3150
 AL,CSE,Palmeira dos Índios,equivalente,313250,CSE,600
 AL,Murici SC,Murici,equivalente,309357,Murici,1400
 AL,Penedense,Penedo,equivalente,309358,Penedense,1050
-AL,Coruripe,Coruripe,substituto,303861,Corinthians (AL),2800
-AL,Cruzeiro de Arapiraca,Arapiraca,substituto,301102,Miguelense,1800
+AL,Cruzeiro de Arapiraca,Arapiraca,substituto,303861,Corinthians (AL),2800
 AM,Nacional-AM,Manaus,equivalente,301107,Nacional (AM),2500
 AM,Princesa do Solimões,Manacapuru,equivalente,313258,Princesa,500
 AM,São Raimundo-AM,Manaus,equivalente,301110,São Raimundo (AM),3450
 AM,Amazonas,Manaus,substituto,301108,Rio Negro (AM),2200
-AM,Itacoatiara,Itacoatiara,substituto,308281,América (AM),1250
-AM,Manauara,Manaus,substituto,309648,Clíper,1250
-AM,Manaus,Manaus,substituto,309652,Sul América,1200
-AM,Parintins,Parintins,substituto,309650,Fast Club,1000
+AM,Itacoatiara,Itacoatiara,substituto,8832362,Grêmio Coariense,1350
+AM,Manauara,Manaus,substituto,308281,América (AM),1250
+AM,Manaus,Manaus,substituto,309648,Clíper,1250
+AM,Parintins,Parintins,substituto,309652,Sul América,1200
 BA,Atlético de Alagoinhas,Alagoinhas,equivalente,301111,Atlético (BA),1400
 BA,Bahia,Salvador,equivalente,314,Bahia,5450
 BA,Bahia de Feira,Feira de Santana,equivalente,319623,Bahia de Feira,400
@@ -76,11 +76,11 @@ DF,Brasília,Brasília,equivalente,301133,Brasília,600
 DF,Brasiliense,Taguatinga,equivalente,309656,Brasiliense,4950
 DF,Ceilândia,Ceilândia,equivalente,310908,Ceilândia,1350
 DF,Gama,Gama,equivalente,121220,Gama,3800
+DF,Paranoá,Paranoá,equivalente,8832332,Paranoá,1300
 DF,Samambaia,Samambaia,equivalente,313264,Samambaia,450
 DF,Sobradinho,Sobradinho,equivalente,311002,Sobradinho,950
 DF,Capital-DF,Paranoá,substituto,313351,CFZ (DF),2300
-DF,Paranoá,Paranoá,substituto,303817,Bandeirante (DF),2150
-DF,Real Brasília,Brasília,substituto,311000,Guará,1750
+DF,Real Brasília,Brasília,substituto,303817,Bandeirante (DF),2150
 ES,Desportiva Ferroviária,Cariacica,equivalente,104887,Desportiva,2800
 ES,Rio Branco-ES,Vitória,equivalente,301140,Rio Branco (ES),1450
 ES,Rio Branco de Venda Nova,Venda Nova do Imigrante,equivalente,314330,Rio Branco VN,950
@@ -88,8 +88,8 @@ ES,Serra,Serra,equivalente,301142,Serra,2750
 ES,Vitória-ES,Vitória,equivalente,313271,Vitória (ES),2200
 ES,Capixaba,Vila Velha,substituto,310384,Alegrense,2550
 ES,Forte,Castelo,substituto,301919,Estrela do Norte,1850
-ES,Porto Vitória,Serra,substituto,318866,CTE Colatina,1700
-ES,Real Noroeste,Águia Branca,substituto,310357,São Mateus,1700
+ES,Porto Vitória,Serra,substituto,310357,São Mateus,1700
+ES,Real Noroeste,Águia Branca,substituto,318866,CTE Colatina,1700
 ES,Vilavelhense,Vila Velha,substituto,2106625,Estrela de Cachoeiro,1300
 GO,Anapolina,Anápolis,equivalente,301144,Anapolina,3050
 GO,Anápolis,Anápolis,equivalente,301146,Anápolis,1800
@@ -112,15 +112,15 @@ MA,ITZ Sport,Imperatriz,substituto,309653,Bacabal,1700
 MA,Luminense,Paço do Lumiar,substituto,311870,Caxiense,1250
 MA,Tuntum,Tuntum,substituto,313288,Viana,1200
 MT,Cuiabá,Cuiabá,equivalente,318913,Cuiabá,1750
+MT,Luverdense,Lucas do Rio Verde,equivalente,8830832,Luverdense,550
 MT,Mixto,Cuiabá,equivalente,309643,Mixto (MT),1500
 MT,Operário-VG,Várzea Grande,equivalente,313901,Operário (MT),1600
 MT,Sport Sinop,Sinop,equivalente,301173,Sinop,1450
 MT,União Rondonópolis,Rondonópolis,equivalente,301177,União Rondonópolis,2700
 MT,Chapada,Chapada dos Guimarães,substituto,301172,Juventude (MT),2400
-MT,Luverdense,Lucas do Rio Verde,substituto,313225,Vila Aurora,2250
-MT,Nova Mutum,Nova Mutum,substituto,313222,Dom Bosco,1350
-MT,Primavera,Primavera do Leste,substituto,313224,Sorriso,1000
-MT,Várzea Grande,Várzea Grande,substituto,314749,Nova Xavantina,1000
+MT,Nova Mutum,Nova Mutum,substituto,313225,Vila Aurora,2250
+MT,Primavera,Primavera do Leste,substituto,313222,Dom Bosco,1350
+MT,Várzea Grande,Várzea Grande,substituto,313224,Sorriso,1000
 MS,Águia Negra,Rio Brilhante,equivalente,314962,Águia Negra,600
 MS,Corumbaense,Corumbá,equivalente,313900,Corumbaense,600
 MS,Dourados,Dourados,equivalente,313236,Operário de Dourados,1450
@@ -177,14 +177,14 @@ PR,Andraus,Campo Largo,substituto,329,Paraná,4850
 PR,Azuriz,Pato Branco,substituto,301216,Malutrom,2650
 PR,Galo Maringá,Maringá,substituto,314602,Paranavaí,2150
 PR,São Joseense,São José dos Pinhais,substituto,303020,Iraty,2000
+PE,Decisão,Goiana,equivalente,8832344,Decisão,550
 PE,Náutico,Recife,equivalente,327,Náutico,4700
 PE,Santa Cruz,Recife,equivalente,107230,Santa Cruz,4700
 PE,Sport,Recife,equivalente,337,Sport Recife,5300
-PE,Decisão,Goiana,substituto,301234,Porto (PE),1650
-PE,Jaguar,Jaboatão dos Guararapes,substituto,301239,Vitória (PE),1600
-PE,Maguary,Bonito,substituto,301230,Ferroviário ST,1450
-PE,Retrô,Camaragibe,substituto,301228,Central (PE),1400
-PE,Vitória das Tabocas,Vitória de Santo Antão,substituto,303012,América (PE),1200
+PE,Jaguar,Jaboatão dos Guararapes,substituto,301234,Porto (PE),1650
+PE,Maguary,Bonito,substituto,301239,Vitória (PE),1600
+PE,Retrô,Camaragibe,substituto,301230,Ferroviário ST,1450
+PE,Vitória das Tabocas,Vitória de Santo Antão,substituto,301228,Central (PE),1400
 PI,Fluminense-PI,Teresina,equivalente,319156,Fluminense (PI),500
 PI,Parnahyba,Parnaíba,equivalente,313303,Parnahyba,1950
 PI,Piauí,Teresina,equivalente,309639,Piauí,1450
@@ -234,13 +234,13 @@ SC,Brusque,Brusque,equivalente,301300,Brusque,1050
 SC,Camboriú,Camboriú,equivalente,319160,Camboriú,500
 SC,Carlos Renaux,Brusque,equivalente,309769,Carlos Renaux,800
 SC,Chapecoense,Chapecó,equivalente,301302,Chapecoense,2100
+SC,Concórdia,Concórdia,equivalente,8832364,Concórdia,550
 SC,Criciúma,Criciúma,equivalente,319,Criciúma,4800
 SC,Figueirense,Florianópolis,equivalente,301304,Figueirense,4950
 SC,Joinville,Joinville,equivalente,301308,Joinville,3600
 SC,Marcílio Dias,Itajaí,equivalente,301314,Marcílio Dias,2050
 SC,Santa Catarina,Rio do Sul,equivalente,319164,Santa Catarina,400
 SC,Barra,Balneário Camboriú,substituto,301316,Tubarão,2600
-SC,Concórdia,Concórdia,substituto,314755,Hermann Aichinger,2500
 SE,Confiança,Aracaju,equivalente,301321,Confiança (SE),2600
 SE,Dorense,Nossa Senhora das Dores,equivalente,313315,Dorense,1300
 SE,Itabaiana,Itabaiana,equivalente,301323,Itabaiana,2050

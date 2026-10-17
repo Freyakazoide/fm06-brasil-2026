@@ -153,3 +153,10 @@ os grupos podem jogar contra o outro grupo.
   competição+0x1C1 (bloco de parâmetros +0x1D; original soma 64, ex.: SP 6,
   RJ 6, MG 4, RS 4, PR 4, PE 3). +0x1C (1 ou 2) é provavelmente a vaga para a
   divisão nacional de baixo (a confirmar).
+- `bra_get_minimum_division_teams` (`0x00BB2840`) registra para cada estadual
+  um número **exato** de clubes (mínimo = máximo). Com a lista de 2026 a
+  contagem mudou e o Brasil sumiu da lista de países do New Game; o patch
+  `estaduais_2026` grava agora o número da lista. O leitor por cabeçalho de
+  clube (`server_teams.find_brazil_teams`) perdia 53 times de estadual;
+  `estaduais_clubes.state_teams` varre o banco inteiro (724 times, as
+  contagens batem com as registradas no exe original).

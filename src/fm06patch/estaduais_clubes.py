@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .estaduais import ID as FIRST_ID
-from .server_teams import TeamRecord, find_brazil_teams
+from .server_teams import TeamRecord, club_names
 
 STATE_FIELD = 47
 LOWER_ID = {
@@ -81,6 +81,28 @@ class StateEntry:
     substitute: bool
 
 
+def state_teams(data: bytes) -> list[TeamRecord]:
+    """Todos os times com estadual: registro "0A 00" (UID do clube antes) com o
+    campo do estadual num dos 54 índices. Varre o banco inteiro (o leitor por
+    cabeçalho de clube perde 53 times de estadual)."""
+    states = {comp_index(data, cid) for cid in FIRST_ID.values()}
+    states |= {comp_index(data, cid) for cid in LOWER_ID.values()}
+    teams = []
+    at = data.find(b"\x0a\x00", 4)
+    while 0 <= at < len(data) - STATE_FIELD - 4:
+        if (data[at + 5:at + 7] == b"\x00\x00" and data[at + 38:at + 40] == b"\x10\x27"
+                and struct.unpack_from("<I", data, at + STATE_FIELD)[0] in states):
+            uid = struct.unpack_from("<I", data, at - 4)[0]
+            division, last = struct.unpack_from("<II", data, at + 7)
+            name, short = club_names(data, uid, len(data))
+            teams.append(TeamRecord(offset=at, club_uid=uid, last_position=data[at + 2],
+                                    reputation=struct.unpack_from("<H", data, at + 3)[0],
+                                    division=division, last_division=last, name=name,
+                                    short_name=short))
+        at = data.find(b"\x0a\x00", at + 1)
+    return teams
+
+
 def state_of(data: bytes, team: TeamRecord) -> int:
     return struct.unpack_from("<I", data, team.offset + STATE_FIELD)[0]
 
@@ -120,7 +142,7 @@ def _match(clube: str, uf: str, pool: list[TeamRecord]) -> TeamRecord | None:
 
 def plan(data: bytes, rows: list[dict] | None = None) -> tuple[list[StateEntry], dict[str, int]]:
     rows = rows if rows is not None else list(csv.DictReader(CLUBS_CSV.open(encoding="utf-8-sig")))
-    teams = find_brazil_teams(data)
+    teams = state_teams(data)
     first = {uf: comp_index(data, cid) for uf, cid in FIRST_ID.items()}
     lower = {uf: comp_index(data, cid) for uf, cid in LOWER_ID.items()}
     entries: list[StateEntry] = []
@@ -160,7 +182,7 @@ def apply(data: bytes, entries: list[StateEntry]) -> bytes:
     first = {uf: comp_index(data, cid) for uf, cid in FIRST_ID.items()}
     lower = {uf: comp_index(data, cid) for uf, cid in LOWER_ID.items()}
     chosen = {e.team.club_uid for e in entries}
-    for team in find_brazil_teams(data):
+    for team in state_teams(data):
         value = state_of(data, team)
         for uf in FIRST_ID:
             if value == first[uf] and team.club_uid not in chosen:

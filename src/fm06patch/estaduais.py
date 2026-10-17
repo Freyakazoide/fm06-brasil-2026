@@ -44,6 +44,8 @@ PARAMS_CALL = 0x00BB510C          # call 0x00BB3330 no construtor genérico
 PARAMS_ORIGINAL = 0x00BB3330
 DATES = 0x00BB3DF0                # (início dia*, início mês*, fim dia*, fim mês*), ret 0x10
 
+MINIMUM_TEAMS = 0x00BB2840       # bra_get_minimum_division_teams
+MINIMUM_TEAMS_SIZE = 0x300
 PARAMS_STUB = SECTION_VA + 0x2000
 DATES_STUB = SECTION_VA + 0x2080
 TABLE = SECTION_VA + 0x2100
@@ -213,6 +215,20 @@ def build(data: bytes):
              b"\xE8" + u32(PARAMS_STUB - (PARAMS_CALL + 5))),
         Swap(off(DATES), data[off(DATES):off(DATES) + 5], b"\xE9" + u32(DATES_STUB - (DATES + 5))),
     ]
+    # bra_get_minimum_division_teams (0x00BB2840): o jogo só deixa o Brasil
+    # jogável se cada estadual tiver exatamente o número registrado (máximo -2 =
+    # igual ao mínimo); passa a ser o da lista de 2026.
+    counts = club_counts()
+    base = off(MINIMUM_TEAMS)
+    for uf, cid in ID.items():
+        pattern = b"\x6A\xFE\x6A"
+        at = data.find(pattern, base, base + MINIMUM_TEAMS_SIZE)
+        while at >= 0 and data[at + 4:at + 7] + data[at + 7:at + 11] != b"\x6A\x00\x68" + u32(cid):
+            at = data.find(pattern, at + 1, base + MINIMUM_TEAMS_SIZE)
+        if at < 0:
+            raise ValueError(f"estaduais: mínimo de clubes de {uf} não encontrado")
+        if uf in counts:
+            swaps.append(Swap(at + 3, data[at + 3:at + 4], bytes([counts[uf]])))
     # construtores especiais -> genérico
     base = off(CONTAINER)
     for at in range(base, base + CONTAINER_SIZE - 5):
