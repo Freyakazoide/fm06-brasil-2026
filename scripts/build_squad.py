@@ -25,7 +25,7 @@ def main() -> None:
     parser.add_argument("elenco", type=Path, help="planilha do elenco desejado")
     parser.add_argument("hospedeiros", type=Path, help="CSV do --squad")
     parser.add_argument("--out-dir", type=Path, default=ROOT / "workspace" / "mods")
-    parser.add_argument("--year-shift", type=int, default=-21)
+    parser.add_argument("--year-shift", type=int, default=-20)   # motor 2006 = 2026 (ano exibido + 20)
     args = parser.parse_args()
 
     targets = read_targets(args.elenco)

@@ -75,6 +75,12 @@ def _libertadores_datas_swaps(data: bytes):
     return build_dates(data)
 
 
+def _ano_exibido_swaps(data: bytes):
+    from .ano_exibido import build
+
+    return build(data)
+
+
 def _estaduais_swaps(data: bytes):
     from .estaduais import build
 
@@ -233,6 +239,13 @@ PATCHES = {
             "em 28/11 (original: grupos fev–abr, oitavas e quartas em maio, semi e final em "
             "junho/julho, final em dois jogos). Ver src/fm06patch/libertadores.py.",
             build=_libertadores_datas_swaps,
+        ),
+        Patch(
+            "ano_exibido_mais_20",
+            "Ano na tela + 20 (motor em 2005/06; temporada 2006 aparece como 2026): datas, nomes de "
+            "temporada, históricos, prêmios, notícias e nomes de competição. Chaves de arquivo e "
+            "save continuam com o ano do motor. Ver src/fm06patch/ano_exibido.py.",
+            build=_ano_exibido_swaps,
         ),
         Patch(
             "copa_do_brasil_2026",

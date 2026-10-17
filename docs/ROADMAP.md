@@ -66,7 +66,7 @@ Por onde cada alteração é feita:
 
 | Item | Situação | Caminho | Observação |
 |---|---|---|---|
-| Ano de início 2026 | ❌ | banco / executável | hoje o jogo começa em 2005/06; as idades ficam certas com o `year_shift` do injetor. Investigar de onde vem a data inicial |
+| Ano de início 2026 | 🟡 | executável | motor em 2005/06 e ano exibido + 20 (`ano_exibido_mais_20`); idades pelo `year_shift` −20 do injetor. Ver `docs/reversing/ano_inicio.md` |
 
 ## Ordem sugerida
 

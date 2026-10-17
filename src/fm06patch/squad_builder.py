@@ -194,7 +194,7 @@ def positions(target: Target) -> dict[str, int]:
     return result
 
 
-def build(targets: list[Target], hosts: list[dict], year_shift: int = -21):
+def build(targets: list[Target], hosts: list[dict], year_shift: int = -20):
     pairs = assign_hosts(targets, hosts)
     lnc_lines = ['# Gerado por scripts/build_squad.py: nomes do elenco']
     players, mapping, warnings = [], [], []

@@ -49,3 +49,13 @@ Manter o motor em 2005/06 e somar ao ano exibido (`SI_DATE` para texto
 ajuste seria +20: 2006 e 2026 são anos de Copa e não bissextos, 2008 e 2028
 bissextos. Os dias da semana não batem (1/1/2006 domingo, 1/1/2026 quinta).
 As idades seguem pelo `year_shift` do injetor (motor − 2026).
+
+## Escolha: opção B (patch `ano_exibido_mais_20`)
+
+`src/fm06patch/ano_exibido.py`: 10 leituras do ano nos formatadores de data
+(+20; ano de 2 dígitos (aa+20)%100) e 58 chamadas que põem ano no texto
+desviadas para stubs em `SECTION_VA+0x4100..0x4150`. Conferido por emulação
+(540 casos dos formatadores; nomes de temporada 2005 → "2025/26", 2006 →
+"2026"). O nome do save com data passa a mostrar 2026 (só cosmético). Anos
+históricos vindos do banco (campeões, títulos) também aparecem +20.
+Injetor: `year_shift` padrão −20 (nascimento 2000 = 1980 no motor).
