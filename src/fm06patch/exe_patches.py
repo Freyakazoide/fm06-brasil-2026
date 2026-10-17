@@ -81,6 +81,12 @@ def _ano_exibido_swaps(data: bytes):
     return build(data)
 
 
+def _sul_americana_swaps(data: bytes):
+    from .sul_americana import build
+
+    return build(data)
+
+
 def _estaduais_swaps(data: bytes):
     from .estaduais import build
 
@@ -206,23 +212,12 @@ PATCHES = {
             ),
         ),
         Patch(
-            "sul_americana_datas_2026",
-            "Sul-Americana (SAM_SUD_CUP, 0x00C07380, mata-mata de 6 rodadas) no calendário de 2026: "
-            "sorteio 1/4, rodadas 15/4, 12/8, 9/9, 14/10, 4/11 e final 21/11 "
-            "(original: sorteio 19/7, 9/8, 23/8, 13/9, 18/10, 22/11, 6/12). O mês da 3ª rodada vem de "
-            "um registrador (setembro) e fica.",
-            tuple(
-                _imm8(va - 0x400000, b"\x6A", old, new)
-                for va, old, new in (
-                    (0xC0744D, 0x13, 1), (0xC0744B, 6, 3),        # sorteio 1/4
-                    (0xC07467, 9, 15), (0xC07465, 7, 3),          # 1ª rodada 15/4
-                    (0xC0765E, 0x17, 12),                         # 2ª rodada 12/8 (mês 7 já)
-                    (0xC076BE, 0x0D, 9),                          # 3ª rodada 9/9
-                    (0xC077F6, 0x12, 14),                         # quartas 14/10 (mês 9 já)
-                    (0xC0788F, 0x16, 4),                          # semifinal 4/11 (mês 10 já)
-                    (0xC078F7, 6, 21), (0xC078F5, 0x0B, 10),      # final 21/11
-                )
-            ),
+            "sul_americana_2026",
+            "Sul-Americana com 28 clubes: Brasil 6 (sem quem está na Libertadores), Argentina 6, "
+            "2 de cada outro país, sem México e EUA; montada em 25/1; 1ª fase 15/4 (países "
+            "menores), 2ª fase 22/7, oitavas 12/8 (Argentina e Brasil entram), quartas 16/9, "
+            "semifinal 21/10, final única 21/11. Ver src/fm06patch/sul_americana.py.",
+            build=_sul_americana_swaps,
         ),
         Patch(
             "libertadores_vagas_2026",
