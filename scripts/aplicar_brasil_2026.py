@@ -9,7 +9,9 @@ Com --apply:
 2. grava o server_db.dat do jogo com os clubes de cada série, partindo sempre
    do original (cópia em workspace\\baseline\\server_db.original.dat);
 3. grava data\\db\\lnc\\all\\brasil_2026.lnc com os nomes Série A, B, C e D;
-4. atualiza data\\brasil\\mapa_2026.csv (quem entrou no lugar de quem).
+4. atualiza data\\brasil\\mapa_2026.csv (quem entrou no lugar de quem);
+5. grava os participantes dos estaduais de 2026 (data\\brasil\\estaduais) e o
+   mapa em data\\brasil\\estaduais\\mapa_estaduais_2026.csv.
 
 Depois é só abrir o fm_brasil.exe e começar um New Game.
 """
@@ -29,6 +31,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
+from fm06patch import estaduais_clubes  # noqa: E402
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -102,6 +105,12 @@ def main() -> None:
         if p.kind == "substituto":
             print(f"  Série {p.serie}: {p.clube or '(vaga extra)':24} -> {p.team.short_name}")
 
+    states, _ = estaduais_clubes.plan(data)
+    subs = [e for e in states if e.substitute]
+    print(f"\nEstaduais 2026: {len(states)} clubes, {len(subs)} substitutos (clube que não existe no FM06):")
+    for e in subs:
+        print(f"  {e.uf}: {e.clube:28} -> {e.team.short_name}")
+
     if not args.apply:
         print("\nSimulação. Para gravar, rode de novo com --apply no fim.")
         return
@@ -120,7 +129,7 @@ def main() -> None:
         BACKUP.parent.mkdir(parents=True, exist_ok=True)
         BACKUP.write_bytes(data)
         print(f"[OK] cópia do banco original em {BACKUP}")
-    server.write_bytes(apply_db(data, placements))
+    server.write_bytes(estaduais_clubes.apply(apply_db(data, placements), states))
     print(f"[OK] gravado {server}")
 
     lnc.parent.mkdir(parents=True, exist_ok=True)
@@ -129,6 +138,9 @@ def main() -> None:
 
     write_report(DATA_DIR / "mapa_2026.csv", placements)
     print(f"[OK] lista completa em {DATA_DIR / 'mapa_2026.csv'}")
+    report = DATA_DIR / "estaduais" / "mapa_estaduais_2026.csv"
+    estaduais_clubes.write_report(report, states)
+    print(f"[OK] estaduais: lista completa em {report}")
 
 
 if __name__ == "__main__":

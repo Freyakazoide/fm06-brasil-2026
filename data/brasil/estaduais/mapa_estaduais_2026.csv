@@ -1,0 +1,269 @@
+uf,clube_2026,cidade,tipo,fm06_uid,fm06_nome,reputacao
+SP,Botafogo-SP,Ribeirão Preto,equivalente,121262,Botafogo (SP),1950
+SP,Capivariano,Capivari,equivalente,318889,Capivariano,700
+SP,Corinthians,São Paulo,equivalente,317,Corinthians,8050
+SP,Guarani,Campinas,equivalente,324,Guarani,5100
+SP,Mirassol,Mirassol,equivalente,301342,Mirassol,2050
+SP,Noroeste,Bauru,equivalente,303022,Noroeste,1200
+SP,Palmeiras,São Paulo,equivalente,328,Palmeiras,7250
+SP,Ponte Preta,Campinas,equivalente,331,Ponte Preta,5600
+SP,Portuguesa,São Paulo,equivalente,332,Portuguesa,4500
+SP,Primavera-SP,Indaiatuba,equivalente,318905,Primavera,400
+SP,Red Bull Bragantino,Bragança Paulista,equivalente,316,Bragantino,2750
+SP,Santos,Santos,equivalente,334,Santos,7800
+SP,São Bernardo,São Bernardo do Campo,equivalente,2106412,São Bernardo,500
+SP,São Paulo,São Paulo,equivalente,336,São Paulo,8150
+SP,Velo Clube,Rio Claro,equivalente,318911,Velo Clube,450
+SP,Novorizontino,Novo Horizonte,substituto,301352,São Caetano,7100
+RJ,Bangu,Rio de Janeiro,equivalente,104750,Bangu,2500
+RJ,Boavista,Saquarema,equivalente,308947,Boavista (RJ),950
+RJ,Botafogo,Rio de Janeiro,equivalente,315,Botafogo,6000
+RJ,Flamengo,Rio de Janeiro,equivalente,321,Flamengo,6800
+RJ,Fluminense,Rio de Janeiro,equivalente,322,Fluminense,6300
+RJ,Madureira,Rio de Janeiro,equivalente,107218,Madureira,2550
+RJ,Nova Iguaçu,Nova Iguaçu,equivalente,311105,Nova Iguaçu,2400
+RJ,Portuguesa-RJ,Rio de Janeiro,equivalente,301249,Portuguesa (RJ),1800
+RJ,Vasco,Rio de Janeiro,equivalente,338,Vasco,6650
+RJ,Volta Redonda,Volta Redonda,equivalente,107238,Volta Redonda,3050
+RJ,Maricá,Maricá,substituto,104885,Americano,3250
+RJ,Sampaio Corrêa-RJ,Saquarema,substituto,900678,América (RJ),2900
+AC,ADESG,Senador Guiomard,equivalente,313240,ADESG,1000
+AC,Independência,Rio Branco,equivalente,104873,Independência,1800
+AC,Rio Branco-AC,Rio Branco,equivalente,104776,Rio Branco (AC),2600
+AC,Vasco-AC,Rio Branco,equivalente,104979,Vasco (AC),2800
+AC,Galvez,Rio Branco,substituto,309637,Atlético Acreano,1150
+AC,Humaitá,Porto Acre,substituto,313242,Juventus (AC),950
+AC,Santa Cruz-AC,Rio Branco,substituto,309635,Andirá,850
+AC,São Francisco-AC,Rio Branco,substituto,313343,Grêmio Acreano,600
+AL,ASA,Arapiraca,equivalente,201666,ASA,2450
+AL,CRB,Maceió,equivalente,301100,CRB,3250
+AL,CSA,Maceió,equivalente,107208,CSA,3150
+AL,CSE,Palmeira dos Índios,equivalente,313250,CSE,600
+AL,Murici SC,Murici,equivalente,309357,Murici,1400
+AL,Penedense,Penedo,equivalente,309358,Penedense,1050
+AL,Coruripe,Coruripe,substituto,303861,Corinthians (AL),2800
+AL,Cruzeiro de Arapiraca,Arapiraca,substituto,301102,Miguelense,1800
+AM,Nacional-AM,Manaus,equivalente,301107,Nacional (AM),2500
+AM,Princesa do Solimões,Manacapuru,equivalente,313258,Princesa,500
+AM,São Raimundo-AM,Manaus,equivalente,301110,São Raimundo (AM),3450
+AM,Amazonas,Manaus,substituto,301108,Rio Negro (AM),2200
+AM,Itacoatiara,Itacoatiara,substituto,308281,América (AM),1250
+AM,Manauara,Manaus,substituto,309648,Clíper,1250
+AM,Manaus,Manaus,substituto,309652,Sul América,1200
+AM,Parintins,Parintins,substituto,309650,Fast Club,1000
+BA,Atlético de Alagoinhas,Alagoinhas,equivalente,301111,Atlético (BA),1400
+BA,Bahia,Salvador,equivalente,314,Bahia,5450
+BA,Bahia de Feira,Feira de Santana,equivalente,319623,Bahia de Feira,400
+BA,Galícia,Salvador,equivalente,301361,Galícia,900
+BA,Jacuipense,Riachão do Jacuípe,equivalente,319113,Jacuipense,400
+BA,Jequié,Jequié,equivalente,314204,Jequié,550
+BA,Vitória,Salvador,equivalente,339,Vitória,5350
+BA,Barcelona de Ilhéus,Ilhéus,substituto,301121,Fluminense (BA),2450
+BA,Juazeirense,Juazeiro,substituto,301123,Juazeiro (BA),2400
+BA,Porto,Porto Seguro,substituto,301113,Camaçari,1850
+CE,Ceará,Fortaleza,equivalente,104653,Ceará,4200
+CE,Ferroviário,Fortaleza,equivalente,301127,Ferroviário (CE),2100
+CE,Fortaleza,Fortaleza,equivalente,104749,Fortaleza,4700
+CE,Maranguape,Maranguape,equivalente,314946,Maranguape,1050
+CE,Quixadá,Quixadá,equivalente,313259,Quixadá,650
+CE,Floresta,Fortaleza,substituto,310639,Guarany de Sobral,2200
+CE,Horizonte,Horizonte,substituto,313675,Icasa,2050
+CE,Iguatu,Iguatu,substituto,314594,Limoeiro,1550
+CE,Maracanã,Maracanaú,substituto,301129,Itapipoca,1450
+CE,Tirol,Fortaleza,substituto,310389,Uniclinic,1350
+DF,ARUC,Cruzeiro,equivalente,313263,ARUC,1050
+DF,Brasília,Brasília,equivalente,301133,Brasília,600
+DF,Brasiliense,Taguatinga,equivalente,309656,Brasiliense,4950
+DF,Ceilândia,Ceilândia,equivalente,310908,Ceilândia,1350
+DF,Gama,Gama,equivalente,121220,Gama,3800
+DF,Samambaia,Samambaia,equivalente,313264,Samambaia,450
+DF,Sobradinho,Sobradinho,equivalente,311002,Sobradinho,950
+DF,Capital-DF,Paranoá,substituto,313351,CFZ (DF),2300
+DF,Paranoá,Paranoá,substituto,303817,Bandeirante (DF),2150
+DF,Real Brasília,Brasília,substituto,311000,Guará,1750
+ES,Desportiva Ferroviária,Cariacica,equivalente,104887,Desportiva,2800
+ES,Rio Branco-ES,Vitória,equivalente,301140,Rio Branco (ES),1450
+ES,Rio Branco de Venda Nova,Venda Nova do Imigrante,equivalente,314330,Rio Branco VN,950
+ES,Serra,Serra,equivalente,301142,Serra,2750
+ES,Vitória-ES,Vitória,equivalente,313271,Vitória (ES),2200
+ES,Capixaba,Vila Velha,substituto,310384,Alegrense,2550
+ES,Forte,Castelo,substituto,301919,Estrela do Norte,1850
+ES,Porto Vitória,Serra,substituto,318866,CTE Colatina,1700
+ES,Real Noroeste,Águia Branca,substituto,310357,São Mateus,1700
+ES,Vilavelhense,Vila Velha,substituto,2106625,Estrela de Cachoeiro,1300
+GO,Anapolina,Anápolis,equivalente,301144,Anapolina,3050
+GO,Anápolis,Anápolis,equivalente,301146,Anápolis,1800
+GO,Aparecidense,Aparecida de Goiânia,equivalente,319139,Aparecidense,550
+GO,Atlético-GO,Goiânia,equivalente,301149,Atlético Goianiense,2600
+GO,CRAC,Catalão,equivalente,303016,CRAC,3200
+GO,Goiás,Goiânia,equivalente,102495,Goiás,5700
+GO,Goiatuba,Goiatuba,equivalente,301157,Goiatuba,1400
+GO,Inhumas,Inhumas,equivalente,301159,Inhumas,1350
+GO,Jataiense,Jataí,equivalente,301364,Jataiense,800
+GO,Vila Nova,Goiânia,equivalente,107234,Vila Nova (GO),3900
+GO,Abecat,Ouvidor,substituto,301155,Goiânia,2100
+GO,Centro Oeste,Senador Canedo,substituto,309138,Grêmio Inhumense,1550
+MA,Imperatriz,Imperatriz,equivalente,301167,Imperatriz,1850
+MA,Maranhão,São Luís,equivalente,301169,Maranhão,2650
+MA,Moto Club,São Luís,equivalente,301171,Moto Clube,3200
+MA,Sampaio Corrêa,São Luís,equivalente,107228,Sampaio Corrêa,3250
+MA,IAPE,São Luís,substituto,313283,Santa Inês,1750
+MA,ITZ Sport,Imperatriz,substituto,309653,Bacabal,1700
+MA,Luminense,Paço do Lumiar,substituto,311870,Caxiense,1250
+MA,Tuntum,Tuntum,substituto,313288,Viana,1200
+MT,Cuiabá,Cuiabá,equivalente,318913,Cuiabá,1750
+MT,Mixto,Cuiabá,equivalente,309643,Mixto (MT),1500
+MT,Operário-VG,Várzea Grande,equivalente,313901,Operário (MT),1600
+MT,Sport Sinop,Sinop,equivalente,301173,Sinop,1450
+MT,União Rondonópolis,Rondonópolis,equivalente,301177,União Rondonópolis,2700
+MT,Chapada,Chapada dos Guimarães,substituto,301172,Juventude (MT),2400
+MT,Luverdense,Lucas do Rio Verde,substituto,313225,Vila Aurora,2250
+MT,Nova Mutum,Nova Mutum,substituto,313222,Dom Bosco,1350
+MT,Primavera,Primavera do Leste,substituto,313224,Sorriso,1000
+MT,Várzea Grande,Várzea Grande,substituto,314749,Nova Xavantina,1000
+MS,Águia Negra,Rio Brilhante,equivalente,314962,Águia Negra,600
+MS,Corumbaense,Corumbá,equivalente,313900,Corumbaense,600
+MS,Dourados,Dourados,equivalente,313236,Operário de Dourados,1450
+MS,Ivinhema,Ivinhema,equivalente,313247,Ivinhema,1000
+MS,Naviraiense,Naviraí,equivalente,314695,Naviraiense,550
+MS,Operário-MS,Campo Grande,equivalente,107240,Operário (MS),2250
+MS,Pantanal,Campo Grande,equivalente,313245,Pantanal,350
+MS,Bataguassu,Bataguassu,substituto,311953,CENE,2400
+MS,Costa Rica,Costa Rica,substituto,301179,Comercial (MS),2150
+MS,CRA,Aquidauana,substituto,313789,Chapadão,2000
+MG,América-MG,Belo Horizonte,equivalente,106881,América (MG),5250
+MG,Atlético-MG,Belo Horizonte,equivalente,312,Atlético Mineiro,6850
+MG,Cruzeiro,Belo Horizonte,equivalente,320,Cruzeiro,7650
+MG,Pouso Alegre,Pouso Alegre,equivalente,319168,Guarani de Pouso Alegre,300
+MG,Tombense,Tombos,equivalente,317949,Tombense,550
+MG,Uberlândia,Uberlândia,equivalente,301198,Uberlândia,1900
+MG,URT,Patos de Minas,equivalente,301200,URT,1750
+MG,Athletic,São João del-Rei,substituto,107236,Villa Nova (MG),3050
+MG,Betim,Betim,substituto,301188,Ipatinga,2650
+MG,Democrata-GV,Governador Valadares,substituto,301181,Caldense,2000
+MG,Itabirito,Itabirito,substituto,301192,Mamoré,2000
+MG,North,Montes Claros,substituto,301194,Rio Branco (MG),1650
+PA,Águia de Marabá,Marabá,equivalente,308938,Águia de Marabá,1150
+PA,Bragantino-PA,Bragança,equivalente,313277,Bragantino (PA),500
+PA,Castanhal,Castanhal,equivalente,301204,Castanhal,1550
+PA,Paysandu,Belém,equivalente,330,Paysandu,5150
+PA,Remo,Belém,equivalente,333,Remo,4000
+PA,Santa Rosa,Belém,equivalente,308940,Santa Rosa,800
+PA,São Francisco-PA,Santarém,equivalente,308941,São Francisco (PA),1250
+PA,São Raimundo-PA,Santarém,equivalente,308942,São Raimundo (PA),1200
+PA,Tuna Luso,Belém,equivalente,107232,Tuna Luso,3350
+PA,Amazônia,Belterra,substituto,308944,Sport Belém,1350
+PA,Cametá,Cametá,substituto,308945,Tiradentes (PA),1200
+PA,Capitão Poço,Capitão Poço,substituto,308939,Carajás,1050
+PB,Atlético de Cajazeiras,Cajazeiras,equivalente,311949,Atlético Cajazeirense,1600
+PB,Botafogo-PB,João Pessoa,equivalente,301206,Botafogo (PB),2900
+PB,Campinense,Campina Grande,equivalente,301208,Campinense,2550
+PB,Esporte de Patos,Patos,equivalente,314960,Esporte,600
+PB,Nacional de Patos,Patos,equivalente,313291,Nacional de Patos,1450
+PB,Treze,Campina Grande,equivalente,301210,Treze,2750
+PB,Confiança de Sapé,Sapé,substituto,309641,Auto Esporte (PB),1300
+PB,Pombal,Pombal,substituto,313289,Santa Cruz (PB),1000
+PB,Serra Branca,Campina Grande,substituto,311951,Guarabira,950
+PB,Sousa,Sousa,substituto,313295,Socremo,800
+PR,Athletico-PR,Curitiba,equivalente,107205,Atlético Paranaense,6700
+PR,Cascavel,Cascavel,equivalente,301367,Cascavel,800
+PR,Cianorte,Cianorte,equivalente,314598,Cianorte,1550
+PR,Coritiba,Curitiba,equivalente,104775,Coritiba,5700
+PR,Foz do Iguaçu,Foz do Iguaçu,equivalente,311042,Foz do Iguaçu,950
+PR,Londrina,Londrina,equivalente,900204,Londrina,3000
+PR,Maringá,Maringá,equivalente,303018,Grêmio Maringá,1350
+PR,Operário-PR,Ponta Grossa,equivalente,311085,Operário (PR),1050
+PR,Andraus,Campo Largo,substituto,329,Paraná,4850
+PR,Azuriz,Pato Branco,substituto,301216,Malutrom,2650
+PR,Galo Maringá,Maringá,substituto,314602,Paranavaí,2150
+PR,São Joseense,São José dos Pinhais,substituto,303020,Iraty,2000
+PE,Náutico,Recife,equivalente,327,Náutico,4700
+PE,Santa Cruz,Recife,equivalente,107230,Santa Cruz,4700
+PE,Sport,Recife,equivalente,337,Sport Recife,5300
+PE,Decisão,Goiana,substituto,301234,Porto (PE),1650
+PE,Jaguar,Jaboatão dos Guararapes,substituto,301239,Vitória (PE),1600
+PE,Maguary,Bonito,substituto,301230,Ferroviário ST,1450
+PE,Retrô,Camaragibe,substituto,301228,Central (PE),1400
+PE,Vitória das Tabocas,Vitória de Santo Antão,substituto,303012,América (PE),1200
+PI,Fluminense-PI,Teresina,equivalente,319156,Fluminense (PI),500
+PI,Parnahyba,Parnaíba,equivalente,313303,Parnahyba,1950
+PI,Piauí,Teresina,equivalente,309639,Piauí,1450
+PI,Altos,Altos,substituto,301244,River (PI),2300
+PI,Atlético Piauiense,Teresina,substituto,308111,Flamengo (PI),1900
+PI,Corisabbá,Floriano,substituto,313301,Oeiras,1650
+PI,Oeirense,Oeiras,substituto,301242,Picos,1150
+PI,Teresina,Teresina,substituto,301240,4 de Julho,1100
+RN,ABC,Natal,equivalente,107203,ABC,3450
+RN,América-RN,Natal,equivalente,107201,América (RN),4050
+RN,Globo,Ceará-Mirim,substituto,301257,Potiguar,2450
+RN,Laguna,Tibau do Sul,substituto,309626,Baraúnas,2250
+RN,Potiguar de Mossoró,Mossoró,substituto,301255,Alecrim,1950
+RN,Potyguar Seridoense,Currais Novos,substituto,309633,São Gonçalo,1750
+RN,QFC,Parnamirim,substituto,309628,Coríntians (RN),1550
+RN,Santa Cruz de Natal,Natal,substituto,314730,Atlético Piranhas,1400
+RS,Avenida,Santa Cruz do Sul,equivalente,301260,Avenida,1450
+RS,Caxias,Caxias do Sul,equivalente,301264,Caxias,3550
+RS,Grêmio,Porto Alegre,equivalente,323,Grêmio,6650
+RS,Internacional,Porto Alegre,equivalente,325,Internacional,6950
+RS,Internacional de Santa Maria,Santa Maria,equivalente,301270,Inter de Santa Maria,1350
+RS,Juventude,Caxias do Sul,equivalente,326,Juventude,5750
+RS,Novo Hamburgo,Novo Hamburgo,equivalente,308516,Novo Hamburgo,1600
+RS,São José-RS,Porto Alegre,equivalente,301282,São José (RS),1600
+RS,São Luiz,Ijuí,equivalente,301284,São Luiz,1050
+RS,Ypiranga,Erechim,equivalente,319159,Ypiranga (RS),450
+RS,Guarany de Bagé,Bagé,substituto,301258,15 de Novembro,2850
+RS,Monsoon,Porto Alegre,substituto,301274,Pelotas,2750
+RO,Genus,Porto Velho,equivalente,301288,Gênus,2650
+RO,Ji-Paraná,Ji-Paraná,equivalente,301290,Ji-Paraná,1800
+RO,Rondoniense,Porto Velho,equivalente,314078,Grêmio Rondoniense,400
+RO,União Cacoalense,Cacoal,equivalente,309618,União Cacoalense,1800
+RO,Barcelona-RO,Porto Velho,substituto,309616,Guajará,1350
+RO,Gazin Porto Velho,Porto Velho,substituto,313308,Ariquemes,1350
+RO,Guaporé,Rolim de Moura,substituto,314734,CFA,1300
+RR,Atlético Roraima,Boa Vista,equivalente,309144,Atlético Roraima,1650
+RR,Baré,Boa Vista,equivalente,301294,Baré,1800
+RR,GAS,Boa Vista,equivalente,301296,GAS,1000
+RR,Náutico-RR,Boa Vista,equivalente,309142,Náutico (RR),1450
+RR,Progresso,Mucajaí,equivalente,309143,Progresso (RR),850
+RR,Rio Negro-RR,Boa Vista,equivalente,301298,Rio Negro (RR),1200
+RR,River-RR,Boa Vista,equivalente,313313,River (RR),600
+RR,São Raimundo-RR,Boa Vista,equivalente,309145,São Raimundo (RR),1250
+RR,Monte Roraima,Boa Vista,substituto,314694,São Francisco (RR),550
+SC,Avaí,Florianópolis,equivalente,107206,Avaí,3550
+SC,Brusque,Brusque,equivalente,301300,Brusque,1050
+SC,Camboriú,Camboriú,equivalente,319160,Camboriú,500
+SC,Carlos Renaux,Brusque,equivalente,309769,Carlos Renaux,800
+SC,Chapecoense,Chapecó,equivalente,301302,Chapecoense,2100
+SC,Criciúma,Criciúma,equivalente,319,Criciúma,4800
+SC,Figueirense,Florianópolis,equivalente,301304,Figueirense,4950
+SC,Joinville,Joinville,equivalente,301308,Joinville,3600
+SC,Marcílio Dias,Itajaí,equivalente,301314,Marcílio Dias,2050
+SC,Santa Catarina,Rio do Sul,equivalente,319164,Santa Catarina,400
+SC,Barra,Balneário Camboriú,substituto,301316,Tubarão,2600
+SC,Concórdia,Concórdia,substituto,314755,Hermann Aichinger,2500
+SE,Confiança,Aracaju,equivalente,301321,Confiança (SE),2600
+SE,Dorense,Nossa Senhora das Dores,equivalente,313315,Dorense,1300
+SE,Itabaiana,Itabaiana,equivalente,301323,Itabaiana,2050
+SE,Sergipe,Aracaju,equivalente,301318,Sergipe,3150
+SE,América de Propriá,Propriá,substituto,309619,Coritiba (SE),1600
+SE,Atlético Gloriense,Nossa Senhora da Glória,substituto,313314,Amadense,1400
+SE,Desportiva Aracaju,Aracaju,substituto,309621,Lagartense,1300
+SE,Falcon,Barra dos Coqueiros,substituto,313319,Maruinense,1050
+SE,Guarany de Porto da Folha,Porto da Folha,substituto,313327,Propriá,1000
+SE,Lagarto,Lagarto,substituto,314291,Vasco (SE),1000
+TO,Araguaína,Araguaína,equivalente,313339,Araguaína,1100
+TO,Gurupi,Gurupi,equivalente,309622,Gurupi,1550
+TO,Palmas,Palmas,equivalente,301327,Palmas,2050
+TO,Tocantinópolis,Tocantinópolis,equivalente,301329,Tocantinópolis,1900
+TO,União-TO,Araguaína,equivalente,313342,União Araguainense,500
+TO,Bela Vista,Cachoeirinha,substituto,309624,Intercap,1350
+TO,Capital-TO,Palmas,substituto,313337,Tocantins (TO),1300
+TO,Guaraí,Guaraí,substituto,313333,Clube dos XXX,1250
+AP,Cristal,Macapá,equivalente,313253,Cristal,1000
+AP,Independente,Santana,equivalente,313254,Independente (AP),1050
+AP,Macapá,Macapá,equivalente,313257,Macapá,1200
+AP,Oratório,Macapá,equivalente,313255,Oratório,400
+AP,Santos-AP,Macapá,equivalente,301105,Santos (AP),1250
+AP,São José-AP,Macapá,equivalente,303010,São José (AP),1900
+AP,Trem,Macapá,equivalente,313348,Trem Desportivo,1000
+AP,Ypiranga-AP,Macapá,equivalente,104982,Ypiranga (AP),2100

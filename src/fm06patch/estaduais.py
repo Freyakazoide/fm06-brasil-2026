@@ -27,7 +27,10 @@ Limites do estadual genérico (pequenas liberdades em relação a 2026):
 
 from __future__ import annotations
 
+import csv
 import struct
+from collections import Counter
+from pathlib import Path
 from datetime import date, timedelta
 
 from .exe_cave import SECTION_VA, Asm, off, sec_off, section_swaps, u32
@@ -70,7 +73,7 @@ FORMATO_2026 = {
     "BA": (13, 1, 1, 4, 2),   # M1 (10 no real; banco tem 13)
     "PE": (8, 1, 1, 4, 2),    # M2
     "CE": (10, 1, 1, 4, 2),   # M6 (grupos + 2ª fase no real)
-    "RN": (14, 2, 1, 4, 2),   # M2 (8 no real): 2 grupos de 7
+    "RN": (8, 1, 1, 4, 2),    # M2
     "PB": (10, 1, 1, 4, 1),   # M1
     "AL": (8, 1, 1, 4, 1),    # M1
     "SE": (10, 1, 1, 4, 2),   # M2 (7 classificados no real)
@@ -79,8 +82,8 @@ FORMATO_2026 = {
     "PA": (14, 1, 1, 4, 2),   # M5 (12 clubes no real; banco tem 14)
     "AM": (8, 1, 1, 4, 1),    # M6 (dois turnos no real)
     "TO": (10, 1, 1, 4, 1),   # M1 (8 no real)
-    "AC": (6, 1, 2, 4, 1),    # M1 (8 clubes no real; banco do FM06 tem 6)
-    "RO": (8, 1, 1, 4, 2),    # M6 (7 clubes, ida e volta no real)
+    "AC": (8, 1, 1, 4, 1),    # M1
+    "RO": (7, 1, 2, 4, 2),    # M6 (ida e volta)
     "RR": (8, 1, 1, 4, 1),    # M1 (9 clubes no real)
     "AP": (8, 1, 1, 4, 1),    # M1
 }
@@ -116,9 +119,23 @@ def league_end(teams: int, groups: int, legs: int, qualified: int) -> tuple[int,
     return end.day, end.month - 1
 
 
+CLUBS_CSV = Path(__file__).resolve().parents[2] / "data" / "brasil" / "estaduais" / "clubes_2026_modelo.csv"
+
+
+def club_counts() -> dict[str, int]:
+    """Clubes de cada estadual na lista de 2026 (o jogo põe na tabela todos os
+    clubes do estado; o calendário tem de ser feito para esse mesmo número)."""
+    if not CLUBS_CSV.exists():
+        return {}
+    rows = csv.DictReader(CLUBS_CSV.open(encoding="utf-8-sig"))
+    return dict(Counter(r["uf"].strip().upper() for r in rows))
+
+
 def table_bytes() -> bytes:
     out = bytearray()
+    counts = club_counts()
     for uf, (teams, groups, legs, qualified, relegated) in FORMATO_2026.items():
+        teams = counts.get(uf, teams)
         stage2 = MATA_MATA if qualified else SEM_SEGUNDA_FASE
         day, month = league_end(teams, groups, legs, qualified)
         out += struct.pack("<I8B", ID[uf], teams, groups, legs, qualified, relegated, stage2, day, month)

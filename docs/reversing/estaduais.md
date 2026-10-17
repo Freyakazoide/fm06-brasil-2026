@@ -133,3 +133,23 @@ Isso cobre direto os modelos M1 e M3 de `docs/REGRAS_2026_ESTADUAIS_E_COPAS.md`
 (liga única + mata-mata de 4 ou 8). Para os demais modelos falta ver o que o
 mata-mata do genérico suporta (6 classificados, 1º e 2º direto à semi) e se
 os grupos podem jogar contra o outro grupo.
+
+## Participantes (banco) e vagas
+
+- Quem joga cada estadual: `0x00BB6290` → `0x00AC6F70(ID do estadual, lista)`
+  junta **todos** os times com `TEAM+0x64` = aquela competição; o número de
+  clubes dos parâmetros só serve para o calendário. No `server_db.dat` o
+  campo fica no registro do time, 47 bytes depois do `0A 00`: índice da 1ª
+  ou da 2ª divisão do estado na tabela de competições (ex.: BA 324 e 325,
+  SP 75 e 374). Os 671 clubes brasileiros têm um dos 54 índices.
+- `src/fm06patch/estaduais_clubes.py` grava a lista de 2026
+  (`data/brasil/estaduais/clubes_2026_modelo.csv`): quem está na lista vai
+  para a 1ª divisão do estado, quem estava e não está vai para a 2ª; clube
+  que não existe no FM06 é trocado pelo de maior reputação do estado (93 de
+  268; mapa em `data/brasil/estaduais/mapa_estaduais_2026.csv`). O número de
+  clubes do formato sai da mesma lista (`estaduais.club_counts`).
+- Vagas: `0x00BB6860` (Copa do Brasil) pega, do estadual ordenado
+  (`0x00A1D020`), os N primeiros que ainda não estão na lista, com N =
+  competição+0x1C1 (bloco de parâmetros +0x1D; original soma 64, ex.: SP 6,
+  RJ 6, MG 4, RS 4, PR 4, PE 3). +0x1C (1 ou 2) é provavelmente a vaga para a
+  divisão nacional de baixo (a confirmar).
