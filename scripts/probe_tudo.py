@@ -79,7 +79,7 @@ def show_states(handle, found) -> None:
             rows.append((UF[u32(comp, 0x1A4)], comp))
     newest = max((year(c) for _, c in rows), default=0)
     for uf, comp in sorted(rows, key=lambda r: (r[0], year(r[1]))):
-        problem = comp[0x98] < comp[0x100] or year(comp) < newest
+        problem = year(comp) < newest            # fase faltando é normal durante o estadual
         out(f"  {uf}: ano {year(comp)}, fases {comp[0x98]}/{comp[0x100]}, clubes {comp[0x1A8]}, "
             f"grupos {comp[0x1A9]}, classificados {comp[0x1AB]}{'   <-- PROBLEMA' if problem else ''}")
         if problem:
