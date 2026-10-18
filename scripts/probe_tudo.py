@@ -45,20 +45,24 @@ def year(comp: bytes) -> int:
     return struct.unpack_from("<H", comp, 0x9C)[0]
 
 
-def team_row(handle, db: bytes, team: int) -> tuple[str, str, str]:
-    data = read_memory(handle, team, 0x60) or b""
-    if len(data) < 0x58:
-        return "?", "?", "?"
+def division_name(handle, division: int) -> str:
+    vt = u32(read_memory(handle, division, 4) or b"\0\0\0\0", 0) if division else 0
+    return class_name(handle, vt).removeprefix(".?AV").removesuffix("@@") if vt else "-"
+
+
+def team_row(handle, db: bytes, team: int) -> tuple[str, str, str, str]:
+    """País, clube (UID), divisão atual e temporada passada (divisão e posição)."""
+    data = read_memory(handle, team, 0x64) or b""
+    if len(data) < 0x64:
+        return "?", "?", "?", "?"
     head = read_memory(handle, u32(data, 0x38), 0xE0) or b""
     uid = u32(head, 0x14) if len(head) >= 0x18 else 0
     nation = u32(head, 0xDC) if len(head) >= 0xE0 else 0
     nation_head = (read_memory(handle, nation, 0x18) or b"") if nation else b""
     nation_uid = u32(nation_head, 0x14) if len(nation_head) >= 0x18 else 0
-    name = (club_names(db, uid)[1] if db and uid else "") or f"clube {uid}"
-    division = u32(data, 0x54)
-    div_vt = u32(read_memory(handle, division, 4) or b"\0\0\0\0", 0) if division else 0
-    div_name = class_name(handle, div_vt).removeprefix(".?AV").removesuffix("@@") if div_vt else "-"
-    return NATION.get(nation_uid, f"{nation_uid:#x}"), name, div_name
+    name = (club_names(db, uid)[1] if db and uid else "") or "?"
+    last = f"{division_name(handle, u32(data, 0x5C))} {data[0x60]}º"
+    return NATION.get(nation_uid, f"{nation_uid:#x}"), f"{name} ({uid})", division_name(handle, u32(data, 0x54)), last
 
 
 def participants(handle, comp: bytes) -> list[int]:
@@ -113,9 +117,9 @@ def show_continental(handle, found, db: bytes) -> None:
                 f"{len(teams)} participante(s)")
             rows = sorted(team_row(handle, db, t) for t in teams)
             counts: dict[str, int] = {}
-            for nation, club, division in rows:
+            for nation, club, division, last in rows:
                 counts[nation] = counts.get(nation, 0) + 1
-                out(f"  {nation}  {club:28} {division}")
+                out(f"  {nation}  {club:28} {division:16} passada: {last}")
             if counts:
                 out("  por país: " + ", ".join(f"{k} {v}" for k, v in sorted(counts.items())))
 
