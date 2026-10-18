@@ -27,56 +27,26 @@ import sys
 import urllib.request
 from pathlib import Path
 
-import openpyxl
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import graficos, identidade  # noqa: E402
+from fm06patch import cores, graficos, identidade  # noqa: E402
 from fm06patch.estaduais_clubes import normalize, same_club  # noqa: E402
 
 CLUBES = ROOT / "data" / "brasil" / "clubes"
 ESCUDOS = CLUBES / "escudos"
 OUT = ROOT / "data" / "brasil" / "graficos_2026"
-KIT_SIZE = 120
-# nome nas séries/estaduais -> nome na planilha de uniformes
-KIT_ALIASES = {"Parnamirim/ABC-D": "Parnamirim", "Gazin Porto Velho": "Porto Velho"}
+KIT_SIZE = 150
 FORMATS = (".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg")
-
-
-def _sheet(path: Path) -> list[dict]:
-    sheet = openpyxl.load_workbook(path, read_only=True).worksheets[0]
-    rows = sheet.iter_rows(values_only=True)
-    header = next(rows)
-    return [dict(zip(header, row)) for row in rows if row[header.index("clube")]]
-
-
-def _kit_rows(identities: list[dict], kits: list[dict]) -> dict[int, dict]:
-    """UID do jogo -> linha de uniformes_2026 (nome igual primeiro, depois nome parecido)."""
-    found: dict[int, dict] = {}
-    free = list(kits)
-    for exact in (True, False):
-        for ident in identities:
-            uid = int(ident["uid_jogo"])
-            if uid in found:
-                continue
-            name, uf = KIT_ALIASES.get(ident["clube_2026"], ident["clube_2026"]), ident["uf"]
-            for row in free:
-                if row["uf"] not in (None, "", uf):
-                    continue
-                if row["clube"] == name if exact else same_club(row["clube"], name, uf):
-                    found[uid] = row
-                    free.remove(row)
-                    break
-    return found
 
 
 def _crest_files() -> dict[str, tuple[str, str]]:
     """clube -> (escudo_arquivo sem extensão, escudo_url)."""
     files = {}
     for sheet in ("clubes_master.xlsx", "clubes_faltando.xlsx"):
-        for row in _sheet(CLUBES / sheet):
+        for row in cores.sheet(CLUBES / sheet):
             if row.get("escudo_arquivo"):
                 files[row["clube"]] = (Path(row["escudo_arquivo"]).stem, row.get("escudo_url") or "")
     return files
@@ -86,25 +56,10 @@ def _names() -> dict[str, tuple[str, str]]:
     """clube -> (nome curto, nome completo) de 2026."""
     names = {}
     for sheet in ("clubes_master.xlsx", "clubes_faltando.xlsx"):
-        for row in _sheet(CLUBES / sheet):
+        for row in cores.sheet(CLUBES / sheet):
             short = row.get("nome_curto_2026") or row["clube"]
             names[row["clube"]] = (short, row.get("nome_completo_2026") or short)
     return names
-
-
-def club_colours(row: dict) -> list[tuple[int, tuple, tuple]]:
-    """(índice, frente, fundo) dos uniformes 1, 2 e 3: fundo = cor da camisa, frente =
-    a secundária, ou branco/preto se ela não contrastar."""
-    sets = []
-    for index, n in enumerate((1, 2, 3)):
-        if not row.get(f"uni{n}_camisa"):
-            continue
-        back = graficos._rgb(row[f"uni{n}_camisa"])
-        front = graficos._rgb(row.get(f"uni{n}_secundaria") or row.get(f"uni{n}_detalhes"), "#FFFFFF")
-        if abs(graficos.luma(front) - graficos.luma(back)) < 70:
-            front = graficos._contrast(back)
-        sets.append((index, front, back))
-    return sets
 
 
 def lnc_clubs(renames: list[tuple[int, str, str]], colours: list[tuple[int, list]]) -> str:
@@ -117,7 +72,7 @@ def lnc_clubs(renames: list[tuple[int, str, str]], colours: list[tuple[int, list
                   f'"CLUB_LONG_NAME_CHANGE"\t{uid}\t"{full}"\t""']
     lines += ["", "# Comando\tID\tÍndice\tR1 G1 B1 (frente)\tR2 G2 B2 (fundo)"]
     for uid, sets in colours:
-        for index, front, back in sets:
+        for index, front, back, _ in sets:
             lines.append(f'"COLOUR_CHANGE"\t{uid}\t{index}\t' + "\t".join(map(str, front + back)))
     return "\r\n".join(lines) + "\r\n"
 
@@ -170,7 +125,7 @@ def main() -> None:
     parser.add_argument("--baixar", action="store_true", help="baixa os escudos que faltam")
     args = parser.parse_args()
     identities = identidade.read_report(CLUBES / "identidade_fm06.csv")
-    kit_rows = _kit_rows(identities, _sheet(CLUBES / "uniformes_2026.xlsx"))
+    kit_rows = cores.kit_rows(identities, cores.sheet(CLUBES / "uniformes_2026.xlsx"))
     files = _crest_files()
     names = _names()
     renames, colours = [], []
@@ -197,7 +152,7 @@ def main() -> None:
         if ident["tipo"] != "vaga extra" and normalize(short) != normalize(ident["fm06_nome"]):
             renames.append((uid, short, full))
         if row and ident["tipo"] == "substituto":
-            colours.append((uid, club_colours(row)))
+            colours.append((uid, cores.club_colours(row)))
         report.append([uid, ident["clube_2026"], ident["uf"], ident["fm06_nome"],
                        "sim" if path else "NÃO", "sim" if row else "NÃO",
                        ", ".join(k for k, v in kits.items() if v)])

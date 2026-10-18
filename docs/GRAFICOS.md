@@ -6,7 +6,7 @@ Formato do FM05/06 (validado no jogo com Flamengo 322, Palmeiras 329 e Cruzeiro 
   (`<list id="maps">`, `<record from="<arquivo sem .png>" to="<chave>"/>`);
 - escudo: `graphics/pictures/club/<UID>/logo` (60×60, cabe no cabeçalho da skin)
   e `.../icon` (20×18);
-- uniforme: `graphics/pictures/team/<UID>/kits/home|away|third` (120×120; `KIT_SIZE` em `scripts\gerar_graficos.py`);
+- uniforme: `graphics/pictures/team/<UID>/kits/home|away|third` (150×150; `KIT_SIZE` em `scripts\gerar_graficos.py`);
 - UID = o do jogo ("Show Unique IDs" nas preferências), não o do repositório.
 
 ## Um clube do jogo = um clube de 2026
@@ -46,3 +46,11 @@ acha o clube pelo UID (lista `0x014EAA30`), pega o conjunto de cores
 cor 2, `+0xC` = 1. No banco (depois dos nomes) a cor 1 do conjunto 0 é a do
 texto e a cor 2 a do fundo: Flamengo preto sobre vermelho, São Caetano branco
 sobre azul (RGB555). O gerador usa fundo = camisa, frente = secundária.
+
+## Cores no banco
+
+O `aplicar_brasil_2026.py` grava as cores de 2026 dos substitutos direto no
+`server_db.dat` (`fm06patch/cores.py`): depois do nome curto do clube vem u8 N
+e N conjuntos de 7 bytes (u16 cor 1, u16 cor 2, u16 cor 3, u8 padrão), RGB555.
+Conjunto 0 = uniforme 1 e cores da tela (cor 1 texto, cor 2 fundo), 1 =
+uniforme 2. Padrão 01 lisa, 03 listras verticais, 0D listras horizontais.
