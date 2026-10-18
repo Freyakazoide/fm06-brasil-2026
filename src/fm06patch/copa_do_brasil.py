@@ -14,7 +14,7 @@ os 20 da Série A), oitavas, quartas, semifinal e final. O patch reproduz da
 - fase 2 (cópia da montagem, 32 clubes): sorteio em 18/4 (a fase nasce no
   meio da temporada; sem data de sorteio ninguém sorteia os confrontos, teste
   3), 5ª fase (rodada 7, 26/4), oitavas
-  (rodada 8, 1/8), quartas (26/8), semifinal (1/11) e final (6/12);
+  (rodada 8, 1/8), quartas (26/8), semifinal (1/11) e final (29/11 e 6/12);
 - método 72: quando a fase 1 termina, junta os 12 vencedores e os 20 clubes
   da Série A e cria a fase 2;
 - participantes da fase 1: os mesmos critérios, sem a Série A, até 48,
@@ -130,7 +130,7 @@ def _stage2(data: bytes, draw: int) -> bytes:
     _date(code, R3_DATE, 1, 7)                                    # oitavas: 1/8
     _date(code, QF_DATE, 26, 7)                                   # quartas: 26/8
     _date(code, SF_DATE, 1, 10)                                   # semifinal: 1/11
-    _date(code, F_DATE, 6, 11)                                    # final: 6/12
+    _date(code, F_DATE, 29, 10)                                   # final: 29/11 e 6/12
     return bytes(code)
 
 
@@ -254,6 +254,10 @@ def build(data: bytes):
         Swap(off(CUP_VTABLE + 4 * 71), u32(BUILDER), u32(entry["dispatch"])),
         Swap(off(CUP_VTABLE + 4 * 72), u32(DEFAULT_NEXT_STAGE), u32(entry["next"])),
         Swap(at(SEASON_SETUP_STAGES), b"\x6A\x01", b"\x6A\x02"),              # 2 fases
+        # temporada de janeiro a dezembro (construtor 0x00BB3100, +0x87 mês do fim; original
+        # junho): com a final em dezembro e o fim em junho, o campeão de 2026 não entrou no
+        # histórico (teste)
+        Swap(at(0x00BB315F), bytes.fromhex("c68687000000" "05"), bytes.fromhex("c68687000000" "0b")),
         # participantes: 48, sem a Série A (filtro), completando com B, nova C e D
         Swap(at(0x00BB957B), data[at(0x00BB957B):at(0x00BB957B) + 5],
              b"\xE9" + u32(entry["filter"] - (0x00BB957B + 5))),

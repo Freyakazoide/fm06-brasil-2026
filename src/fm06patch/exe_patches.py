@@ -245,7 +245,7 @@ PATCHES = {
         Patch(
             "copa_do_brasil_2026",
             "Copa do Brasil em duas fases: 48 clubes sem a Série A (11/3 e 18/3); depois os 12 "
-            "classificados + os 20 da Série A da 5ª fase à final (22/4, 1/8, 26/8, 1/11, 6/12). "
+            "classificados + os 20 da Série A da 5ª fase à final (22/4, 1/8, 26/8, 1/11, final 29/11 e 6/12; temporada até dezembro). "
             "Ver src/fm06patch/copa_do_brasil.py.",
             build=_copa_swaps,
         ),
@@ -253,7 +253,7 @@ PATCHES = {
             "copa_do_brasil_datas_2026",
             "Copa do Brasil (0x00BBAD30, mata-mata de 64 em 6 rodadas) nas datas de 2026, cada rodada "
             "na fase de 2026 com o mesmo número de clubes: 64 em 18/3 (4ª fase), 32 em 22/4 (5ª), "
-            "16 em 1/8 (oitavas), 8 em 26/8 (quartas), 4 em 1/11 (semifinal), final em 6/12. "
+            "16 em 1/8 (oitavas), 8 em 26/8 (quartas), 4 em 1/11 (semifinal), final em 29/11 e 6/12. "
             "Original: 2/2, 2/3, 30/3, 20/4, 25/5, 15/6.",
             tuple(
                 swap

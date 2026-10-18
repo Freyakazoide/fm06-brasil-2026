@@ -58,6 +58,9 @@ CHANGES = (
     (0xC06AEE, "7460", "eb60"),            # ... e pode entrar pela tabela do país
     (0xC06BD6, "7458", "eb58"),
     (0xC06C4D, "83e802", "83e8fe"),        # exclusão da Libertadores: Brasil, Argentina, Peru
+    # o campeão brasileiro (1º da 1ª divisão) ficava na Sul-Americana mesmo estando na
+    # Libertadores (teste: Flamengo, campeão de 2025, nas oitavas de 2026)
+    (0xC06C9C, "7513", "eb13"),
     (0xC06C52, "83e803", "83e807"),
     # mata-mata (0x00C07380)
     (0xC073B1, "22", "1c"),                # 28 clubes

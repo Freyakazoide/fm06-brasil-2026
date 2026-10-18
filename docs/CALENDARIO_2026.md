@@ -161,7 +161,7 @@ de 2026 em diante:
 | Fase no jogo | Rodadas | Clubes | Datas |
 |---|---|---|---|
 | 1 (sem a Série A) | 3ª fase (código 6), 4ª fase (código 7) | 48 → 24 → 12 | 11/3, 18/3 |
-| 2 | 5ª fase, oitavas, quartas, semifinal, final | 12 + 20 da Série A = 32 | sorteio 18/4; 26/4, 1/8, 26/8, 1/11, 6/12 |
+| 2 | 5ª fase, oitavas, quartas, semifinal, final | 12 + 20 da Série A = 32 | sorteio 18/4; 26/4, 1/8, 26/8, 1/11, final 29/11 e 6/12 |
 
 - Participantes da fase 1: os mesmos critérios, filtrando os clubes da Série
   A (`TEAM+0x54`), até 48, completando com Série B, nova C e Série D.
