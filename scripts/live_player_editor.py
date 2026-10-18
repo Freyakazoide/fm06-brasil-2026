@@ -8,6 +8,7 @@ Fluxo: New Game -> rodar este script -> conferir no jogo -> salvar o jogo.
     python scripts/live_player_editor.py --show 3100367
     python scripts/live_player_editor.py --club-of 3100367
     python scripts/live_player_editor.py --squad 337 --out workspace/elenco_337.csv
+    python scripts/live_player_editor.py --squads-all data/brasil/clubes/identidade_fm06.csv
 
 Sem --apply nada é gravado: o script só mostra o que mudaria.
 Cada --apply salva os bytes originais em workspace/live_edits/ para --restore.
@@ -60,6 +61,16 @@ kernel32.WriteProcessMemory.argtypes = [
     ctypes.POINTER(ctypes.c_size_t),
 ]
 kernel32.WriteProcessMemory.restype = wintypes.BOOL
+
+
+def game_pid() -> int:
+    """O jogo aberto: fm_brasil.exe (mod) ou fm.exe."""
+    for name in ("fm_brasil.exe", "fm.exe"):
+        try:
+            return find_process_id(name)
+        except RuntimeError:
+            continue
+    raise RuntimeError("abra o fm_brasil.exe (ou o fm.exe) antes")
 
 
 def open_for_write(pid: int):
@@ -152,7 +163,7 @@ def cmd_edit(spec_path: Path, apply: bool) -> None:
     spec = json.loads(spec_path.read_text(encoding="utf-8"))
     year_shift = int(spec.get("year_shift", 0))
     players = spec["players"]
-    handle = open_for_write(find_process_id("fm.exe"))
+    handle = open_for_write(game_pid())
     uids = sorted({int(p["uid"]) for p in players})
     donors = sorted({int(p["nationality_like"]) for p in players if "nationality_like" in p} - set(uids))
     addresses = resolve(handle, uids)
@@ -205,7 +216,7 @@ def cmd_edit(spec_path: Path, apply: bool) -> None:
 
 def cmd_restore(path: Path) -> None:
     backup = json.loads(path.read_text(encoding="utf-8"))
-    handle = open_for_write(find_process_id("fm.exe"))
+    handle = open_for_write(game_pid())
     for item in backup["objects"]:
         data = bytes.fromhex(item["data"])
         before = OBJECT_SPAN[item["kind"]][0]
@@ -220,7 +231,7 @@ def cmd_restore(path: Path) -> None:
 
 
 def cmd_show(uid: int) -> None:
-    handle = open_for_write(find_process_id("fm.exe"))
+    handle = open_for_write(game_pid())
     show_summary("ATUAL", load_player(handle, uid, resolve(handle, [uid])[uid]))
 
 
@@ -263,7 +274,7 @@ def contracts(handle) -> list[dict]:
 
 
 def cmd_club_of(uid: int) -> None:
-    handle = open_for_write(find_process_id("fm.exe"))
+    handle = open_for_write(game_pid())
     print("Lendo contratos...", flush=True)
     rows = [c for c in contracts(handle) if c["player_uid"] == uid]
     if not rows:
@@ -272,26 +283,49 @@ def cmd_club_of(uid: int) -> None:
         print(f"UID {uid}: {c['kind']} com o clube UID {c['club_uid']}")
 
 
-def cmd_squad(club_uid: int, out: Path | None) -> None:
-    handle = open_for_write(find_process_id("fm.exe"))
-    print("Lendo contratos...", flush=True)
-    rows = [c for c in contracts(handle) if c["club_uid"] == club_uid]
-    if not rows:
-        print(f"Nenhum contrato com o clube UID {club_uid}.")
-        return
+def squad_table(handle, rows: list[dict]) -> list[dict]:
     uids = sorted({c["player_uid"] for c in rows})
     kinds = {c["player_uid"]: c["kind"] for c in rows}
+    clubs = {c["player_uid"]: c["club_uid"] for c in rows}
     addresses = resolve(handle, uids)
     table = []
     for uid in uids:
         s = load_player(handle, uid, addresses[uid]).summary()
         positions = [n for n, v in s["attributes"].items() if v >= 15 and n in POSITION_NAMES]
         table.append({
-            "uid": uid, "vinculo": kinds[uid], "nascido": s["born"],
+            "clube_uid": clubs[uid], "uid": uid, "vinculo": kinds[uid], "nascido": s["born"],
             "ca": s["ca"], "pa": s["pa"], "altura": s["height"], "peso": s["weight"],
             "posicoes": " ".join(positions),
         })
-    table.sort(key=lambda r: -r["ca"])
+    table.sort(key=lambda r: (r["clube_uid"], -r["ca"]))
+    return table
+
+
+def cmd_squads_all(identities: Path, out: Path) -> None:
+    """Elencos de todos os clubes de identidade_fm06.csv (uid_jogo) num CSV só."""
+    wanted = {int(r["uid_jogo"]) for r in csv.DictReader(identities.open(encoding="utf-8-sig"))}
+    handle = open_for_write(game_pid())
+    print("Lendo contratos...", flush=True)
+    rows = [c for c in contracts(handle) if c["club_uid"] in wanted]
+    print(f"{len(rows)} contratos em {len({c['club_uid'] for c in rows})} de {len(wanted)} clubes. Lendo jogadores...",
+          flush=True)
+    table = squad_table(handle, rows)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(table[0]))
+        writer.writeheader()
+        writer.writerows(table)
+    print(f"Salvo em {out}")
+
+
+def cmd_squad(club_uid: int, out: Path | None) -> None:
+    handle = open_for_write(game_pid())
+    print("Lendo contratos...", flush=True)
+    rows = [c for c in contracts(handle) if c["club_uid"] == club_uid]
+    if not rows:
+        print(f"Nenhum contrato com o clube UID {club_uid}.")
+        return
+    table = squad_table(handle, rows)
     print(f"\nClube UID {club_uid}: {len(table)} jogadores")
     print(f"{'UID':>9}  {'vínculo':10} {'nascido':10}  CA  PA  alt  peso  posições")
     for r in table:
@@ -319,12 +353,16 @@ def main() -> None:
     parser.add_argument("--show", type=int, metavar="UID", help="só mostra os dados atuais")
     parser.add_argument("--club-of", type=int, metavar="UID", help="mostra o clube do jogador")
     parser.add_argument("--squad", type=int, metavar="CLUB_UID", help="lista o elenco de um clube")
-    parser.add_argument("--out", type=Path, help="CSV de saída para --squad")
+    parser.add_argument("--squads-all", type=Path, metavar="IDENTIDADE_CSV",
+                        help="lista os elencos de todos os clubes de identidade_fm06.csv")
+    parser.add_argument("--out", type=Path, help="CSV de saída para --squad e --squads-all")
     args = parser.parse_args()
     if args.club_of:
         cmd_club_of(args.club_of)
     elif args.squad:
         cmd_squad(args.squad, args.out)
+    elif args.squads_all:
+        cmd_squads_all(args.squads_all, args.out or ROOT / "workspace" / "elencos_2005.csv")
     elif args.restore:
         cmd_restore(args.restore)
     elif args.show:

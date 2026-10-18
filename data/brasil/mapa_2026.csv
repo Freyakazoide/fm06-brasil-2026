@@ -97,7 +97,7 @@ D,Mixto,Mato Grosso,equivalente,309643,Mixto (MT),1500
 D,Operário VG,Mato Grosso,equivalente,313901,Operário (MT),1600
 D,Primavera,Mato Grosso,substituto,107222,Portuguesa Santista,2600
 D,União Rondonópolis,Mato Grosso,equivalente,301177,União Rondonópolis,2700
-D,FC Pantanal,Mato Grosso do Sul,equivalente,313245,Pantanal,350
+D,Ivinhema,Mato Grosso do Sul,equivalente,313247,Ivinhema,1000
 D,Operário-MS,Mato Grosso do Sul,equivalente,107240,Operário (MS),2250
 D,Betim,Minas Gerais,substituto,301316,Tubarão,2600
 D,Democrata GV,Minas Gerais,equivalente,301182,Democrata,1350
@@ -129,7 +129,7 @@ D,Portuguesa-RJ,Rio de Janeiro,equivalente,301249,Portuguesa (RJ),1800
 D,Sampaio Corrêa-RJ,Rio de Janeiro,substituto,301244,River (PI),2300
 D,América-RN,Rio Grande do Norte,equivalente,107201,América (RN),4050
 D,Laguna,Rio Grande do Norte,substituto,313351,CFZ (DF),2300
-D,Parnamirim/ABC-D,Rio Grande do Norte,equivalente,310905,Parnamirim,600
+D,ABC,Rio Grande do Norte,equivalente,107203,ABC,3450
 D,Brasil de Pelotas,Rio Grande do Sul,equivalente,301262,Brasil de Pelotas,1750
 D,Guarany de Bagé,Rio Grande do Sul,substituto,301331,América (SP),2250
 D,São José-RS,Rio Grande do Sul,equivalente,301282,São José (RS),1600
@@ -152,6 +152,6 @@ D,Lagarto,Sergipe,equivalente,309621,Lagartense,1300
 D,Sergipe,Sergipe,equivalente,301318,Sergipe,3150
 D,Araguaína,Tocantins,equivalente,313339,Araguaína,1100
 D,Tocantinópolis,Tocantins,equivalente,301329,Tocantinópolis,1900
-D,,,substituto,107203,ABC,3450
-D,,,substituto,301110,São Raimundo (AM),3450
-D,,,substituto,107208,CSA,3150
+D,CSA,Alagoas,equivalente,107208,CSA,3150
+D,Manauara,Amazonas,substituto,310639,Guarany de Sobral,2200
+D,Iguatu,Ceará,substituto,301179,Comercial (MS),2150

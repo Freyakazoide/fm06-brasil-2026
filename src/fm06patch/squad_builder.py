@@ -29,6 +29,14 @@ NATIONALITY_DONORS = {
     "Chile": 2001859,      # Marcelo Salas
     "Espanha": 6700151,    # Iker Casillas
     "França": 8076,        # Zinedine Zidane
+    # Achados no people_db (nome completo, ano, código da nação; UID no fim do registro):
+    "Colômbia": 309478, "Paraguai": 120938, "Portugal": 735216, "Equador": 856896,
+    "Venezuela": 121009, "Peru": 8826193, "Bolívia": 5240074, "Nigéria": 919581,
+    "Camarões": 105788, "Gana": 876900, "Angola": 913822, "Marrocos": 916312,
+    "Panamá": 5260831, "Croácia": 652368, "Holanda": 1590, "Inglaterra": 2003443,
+    "Dinamarca": 928418, "Suécia": 15951, "Bulgária": 5313413, "Estados Unidos": 976234,
+    "México": 120929, "Senegal": 403128, "Guiné": 8168095, "RD Congo": 144178,
+    "Costa do Marfim": 533344, "Moçambique": 4100618,
 }
 
 # Perfis para um jogador de CA 160, na escala exibida (1..20).

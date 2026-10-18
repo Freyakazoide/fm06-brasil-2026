@@ -44,13 +44,13 @@ AL,Murici SC,Murici,equivalente,309357,Murici,1400
 AL,Penedense,Penedo,equivalente,309358,Penedense,1050
 AL,Cruzeiro de Arapiraca,Arapiraca,substituto,301102,Miguelense,1800
 AM,Amazonas,Manaus,substituto,301350,Santo André,4850
+AM,Manauara,Manaus,substituto,310639,Guarany de Sobral,2200
 AM,Manaus,Manaus,substituto,107220,Mogi Mirim,3100
 AM,Nacional-AM,Manaus,equivalente,301107,Nacional (AM),2500
 AM,Princesa do Solimões,Manacapuru,equivalente,313258,Princesa,500
 AM,São Raimundo-AM,Manaus,equivalente,301110,São Raimundo (AM),3450
 AM,Itacoatiara,Itacoatiara,substituto,8832362,Grêmio Coariense,1350
-AM,Manauara,Manaus,substituto,308281,América (AM),1250
-AM,Parintins,Parintins,substituto,309648,Clíper,1250
+AM,Parintins,Parintins,substituto,308281,América (AM),1250
 BA,Atlético de Alagoinhas,Alagoinhas,equivalente,301111,Atlético (BA),1400
 BA,Bahia,Salvador,equivalente,314,Bahia,5450
 BA,Bahia de Feira,Feira de Santana,equivalente,319623,Bahia de Feira,400
@@ -65,12 +65,12 @@ CE,Ceará,Fortaleza,equivalente,104653,Ceará,4200
 CE,Ferroviário,Fortaleza,equivalente,301127,Ferroviário (CE),2100
 CE,Floresta,Fortaleza,substituto,311024,Marília,3300
 CE,Fortaleza,Fortaleza,equivalente,104749,Fortaleza,4700
+CE,Iguatu,Iguatu,substituto,301179,Comercial (MS),2150
 CE,Maracanã,Maracanaú,substituto,303861,Corinthians (AL),2800
 CE,Maranguape,Maranguape,equivalente,314946,Maranguape,1050
 CE,Quixadá,Quixadá,equivalente,313259,Quixadá,650
 CE,Tirol,Fortaleza,substituto,301274,Pelotas,2750
-CE,Horizonte,Horizonte,substituto,310639,Guarany de Sobral,2200
-CE,Iguatu,Iguatu,substituto,313675,Icasa,2050
+CE,Horizonte,Horizonte,substituto,313675,Icasa,2050
 DF,ARUC,Cruzeiro,equivalente,313263,ARUC,1050
 DF,Brasília,Brasília,equivalente,301133,Brasília,600
 DF,Brasiliense,Taguatinga,equivalente,309656,Brasiliense,4950
@@ -128,9 +128,9 @@ MS,Ivinhema,Ivinhema,equivalente,313247,Ivinhema,1000
 MS,Naviraiense,Naviraí,equivalente,314695,Naviraiense,550
 MS,Operário-MS,Campo Grande,equivalente,107240,Operário (MS),2250
 MS,Pantanal,Campo Grande,equivalente,313245,Pantanal,350
-MS,Bataguassu,Bataguassu,substituto,301179,Comercial (MS),2150
-MS,Costa Rica,Costa Rica,substituto,313789,Chapadão,2000
-MS,CRA,Aquidauana,substituto,313232,Cassilandense,1400
+MS,Bataguassu,Bataguassu,substituto,313789,Chapadão,2000
+MS,Costa Rica,Costa Rica,substituto,313232,Cassilandense,1400
+MS,CRA,Aquidauana,substituto,309646,Nova Andradina,1350
 MG,América-MG,Belo Horizonte,equivalente,106881,América (MG),5250
 MG,Athletic,São João del-Rei,substituto,301352,São Caetano,7100
 MG,Atlético-MG,Belo Horizonte,equivalente,312,Atlético Mineiro,6850

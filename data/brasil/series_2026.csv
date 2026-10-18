@@ -97,7 +97,7 @@ D,Mato Grosso,Mixto
 D,Mato Grosso,Operário VG
 D,Mato Grosso,Primavera
 D,Mato Grosso,União Rondonópolis
-D,Mato Grosso do Sul,FC Pantanal
+D,Mato Grosso do Sul,Ivinhema
 D,Mato Grosso do Sul,Operário-MS
 D,Minas Gerais,Betim
 D,Minas Gerais,Democrata GV
@@ -129,7 +129,7 @@ D,Rio de Janeiro,Portuguesa-RJ
 D,Rio de Janeiro,Sampaio Corrêa-RJ
 D,Rio Grande do Norte,América-RN
 D,Rio Grande do Norte,Laguna
-D,Rio Grande do Norte,Parnamirim/ABC-D
+D,Rio Grande do Norte,ABC
 D,Rio Grande do Sul,Brasil de Pelotas
 D,Rio Grande do Sul,Guarany de Bagé
 D,Rio Grande do Sul,São José-RS
@@ -152,3 +152,6 @@ D,Sergipe,Lagarto
 D,Sergipe,Sergipe
 D,Tocantins,Araguaína
 D,Tocantins,Tocantinópolis
+D,Alagoas,CSA
+D,Amazonas,Manauara
+D,Ceará,Iguatu
