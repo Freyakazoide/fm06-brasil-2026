@@ -307,8 +307,8 @@ PATCHES = {
             "serie_d_96",
             "Série D (antiga C, 0x00BBFD00) com 96 clubes: 16 grupos de 6, avançam 2 por grupo; "
             "mata-mata de 32 e de 16; os 8 restantes jogam a fase final em turno único e os 6 primeiros "
-            "sobem (original: 4 na fase final, 2 sobem). Grupos 5/4 a 23/8, mata-mata 6/9 e 20/9, fase final "
-            "4/10 a 22/11. "
+            "sobem (original: 4 na fase final, 2 sobem). Grupos aos domingos de 2/4 a 28/5 e 10ª rodada na "
+            "quarta 31/5; mata-mata 9/7 e 16/7, 19/7 e 23/7; fase final aos domingos de 30/7 a 10/9. "
             "Exige pelo menos 96 times, sem máximo. Não combina com serie_c_64_clubes.",
             (
                 Swap(0x7BFDB7, bytes.fromhex("66c7008000"), bytes.fromhex("66c7006000")),  # total 128 -> 96
@@ -319,25 +319,31 @@ PATCHES = {
                 Swap(0x7C04E0, bytes.fromhex("66c7000400"), bytes.fromhex("66c7000800")),  # fase final com 8
                 Swap(0x7C054C, bytes.fromhex("c6460a02"), bytes.fromhex("c6460a01")),      # turno único
                 Swap(0x7B286F, bytes.fromhex("6afe6880000000"), bytes.fromhex("6aff6860000000")),
-                # datas (push mês, push dia; mês começa em 0)
-                _imm8(0x7BFF53, b"\x6A", 5, 3),       # grupos, início: 25/6 -> 5/4
-                _imm8(0x7BFF5C, b"\x6A", 0x19, 5),
-                # grupos, fim: 20/9 -> 23/8. Com fim em 9/8 a 10ª rodada (domingos, com a
-                # pausa da Copa) não coube e caiu em 20/9, depois do mata-mata.
-                _imm8(0x7BFF90, b"\x6A", 8, 7),
-                _imm8(0x7BFF92, b"\x6A", 0x14, 23),
-                _imm8(0x7C01AE, b"\x6A", 8, 7),       # mata-mata: 21/9 -> 30/8
-                _imm8(0x7C01B0, b"\x6A", 0x15, 30),
-                _imm8(0x7C01C8, b"\x6A", 8, 8),       # 1ª rodada: 24/9 -> 6/9
-                _imm8(0x7C01CA, b"\x6A", 0x18, 6),
-                _imm8(0x7C027A, b"\x6A", 9, 8),       # 2ª rodada: 4/10 -> 20/9
-                _imm8(0x7C027C, b"\x6A", 4, 20),
-                _imm8(0x7C03A1, b"\x6A", 9, 6),       # 3ª rodada: 15/10 -> 30/7
+                # datas (push mês, push dia; mês começa em 0). A fase de liga (0x00B0EE30) põe
+                # primeiro uma rodada no domingo da semana do fim e depois as outras de 21 em 21
+                # dias a partir do início (+0, +7, +14): com mais domingos do que rodadas, sobram
+                # buracos de 2 e 3 semanas (teste: 2/4, 9/4, 23/4, 14/5...). A janela tem de ter
+                # exatamente 9 domingos; a 10ª rodada é a data fixa de 0x00B0F650 (rodada final
+                # simultânea, quarta), que continuava em 20/9.
+                _imm8(0x7BFF53, b"\x6A", 5, 3),       # grupos, início (domingo): 25/6 -> 2/4
+                _imm8(0x7BFF5C, b"\x6A", 0x19, 2),
+                _imm8(0x7BFF90, b"\x6A", 8, 4),       # grupos, fim (quarta): 20/9 -> 31/5
+                _imm8(0x7BFF92, b"\x6A", 0x14, 31),
+                _imm8(0x7BFFE8, b"\x6A", 8, 4),       # 10ª rodada (quarta, 19h30): 20/9 -> 31/5
+                _imm8(0x7BFFEA, b"\x6A", 0x14, 31),
+                _imm8(0x7C01AE, b"\x6A", 8, 6),       # mata-mata, sorteio (quinta): 21/9 -> 6/7
+                _imm8(0x7C01B0, b"\x6A", 0x15, 6),
+                _imm8(0x7C01C8, b"\x6A", 8, 6),       # 1ª rodada (domingos): 24/9 -> 9/7 e 16/7
+                _imm8(0x7C01CA, b"\x6A", 0x18, 9),
+                _imm8(0x7C027A, b"\x6A", 9, 6),       # 2ª rodada (quarta e domingo): 4/10 -> 19/7 e 23/7
+                _imm8(0x7C027C, b"\x6A", 4, 19),
+                _imm8(0x7C03A1, b"\x6A", 9, 6),       # 3ª rodada (pulada): 15/10 -> 30/7
                 _imm8(0x7C03A3, b"\x6A", 0x0F, 30),
-                _imm8(0x7C05BA, b"\x6A", 9, 9),       # fase final, início: 25/10 -> 4/10
-                _imm8(0x7C05BC, b"\x6A", 0x19, 4),
-                _imm8(0x7C05DF, b"\x6A", 0x0A, 10),   # fase final, fim: 26/11 -> 22/11
-                _imm8(0x7C05E1, b"\x6A", 0x1A, 22),
+                # fase final: 7 domingos de 30/7 a 10/9 (o domingo 23/7, antes do início, não vale)
+                _imm8(0x7C05BA, b"\x6A", 9, 6),       # início (quarta): 25/10 -> 26/7
+                _imm8(0x7C05BC, b"\x6A", 0x19, 26),
+                _imm8(0x7C05DF, b"\x6A", 0x0A, 8),   # fim (domingo): 26/11 -> 10/9
+                _imm8(0x7C05E1, b"\x6A", 0x1A, 10),
             ),
         ),
         Patch(

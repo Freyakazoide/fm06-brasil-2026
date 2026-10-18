@@ -30,6 +30,15 @@ junho: `0x00ACFFF0(20, 5)`). Patch `virada_1_janeiro`: 1º de janeiro
 
 ## Como uma liga distribui as rodadas
 
+Regra observada e conferida com os dois calendários da Série D no jogo
+(`0x00B0EE30`): a primeira rodada vai para o domingo da semana da data de fim;
+as demais saem do domingo da semana do início, de 21 em 21 dias, depois a
+partir de +7 e de +14, até completar. Datas antes do início da fase não
+valem. Janela com mais domingos do que rodadas deixa buracos de 2 e 3
+semanas; para rodadas semanais a janela precisa ter exatamente um domingo por
+rodada. Uma data fixa de `0x00B0F650` (rodada final simultânea) fica fora
+dessa conta.
+
 A montagem da fase registra "janelas" de datas com `0x00B0EE30`, cada uma
 com início (`0x00B08360`), fim (`0x00B08470`) e dias/horários dos jogos
 (`0x00B085F0`, `0x00B08D90`). A Série A original registra duas: 6/8–10/12
@@ -63,7 +72,7 @@ durante a Copa do Mundo de 2006 do FM06.
 | A | 28/1–2/12; returno a partir de 6/8 (sem pausa da Copa) |
 | B | 21/3–15/11; playoff sorteado 20/11, jogos 22/11 e volta |
 | C | 1ª fase 5/4–23/8; grupos 6/9–1/11 |
-| D | grupos 5/4–9/8; mata-mata 16/8–2/9; fase final 16/9–28/10 |
+| D | grupos aos domingos 2/4–28/5 e 10ª rodada na quarta 31/5; mata-mata 9/7–23/7; fase final aos domingos 30/7–10/9 |
 
 ## Calendário da CBF para 2026
 

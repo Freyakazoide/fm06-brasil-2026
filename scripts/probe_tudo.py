@@ -4,6 +4,7 @@ Uso (com o jogo aberto e o save carregado; uma linha só):
     python -u scripts\\probe_tudo.py fm_brasil.exe
 
 Mostra e grava em workspace\\probe_saida.txt:
+- a data do jogo (ano exibido, +20);
 - estaduais: ano e fases de cada estado e do contêiner; para estado com fase
   faltando, a classe e os bytes da fase de liga;
 - séries A, B, C, D e Copa do Brasil: ano e fases;
@@ -13,6 +14,7 @@ Mostra e grava em workspace\\probe_saida.txt:
 
 from __future__ import annotations
 
+import datetime
 import struct
 import sys
 from pathlib import Path
@@ -30,6 +32,7 @@ from fm06patch.server_teams import club_names  # noqa: E402
 NATION = {0x671: "ARG", 0x672: "BOL", 0x673: "BRA", 0x674: "CHI", 0x675: "COL", 0x676: "ECU",
           0x677: "PAR", 0x678: "PER", 0x679: "URU", 0x67A: "VEN", 0x17B: "MEX", 0x186: "EUA"}
 OUTPUT = ROOT / "workspace" / "probe_saida.txt"
+GAME_DATE = 0x014EAB38             # SI_DATE atual: u16 dia do ano (base 0), u16 ano
 lines: list[str] = []
 
 
@@ -117,6 +120,14 @@ def show_continental(handle, found, db: bytes) -> None:
                 out("  por país: " + ", ".join(f"{k} {v}" for k, v in sorted(counts.items())))
 
 
+def show_date(handle) -> None:
+    raw = read_memory(handle, GAME_DATE, 4) or b""
+    if len(raw) == 4:
+        day, engine_year = struct.unpack("<HH", raw)
+        date = datetime.date(engine_year, 1, 1) + datetime.timedelta(days=day)
+        out(f"=== Data do jogo: {date.day:02d}/{date.month:02d}/{engine_year + 20} (motor {engine_year})\n")
+
+
 def main() -> None:
     handle = open_process(find_process_id(sys.argv[1] if len(sys.argv) > 1 else "fm_brasil.exe"))
     print("Procurando tudo na memória (1 a 2 minutos)...", flush=True)
@@ -125,6 +136,7 @@ def main() -> None:
     vtables.update({"estadual": STATE_VTABLE, "contêiner": CONTAINER_VTABLE})
     found = find_objects(handle, vtables)
     db = server_db()
+    show_date(handle)
     show_states(handle, found)
     show_national(handle, found)
     show_continental(handle, found, db)
