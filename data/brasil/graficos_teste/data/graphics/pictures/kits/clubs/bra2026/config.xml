@@ -1,0 +1,12 @@
+<record>
+	<boolean id="preload" value="false"/>
+	<boolean id="amap" value="false"/>
+	<list id="maps">
+		<record from="flamengo_home" to="graphics/pictures/team/322/kits/home"/>
+		<record from="flamengo_away" to="graphics/pictures/team/322/kits/away"/>
+		<record from="palmeiras_home" to="graphics/pictures/team/329/kits/home"/>
+		<record from="palmeiras_away" to="graphics/pictures/team/329/kits/away"/>
+		<record from="cruzeiro_home" to="graphics/pictures/team/321/kits/home"/>
+		<record from="cruzeiro_away" to="graphics/pictures/team/321/kits/away"/>
+	</list>
+</record>

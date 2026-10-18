@@ -1,15 +1,13 @@
-"""Escudos e uniformes 2026 para a pasta graphics do FM06.
+"""Escudos e uniformes 2026 para a pasta data\\graphics do FM06.
 
-Uniforme: camisa desenhada a partir de data/brasil/clubes/uniformes_2026.xlsx
-(modelo, camisa, secundária, detalhes, calção). Escudo: SVG ou PNG convertido
-para PNG com fundo transparente.
-
-O formato do caminho que o FM06 usa para a imagem de cada clube ainda não está
-confirmado: o exe registra os tipos (0x00A10D40: 'logo', 'icon', 'kits/home',
-'kits/away', 'kits/third'...) e as chaves começam por "pictures/" (ex.:
-"pictures/kits/default/<n>"), mas o caminho completo é montado em tempo de
-execução. pacote_teste() grava o mesmo clube em vários formatos, cada um com
-uma letra, para ver no jogo qual deles vale.
+Formato do FM05/06 (pesquisa com tutoriais e packs da época, confirmado pelas
+chaves que o exe registra em 0x00A10D40: 'logo', 'icon', 'kits/home'...):
+- arquivos em data/graphics/pictures/<qualquer subpasta>/ com um config.xml;
+- config.xml: <list id="maps"> com <record from="<arquivo sem .png>" to="<chave>"/>;
+- escudo: graphics/pictures/club/<UID>/logo (grande) e .../icon (pequeno);
+- uniforme: graphics/pictures/team/<UID>/kits/home, away, third.
+UID = o do jogo (CLUB+0x14; server_teams.clubs_by_uid), não o do repositório.
+Uniforme desenhado a partir de data/brasil/clubes/uniformes_2026.xlsx.
 """
 
 from __future__ import annotations
@@ -19,8 +17,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-SIZES = {"logo": 180, "icon": 25}
-KIT_SIZE = 100
+SIZES = {"logo": (120, 120), "icon": (20, 18)}
+KIT_SIZE = 80
 
 
 def _rgb(hex_color: str | None, default: str = "#FFFFFF") -> tuple[int, int, int]:
@@ -28,16 +26,17 @@ def _rgb(hex_color: str | None, default: str = "#FFFFFF") -> tuple[int, int, int
     return tuple(int(value[i:i + 2], 16) for i in (0, 2, 4))
 
 
-def logo_png(source: bytes, size: int) -> Image.Image:
-    """SVG ou imagem -> quadrado size x size, transparente, centralizado."""
+def logo_png(source: bytes, size) -> Image.Image:
+    """SVG ou imagem -> size (lado ou (largura, altura)), transparente, centralizado."""
+    width, height = (size, size) if isinstance(size, int) else size
     if b"<svg" in source[:2000]:
         import cairosvg
 
-        source = cairosvg.svg2png(bytestring=source, output_width=size * 4)
+        source = cairosvg.svg2png(bytestring=source, output_width=max(width, height) * 4)
     image = Image.open(io.BytesIO(source)).convert("RGBA")
-    image.thumbnail((size, size), Image.LANCZOS)
-    square = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    square.paste(image, ((size - image.width) // 2, (size - image.height) // 2), image)
+    image.thumbnail((width, height), Image.LANCZOS)
+    square = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    square.paste(image, ((width - image.width) // 2, (height - image.height) // 2), image)
     return square
 
 
@@ -90,58 +89,34 @@ def kit_png(kit: dict, size: int = KIT_SIZE) -> Image.Image:
     return shirt
 
 
-def label(image: Image.Image, text: str) -> Image.Image:
-    """Letra grande no canto, para identificar a variante no jogo."""
-    out = image.copy()
-    d = ImageDraw.Draw(out)
-    size = max(10, out.width // 3)
-    try:
-        font = ImageFont.truetype("DejaVuSans-Bold.ttf", size)
-    except OSError:
-        font = ImageFont.load_default()
-    d.rectangle([0, 0, size, size], fill=(255, 255, 0, 255))
-    d.text((size // 6, -size // 10), text, fill=(0, 0, 0, 255), font=font)
-    return out
+def _config(records: list[tuple[str, str]]) -> str:
+    lines = [f'\t\t<record from="{name}" to="{key}"/>' for name, key in records]
+    return ('<record>\n\t<boolean id="preload" value="false"/>\n\t<boolean id="amap" value="false"/>\n'
+            '\t<list id="maps">\n' + "\n".join(lines) + '\n\t</list>\n</record>\n')
 
 
-# Formatos de caminho testados (letra: (como o arquivo entra, caminho))
-#   "config": arquivo na pasta do pacote + registro no config.xml com o caminho em "to"
-#   "arquivo": arquivo gravado direto nesse caminho dentro de graphics/
-VARIANTS = {
-    "A": ("config", "graphics/pictures/team/{uid}/{kind}"),
-    "B": ("config", "graphics/pictures/club/{uid}/{kind}"),
-    "C": ("config", "pictures/team/{uid}/{kind}"),
-    "D": ("config", "pictures/club/{uid}/{kind}"),
-    "E": ("config", "graphics/pictures/{uid}/{kind}"),
-    "F": ("arquivo", "pictures/team/{uid}/{kind}"),
-    "G": ("arquivo", "pictures/club/{uid}/{kind}"),
-}
-
-
-def pacote_teste(out: Path, clubs: list[dict]) -> list[str]:
-    """clubs: uid, nome, escudo (bytes), kit (dict). Grava out/graphics/..."""
-    pack = out / "graphics" / "brasil2026_teste"
-    pack.mkdir(parents=True, exist_ok=True)
-    records = []
-    written = []
+def pacote(out: Path, clubs: list[dict], pack: str = "bra2026") -> int:
+    """clubs: uid, slug, escudo (bytes ou None), kits {"home": dict, "away": dict}.
+    Grava out/data/graphics/pictures/{logos,kits}/clubs/<pack>/. Devolve o nº de imagens."""
+    logos = out / "data" / "graphics" / "pictures" / "logos" / "clubs" / pack
+    kits = out / "data" / "graphics" / "pictures" / "kits" / "clubs" / pack
+    logos.mkdir(parents=True, exist_ok=True)
+    kits.mkdir(parents=True, exist_ok=True)
+    logo_records, kit_records, count = [], [], 0
     for club in clubs:
-        images = {kind: logo_png(club["escudo"], size) for kind, size in SIZES.items()}
-        images["kits/home"] = kit_png(club["kit"])
-        for letter, (how, pattern) in VARIANTS.items():
-            for kind, image in images.items():
-                path = pattern.format(uid=club["uid"], kind=kind)
-                tagged = label(image, letter)
-                if how == "config":
-                    name = f"{club['uid']}_{letter}_{kind.replace('/', '_')}"
-                    tagged.save(pack / f"{name}.png")
-                    records.append(f'\t\t<record from="{name}" to="{path}"/>')
-                else:
-                    target = out / "graphics" / f"{path}.png"
-                    target.parent.mkdir(parents=True, exist_ok=True)
-                    tagged.save(target)
-                    written.append(str(target.relative_to(out)))
-    config = ("<record>\n\t<boolean id=\"preload\" value=\"false\"/>\n\t<boolean id=\"auto_map\" value=\"false\"/>\n"
-              "\t<list id=\"mappings\">\n" + "\n".join(records) + "\n\t</list>\n"
-              "\t<list id=\"maps\">\n" + "\n".join(records) + "\n\t</list>\n</record>\n")
-    (pack / "config.xml").write_text(config, encoding="utf-8")
-    return written
+        uid, slug = club["uid"], club["slug"]
+        if club.get("escudo"):
+            for kind, size in SIZES.items():
+                name = slug if kind == "logo" else f"{slug}_icon"
+                logo_png(club["escudo"], size).save(logos / f"{name}.png")
+                logo_records.append((name, f"graphics/pictures/club/{uid}/{kind}"))
+                count += 1
+        for kind, kit in club.get("kits", {}).items():
+            if kit and kit.get("camisa"):
+                name = f"{slug}_{kind}"
+                kit_png(kit).save(kits / f"{name}.png")
+                kit_records.append((name, f"graphics/pictures/team/{uid}/kits/{kind}"))
+                count += 1
+    (logos / "config.xml").write_text(_config(logo_records), encoding="utf-8")
+    (kits / "config.xml").write_text(_config(kit_records), encoding="utf-8")
+    return count
