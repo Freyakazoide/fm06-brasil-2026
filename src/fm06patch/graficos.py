@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-SIZES = {"logo": (120, 120), "icon": (20, 18)}
+SIZES = {"logo": (60, 60), "icon": (20, 18)}   # logo: 60x60 cabe no cabeçalho (teste)
 KIT_SIZE = 80
 
 
@@ -227,8 +227,8 @@ def _config(records: list[tuple[str, str]]) -> str:
 
 
 def pacote(out: Path, clubs: list[dict], pack: str = "bra2026") -> int:
-    """clubs: uid, slug, escudo (bytes ou None), logo_size (opcional) e kits
-    {"home": dict, "away": dict}; cada kit pode ter estilo, patrocinador e fornecedor.
+    """clubs: uid, slug, escudo (bytes ou None), logo_size e kit_size (opcionais) e kits
+    {"home": dict, "away": dict, "third": dict}; cada kit pode ter estilo, patrocinador e fornecedor.
     Grava out/data/graphics/pictures/{logos,kits}/clubs/<pack>/. Devolve o nº de imagens."""
     logos = out / "data" / "graphics" / "pictures" / "logos" / "clubs" / pack
     kits = out / "data" / "graphics" / "pictures" / "kits" / "clubs" / pack
@@ -248,7 +248,7 @@ def pacote(out: Path, clubs: list[dict], pack: str = "bra2026") -> int:
         for kind, kit in club.get("kits", {}).items():
             if kit and kit.get("camisa"):
                 name = f"{slug}_{kind}"
-                kit_png(kit, style=kit.get("estilo", "3d"), crest=crest, sponsor=kit.get("patrocinador"),
+                kit_png(kit, size=club.get("kit_size", KIT_SIZE), style=kit.get("estilo", "3d"), crest=crest, sponsor=kit.get("patrocinador"),
                         supplier=kit.get("fornecedor")).save(kits / f"{name}.png")
                 kit_records.append((name, f"graphics/pictures/team/{uid}/kits/{kind}"))
                 count += 1

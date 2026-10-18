@@ -4,12 +4,15 @@
 	<list id="maps">
 		<record from="flamengo_home" to="graphics/pictures/team/322/kits/home"/>
 		<record from="flamengo_away" to="graphics/pictures/team/322/kits/away"/>
+		<record from="flamengo_third" to="graphics/pictures/team/322/kits/third"/>
 		<record from="palmeiras_home" to="graphics/pictures/team/329/kits/home"/>
 		<record from="palmeiras_away" to="graphics/pictures/team/329/kits/away"/>
+		<record from="palmeiras_third" to="graphics/pictures/team/329/kits/third"/>
 		<record from="cruzeiro_home" to="graphics/pictures/team/321/kits/home"/>
 		<record from="cruzeiro_away" to="graphics/pictures/team/321/kits/away"/>
 		<record from="fluminense_home" to="graphics/pictures/team/323/kits/home"/>
 		<record from="fluminense_away" to="graphics/pictures/team/323/kits/away"/>
+		<record from="fluminense_third" to="graphics/pictures/team/323/kits/third"/>
 		<record from="botafogo_home" to="graphics/pictures/team/316/kits/home"/>
 		<record from="botafogo_away" to="graphics/pictures/team/316/kits/away"/>
 		<record from="vasco_da_gama_home" to="graphics/pictures/team/339/kits/home"/>

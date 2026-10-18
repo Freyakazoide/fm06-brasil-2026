@@ -3,9 +3,9 @@
 Uso: python scripts/gerar_graficos_teste.py --escudos <pasta com os .svg/.png>
 Os escudos têm o nome da coluna escudo_arquivo de clubes_master.xlsx.
 
-Teste de estilo: uniforme de casa em 3D (com escudo, fornecedor e patrocínio),
-de fora em pixel art. Teste do tamanho do escudo no cabeçalho da skin:
-Palmeiras 60x60 e Fluminense 90x90; os demais 120x120.
+Estilo 3D (escolhido no teste), escudo 60x60 (cabe no cabeçalho da skin).
+Teste do tamanho do uniforme: Flamengo 120, Palmeiras 100, Corinthians 80, demais 100.
+Teste do 3º uniforme (cores provisórias): Flamengo, Palmeiras, Fluminense.
 """
 
 from __future__ import annotations
@@ -34,7 +34,12 @@ TESTE = {
     "Vasco da Gama": 339, "São Paulo": 337, "Corinthians": 319, "Santos": 335, "Grêmio": 324,
     "Internacional": 326, "Atlético-MG": 314, "Bahia": 315, "Sport": 338,
 }
-LOGO_SIZE = {"Palmeiras": (60, 60), "Fluminense": (90, 90)}
+KIT_SIZE = {"Flamengo": 120, "Palmeiras": 100, "Corinthians": 80}
+THIRD = {   # provisório, só para ver se o jogo mostra o 3º uniforme
+    "Flamengo": {"modelo": "lisa", "camisa": "#FFFFFF", "secundaria": "#D2232A", "detalhes": "#000000"},
+    "Palmeiras": {"modelo": "lisa", "camisa": "#035F30", "secundaria": "#FFFFFF", "detalhes": "#D4AF37"},
+    "Fluminense": {"modelo": "lisa", "camisa": "#FFFFFF", "secundaria": "#7A263A", "detalhes": "#00843D"},
+}
 
 
 def _sheet(path: Path) -> dict[str, dict]:
@@ -66,13 +71,13 @@ def main() -> None:
         row = kits[name]
         crest_file = (master.get(name) or {}).get("escudo_arquivo")
         crest = args.escudos / crest_file if crest_file else None
-        home = dict(_kit(row, 1), estilo="3d", patrocinador=row["patrocinador_master"],
-                    fornecedor=row["fornecedor_2026"])
-        away = dict(_kit(row, 2), estilo="pixel", fornecedor=row["fornecedor_2026"])
+        brand = {"patrocinador": row["patrocinador_master"], "fornecedor": row["fornecedor_2026"]}
+        kit = {"home": dict(_kit(row, 1), **brand), "away": dict(_kit(row, 2), **brand)}
+        if row["uni3_camisa"] or name in THIRD:
+            kit["third"] = dict(_kit(row, 3) if row["uni3_camisa"] else THIRD[name], **brand)
         clubs.append({"uid": uid, "slug": _slug(name),
                       "escudo": crest.read_bytes() if crest and crest.exists() else None,
-                      "logo_size": LOGO_SIZE.get(name, graficos.SIZES["logo"]),
-                      "kits": {"home": home, "away": away}, "nome": name})
+                      "kit_size": KIT_SIZE.get(name, 100), "kits": kit, "nome": name})
         if not clubs[-1]["escudo"]:
             print(f"[AVISO] sem escudo: {name}")
     shutil.rmtree(OUT / "data", ignore_errors=True)
@@ -82,18 +87,18 @@ def main() -> None:
 
 
 def _preview(clubs: list[dict]) -> None:
-    """previa.png: casa e fora de cada clube no tamanho real e em 2x."""
+    """previa.png: casa, fora e 3º de cada clube no tamanho real."""
     kits = OUT / "data" / "graphics" / "pictures" / "kits" / "clubs" / "bra2026"
-    cell = 2 * graficos.KIT_SIZE + 12
-    sheet = Image.new("RGB", (cell * 7, (2 * cell + 20) * 2), (58, 68, 58))
+    cell = 130
+    sheet = Image.new("RGB", (cell * 7, (3 * cell + 20) * 2), (58, 68, 58))
     d = ImageDraw.Draw(sheet)
     for i, club in enumerate(clubs):
-        x, y = (i % 7) * cell, (i // 7) * (2 * cell + 20)
+        x, y = (i % 7) * cell, (i // 7) * (3 * cell + 20)
         d.text((x + 6, y + 4), club["nome"], fill="white")
-        for j, kind in enumerate(("home", "away")):
+        for j, kind in enumerate(("home", "away", "third")):
             path = kits / f"{club['slug']}_{kind}.png"
             if path.exists():
-                kit = Image.open(path).resize((2 * graficos.KIT_SIZE,) * 2, Image.NEAREST)
+                kit = Image.open(path)
                 sheet.paste(kit, (x + 6, y + 18 + j * cell), kit)
     sheet.save(OUT / "previa.png")
 
