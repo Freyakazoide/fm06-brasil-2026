@@ -110,11 +110,17 @@ FINAL_LEGS = (0xC080A6,
               bytes.fromhex("0FB7959C00000081EACE07000081E20300008079054A83CAFC42"),
               b"\xC6\x44\x24\x6C\x01" + b"\x90" * 21)   # mov byte [esp+0x6C], 1 (rodada +0x34)
 FINAL_BRANCH = (0xC080CB, b"\x75\x06", b"\xEB\x06")
+# temporada da competição (construtor 0x00C062F0, +0x85..+0x88): de janeiro a agosto no
+# original; com a final em 28/11 a Libertadores não virava de ano (teste: em 30/1 do ano
+# seguinte ainda estava no ano anterior, sem a edição nova). Fim em dezembro, como a
+# Sul-Americana.
+SEASON_END = (0xC06383, bytes.fromhex("c6868700000007"), bytes.fromhex("c686870000000b"))
 
 
 def build_dates(data: bytes):
     from .exe_patches import Swap
 
     swaps = [Swap(off(va), bytes([old]), bytes([new])) for va, old, new in DATES_2026]
-    swaps += [Swap(off(va), old, new) for va, old, new in (FINAL_WEEKDAY, FINAL_LEGS, FINAL_BRANCH)]
+    swaps += [Swap(off(va), old, new) for va, old, new in (FINAL_WEEKDAY, FINAL_LEGS, FINAL_BRANCH,
+                                                             SEASON_END)]
     return tuple(swaps)

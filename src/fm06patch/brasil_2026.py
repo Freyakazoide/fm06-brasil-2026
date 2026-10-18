@@ -100,6 +100,32 @@ def apply(data: bytes, placements: list[Placement]) -> bytes:
     return bytes(buffer)
 
 
+def apply_last_season(data: bytes, placements: list[Placement], path: Path) -> tuple[bytes, list[str]]:
+    """Classificação real de 2025 (serie, posicao, clube com o nome de 2026) nos campos
+    "temporada passada" do time (TEAM+0x5C divisão, TEAM+0x60 posição). Sem isso o jogo
+    usa a de 2005 do banco do FM06 (vagas da 1ª Libertadores, Sul-Americana, Copa do
+    Brasil). Divisão de 2025 pelo mesmo índice das séries de 2026."""
+    if not path.exists():
+        return data, []
+    buffer = bytearray(data)
+    by_name = {p.clube: p.team for p in placements if p.clube}
+    national = set(INDEX.values())
+    for team in find_brazil_teams(data):
+        if team.last_division in national:
+            team.last_division, team.last_position = NONE, 0
+            write_team(buffer, team)
+    missing = []
+    for row in read_csv(path):
+        team = by_name.get(row["clube"].strip())
+        if team is None:
+            missing.append(row["clube"])
+            continue
+        team.last_division = INDEX[row["serie"].strip().upper()]
+        team.last_position = int(row["posicao"])
+        write_team(buffer, team)
+    return bytes(buffer), missing
+
+
 def write_report(path: Path, placements: list[Placement]) -> None:
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")

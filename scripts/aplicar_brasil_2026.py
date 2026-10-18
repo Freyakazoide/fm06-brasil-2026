@@ -29,7 +29,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch.brasil_2026 import SERIES, apply as apply_db, lnc_text, plan, write_report  # noqa: E402
+from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import estaduais_clubes  # noqa: E402
 
@@ -129,7 +129,10 @@ def main() -> None:
         BACKUP.parent.mkdir(parents=True, exist_ok=True)
         BACKUP.write_bytes(data)
         print(f"[OK] cópia do banco original em {BACKUP}")
-    server.write_bytes(estaduais_clubes.apply(apply_db(data, placements), states))
+    db, missing = apply_last_season(apply_db(data, placements), placements, DATA_DIR / "classificacao_2025.csv")
+    if missing:
+        print("[AVISO] classificação 2025: clubes que não estão nas séries de 2026:", ", ".join(missing))
+    server.write_bytes(estaduais_clubes.apply(db, states))
     print(f"[OK] gravado {server}")
 
     lnc.parent.mkdir(parents=True, exist_ok=True)
