@@ -39,7 +39,7 @@ from fm06patch.estaduais_clubes import normalize, same_club  # noqa: E402
 CLUBES = ROOT / "data" / "brasil" / "clubes"
 ESCUDOS = CLUBES / "escudos"
 OUT = ROOT / "data" / "brasil" / "graficos_2026"
-KIT_SIZE = 100
+KIT_SIZE = 120
 # nome nas séries/estaduais -> nome na planilha de uniformes
 KIT_ALIASES = {"Parnamirim/ABC-D": "Parnamirim", "Gazin Porto Velho": "Porto Velho"}
 FORMATS = (".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg")
@@ -92,13 +92,33 @@ def _names() -> dict[str, tuple[str, str]]:
     return names
 
 
-def lnc_clubs(renames: list[tuple[int, str, str]]) -> str:
-    """CLUB_NAME_CHANGE etc. (unid, nome, idioma) com o UID do jogo."""
-    lines = ["# FM06 Brasil 2026: nomes de 2026 dos clubes", "# Comando\tID\tNome\tIdioma"]
+def club_colours(row: dict) -> list[tuple[int, tuple, tuple]]:
+    """(índice, frente, fundo) dos uniformes 1, 2 e 3: fundo = cor da camisa, frente =
+    a secundária, ou branco/preto se ela não contrastar."""
+    sets = []
+    for index, n in enumerate((1, 2, 3)):
+        if not row.get(f"uni{n}_camisa"):
+            continue
+        back = graficos._rgb(row[f"uni{n}_camisa"])
+        front = graficos._rgb(row.get(f"uni{n}_secundaria") or row.get(f"uni{n}_detalhes"), "#FFFFFF")
+        if abs(graficos.luma(front) - graficos.luma(back)) < 70:
+            front = graficos._contrast(back)
+        sets.append((index, front, back))
+    return sets
+
+
+def lnc_clubs(renames: list[tuple[int, str, str]], colours: list[tuple[int, list]]) -> str:
+    """CLUB_NAME_CHANGE etc. (unid, nome, idioma) e COLOUR_CHANGE (unid, índice, cor 1 =
+    frente, cor 2 = fundo; executor em 0x00AAA1B0) com o UID do jogo."""
+    lines = ["# FM06 Brasil 2026: nomes e cores de 2026 dos clubes", "# Comando\tID\tNome\tIdioma"]
     for uid, short, full in renames:
         lines += [f'"CLUB_NAME_CHANGE"\t{uid}\t"{short}"\t""',
                   f'"CLUB_SHORT_NAME_CHANGE"\t{uid}\t"{short}"\t""',
                   f'"CLUB_LONG_NAME_CHANGE"\t{uid}\t"{full}"\t""']
+    lines += ["", "# Comando\tID\tÍndice\tR1 G1 B1 (frente)\tR2 G2 B2 (fundo)"]
+    for uid, sets in colours:
+        for index, front, back in sets:
+            lines.append(f'"COLOUR_CHANGE"\t{uid}\t{index}\t' + "\t".join(map(str, front + back)))
     return "\r\n".join(lines) + "\r\n"
 
 
@@ -153,7 +173,7 @@ def main() -> None:
     kit_rows = _kit_rows(identities, _sheet(CLUBES / "uniformes_2026.xlsx"))
     files = _crest_files()
     names = _names()
-    renames = []
+    renames, colours = [], []
     if args.baixar:
         baixar(files)
 
@@ -176,6 +196,8 @@ def main() -> None:
         short, full = names.get(name) or names.get(ident["clube_2026"]) or (ident["clube_2026"],) * 2
         if ident["tipo"] != "vaga extra" and normalize(short) != normalize(ident["fm06_nome"]):
             renames.append((uid, short, full))
+        if row and ident["tipo"] == "substituto":
+            colours.append((uid, club_colours(row)))
         report.append([uid, ident["clube_2026"], ident["uf"], ident["fm06_nome"],
                        "sim" if path else "NÃO", "sim" if row else "NÃO",
                        ", ".join(k for k, v in kits.items() if v)])
@@ -183,14 +205,14 @@ def main() -> None:
     count = graficos.pacote(OUT, clubs)
     lnc = OUT / "data" / "db" / "lnc" / "all" / "brasil_2026_clubes.lnc"
     lnc.parent.mkdir(parents=True, exist_ok=True)
-    lnc.write_bytes(lnc_clubs(renames).encode("utf-16"))
+    lnc.write_bytes(lnc_clubs(renames, colours).encode("utf-16"))
     with (OUT / "relatorio.csv").open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(["uid_jogo", "clube_2026", "uf", "fm06_nome", "escudo", "uniforme", "kits"])
         writer.writerows(report)
     without = [r[1] for r in report if r[4] != "sim"]
     print(f"[OK] {count} imagens de {len(clubs)} clubes em {OUT / 'data'}")
-    print(f"[OK] {len(renames)} clubes com o nome de 2026 em {lnc}")
+    print(f"[OK] {len(renames)} clubes com o nome de 2026 e {len(colours)} substitutos com as cores de 2026 em {lnc}")
     print(f"[OK] relatório em {OUT / 'relatorio.csv'}")
     if without:
         print(f"[AVISO] {len(without)} clubes sem escudo (rode com --baixar): " + ", ".join(without))
