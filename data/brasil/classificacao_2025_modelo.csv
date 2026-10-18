@@ -1,4 +1,125 @@
-serie,posicao,clube
+﻿serie,posicao,clube
 A,1,Flamengo
 A,2,Palmeiras
+A,3,Cruzeiro
+A,4,Mirassol
+A,5,Fluminense
+A,6,Botafogo
+A,7,Bahia
+A,8,São Paulo
+A,9,Grêmio
+A,10,Red Bull Bragantino
+A,11,Atlético-MG
+A,12,Santos
+A,13,Corinthians
+A,14,Vasco da Gama
+A,15,Vitória
+A,16,Internacional
+A,17,Ceará
+A,18,Fortaleza
+A,19,Juventude
+A,20,Sport
 B,1,Coritiba
+B,2,Athletico-PR
+B,3,Chapecoense
+B,4,Remo
+B,5,Criciúma
+B,6,Goiás
+B,7,Novorizontino
+B,8,CRB
+B,9,Avaí
+B,10,Cuiabá
+B,11,Atlético-GO
+B,12,Operário-PR
+B,13,Vila Nova
+B,14,América-MG
+B,15,Athletic
+B,16,Botafogo-SP
+B,17,Ferroviária
+B,18,Amazonas
+B,19,Volta Redonda
+B,20,Paysandu
+C,1,Ponte Preta
+C,2,Londrina
+C,3,Náutico
+C,4,São Bernardo
+C,5,Caxias
+C,6,Brusque
+C,7,Guarani
+C,8,Floresta
+C,9,Confiança
+C,10,Ypiranga-RS
+C,11,Maringá
+C,12,Ituano
+C,13,Botafogo-PB
+C,14,Figueirense
+C,15,Anápolis
+C,16,Itabaiana
+C,17,CSA
+C,18,ABC
+C,19,Retrô
+C,20,Tombense
+D,1,Barra-SC
+D,2,Santa Cruz
+D,3,Inter de Limeira
+D,4,Maranhão
+D,5,ASA
+D,6,América-RN
+D,7,Cianorte
+D,8,Goiatuba
+D,9,Aparecidense
+D,10,Altos
+D,11,Ceilândia
+D,12,Rio Branco-ES
+D,13,Manauara
+D,14,Central
+D,15,Imperatriz
+D,16,Mixto
+D,17,Portuguesa
+D,18,Tuna Luso
+D,19,São José-RS
+D,20,Manaus
+D,21,Luverdense
+D,22,Sergipe
+D,23,Lagarto
+D,24,Juazeirense
+D,25,Água Santa
+D,26,Joinville
+D,27,Sampaio Corrêa
+D,28,Marcílio Dias
+D,29,Independência
+D,30,FC Cascavel
+D,31,Maricá
+D,32,Ferroviário
+D,33,Águia de Marabá
+D,34,União-TO
+D,35,Guarany de Bagé
+D,36,Iguatu
+D,37,Trem
+D,38,Horizonte
+D,39,Pouso Alegre
+D,40,Santa Cruz de Natal
+D,41,Capital-DF
+D,42,Porto Vitória
+D,43,Brasil de Pelotas
+D,44,Uberlândia
+D,45,Jequié
+D,46,GAS
+D,47,Nova Iguaçu
+D,48,Tocantinópolis
+D,49,Monte Azul
+D,50,Parnahyba
+D,51,Operário-MS
+D,52,São Luiz
+D,53,Treze
+D,54,Azuriz
+D,55,Sousa
+D,56,Barcelona de Ilhéus
+D,57,Goiânia
+D,58,Itabirito
+D,59,Maracanã
+D,60,Boavista-RJ
+D,61,Goianésia
+D,62,Penedense
+D,63,Porto Velho
+D,64,Humaitá
