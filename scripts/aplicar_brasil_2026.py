@@ -13,7 +13,9 @@ Com --apply:
 5. grava os participantes dos estaduais de 2026 (data\\brasil\\estaduais) e o
    mapa em data\\brasil\\estaduais\\mapa_estaduais_2026.csv;
 6. grava a classificação de 2025 (data\\brasil\\classificacao_2025.csv) e os
-   campeões de 2025 (Libertadores, Sul-Americana, Copa do Brasil, Série A).
+   campeões de 2025 (Libertadores, Copa do Brasil, Série A);
+7. grava o lang_db.dat com os nomes das fases em português do Brasil (cópia do
+   original em workspace\\baseline\\lang_db.original.dat).
 
 Depois é só abrir o fm_brasil.exe e começar um New Game.
 """
@@ -33,7 +35,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import estaduais_clubes, historico  # noqa: E402
+from fm06patch import estaduais_clubes, historico, nomes_fases  # noqa: E402
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -47,10 +49,12 @@ EXE_PATCHES = [
     "estaduais_2026",
     "copa_do_brasil_2026",
     "sul_americana_2026", "libertadores_vagas_2026", "libertadores_datas_2026",
-    "ano_exibido_mais_20",
+    "ano_exibido_mais_20", "nomes_fases_2026",
 ]
 SERVER_SHA256 = "9FB7A4A2B87798120BF4D9DA9E86E7DABB99C668802B2FB9ECB035230F66BE62"
 BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
+LANG_SHA256 = "313B5D388208389E1C97FCE8270B880BB9B95BA444FCC392AFF90474DD24EEF4"
+LANG_BACKUP = ROOT / "workspace" / "baseline" / "lang_db.original.dat"
 DATA_DIR = ROOT / "data" / "brasil"
 
 
@@ -72,6 +76,20 @@ def original_server_db(path: Path) -> bytes:
     return data
 
 
+def original_lang_db(path: Path) -> bytes | None:
+    if LANG_BACKUP.exists():
+        return LANG_BACKUP.read_bytes()
+    data = path.read_bytes()
+    if sha256(data) != LANG_SHA256:
+        print("[AVISO] o lang_db.dat do jogo não é o original e não há cópia em workspace\\baseline: "
+              "nomes das fases não gravados.")
+        return None
+    LANG_BACKUP.parent.mkdir(parents=True, exist_ok=True)
+    LANG_BACKUP.write_bytes(data)
+    print(f"[OK] cópia do lang_db original em {LANG_BACKUP}")
+    return data
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--apply", action="store_true")
@@ -86,11 +104,15 @@ def main() -> None:
     game = game_dir()
     server = game / "data" / "db" / "server_db.dat"
     lnc = game / "data" / "db" / "lnc" / "all" / "brasil_2026.lnc"
+    lang = game / "data" / "db" / "lang_db.dat"
 
     if args.restore:
         if BACKUP.exists():
             shutil.copy2(BACKUP, server)
             print(f"[OK] banco original restaurado em {server}")
+        if LANG_BACKUP.exists():
+            shutil.copy2(LANG_BACKUP, lang)
+            print(f"[OK] lang_db original restaurado em {lang}")
         if lnc.exists():
             lnc.unlink()
             print(f"[OK] removido {lnc}")
@@ -142,6 +164,12 @@ def main() -> None:
         print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))
     server.write_bytes(db)
     print(f"[OK] gravado {server}")
+
+    lang_data = original_lang_db(lang)
+    if lang_data is not None:
+        lang_new, renamed = nomes_fases.apply(lang_data)
+        lang.write_bytes(lang_new)
+        print(f"[OK] gravado {lang} (nomes das fases: {len(renamed)} trocados)")
 
     lnc.parent.mkdir(parents=True, exist_ok=True)
     lnc.write_bytes(lnc_text().encode("utf-16"))

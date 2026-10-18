@@ -18,7 +18,7 @@ mexicanos.
 
 from __future__ import annotations
 
-from .exe_cave import SECTION_VA, Asm, off, sec_off, section_swaps, u32
+from .exe_cave import SECTION_VA, Asm, _relocate, _replace, off, sec_off, section_swaps, u32
 
 POTS_HOOK = 0x00C05695            # push -1 ×3 (antes de 0x00ACD4B0), depois do cálculo dos potes
 POTS_BACK = 0x00C0569B
@@ -126,10 +126,38 @@ FINAL_BRANCH = (0xC080CB, b"\x75\x06", b"\xEB\x06")
 SEASON_END = (0xC06383, bytes.fromhex("c686870000" "0007"), bytes.fromhex("c686870000" "000b"))
 
 
+# Virada da temporada. A Libertadores está no sistema da América do Sul (sam_get_settings,
+# 0x00ACFFF0(19, 8)): em 19/9 o jogo vira só as competições já terminadas (0x00AD41F3). Com a
+# final em 28/11 ela ainda estava nas quartas, ficava para trás e a de 2027 nunca era montada
+# (testes 1 a 4). A Sul-Americana tem virada própria no método diário (vtable +0x1BC,
+# 0x00C04CC0: no dia 180 do ano, se terminou, 0x00AD0C60). A Libertadores ganha uma cópia desse
+# método com o dia 348 (15/12; 14/12 em ano bissexto); o ano passa a ser o seguinte e a
+# montagem continua em 21/1.
+DAILY_SOURCE = 0x00C04CC0
+DAILY_SIZE = 0x4E                      # até o ret 4
+DAILY_CALLS = (0x09, 0x44)             # 0x00AC5AA0 e 0x00AD0C60
+DAILY_DAY_AT = 0x12                    # cmp word [0x014EAB38], 0xB4
+DAILY_STUB = SECTION_VA + 0x5200
+LIBERTADORES_DAILY_SLOT = 0x01154CF4 + 0x1BC
+ROLLOVER_DAY = 348
+
+
+def _daily_stub(data: bytes) -> bytes:
+    code = bytearray(data[off(DAILY_SOURCE):off(DAILY_SOURCE) + DAILY_SIZE])
+    _relocate(code, DAILY_SOURCE, DAILY_STUB, DAILY_CALLS)
+    _replace(code, DAILY_DAY_AT, bytes.fromhex("66813D38AB4E01B400"),
+             bytes.fromhex("66813D38AB4E01") + ROLLOVER_DAY.to_bytes(2, "little"))
+    return bytes(code)
+
+
 def build_dates(data: bytes):
     from .exe_patches import Swap
 
-    swaps = [Swap(off(va), bytes([old]), bytes([new])) for va, old, new in DATES_2026]
+    swaps = list(section_swaps(data))
+    stub = _daily_stub(data)
+    swaps.append(Swap(sec_off(DAILY_STUB), bytes(len(stub)), stub))
+    swaps.append(Swap(off(LIBERTADORES_DAILY_SLOT), u32(0x00AC5AA0), u32(DAILY_STUB)))
+    swaps += [Swap(off(va), bytes([old]), bytes([new])) for va, old, new in DATES_2026]
     swaps += [Swap(off(va), old, new) for va, old, new in (FINAL_WEEKDAY, FINAL_LEGS, FINAL_BRANCH,
                                                              SEASON_END)]
     return tuple(swaps)

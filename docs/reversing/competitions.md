@@ -213,3 +213,24 @@ original e os bytes antes da troca.
   nos pênaltis (+0x2E = 2), sorteio 21/10, jogos 25/10 e 1/11, vencedor com
   posição final 0 (campeão), perdedor 1.
 - +0x0C da fase de liga = 0: o líder da 1ª fase não é mais marcado campeão.
+
+
+## Virada das competições continentais
+
+- `sam_get_settings` (`0x00C046C0`): a temporada do sistema da América do Sul
+  vira em 19/9 (`0x00ACFFF0(19, 8)`). Nesse dia o jogo vira só as competições
+  já terminadas (`0x00AD41F3` → `0x00AD0C60`); o teste de "terminada" é o
+  método `+0x1D4` (`0x00AC5FA0`: fases concluídas, sem data).
+- A Sul-Americana vira no próprio método diário (vtable `+0x1BC`,
+  `0x00C04CC0`): no dia 180 do ano, se terminou.
+- Libertadores com final em 28/11: em 19/9 ainda não terminou e nunca virava.
+  O patch `libertadores_datas_2026` põe no método diário dela uma cópia do da
+  Sul-Americana com o dia 348 (15/12).
+
+## Nomes das fases
+
+Código do nome: `0x00B43720(código)` (rodada) e `0x00B4BE40(código)` (fase),
+textos no `lang_db.dat` (tabela de 167 registros que começa em "Repetição";
+ver `src/fm06patch/nomes_fases.py`). O índice do `lang_db` guarda posições
+absolutas, então os textos novos ocupam o mesmo tamanho (completados com
+espaços).
