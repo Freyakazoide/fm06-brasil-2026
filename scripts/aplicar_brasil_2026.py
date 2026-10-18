@@ -37,7 +37,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import estaduais_clubes, historico, identidade, nomes_fases  # noqa: E402
+from fm06patch import cores, estaduais_clubes, historico, identidade, nomes_fases, reputacao  # noqa: E402
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -122,7 +122,8 @@ def main() -> None:
         return
 
     data = original_server_db(server)
-    placements = plan(data, DATA_DIR, frozenset(estaduais_clubes.equivalents(data)))
+    taken = frozenset(estaduais_clubes.equivalents(data))     # clubes do FM06 que já são um clube de 2026
+    placements = plan(data, DATA_DIR, taken)
     counts = Counter(p.serie for p in placements)
     kinds = Counter(p.kind for p in placements)
     print("Clubes por série:", {s: counts[s] for s in SERIES},
@@ -132,7 +133,7 @@ def main() -> None:
         if p.kind == "substituto":
             print(f"  Série {p.serie}: {p.clube or '(vaga extra)':24} -> {p.team.short_name}")
 
-    states, _ = estaduais_clubes.plan(data, national=placements)
+    states, _ = estaduais_clubes.plan(data, national=placements, protect=taken)
     subs = [e for e in states if e.substitute]
     print(f"\nEstaduais 2026: {len(states)} clubes, {len(subs)} substitutos (clube que não existe no FM06):")
     for e in subs:
@@ -162,6 +163,13 @@ def main() -> None:
     db, notes = historico.apply(estaduais_clubes.apply(db, states))
     for note in notes:
         print(f"[OK] campeões 2025: {note}")
+    changes = reputacao.plan(placements, states)
+    db = reputacao.apply(db, changes)
+    print(f"[OK] reputação de {len(changes)} substitutos ajustada (ex.: "
+          + ", ".join(f"{c} {a}->{b}" for a, b, c in list(changes.values())[:3]) + ")")
+    identities = identidade.build(data, placements, states)
+    db, painted = cores.apply(db, cores.plan(identities))
+    print(f"[OK] cores de 2026 (tela do clube e uniforme da partida) em {painted} substitutos")
     db, cleared = historico.clear_brazil_continental(db)
     if cleared:
         print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))
@@ -184,7 +192,7 @@ def main() -> None:
     estaduais_clubes.write_report(report, states)
     print(f"[OK] estaduais: lista completa em {report}")
     report = DATA_DIR / "clubes" / "identidade_fm06.csv"
-    identidade.write_report(report, identidade.build(data, placements, states))
+    identidade.write_report(report, identities)
     print(f"[OK] clube do jogo de cada clube de 2026 (escudos, uniformes, nomes) em {report}")
 
 

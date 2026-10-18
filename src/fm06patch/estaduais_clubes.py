@@ -141,7 +141,8 @@ def _match(clube: str, uf: str, pool: list[TeamRecord]) -> TeamRecord | None:
 
 
 # nome no estadual -> nome nas séries nacionais, quando as palavras não batem
-NATIONAL_ALIASES = {"Vasco": "Vasco da Gama", "Decisão": "Decisão Goiana", "São Joseense": "PSTC/São Joseense"}
+NATIONAL_ALIASES = {"Vasco": "Vasco da Gama", "Decisão": "Decisão Goiana", "São Joseense": "PSTC/São Joseense",
+                    "Porto Velho": "Gazin Porto Velho"}
 
 
 def _rows(rows: list[dict] | None) -> list[dict]:
@@ -175,9 +176,25 @@ def _find(data, uf, wanted, pool, used, found) -> None:
                 used.add(team.club_uid)
 
 
+EXISTING_XLSX = CLUBS_CSV.parents[1] / "clubes" / "clubes_existentes_2026.xlsx"
+
+
+def existing_rows(path: Path = EXISTING_XLSX) -> list[dict]:
+    """Clubes que existem em 2026 fora das listas (divisões de acesso): uf, clube."""
+    if not path.exists():
+        return []
+    import openpyxl
+
+    sheet = openpyxl.load_workbook(path, read_only=True).worksheets[0]
+    rows = sheet.iter_rows(values_only=True)
+    header = [str(h or "").strip() for h in next(rows)]
+    return [{"uf": str(r[header.index("uf")] or "").strip().upper(), "clube": str(r[header.index("clube")]).strip()}
+            for r in rows if r[header.index("clube")]]
+
+
 def equivalents(data: bytes, rows: list[dict] | None = None) -> set[int]:
-    """Clubes do FM06 que são um clube dos estaduais de 2026 (nome igual)."""
-    rows, teams = _rows(rows), state_teams(data)
+    """Clubes do FM06 que são um clube de 2026 (estaduais e clubes_existentes_2026)."""
+    rows, teams = _rows(rows) + existing_rows(), state_teams(data)
     first = {uf: comp_index(data, cid) for uf, cid in FIRST_ID.items()}
     lower = {uf: comp_index(data, cid) for uf, cid in LOWER_ID.items()}
     uids: set[int] = set()
@@ -189,10 +206,12 @@ def equivalents(data: bytes, rows: list[dict] | None = None) -> set[int]:
     return uids
 
 
-def plan(data: bytes, rows: list[dict] | None = None, national=()) -> tuple[list[StateEntry], dict[str, int]]:
+def plan(data: bytes, rows: list[dict] | None = None, national=(),
+         protect: frozenset[int] = frozenset()) -> tuple[list[StateEntry], dict[str, int]]:
     """national: Placement das séries de 2026. Clube que também está numa série usa o
     mesmo clube do FM06 no estadual (um clube do jogo = um clube de 2026); os outros
-    clubes das séries não entram no estadual de ninguém."""
+    clubes das séries não entram no estadual de ninguém. protect: clubes que existem
+    em 2026 fora das listas (equivalents), que não servem de substituto."""
     rows = _rows(rows)
     teams = state_teams(data)
     by_uid = {t.club_uid: t for t in teams}
@@ -222,7 +241,7 @@ def plan(data: bytes, rows: list[dict] | None = None, national=()) -> tuple[list
                 entries.append(StateEntry(uf, row["clube"], row.get("cidade", ""), found[i], i in stand_in))
             else:
                 missing.append(row)
-        used |= reserved
+        used |= reserved | protect
         for row in missing:
             free = sorted((t for t in pool if t.club_uid not in used and t.short_name),
                           key=lambda t: -t.reputation)

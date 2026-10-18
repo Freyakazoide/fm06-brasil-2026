@@ -27,56 +27,26 @@ import sys
 import urllib.request
 from pathlib import Path
 
-import openpyxl
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import graficos, identidade  # noqa: E402
+from fm06patch import cores, graficos, identidade  # noqa: E402
 from fm06patch.estaduais_clubes import normalize, same_club  # noqa: E402
 
 CLUBES = ROOT / "data" / "brasil" / "clubes"
 ESCUDOS = CLUBES / "escudos"
 OUT = ROOT / "data" / "brasil" / "graficos_2026"
-KIT_SIZE = 100
-# nome nas séries/estaduais -> nome na planilha de uniformes
-KIT_ALIASES = {"Parnamirim/ABC-D": "Parnamirim", "Gazin Porto Velho": "Porto Velho"}
+KIT_SIZE = 150
 FORMATS = (".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg")
-
-
-def _sheet(path: Path) -> list[dict]:
-    sheet = openpyxl.load_workbook(path, read_only=True).worksheets[0]
-    rows = sheet.iter_rows(values_only=True)
-    header = next(rows)
-    return [dict(zip(header, row)) for row in rows if row[header.index("clube")]]
-
-
-def _kit_rows(identities: list[dict], kits: list[dict]) -> dict[int, dict]:
-    """UID do jogo -> linha de uniformes_2026 (nome igual primeiro, depois nome parecido)."""
-    found: dict[int, dict] = {}
-    free = list(kits)
-    for exact in (True, False):
-        for ident in identities:
-            uid = int(ident["uid_jogo"])
-            if uid in found:
-                continue
-            name, uf = KIT_ALIASES.get(ident["clube_2026"], ident["clube_2026"]), ident["uf"]
-            for row in free:
-                if row["uf"] not in (None, "", uf):
-                    continue
-                if row["clube"] == name if exact else same_club(row["clube"], name, uf):
-                    found[uid] = row
-                    free.remove(row)
-                    break
-    return found
 
 
 def _crest_files() -> dict[str, tuple[str, str]]:
     """clube -> (escudo_arquivo sem extensão, escudo_url)."""
     files = {}
     for sheet in ("clubes_master.xlsx", "clubes_faltando.xlsx"):
-        for row in _sheet(CLUBES / sheet):
+        for row in cores.sheet(CLUBES / sheet):
             if row.get("escudo_arquivo"):
                 files[row["clube"]] = (Path(row["escudo_arquivo"]).stem, row.get("escudo_url") or "")
     return files
@@ -86,19 +56,24 @@ def _names() -> dict[str, tuple[str, str]]:
     """clube -> (nome curto, nome completo) de 2026."""
     names = {}
     for sheet in ("clubes_master.xlsx", "clubes_faltando.xlsx"):
-        for row in _sheet(CLUBES / sheet):
+        for row in cores.sheet(CLUBES / sheet):
             short = row.get("nome_curto_2026") or row["clube"]
             names[row["clube"]] = (short, row.get("nome_completo_2026") or short)
     return names
 
 
-def lnc_clubs(renames: list[tuple[int, str, str]]) -> str:
-    """CLUB_NAME_CHANGE etc. (unid, nome, idioma) com o UID do jogo."""
-    lines = ["# FM06 Brasil 2026: nomes de 2026 dos clubes", "# Comando\tID\tNome\tIdioma"]
+def lnc_clubs(renames: list[tuple[int, str, str]], colours: list[tuple[int, list]]) -> str:
+    """CLUB_NAME_CHANGE etc. (unid, nome, idioma) e COLOUR_CHANGE (unid, índice, cor 1 =
+    frente, cor 2 = fundo; executor em 0x00AAA1B0) com o UID do jogo."""
+    lines = ["# FM06 Brasil 2026: nomes e cores de 2026 dos clubes", "# Comando\tID\tNome\tIdioma"]
     for uid, short, full in renames:
         lines += [f'"CLUB_NAME_CHANGE"\t{uid}\t"{short}"\t""',
                   f'"CLUB_SHORT_NAME_CHANGE"\t{uid}\t"{short}"\t""',
                   f'"CLUB_LONG_NAME_CHANGE"\t{uid}\t"{full}"\t""']
+    lines += ["", "# Comando\tID\tÍndice\tR1 G1 B1 (frente)\tR2 G2 B2 (fundo)"]
+    for uid, sets in colours:
+        for index, front, back, _ in sets:
+            lines.append(f'"COLOUR_CHANGE"\t{uid}\t{index}\t' + "\t".join(map(str, front + back)))
     return "\r\n".join(lines) + "\r\n"
 
 
@@ -150,10 +125,10 @@ def main() -> None:
     parser.add_argument("--baixar", action="store_true", help="baixa os escudos que faltam")
     args = parser.parse_args()
     identities = identidade.read_report(CLUBES / "identidade_fm06.csv")
-    kit_rows = _kit_rows(identities, _sheet(CLUBES / "uniformes_2026.xlsx"))
+    kit_rows = cores.kit_rows(identities, cores.sheet(CLUBES / "uniformes_2026.xlsx"))
     files = _crest_files()
     names = _names()
-    renames = []
+    renames, colours = [], []
     if args.baixar:
         baixar(files)
 
@@ -176,6 +151,8 @@ def main() -> None:
         short, full = names.get(name) or names.get(ident["clube_2026"]) or (ident["clube_2026"],) * 2
         if ident["tipo"] != "vaga extra" and normalize(short) != normalize(ident["fm06_nome"]):
             renames.append((uid, short, full))
+        if row and ident["tipo"] == "substituto":
+            colours.append((uid, cores.club_colours(row)))
         report.append([uid, ident["clube_2026"], ident["uf"], ident["fm06_nome"],
                        "sim" if path else "NÃO", "sim" if row else "NÃO",
                        ", ".join(k for k, v in kits.items() if v)])
@@ -183,14 +160,14 @@ def main() -> None:
     count = graficos.pacote(OUT, clubs)
     lnc = OUT / "data" / "db" / "lnc" / "all" / "brasil_2026_clubes.lnc"
     lnc.parent.mkdir(parents=True, exist_ok=True)
-    lnc.write_bytes(lnc_clubs(renames).encode("utf-16"))
+    lnc.write_bytes(lnc_clubs(renames, colours).encode("utf-16"))
     with (OUT / "relatorio.csv").open("w", encoding="utf-8-sig", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(["uid_jogo", "clube_2026", "uf", "fm06_nome", "escudo", "uniforme", "kits"])
         writer.writerows(report)
     without = [r[1] for r in report if r[4] != "sim"]
     print(f"[OK] {count} imagens de {len(clubs)} clubes em {OUT / 'data'}")
-    print(f"[OK] {len(renames)} clubes com o nome de 2026 em {lnc}")
+    print(f"[OK] {len(renames)} clubes com o nome de 2026 e {len(colours)} substitutos com as cores de 2026 em {lnc}")
     print(f"[OK] relatório em {OUT / 'relatorio.csv'}")
     if without:
         print(f"[AVISO] {len(without)} clubes sem escudo (rode com --baixar): " + ", ".join(without))

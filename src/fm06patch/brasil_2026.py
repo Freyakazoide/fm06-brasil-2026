@@ -124,6 +124,10 @@ def apply_last_season(data: bytes, placements: list[Placement], path: Path) -> t
     for row in read_csv(path):
         name = row["clube"].strip()
         team = by_name.get(name) or by_name.get(name.replace("-", " (") + ")" if "-" in name else name)
+        if team is None:                                # "Barra-SC" x "Barra", "Capital-DF" x "Capital"
+            from .estaduais_clubes import same_club, uf_of
+
+            team = next((p.team for p in placements if p.clube and same_club(name, p.clube, uf_of(p.estado))), None)
         if team is None:
             missing.append(row["clube"])
             continue

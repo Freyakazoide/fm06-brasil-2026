@@ -135,8 +135,12 @@ def _lit(image, light) -> np.ndarray:
     return np.clip(np.where(l <= 1, a * l, a + (255 - a) * (l - 1)), 0, 255)
 
 
+def luma(color) -> float:
+    return 0.3 * color[0] + 0.59 * color[1] + 0.11 * color[2]
+
+
 def _contrast(color) -> tuple[int, int, int]:
-    return (255, 255, 255) if 0.3 * color[0] + 0.59 * color[1] + 0.11 * color[2] < 150 else (20, 20, 20)
+    return (255, 255, 255) if luma(color) < 150 else (20, 20, 20)
 
 
 def _font(size):
