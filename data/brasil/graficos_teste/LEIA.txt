@@ -1,0 +1,9 @@
+Pacote de teste: escudo (grande e pequeno) e camisa de Flamengo (322), Palmeiras (329)
+e Cruzeiro (321), em 7 formatos de caminho. Cada imagem tem uma letra amarela no canto
+(A a G); a letra que aparecer no jogo diz qual formato o FM06 usa.
+
+Copiar para o jogo:
+  xcopy /E /I /Y data\brasil\graficos_teste\graphics "C:\Games\Football Manager 2006\graphics"
+Remover depois do teste:
+  rmdir /S /Q "C:\Games\Football Manager 2006\graphics\brasil2026_teste"
+  rmdir /S /Q "C:\Games\Football Manager 2006\graphics\pictures"
