@@ -61,6 +61,14 @@ por 4.
 - Vtables: `0x0113B2FC`, `0x0113B2E8`, `0x0113B2C0`, `0x0113B2B4` e
   `0x0113B2A0`.
 - Campos fixados no construtor: `+0x80`=1, `+0x85`=3, `+0x87`=0x0B.
+- Temporada da competição: `+0x85` mês do início, `+0x86` ano do início, `+0x87`
+  mês do fim, `+0x88` ano do fim (anos somados ao ano da temporada `+0x9C`;
+  meses base 0). O dia vem de quem usa (ex.: `0x00AC2140` usa o dia 15,
+  `0x00AC2EBE` o dia 1). Ex.: Sul-Americana julho–dezembro (6, 0, 11, 0).
+- Rodada de mata-mata (modelo): `+0x26` clubes, `+0x28` vencedores, `+0x2E`
+  desempate (1 prorrogação, 2 pênaltis, 4 gol fora, 8 gol fora na prorrogação,
+  0x10 shoot-out, 0x40 cabeça de chave, 0x100 campanha), `+0x30` jogo extra
+  (repetição), `+0x34` jogos (1 ou 2). Textos das regras em `0x006A1C90`.
 - Métodos próprios da Série A na vtable principal:
   - [63] `0x00BB2D60` devolve 15000;
   - [69] `0x00BBA3F0`;

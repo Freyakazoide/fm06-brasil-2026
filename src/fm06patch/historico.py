@@ -21,6 +21,12 @@ alto (0x00AFD370). Os campeões reais de 2025 entram como o ano 2005 do motor
 Libertadores e Copa do Brasil já têm 2005; a Série A reaproveita o registro
 mais antigo. A Sul-Americana 2005 é jogada pelo próprio jogo antes do primeiro
 dia do jogador (ver CHAMPIONS_2025).
+
+Vaga continental pré-definida: o registro do time tem, 33 bytes depois do
+"0A 00", o índice da competição continental em que ele já entra
+(FFFFFFFF = nenhuma). A Libertadores (0x00C06440) põe esses clubes antes de
+olhar a tabela. No banco original só o Paulista (Copa do Brasil 2005) tem a
+vaga; com ela o Paulista jogava a Libertadores de 2026.
 """
 
 from __future__ import annotations
@@ -31,6 +37,7 @@ RECORD = 39
 NONE = 0xFFFFFFFF
 LIBERTADORES, SUL_AMERICANA, COPA_DO_BRASIL, SERIE_A = 0x1900F, 0x4D87F, 0x1901B, 0x19017
 LAST_YEAR = 2005                  # 2025 na tela
+CONTINENTAL_FIELD = 33
 
 # competição: (campeão, vice) pelo UID do server_teams (convenção do repositório)
 CHAMPIONS_2025 = {
@@ -100,3 +107,17 @@ def apply(data: bytes, champions: dict[int, tuple[int, int]] = CHAMPIONS_2025) -
             notes.append(f"competição {comp_id:#x}: registro de {oldest} vira {LAST_YEAR}")
         struct.pack_into("<II", out, at + 7, team_index(data, winner_uid), team_index(data, runner_uid))
     return bytes(out), notes
+
+
+def clear_brazil_continental(data: bytes) -> tuple[bytes, list[str]]:
+    """Tira dos clubes brasileiros a vaga continental pré-definida do banco."""
+    from .estaduais_clubes import state_teams
+
+    out = bytearray(data)
+    cleared = []
+    for team in state_teams(data):
+        at = team.offset + CONTINENTAL_FIELD
+        if struct.unpack_from("<I", data, at)[0] != NONE:
+            struct.pack_into("<I", out, at, NONE)
+            cleared.append(team.short_name or str(team.club_uid))
+    return bytes(out), cleared

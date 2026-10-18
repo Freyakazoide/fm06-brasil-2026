@@ -137,6 +137,9 @@ def main() -> None:
     db, notes = historico.apply(estaduais_clubes.apply(db, states))
     for note in notes:
         print(f"[OK] campeões 2025: {note}")
+    db, cleared = historico.clear_brazil_continental(db)
+    if cleared:
+        print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))
     server.write_bytes(db)
     print(f"[OK] gravado {server}")
 

@@ -110,6 +110,8 @@ def _final_stub() -> bytes:
     a = Asm(FINAL_STUB)
     a.raw(b"\x66\x89\x7C\x24\x42")                   # instrução substituída
     a.raw(b"\xC6\x44\x24\x50\x01")                   # rodada +0x34 = 1 jogo
+    a.raw(b"\x66\xC7\x44\x24\x4A\x03\x00")           # +0x2E: prorrogação e pênaltis
+    a.raw(b"\xC6\x44\x24\x4C\x00")                   # +0x30: sem jogo extra
     a.jmp(FINAL_BACK)
     return bytes(a.code)
 

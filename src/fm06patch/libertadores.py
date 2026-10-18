@@ -105,20 +105,25 @@ DATES_2026 = (
     (0xC080CE, 0x06, 0x0A), (0xC080D0, 0x13, 0x1C), (0xC080D4, 0x05, 0x0A), (0xC080D6, 0x15, 0x1C),
 )
 FINAL_WEEKDAY = (0xC080C1, b"\x57", b"\x53")      # push edi (quarta) -> push ebx (0: data exata)
-# final em jogo único: a conta do ano de Copa (já sem efeito) vira legs = 1 na rodada
+# final em jogo único: a conta do ano de Copa (já sem efeito) vira legs = 1 na rodada (+0x34),
+# desempate prorrogação + pênaltis (+0x2E = 3) e sem jogo extra (+0x30 = 0; texto das regras em
+# 0x006A1EA2). Com o desempate da semifinal (0xE) e o jogo extra ligado, a final empatada foi
+# repetida 7 dias depois (teste 2).
 FINAL_LEGS = (0xC080A6,
               bytes.fromhex("0FB7959C00000081EACE07000081E20300008079054A83CAFC42"),
-              b"\xC6\x44\x24\x6C\x01" + b"\x90" * 21)   # mov byte [esp+0x6C], 1 (rodada +0x34)
+              b"\xC6\x44\x24\x6C\x01"            # mov byte [esp+0x6C], 1
+              + b"\x66\xC7\x44\x24\x66\x03\x00"   # mov word [esp+0x66], 3
+              + b"\xC6\x44\x24\x68\x00"            # mov byte [esp+0x68], 0
+              + b"\x90" * 9)
 FINAL_BRANCH = (0xC080CB, b"\x75\x06", b"\xEB\x06")
-# temporada da competição (construtor 0x00C062F0, +0x85 mês e +0x86 dia do início, +0x87
-# mês e +0x88 dia do fim, base 0): 1/1 a 1/8 no original. Com a final em 28/11 a
-# Libertadores não virava de ano (teste 1: em 30/1 do ano seguinte ainda no ano anterior).
-# Com fim em 1/12, a final empatou e o jogo marcou a repetição para 5/12, depois do fim, e
-# de novo não virou (teste 2). Fim em 20/12 (mov word [esi+0x87], 0x130B): cabe a
-# repetição da final (+7 dias) e sobram dias até o início da temporada seguinte (1/1); com
-# fim em 31/12 o fim e o novo início ficavam colados.
-SEASON_END = (0xC06383, bytes.fromhex("c6868700000007889e88000000"),
-              bytes.fromhex("66c786870000000b13") + b"\x90" * 4)
+# temporada da competição (construtor 0x00C062F0): +0x85 mês do início, +0x86 ano do início
+# (somado ao ano da temporada), +0x87 mês do fim, +0x88 ano do fim; meses base 0, o dia
+# vem de cada função que usa (ex.: 0x00AC2140 usa o dia 15). Original: janeiro a agosto do
+# mesmo ano; com a final em 28/11 a Libertadores não virava (teste 1). As tentativas
+# seguintes gravaram um "dia" em +0x88, que é o ano: fim 30 anos (teste 2) e 19 anos
+# (teste 3) depois, e ela nunca virou. Agora: fim em dezembro do mesmo ano, como a
+# Sul-Americana (0x00C05F84: +0x87 = 11, +0x88 = 0).
+SEASON_END = (0xC06383, bytes.fromhex("c686870000" "0007"), bytes.fromhex("c686870000" "000b"))
 
 
 def build_dates(data: bytes):
