@@ -40,6 +40,7 @@ BUILDER_CALLS = (
 SELECTION = 0x00BB9430
 SEASON_SETUP_STAGES = 0x00BBA921   # push 1 (número de fases) em 0x00BBA920
 DEFAULT_NEXT_STAGE = 0x007560A0
+REGISTER_TEAMS = 0x00ACD4B0         # competição.inscreve(lista*, -1, -1, -1)
 KNOCKOUT_TO_NEXT = 0x00B45500      # (rodada, 0 = vencedores, NEXT_STAGE_INFO*)
 KNOCKOUT_GET = 0x00AC73D0          # competição.mata_mata(índice, 0)
 KNOCKOUT_QUALIFIED = 0x00B3E6E0    # mata_mata.classificados(NEXT_STAGE_INFO*, lista*)
@@ -187,6 +188,10 @@ def _stubs() -> tuple[bytes, dict[str, int]]:
     a.raw(b"\x83\xC4\x1C")
     a.raw(b"\x8D\x44\x24\x20\x50\x8D\x44\x24\x04\x50").call(SEEDING)
     a.raw(b"\x83\xC4\x08")
+    # inscreve os 32 na tabela de posições da competição (+0xA4), como a Libertadores faz
+    # a cada fase: sem isso a posição final dos 20 da Série A não é gravada e o campeão
+    # não entra no histórico (0x00AB7E00 exige campeão e vice; teste: final Santos x Grêmio)
+    a.push(-1).push(-1).push(-1).raw(b"\x8D\x44\x24\x0C\x50\x8B\xCE").call(REGISTER_TEAMS)
     a.push(0x30).call(STAGE_ALLOC).raw(b"\x83\xC4\x04\x85\xC0")
     je_free = len(a.code); a.raw(b"\x74\x00")
     a.raw(b"\x8B\xC8").push(0)
