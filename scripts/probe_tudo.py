@@ -124,6 +124,67 @@ def show_continental(handle, found, names: dict) -> None:
                 out("  por país: " + ", ".join(f"{k} {v}" for k, v in sorted(counts.items())))
 
 
+TEAM_VTABLE = 0x010EDF6C
+
+
+def is_team(handle, ptr: int) -> bool:
+    raw = read_memory(handle, ptr, 4) if ptr > 0x10000 else None
+    return bool(raw) and u32(raw, 0) == TEAM_VTABLE
+
+
+def position_entries(handle, table: int) -> list[tuple[int, int]]:
+    """Tabela de posições finais (competição+0xA4): lista em +0x2C (ponteiro +0x30,
+    quantidade word +0x34); cada item tem o TEAM em +0 e o tipo em +8 (0 campeão, 1 vice,
+    2 terceiro). O tamanho do item não é conhecido: tenta ponteiros e depois structs."""
+    head = read_memory(handle, table, 0x40) or b""
+    if len(head) < 0x38:
+        return []
+    ptr, count = u32(head, 0x30), struct.unpack_from("<H", head, 0x34)[0]
+    if ptr < 0x10000 or not 0 < count <= 200:
+        return []
+    raw = read_memory(handle, ptr, 4 * count) or b""
+    items = [u32(raw, 4 * i) for i in range(len(raw) // 4)]
+    if items and all(is_team(handle, u32(read_memory(handle, it, 4) or b"\0\0\0\0", 0)) for it in items[:3]):
+        out = []
+        for it in items:
+            item = read_memory(handle, it, 12) or b""
+            if len(item) == 12:
+                out.append((u32(item, 0), item[8]))
+        return out
+    for stride in (12, 16, 20, 24, 28, 32, 8):
+        raw = read_memory(handle, ptr, stride * count) or b""
+        if len(raw) == stride * count and all(is_team(handle, u32(raw, stride * i)) for i in range(min(count, 3))):
+            return [(u32(raw, stride * i), raw[stride * i + 8]) for i in range(count)]
+    return []
+
+
+def show_cup(handle, found, names: dict) -> None:
+    """Copa do Brasil: o que decide se o campeão vai para o histórico."""
+    for address in found.get("Copa do Brasil", []):
+        comp = read_memory(handle, address, 0x200) or b""
+        if len(comp) < 0x200:
+            continue
+        out("\n=== Copa do Brasil (detalhe)")
+        out(f"  ano {year(comp)}, fases {comp[0x98]}/{comp[0x100]}, +0xA8={comp[0xA8]} +0xAC={comp[0xAC]} "
+            f"+0xFC={comp[0xFC]} +0x101={comp[0x101]}")
+        record = u32(comp, 0x1C)
+        rec = (read_memory(handle, record, 0x30) or b"") if record > 0x10000 else b""
+        if len(rec) >= 0x2C:
+            winner = team_row(handle, names, u32(rec, 0x24))[1] if is_team(handle, u32(rec, 0x24)) else "?"
+            out(f"  campeão em título: {winner} (ano {struct.unpack_from('<h', rec, 0x20)[0]})")
+        for index, stage in enumerate(stage_list(handle, comp)):
+            data = read_memory(handle, stage, 0x30) or b""
+            if len(data) >= 0x28:
+                out(f"  fase {index}: {class_name(handle, u32(data, 0))}, +9={data[9]}, "
+                    f"clubes {struct.unpack_from('<H', data, 0x24)[0]}")
+        table = u32(comp, 0xA4)
+        entries = position_entries(handle, table) if table > 0x10000 else []
+        out(f"  tabela de posições (+0xA4): {len(entries)} itens com clube")
+        for team, kind in entries:
+            if kind <= 3:
+                out(f"    tipo {kind}: {team_row(handle, names, team)[1]}")
+
+
 def show_date(handle) -> None:
     raw = read_memory(handle, GAME_DATE, 4) or b""
     if len(raw) == 4:
@@ -143,7 +204,9 @@ def main() -> None:
     show_date(handle)
     show_states(handle, found)
     show_national(handle, found)
-    show_continental(handle, found, clubs_by_uid(db) if db else {})
+    names = clubs_by_uid(db) if db else {}
+    show_continental(handle, found, names)
+    show_cup(handle, found, names)
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"\nGravado em {OUTPUT}")
