@@ -110,11 +110,13 @@ FINAL_LEGS = (0xC080A6,
               bytes.fromhex("0FB7959C00000081EACE07000081E20300008079054A83CAFC42"),
               b"\xC6\x44\x24\x6C\x01" + b"\x90" * 21)   # mov byte [esp+0x6C], 1 (rodada +0x34)
 FINAL_BRANCH = (0xC080CB, b"\x75\x06", b"\xEB\x06")
-# temporada da competição (construtor 0x00C062F0, +0x85..+0x88): de janeiro a agosto no
-# original; com a final em 28/11 a Libertadores não virava de ano (teste: em 30/1 do ano
-# seguinte ainda estava no ano anterior, sem a edição nova). Fim em dezembro, como a
-# Sul-Americana.
-SEASON_END = (0xC06383, bytes.fromhex("c6868700000007"), bytes.fromhex("c686870000000b"))
+# temporada da competição (construtor 0x00C062F0, +0x85 mês e +0x86 dia do início, +0x87
+# mês e +0x88 dia do fim, base 0): 1/1 a 1/8 no original. Com a final em 28/11 a
+# Libertadores não virava de ano (teste 1: em 30/1 do ano seguinte ainda no ano anterior).
+# Com fim em 1/12, a final empatou e o jogo marcou a repetição para 5/12, depois do fim, e
+# de novo não virou (teste 2). Fim em 31/12: mov word [esi+0x87], 0x1E0B.
+SEASON_END = (0xC06383, bytes.fromhex("c6868700000007889e88000000"),
+              bytes.fromhex("66c786870000000b1e") + b"\x90" * 4)
 
 
 def build_dates(data: bytes):
