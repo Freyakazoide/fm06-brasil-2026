@@ -34,6 +34,13 @@ FINAL_STUB = SECTION_VA + 0x4280
 R16_DATE = 0x00C07701              # código morto reaproveitado para a data das oitavas
 R16_DATE_BACK = 0x00C076C5
 THURSDAY = 5                       # dia da semana das rodadas (a Libertadores é na quarta)
+IN_COMP = 0x00A1E830               # TEAM.na_competição(comp): só vê quem ainda está vivo nela
+IN_LIBERTADORES_CALL = 0x00C06C85  # 0x00C068C0: exclusão de quem está na Libertadores
+LIBERTADORES_STUB = SECTION_VA + 0x4300
+COMP_BY_ID = 0x00582440            # ([0x014EAA34]).competição(ID)
+COMPS = 0x014EAA34
+SERIE_A_ID, COPA_DO_BRASIL_ID = 0x19017, 0x1901B
+LIBERTADORES_TOP = 7               # 1º a 7º da Série A anterior vão à Libertadores
 
 ARG, BRA = 0x30, 0x20              # lista da Argentina em [esp+0x2C], Brasil em [esp+0x1C] (+4 do ebx)
 # vagas 16–27 da lista: A2 B5 A0 B1 B2 A5 A3 B4 A1 B0 B3 A4 (melhores fora de casa no 1º
@@ -115,16 +122,58 @@ def _r16_date() -> bytes:
     return bytes(a.code)
 
 
+def _libertadores_stub() -> bytes:
+    """No lugar de 0x00A1E830 na exclusão: também conta como "está na Libertadores" o
+    brasileiro do 1º ao 7º da Série A anterior (TEAM+0x5C, +0x60) e o campeão da Copa do
+    Brasil. Quem caiu nos grupos da Libertadores (maio) já saiu da lista de competições do
+    time quando a Sul-Americana é montada (agosto) e entrava nela (teste: Flamengo e
+    Fluminense nas duas)."""
+    a = Asm(LIBERTADORES_STUB)
+    a.raw(b"\x56\x8B\xF1\xFF\x74\x24\x08\x8B\xCE")     # push esi ; mov esi, ecx ; push [esp+8] ; mov ecx, esi
+    a.call(IN_COMP)
+    a.raw(b"\x85\xC0")
+    jne_done = len(a.code); a.raw(b"\x75\x00")
+    a.raw(b"\x8B\x46\x5C\x85\xC0")                      # mov eax, [esi+0x5C] ; test eax, eax
+    je_cup = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x0F\xB6\x56\x60\x4A\x83\xFA" + bytes([LIBERTADORES_TOP - 1]))  # posição - 1 ; cmp edx, 6
+    ja_cup = len(a.code); a.raw(b"\x77\x00")
+    a.raw(b"\x8B\xC8\x8B\x10\xFF\x52\x10")              # divisão.ID()
+    a.raw(b"\x3D" + u32(SERIE_A_ID))
+    je_yes = len(a.code); a.raw(b"\x74\x00")
+    cup = len(a.code)
+    a.raw(b"\x8B\x0D" + u32(COMPS)).push(COPA_DO_BRASIL_ID).call(COMP_BY_ID)
+    a.raw(b"\x85\xC0")
+    je_no = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x8B\x40\x1C\x85\xC0")                      # campeão anterior (COMP_HISTORY)
+    je_no2 = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x3B\x70\x24")                              # cmp esi, [eax+0x24]
+    jne_no = len(a.code); a.raw(b"\x75\x00")
+    yes = len(a.code)
+    a.raw(b"\xB8\x01\x00\x00\x00")
+    jmp_done = len(a.code); a.raw(b"\xEB\x00")
+    no = len(a.code)
+    a.raw(b"\x33\xC0")
+    done = len(a.code)
+    a.raw(b"\x5E\xC2\x04\x00")
+    code = bytearray(a.code)
+    for at, target in ((jne_done, done), (je_cup, cup), (ja_cup, cup), (je_yes, yes), (je_no, no),
+                       (je_no2, no), (jne_no, no), (jmp_done, done)):
+        code[at + 1] = target - (at + 2)
+    return bytes(code)
+
+
 def build(data: bytes):
     from .exe_patches import Swap
 
     swaps = list(section_swaps(data))
     for base, code in ((BRACKET_STUB, _bracket_stub()), (BRACKET_TABLE, _bracket_table()),
-                       (FINAL_STUB, _final_stub())):
+                       (FINAL_STUB, _final_stub()), (LIBERTADORES_STUB, _libertadores_stub())):
         swaps.append(Swap(sec_off(base), bytes(len(code)), code))
     swaps += [Swap(off(va), bytes.fromhex(old), bytes.fromhex(new)) for va, old, new in CHANGES]
     r16 = _r16_date()
     swaps.append(Swap(off(R16_DATE), data[off(R16_DATE):off(R16_DATE) + len(r16)], r16))
+    swaps.append(Swap(off(IN_LIBERTADORES_CALL), b"\xE8" + u32(IN_COMP - (IN_LIBERTADORES_CALL + 5)),
+                      b"\xE8" + u32(LIBERTADORES_STUB - (IN_LIBERTADORES_CALL + 5))))
     for hook, stub in ((BRACKET_HOOK, BRACKET_STUB), (FINAL_HOOK, FINAL_STUB)):
         swaps.append(Swap(off(hook), data[off(hook):off(hook) + 5], b"\xE9" + u32(stub - (hook + 5))))
     return tuple(swaps)

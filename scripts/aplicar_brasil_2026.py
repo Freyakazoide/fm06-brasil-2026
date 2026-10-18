@@ -11,7 +11,9 @@ Com --apply:
 3. grava data\\db\\lnc\\all\\brasil_2026.lnc com os nomes Série A, B, C e D;
 4. atualiza data\\brasil\\mapa_2026.csv (quem entrou no lugar de quem);
 5. grava os participantes dos estaduais de 2026 (data\\brasil\\estaduais) e o
-   mapa em data\\brasil\\estaduais\\mapa_estaduais_2026.csv.
+   mapa em data\\brasil\\estaduais\\mapa_estaduais_2026.csv;
+6. grava a classificação de 2025 (data\\brasil\\classificacao_2025.csv) e os
+   campeões de 2025 (Libertadores, Sul-Americana, Copa do Brasil, Série A).
 
 Depois é só abrir o fm_brasil.exe e começar um New Game.
 """
@@ -31,7 +33,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import estaduais_clubes  # noqa: E402
+from fm06patch import estaduais_clubes, historico  # noqa: E402
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -132,7 +134,10 @@ def main() -> None:
     db, missing = apply_last_season(apply_db(data, placements), placements, DATA_DIR / "classificacao_2025.csv")
     if missing:
         print("[AVISO] classificação 2025: clubes que não estão nas séries de 2026:", ", ".join(missing))
-    server.write_bytes(estaduais_clubes.apply(db, states))
+    db, notes = historico.apply(estaduais_clubes.apply(db, states))
+    for note in notes:
+        print(f"[OK] campeões 2025: {note}")
+    server.write_bytes(db)
     print(f"[OK] gravado {server}")
 
     lnc.parent.mkdir(parents=True, exist_ok=True)
