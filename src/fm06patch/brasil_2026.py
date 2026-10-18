@@ -39,7 +39,7 @@ class Placement:
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
-    with path.open(encoding="utf-8") as handle:
+    with path.open(encoding="utf-8-sig") as handle:
         return list(csv.DictReader(handle))
 
 
@@ -115,8 +115,12 @@ def apply_last_season(data: bytes, placements: list[Placement], path: Path) -> t
             team.last_division, team.last_position = NONE, 0
             write_team(buffer, team)
     missing = []
+    teams = find_brazil_teams(data)
+    for team in teams:                                  # clube fora das séries de 2026: nome no FM06
+        by_name.setdefault(team.short_name, team)
     for row in read_csv(path):
-        team = by_name.get(row["clube"].strip())
+        name = row["clube"].strip()
+        team = by_name.get(name) or by_name.get(name.replace("-", " (") + ")" if "-" in name else name)
         if team is None:
             missing.append(row["clube"])
             continue

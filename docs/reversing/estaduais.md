@@ -162,3 +162,9 @@ os grupos podem jogar contra o outro grupo.
   contagens batem com as registradas no exe original). As 2ª divisões
   estaduais têm mínimo registrado (3 ou 4, sem máximo); completar as listas
   tira clubes delas (Acre 4 -> 2, Roraima 1 -> 0), então o mínimo delas vai a 0.
+- Vagas na Copa do Brasil (patch `estaduais_2026`): a entrada da tabela tem
+  16 bytes; o byte 12 vai para +0x1D (vagas). As 102 vagas reais de 2027
+  (`vagas_2026_modelo.csv`: 6, 5, 4 ou 3 por federação) viram 4, 3, 2 ou 1,
+  soma 48 (a 1ª fase tem 48 clubes; `0x00BB9430` corta a lista em 48 depois
+  de completar com B, C e D). Em `0x00BB6964` um desvio pula quem está na
+  Série A (entra direto na 5ª fase): a vaga passa para o próximo do estadual.

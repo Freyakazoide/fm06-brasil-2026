@@ -28,6 +28,7 @@ Limites do estadual genérico (pequenas liberdades em relação a 2026):
 from __future__ import annotations
 
 import csv
+import re
 import struct
 from collections import Counter
 from pathlib import Path
@@ -49,6 +50,14 @@ MINIMUM_TEAMS_SIZE = 0x600
 PARAMS_STUB = SECTION_VA + 0x2000
 DATES_STUB = SECTION_VA + 0x2080
 TABLE = SECTION_VA + 0x2100
+ENTRY = 16                        # id, clubes, grupos, turnos, classificados, rebaixados, 2ª fase,
+                                  # fim dia, fim mês, vagas na Copa do Brasil, 3 livres
+SKIP_SERIE_A_STUB = SECTION_VA + 0x2400
+COPA_PICK_HOOK = 0x00BB6964       # 0x00BB6860: o estadual põe o próximo clube na Copa do Brasil
+COPA_PICK_BACK = 0x00BB696C
+COPA_PICK_NEXT = 0x00BB6980       # próximo clube da tabela do estadual
+SERIE_A_ID = 0x19017
+VAGAS_CSV = Path(__file__).resolve().parents[2] / "data" / "brasil" / "estaduais" / "vagas_2026_modelo.csv"
 
 ID = {
     "SP": 0x1901A, "RJ": 0x19018, "AC": 0x1A2B2, "AL": 0x1A2B1, "AM": 0x49C7F, "BA": 0x4B9AE,
@@ -133,14 +142,33 @@ def club_counts() -> dict[str, int]:
     return dict(Counter(r["uf"].strip().upper() for r in rows))
 
 
+def copa_quotas() -> dict[str, int]:
+    """Vagas de cada estadual na 1ª fase da Copa do Brasil (48 clubes, sem a Série A).
+    As 102 vagas reais (ranking de federações: 6, 5, 4 ou 3) viram 4, 3, 2 ou 1:
+    soma 48, um clube por estado no mínimo."""
+    if not VAGAS_CSV.exists():
+        return {}
+    quotas = {}
+    for row in csv.DictReader(VAGAS_CSV.open(encoding="utf-8-sig")):
+        if not row["vaga"].startswith("Copa do Brasil"):
+            continue
+        found = re.match(r"\s*(\d+)\s*vaga", row["quem_ganha"])
+        if found:
+            quotas[row["uf"].strip().upper()] = max(1, int(found.group(1)) - 2)
+    return quotas
+
+
 def table_bytes() -> bytes:
     out = bytearray()
     counts = club_counts()
+    quotas = copa_quotas()
     for uf, (teams, groups, legs, qualified, relegated) in FORMATO_2026.items():
         teams = counts.get(uf, teams)
         stage2 = MATA_MATA if qualified else SEM_SEGUNDA_FASE
         day, month = league_end(teams, groups, legs, qualified)
-        out += struct.pack("<I8B", ID[uf], teams, groups, legs, qualified, relegated, stage2, day, month)
+        quota = quotas.get(uf, 0)
+        out += struct.pack("<I9B3x", ID[uf], teams, groups, legs, qualified, relegated, stage2, day, month,
+                           quota)
     out += struct.pack("<I", 0)
     return bytes(out)
 
@@ -157,13 +185,14 @@ def _params_stub() -> bytes:
     je_done = len(a.code); a.raw(b"\x74\x00")
     a.raw(b"\x3B\xD1")                             # cmp edx, ecx
     je_hit = len(a.code); a.raw(b"\x74\x00")
-    a.raw(b"\x83\xC0\x0C")                         # add eax, 12
+    a.raw(b"\x83\xC0" + bytes([ENTRY]))             # add eax, ENTRY
     jmp_loop = len(a.code); a.raw(b"\xEB\x00")
     hit = len(a.code)
     for i, field in enumerate((4, 5, 6, 7, 8)):
         a.raw(b"\x8A\x50" + bytes([4 + i]))        # mov dl, [eax+4+i]
         a.raw(b"\x88\x56" + bytes([field]))        # mov [esi+field], dl
     a.raw(b"\x8A\x50\x09\x88\x56\x18")             # +0x18 = tipo da 2ª fase
+    a.raw(b"\x8A\x50\x0C\x84\xD2\x74\x03\x88\x56\x1D") # vagas na Copa do Brasil (+0x1D), se houver
     done = len(a.code)
     a.raw(b"\x5E\xC2\x04\x00")                     # pop esi ; ret 4
     code = bytearray(a.code)
@@ -183,7 +212,7 @@ def _dates_stub() -> bytes:
     je_missing = len(a.code); a.raw(b"\x74\x00")
     a.raw(b"\x3B\xCA")                                                    # cmp ecx, edx
     je_hit = len(a.code); a.raw(b"\x74\x00")
-    a.raw(b"\x83\xC0\x0C")                                                # add eax, 12
+    a.raw(b"\x83\xC0" + bytes([ENTRY]))                                    # add eax, ENTRY
     jmp_loop = len(a.code); a.raw(b"\xEB\x00")
     missing = len(a.code)
     a.raw(b"\xB1" + bytes([END_DEFAULT[0]]) + b"\xB5" + bytes([END_DEFAULT[1]]))   # mov cl, dia ; mov ch, mês
@@ -200,11 +229,31 @@ def _dates_stub() -> bytes:
     return bytes(code)
 
 
+def _skip_serie_a_stub() -> bytes:
+    """Na escolha dos clubes do estadual para a Copa do Brasil, pula quem está na
+    Série A (entra direto na 5ª fase): a vaga vai para o próximo da tabela."""
+    a = Asm(SKIP_SERIE_A_STUB)
+    a.raw(b"\x8B\x44\x24\x1C\x8B\x40\x54\x85\xC0")    # mov eax, [esp+0x1C] (time) ; mov eax, [eax+0x54]
+    je_add = len(a.code); a.raw(b"\x74\x00")
+    a.raw(b"\x8B\xC8\x8B\x10\xFF\x52\x10")           # mov ecx, eax ; mov edx, [eax] ; call [edx+0x10]
+    a.raw(b"\x3D" + u32(SERIE_A_ID))                   # cmp eax, Série A
+    jne_add = len(a.code); a.raw(b"\x75\x00")
+    a.jmp(COPA_PICK_NEXT)
+    add = len(a.code)
+    a.raw(b"\x8B\x44\x24\x14\x8B\x54\x24\x28")       # instruções substituídas
+    a.jmp(COPA_PICK_BACK)
+    code = bytearray(a.code)
+    code[je_add + 1] = add - (je_add + 2)
+    code[jne_add + 1] = add - (jne_add + 2)
+    return bytes(code)
+
+
 def build(data: bytes):
     from .exe_patches import Swap
 
     swaps = list(section_swaps(data))
     params, dates, table = _params_stub(), _dates_stub(), table_bytes()
+    skip = _skip_serie_a_stub()
     if PARAMS_STUB + len(params) > DATES_STUB or DATES_STUB + len(dates) > TABLE:
         raise ValueError("estaduais: código não cabe")
     swaps += [
@@ -214,6 +263,9 @@ def build(data: bytes):
         Swap(off(PARAMS_CALL), b"\xE8" + u32(PARAMS_ORIGINAL - (PARAMS_CALL + 5)),
              b"\xE8" + u32(PARAMS_STUB - (PARAMS_CALL + 5))),
         Swap(off(DATES), data[off(DATES):off(DATES) + 5], b"\xE9" + u32(DATES_STUB - (DATES + 5))),
+        Swap(sec_off(SKIP_SERIE_A_STUB), bytes(len(skip)), skip),
+        Swap(off(COPA_PICK_HOOK), bytes.fromhex("8b4424148b542428"),
+             b"\xE9" + u32(SKIP_SERIE_A_STUB - (COPA_PICK_HOOK + 5)) + b"\x90" * 3),
     ]
     # bra_get_minimum_division_teams (0x00BB2840): o jogo só deixa o Brasil
     # jogável se cada estadual tiver exatamente o número registrado (máximo -2 =

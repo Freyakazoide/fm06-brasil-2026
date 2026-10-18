@@ -58,7 +58,7 @@ Por onde cada alteração é feita:
 | Acessos e rebaixamentos | ✅ | executável | `scripts/patch_exe.py` (campos `+0x11`/`+0x14` da fase); validado: Série A rebaixa 4, Série B sobe 4 |
 | Criar a Série D | ✅ | executável + banco | `scripts/aplicar_brasil_2026.py`: Séries A–D com nomes, datas e clubes de 2026. Falta: playoffs da B, fases da C, 6 acessos da D |
 | Vagas em Libertadores e Sul-Americana | ⚠️ | executável | Libertadores: Brasil 7, Argentina 6, sem México, calendário de 2026 com final única (validado). Sul-Americana: ainda 8 brasileiros + México/EUA (chaveamento fixo da 1ª fase) |
-| Classificação da temporada passada | 🟡 | banco | `scripts/server_db_teams.py --pos` / `--last` |
+| Classificação da temporada passada | ✅ | banco | `data/brasil/classificacao_2025.csv` (A, B, C 20 e D 64), gravada pelo `aplicar_brasil_2026.py` |
 | Histórico de campeões (Séries A–D, pelo menos os últimos) | ❌ | banco | não localizado |
 | Calendário | ✅ | executável | datas de A, B, C e D por patch; ver `docs/REGRAS_2026.md` |
 
