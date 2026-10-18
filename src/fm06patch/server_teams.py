@@ -192,3 +192,25 @@ def find_brazil_teams(data: bytes) -> list[TeamRecord]:
             short_name=short_name,
         )
     return list(teams.values())
+
+
+def clubs_by_uid(data: bytes) -> dict[int, tuple[str, str]]:
+    """UID verdadeiro -> (nome longo, curto): o UID que o jogo usa na memória (CLUB+0x14).
+
+    Cada registro de clube termina com o próprio (índice, UID); o par lido por
+    club_names, logo antes de "00 BD 00 00 00", é o fim do registro anterior. O UID
+    verdadeiro do clube é o par seguinte.
+    """
+    starts = [m.start() - 4 for m in re.finditer(re.escape(_CLUB_TAIL), data) if m.start() >= 8]
+    names: dict[int, tuple[str, str]] = {}
+    for start, following in zip(starts, starts[1:]):
+        if following - start > 0x2000:
+            continue
+        mark = data.find(_DATES, start, min(start + 0x600, following))
+        if mark < 0:
+            continue
+        long_name, after = _string(data, mark + len(_DATES))
+        short_name, _ = _string(data, after)
+        if long_name:
+            names[struct.unpack_from("<I", data, following)[0]] = (long_name, short_name or long_name)
+    return names

@@ -18,3 +18,13 @@ motor sem mudar o tamanho do arquivo: Libertadores e Copa do Brasil já têm
 é gravada: a de 2005 do motor é jogada entre o início do New Game (julho de
 2005) e o primeiro dia do jogador, e com o Lanús gravado o histórico mostrava
 dois campeões de 2025.
+
+## UID do clube: banco x memória
+
+Cada registro de clube termina com o próprio (índice, UID). O par que o
+repositório lê antes de `00 BD 00 00 00` (`server_teams.club_names`) é o fim do
+registro anterior: o "UID" do repositório é o do clube anterior na lista
+(Cruzeiro: repositório 320, jogo 321; Corinthians: 317 e 319, porque 318 não é
+clube). O jogo usa o UID verdadeiro (`CLUB+0x14`); `server_teams.clubs_by_uid`
+faz o mapa. O pipeline do banco continua na convenção do repositório (as
+buscas são consistentes entre si); só quem lê a memória precisa do mapa novo.
