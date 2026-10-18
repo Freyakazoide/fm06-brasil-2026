@@ -15,7 +15,9 @@ Com --apply:
 6. grava a classificação de 2025 (data\\brasil\\classificacao_2025.csv) e os
    campeões de 2025 (Libertadores, Copa do Brasil, Série A);
 7. grava o lang_db.dat com os nomes das fases em português do Brasil (cópia do
-   original em workspace\\baseline\\lang_db.original.dat).
+   original em workspace\\baseline\\lang_db.original.dat);
+8. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
+   2026), lido pelo scripts\\gerar_graficos.py (escudos, uniformes e nomes).
 
 Depois é só abrir o fm_brasil.exe e começar um New Game.
 """
@@ -35,7 +37,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import estaduais_clubes, historico, nomes_fases  # noqa: E402
+from fm06patch import estaduais_clubes, historico, identidade, nomes_fases  # noqa: E402
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -113,13 +115,14 @@ def main() -> None:
         if LANG_BACKUP.exists():
             shutil.copy2(LANG_BACKUP, lang)
             print(f"[OK] lang_db original restaurado em {lang}")
-        if lnc.exists():
-            lnc.unlink()
-            print(f"[OK] removido {lnc}")
+        for path in (lnc, lnc.with_name("brasil_2026_clubes.lnc")):   # o 2º vem do pacote de gráficos
+            if path.exists():
+                path.unlink()
+                print(f"[OK] removido {path}")
         return
 
     data = original_server_db(server)
-    placements = plan(data, DATA_DIR)
+    placements = plan(data, DATA_DIR, frozenset(estaduais_clubes.equivalents(data)))
     counts = Counter(p.serie for p in placements)
     kinds = Counter(p.kind for p in placements)
     print("Clubes por série:", {s: counts[s] for s in SERIES},
@@ -129,7 +132,7 @@ def main() -> None:
         if p.kind == "substituto":
             print(f"  Série {p.serie}: {p.clube or '(vaga extra)':24} -> {p.team.short_name}")
 
-    states, _ = estaduais_clubes.plan(data)
+    states, _ = estaduais_clubes.plan(data, national=placements)
     subs = [e for e in states if e.substitute]
     print(f"\nEstaduais 2026: {len(states)} clubes, {len(subs)} substitutos (clube que não existe no FM06):")
     for e in subs:
@@ -180,6 +183,9 @@ def main() -> None:
     report = DATA_DIR / "estaduais" / "mapa_estaduais_2026.csv"
     estaduais_clubes.write_report(report, states)
     print(f"[OK] estaduais: lista completa em {report}")
+    report = DATA_DIR / "clubes" / "identidade_fm06.csv"
+    identidade.write_report(report, identidade.build(data, placements, states))
+    print(f"[OK] clube do jogo de cada clube de 2026 (escudos, uniformes, nomes) em {report}")
 
 
 if __name__ == "__main__":

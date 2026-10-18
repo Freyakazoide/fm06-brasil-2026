@@ -140,32 +140,89 @@ def _match(clube: str, uf: str, pool: list[TeamRecord]) -> TeamRecord | None:
     return best if score >= 0.99 else None
 
 
-def plan(data: bytes, rows: list[dict] | None = None) -> tuple[list[StateEntry], dict[str, int]]:
-    rows = rows if rows is not None else list(csv.DictReader(CLUBS_CSV.open(encoding="utf-8-sig")))
-    teams = state_teams(data)
+# nome no estadual -> nome nas séries nacionais, quando as palavras não batem
+NATIONAL_ALIASES = {"Vasco": "Vasco da Gama", "Decisão": "Decisão Goiana", "São Joseense": "PSTC/São Joseense"}
+
+
+def _rows(rows: list[dict] | None) -> list[dict]:
+    return rows if rows is not None else list(csv.DictReader(CLUBS_CSV.open(encoding="utf-8-sig")))
+
+
+def uf_of(estado: str) -> str:
+    """'PR' ou 'Paraná' -> 'PR'."""
+    if len(estado.strip()) == 2:
+        return estado.strip().upper()
+    full = {name: uf for uf, name in UF_NAMES.items()}
+    return full.get(normalize(estado), "")
+
+
+def same_club(state_name: str, national_name: str, uf: str) -> bool:
+    """Mesmo clube com nome diferente nas duas listas ('Pantanal' x 'FC Pantanal',
+    'Nacional-AM' x 'Nacional')."""
+    state_name = NATIONAL_ALIASES.get(state_name, state_name)
+    return normalize(state_name) == normalize(national_name) or (
+        bool(_words(state_name, uf)) and _words(state_name, uf) == _words(national_name, uf))
+
+
+def _find(data, uf, wanted, pool, used, found) -> None:
+    for finder in (_exact, _match):                     # nome igual primeiro, depois palavras
+        for i, row in enumerate(wanted):
+            if i in found:
+                continue
+            team = finder(row["clube"], uf, [t for t in pool if t.club_uid not in used])
+            if team is not None:
+                found[i] = team
+                used.add(team.club_uid)
+
+
+def equivalents(data: bytes, rows: list[dict] | None = None) -> set[int]:
+    """Clubes do FM06 que são um clube dos estaduais de 2026 (nome igual)."""
+    rows, teams = _rows(rows), state_teams(data)
     first = {uf: comp_index(data, cid) for uf, cid in FIRST_ID.items()}
     lower = {uf: comp_index(data, cid) for uf, cid in LOWER_ID.items()}
+    uids: set[int] = set()
+    for uf in FIRST_ID:
+        wanted = [r for r in rows if r["uf"].strip().upper() == uf]
+        found: dict[int, TeamRecord] = {}
+        _find(data, uf, wanted, [t for t in teams if state_of(data, t) in (first[uf], lower[uf])], set(), found)
+        uids |= {t.club_uid for t in found.values()}
+    return uids
+
+
+def plan(data: bytes, rows: list[dict] | None = None, national=()) -> tuple[list[StateEntry], dict[str, int]]:
+    """national: Placement das séries de 2026. Clube que também está numa série usa o
+    mesmo clube do FM06 no estadual (um clube do jogo = um clube de 2026); os outros
+    clubes das séries não entram no estadual de ninguém."""
+    rows = _rows(rows)
+    teams = state_teams(data)
+    by_uid = {t.club_uid: t for t in teams}
+    first = {uf: comp_index(data, cid) for uf, cid in FIRST_ID.items()}
+    lower = {uf: comp_index(data, cid) for uf, cid in LOWER_ID.items()}
+    named = [p for p in national if p.clube]
+    reserved = {p.team.club_uid for p in national}
     entries: list[StateEntry] = []
     counts: dict[str, int] = {}
     for uf in FIRST_ID:
         wanted = [r for r in rows if r["uf"].strip().upper() == uf]
         pool = [t for t in teams if state_of(data, t) in (first[uf], lower[uf])]
-        used: set[int] = set()
+        used = {p.team.club_uid for p in named}
         found: dict[int, TeamRecord] = {}
-        for finder in (_exact, _match):                 # nome igual primeiro, depois palavras
-            for i, row in enumerate(wanted):
-                if i in found:
-                    continue
-                team = finder(row["clube"], uf, [t for t in pool if t.club_uid not in used])
-                if team is not None:
-                    found[i] = team
-                    used.add(team.club_uid)
+        stand_in: set[int] = set()                      # substituto nas séries
+        for i, row in enumerate(wanted):                # o mesmo clube das séries
+            for p in named:
+                if uf_of(p.estado) == uf and same_club(row["clube"], p.clube, uf) and p.team.club_uid in by_uid:
+                    found[i] = by_uid[p.team.club_uid]
+                    if p.kind == "substituto":
+                        stand_in.add(i)
+                    break
+        _find(data, uf, wanted, pool, used, found)
         missing = []
         for i, row in enumerate(wanted):
             if i in found:
-                entries.append(StateEntry(uf, row["clube"], row.get("cidade", ""), found[i], False))
+                entries.append(StateEntry(uf, row["clube"], row.get("cidade", ""), found[i], i in stand_in))
             else:
                 missing.append(row)
+        used |= reserved
         for row in missing:
             free = sorted((t for t in pool if t.club_uid not in used and t.short_name),
                           key=lambda t: -t.reputation)

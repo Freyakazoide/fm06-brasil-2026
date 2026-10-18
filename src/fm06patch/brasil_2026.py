@@ -43,7 +43,9 @@ def read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def plan(data: bytes, data_dir: Path) -> list[Placement]:
+def plan(data: bytes, data_dir: Path, avoid: frozenset[int] = frozenset()) -> list[Placement]:
+    """avoid: clubes do FM06 que já são outro clube de 2026 (estaduais); não servem de
+    substituto de um clube com nome, só de vaga extra (que fica com o próprio nome)."""
     clubs = read_csv(data_dir / "series_2026.csv")
     equivalent = {row["clube"]: row["fm06"] for row in read_csv(data_dir / "equivalencias_fm06.csv")}
     teams = find_brazil_teams(data)
@@ -67,8 +69,9 @@ def plan(data: bytes, data_dir: Path) -> list[Placement]:
 
     pool = sorted((t for t in teams if t.club_uid not in used), key=lambda t: -t.reputation)
 
-    def substitute() -> TeamRecord:
-        team = pool.pop(0)
+    def substitute(named: bool = True) -> TeamRecord:
+        team = next(t for t in pool if not named or t.club_uid not in avoid)
+        pool.remove(team)
         used.add(team.club_uid)
         return team
 
@@ -81,7 +84,7 @@ def plan(data: bytes, data_dir: Path) -> list[Placement]:
             else:
                 placements.append(Placement(serie, row["clube"], row["estado"], substitute(), "substituto"))
         for _ in range(SIZES[serie] - len(rows)):
-            placements.append(Placement(serie, "", "", substitute(), "substituto"))
+            placements.append(Placement(serie, "", "", substitute(named=False), "substituto"))
     return placements
 
 

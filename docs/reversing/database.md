@@ -28,3 +28,8 @@ registro anterior: o "UID" do repositório é o do clube anterior na lista
 clube). O jogo usa o UID verdadeiro (`CLUB+0x14`); `server_teams.clubs_by_uid`
 faz o mapa. O pipeline do banco continua na convenção do repositório (as
 buscas são consistentes entre si); só quem lê a memória precisa do mapa novo.
+`server_teams.true_uids` converte repositório -> jogo; no último clube de um
+bloco (Vitória: repositório 339, jogo 340) o registro seguinte é de outro tipo
+e o par é o primeiro (índice anterior + 1, UID) depois dos nomes. O UID do jogo
+é o dos gráficos (`club/<UID>/logo`, `team/<UID>/kits/home`, confirmado com
+"Show Unique IDs": Flamengo 322) e o do `CLUB_NAME_CHANGE`.

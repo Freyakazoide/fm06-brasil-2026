@@ -1,0 +1,280 @@
+uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
+315,314,Bahia,BA,Bahia,equivalente,"Série A, estadual BA"
+340,339,Vitória,BA,Vitória,equivalente,"Série A, estadual BA"
+314,312,Atlético-MG,MG,Atlético Mineiro,equivalente,"Série A, estadual MG"
+321,320,Cruzeiro,MG,Cruzeiro,equivalente,"Série A, estadual MG"
+334,333,Remo,PA,Remo,equivalente,"Série A, estadual PA"
+107206,107205,Athletico-PR,PR,Atlético Paranaense,equivalente,"Série A, estadual PR"
+104776,104775,Coritiba,PR,Coritiba,equivalente,"Série A, estadual PR"
+316,315,Botafogo,RJ,Botafogo,equivalente,"Série A, estadual RJ"
+322,321,Flamengo,RJ,Flamengo,equivalente,"Série A, estadual RJ"
+323,322,Fluminense,RJ,Fluminense,equivalente,"Série A, estadual RJ"
+339,338,Vasco da Gama,RJ,Vasco,equivalente,"Série A, estadual RJ"
+324,323,Grêmio,RS,Grêmio,equivalente,"Série A, estadual RS"
+326,325,Internacional,RS,Internacional,equivalente,"Série A, estadual RS"
+301304,301302,Chapecoense,SC,Chapecoense,equivalente,"Série A, estadual SC"
+319,317,Corinthians,SP,Corinthians,equivalente,"Série A, estadual SP"
+301344,301342,Mirassol,SP,Mirassol,equivalente,"Série A, estadual SP"
+329,328,Palmeiras,SP,Palmeiras,equivalente,"Série A, estadual SP"
+317,316,Red Bull Bragantino,SP,Bragantino,equivalente,"Série A, estadual SP"
+335,334,Santos,SP,Santos,equivalente,"Série A, estadual SP"
+337,336,São Paulo,SP,São Paulo,equivalente,"Série A, estadual SP"
+301102,301100,CRB,AL,CRB,equivalente,"Série B, estadual AL"
+104749,104653,Ceará,CE,Ceará,equivalente,"Série B, estadual CE"
+104750,104749,Fortaleza,CE,Fortaleza,equivalente,"Série B, estadual CE"
+301151,301149,Atlético-GO,GO,Atlético Goianiense,equivalente,"Série B, estadual GO"
+102555,102495,Goiás,GO,Goiás,equivalente,"Série B, estadual GO"
+107236,107234,Vila Nova,GO,Vila Nova (GO),equivalente,"Série B, estadual GO"
+107201,106881,América-MG,MG,América (MG),equivalente,"Série B, estadual MG"
+301354,301352,Athletic,MG,São Caetano,substituto,"Série B, estadual MG"
+318915,318913,Cuiabá,MT,Cuiabá,equivalente,"Série B, estadual MT"
+328,327,Náutico,PE,Náutico,equivalente,"Série B, estadual PE"
+338,337,Sport,PE,Sport Recife,equivalente,"Série B, estadual PE"
+900678,900204,Londrina,PR,Londrina,equivalente,"Série B, estadual PR"
+311086,311085,Operário-PR,PR,Operário (PR),equivalente,"Série B, estadual PR"
+327,326,Juventude,RS,Juventude,equivalente,"Série B, estadual RS"
+107208,107206,Avaí,SC,Avaí,equivalente,"Série B, estadual SC"
+320,319,Criciúma,SC,Criciúma,equivalente,"Série B, estadual SC"
+121265,121262,Botafogo-SP,SP,Botafogo (SP),equivalente,"Série B, estadual SP"
+330,329,Novorizontino,SP,Paraná,substituto,"Série B, estadual SP"
+332,331,Ponte Preta,SP,Ponte Preta,equivalente,"Série B, estadual SP"
+2106553,2106412,São Bernardo,SP,São Bernardo,equivalente,"Série B, estadual SP"
+302148,302143,Ferroviária,SP,Ferroviária (SP),equivalente,Série C
+104979,104978,Inter de Limeira,SP,Inter de Limeira,equivalente,Série C
+107216,107214,Ituano,SP,Ituano,equivalente,Série C
+301352,301350,Amazonas,AM,Santo André,substituto,"Série C, estadual AM"
+311026,311024,Floresta,CE,Marília,substituto,"Série C, estadual CE"
+301148,301146,Anápolis,GO,Anápolis,equivalente,"Série C, estadual GO"
+301171,301169,Maranhão,MA,Maranhão,equivalente,"Série C, estadual MA"
+331,330,Paysandu,PA,Paysandu,equivalente,"Série C, estadual PA"
+301208,301206,Botafogo-PB,PB,Botafogo (PB),equivalente,"Série C, estadual PB"
+107232,107230,Santa Cruz,PE,Santa Cruz,equivalente,"Série C, estadual PE"
+303020,303018,Maringá,PR,Grêmio Maringá,equivalente,"Série C, estadual PR"
+107240,107238,Volta Redonda,RJ,Volta Redonda,equivalente,"Série C, estadual RJ"
+301266,301264,Caxias,RS,Caxias,equivalente,"Série C, estadual RS"
+319160,319159,Ypiranga,RS,Ypiranga (RS),equivalente,"Série C, estadual RS"
+301338,301336,Barra,SC,Paulista,substituto,"Série C, estadual SC"
+301302,301300,Brusque,SC,Brusque,equivalente,"Série C, estadual SC"
+301306,301304,Figueirense,SC,Figueirense,equivalente,"Série C, estadual SC"
+301323,301321,Confiança,SE,Confiança (SE),equivalente,"Série C, estadual SE"
+301325,301323,Itabaiana,SE,Itabaiana,equivalente,"Série C, estadual SE"
+325,324,Guarani,SP,Guarani,equivalente,"Série C, estadual SP"
+900996,900678,América-RJ,RJ,América (RJ),equivalente,Série D
+301260,301258,Atlético Cearense,CE,15 de Novembro,substituto,Série D
+316773,316733,Blumenau,SC,Blumenau,equivalente,Série D
+301264,301262,Brasil de Pelotas,RS,Brasil de Pelotas,equivalente,Série D
+301230,301228,Central,PE,Central (PE),equivalente,Série D
+310908,310905,Parnamirim/ABC-D,RN,Parnamirim,equivalente,Série D
+104978,104975,XV de Piracicaba,SP,XV de Piracicaba,equivalente,Série D
+301340,301338,Água Santa,SP,Francana,substituto,Série D
+107210,107208,CSA,AL,CSA,equivalente,"Série D (vaga extra), estadual AL"
+301111,301110,São Raimundo-AM,AM,São Raimundo (AM),equivalente,"Série D (vaga extra), estadual AM"
+107205,107203,ABC,RN,ABC,equivalente,"Série D (vaga extra), estadual RN"
+104887,104885,Galvez,AC,Americano,substituto,"Série D, estadual AC"
+301359,301357,Humaitá,AC,União Barbarense,substituto,"Série D, estadual AC"
+104885,104873,Independência,AC,Independência,equivalente,"Série D, estadual AC"
+301100,201666,ASA,AL,ASA,equivalente,"Série D, estadual AL"
+313251,313250,CSE,AL,CSE,equivalente,"Série D, estadual AL"
+107222,107220,Manaus,AM,Mogi Mirim,substituto,"Série D, estadual AM"
+301108,301107,Nacional,AM,Nacional (AM),equivalente,"Série D, estadual AM"
+313256,313255,Oratório,AP,Oratório,equivalente,"Série D, estadual AP"
+313350,313348,Trem,AP,Trem Desportivo,equivalente,"Série D, estadual AP"
+301113,301111,Atlético de Alagoinhas,BA,Atlético (BA),equivalente,"Série D, estadual BA"
+319115,319113,Jacuipense,BA,Jacuipense,equivalente,"Série D, estadual BA"
+107238,107236,Juazeirense,BA,Villa Nova (MG),substituto,"Série D, estadual BA"
+107212,107210,Porto,BA,Friburguense,substituto,"Série D, estadual BA"
+301129,301127,Ferroviário,CE,Ferroviário (CE),equivalente,"Série D, estadual CE"
+303902,303861,Maracanã,CE,Corinthians (AL),substituto,"Série D, estadual CE"
+301276,301274,Tirol,CE,Pelotas,substituto,"Série D, estadual CE"
+309670,309656,Brasiliense,DF,Brasiliense,equivalente,"Série D, estadual DF"
+336,335,Capital,DF,União São João,substituto,"Série D, estadual DF"
+311000,310908,Ceilândia,DF,Ceilândia,equivalente,"Série D, estadual DF"
+121262,121220,Gama,DF,Gama,equivalente,"Série D, estadual DF"
+107226,107224,Real Noroeste,ES,Rio Branco (SP),substituto,"Série D, estadual ES"
+301142,301140,Rio Branco-ES,ES,Rio Branco (ES),equivalente,"Série D, estadual ES"
+313273,313271,Vitória-ES,ES,Vitória (ES),equivalente,"Série D, estadual ES"
+301190,301188,ABECAT,GO,Ipatinga,substituto,"Série D, estadual GO"
+319141,319139,Aparecidense,GO,Aparecidense,equivalente,"Série D, estadual GO"
+303018,303016,CRAC,GO,CRAC,equivalente,"Série D, estadual GO"
+301159,301157,Goiatuba,GO,Goiatuba,equivalente,"Série D, estadual GO"
+301161,301159,Inhumas,GO,Inhumas,equivalente,"Série D, estadual GO"
+301218,301216,IAPE,MA,Malutrom,substituto,"Série D, estadual MA"
+301169,301167,Imperatriz,MA,Imperatriz,equivalente,"Série D, estadual MA"
+301172,301171,Moto Club,MA,Moto Clube,equivalente,"Série D, estadual MA"
+107230,107228,Sampaio Corrêa,MA,Sampaio Corrêa,equivalente,"Série D, estadual MA"
+301318,301316,Betim,MG,Tubarão,substituto,"Série D, estadual MG"
+301184,301182,Democrata GV,MG,Democrata,equivalente,"Série D, estadual MG"
+319170,319168,Pouso Alegre,MG,Guarani de Pouso Alegre,equivalente,"Série D, estadual MG"
+318860,317949,Tombense,MG,Tombense,equivalente,"Série D, estadual MG"
+301200,301198,Uberlândia,MG,Uberlândia,equivalente,"Série D, estadual MG"
+313247,313245,FC Pantanal,MS,Pantanal,equivalente,"Série D, estadual MS"
+107242,107240,Operário-MS,MS,Operário (MS),equivalente,"Série D, estadual MS"
+301247,301245,Luverdense,MT,Cabofriense,substituto,"Série D, estadual MT"
+309644,309643,Mixto,MT,Mixto (MT),equivalente,"Série D, estadual MT"
+313904,313901,Operário VG,MT,Operário (MT),equivalente,"Série D, estadual MT"
+107224,107222,Primavera,MT,Portuguesa Santista,substituto,"Série D, estadual MT"
+301179,301177,União Rondonópolis,MT,União Rondonópolis,equivalente,"Série D, estadual MT"
+107234,107232,Tuna Luso,PA,Tuna Luso,equivalente,"Série D, estadual PA"
+308939,308938,Águia de Marabá,PA,Águia de Marabá,equivalente,"Série D, estadual PA"
+310389,310384,Serra Branca,PB,Alegrense,substituto,"Série D, estadual PB"
+301342,301340,Sousa,PB,Matonense,substituto,"Série D, estadual PB"
+301212,301210,Treze,PB,Treze,equivalente,"Série D, estadual PB"
+301123,301121,Decisão Goiana,PE,Fluminense (BA),substituto,"Série D, estadual PE"
+301258,301257,Maguary,PE,Potiguar,substituto,"Série D, estadual PE"
+301125,301123,Retrô,PE,Juazeiro (BA),substituto,"Série D, estadual PE"
+301173,301172,Altos,PI,Juventude (MT),substituto,"Série D, estadual PI"
+319158,319156,Fluminense-PI,PI,Fluminense (PI),equivalente,"Série D, estadual PI"
+313305,313303,Parnahyba,PI,Parnahyba,equivalente,"Série D, estadual PI"
+309640,309639,Piauí,PI,Piauí,equivalente,"Série D, estadual PI"
+314757,314755,Azuriz,PR,Hermann Aichinger,substituto,"Série D, estadual PR"
+314600,314598,Cianorte,PR,Cianorte,equivalente,"Série D, estadual PR"
+301370,301367,FC Cascavel,PR,Cascavel,equivalente,"Série D, estadual PR"
+104873,104868,PSTC/São Joseense,PR,Olaria,substituto,"Série D, estadual PR"
+107220,107218,Madureira,RJ,Madureira,equivalente,"Série D, estadual RJ"
+311955,311953,Maricá,RJ,CENE,substituto,"Série D, estadual RJ"
+311107,311105,Nova Iguaçu,RJ,Nova Iguaçu,equivalente,"Série D, estadual RJ"
+301251,301249,Portuguesa-RJ,RJ,Portuguesa (RJ),equivalente,"Série D, estadual RJ"
+301245,301244,Sampaio Corrêa-RJ,RJ,River (PI),substituto,"Série D, estadual RJ"
+107203,107201,América-RN,RN,América (RN),equivalente,"Série D, estadual RN"
+313352,313351,Laguna,RN,CFZ (DF),substituto,"Série D, estadual RN"
+309628,309626,Gazin Porto Velho,RO,Baraúnas,substituto,"Série D, estadual RO"
+313227,313225,Guaporé,RO,Vila Aurora,substituto,"Série D, estadual RO"
+301298,301296,GAS,RR,GAS,equivalente,"Série D, estadual RR"
+301110,301108,Monte Roraima,RR,Rio Negro (AM),substituto,"Série D, estadual RR"
+309357,309145,São Raimundo-RR,RR,São Raimundo (RR),equivalente,"Série D, estadual RR"
+301333,301331,Guarany de Bagé,RS,América (SP),substituto,"Série D, estadual RS"
+301284,301282,São José-RS,RS,São José (RS),equivalente,"Série D, estadual RS"
+301286,301284,São Luiz,RS,São Luiz,equivalente,"Série D, estadual RS"
+301310,301308,Joinville,SC,Joinville,equivalente,"Série D, estadual SC"
+301316,301314,Marcílio Dias,SC,Marcílio Dias,equivalente,"Série D, estadual SC"
+319165,319164,Santa Catarina,SC,Santa Catarina,equivalente,"Série D, estadual SC"
+309622,309621,Lagarto,SE,Lagartense,equivalente,"Série D, estadual SE"
+301321,301318,Sergipe,SE,Sergipe,equivalente,"Série D, estadual SE"
+303612,303022,Noroeste,SP,Noroeste,equivalente,"Série D, estadual SP"
+333,332,Portuguesa,SP,Portuguesa,equivalente,"Série D, estadual SP"
+318913,318911,Velo Clube,SP,Velo Clube,equivalente,"Série D, estadual SP"
+313341,313339,Araguaína,TO,Araguaína,equivalente,"Série D, estadual TO"
+301331,301329,Tocantinópolis,TO,Tocantinópolis,equivalente,"Série D, estadual TO"
+313242,313240,ADESG,AC,ADESG,equivalente,estadual AC
+104868,104776,Rio Branco-AC,AC,Rio Branco (AC),equivalente,estadual AC
+309638,309637,Santa Cruz-AC,AC,Atlético Acreano,substituto,estadual AC
+313244,313242,São Francisco-AC,AC,Juventus (AC),substituto,estadual AC
+104982,104979,Vasco-AC,AC,Vasco (AC),equivalente,estadual AC
+8832327,8832325,Coruripe,AL,Coruripe,equivalente,estadual AL
+301103,301102,Cruzeiro de Arapiraca,AL,Miguelense,substituto,estadual AL
+309358,309357,Murici SC,AL,Murici,equivalente,estadual AL
+309361,309358,Penedense,AL,Penedense,equivalente,estadual AL
+8832363,8832362,Itacoatiara,AM,Grêmio Coariense,substituto,estadual AM
+308516,308281,Manauara,AM,América (AM),substituto,estadual AM
+309650,309648,Parintins,AM,Clíper,substituto,estadual AM
+313259,313258,Princesa do Solimões,AM,Princesa,equivalente,estadual AM
+313254,313253,Cristal,AP,Cristal,equivalente,estadual AP
+313255,313254,Independente,AP,Independente (AP),equivalente,estadual AP
+313258,313257,Macapá,AP,Macapá,equivalente,estadual AP
+301107,301105,Santos-AP,AP,Santos (AP),equivalente,estadual AP
+303012,303010,São José-AP,AP,São José (AP),equivalente,estadual AP
+104988,104982,Ypiranga-AP,AP,Ypiranga (AP),equivalente,estadual AP
+320262,319623,Bahia de Feira,BA,Bahia de Feira,equivalente,estadual BA
+301115,301113,Barcelona de Ilhéus,BA,Camaçari,substituto,estadual BA
+301363,301361,Galícia,BA,Galícia,equivalente,estadual BA
+314235,314204,Jequié,BA,Jequié,equivalente,estadual BA
+310642,310639,Horizonte,CE,Guarany de Sobral,substituto,estadual CE
+313749,313675,Iguatu,CE,Icasa,substituto,estadual CE
+314956,314946,Maranguape,CE,Maranguape,equivalente,estadual CE
+313261,313259,Quixadá,CE,Quixadá,equivalente,estadual CE
+313264,313263,ARUC,DF,ARUC,equivalente,estadual DF
+301135,301133,Brasília,DF,Brasília,equivalente,estadual DF
+8832334,8832332,Paranoá,DF,Paranoá,equivalente,estadual DF
+303861,303817,Real Brasília,DF,Bandeirante (DF),substituto,estadual DF
+313265,313264,Samambaia,DF,Samambaia,equivalente,estadual DF
+311004,311002,Sobradinho,DF,Sobradinho,equivalente,estadual DF
+302141,301919,Capixaba,ES,Estrela do Norte,substituto,estadual ES
+104975,104887,Desportiva Ferroviária,ES,Desportiva,equivalente,estadual ES
+310384,310357,Forte,ES,São Mateus,substituto,estadual ES
+318868,318866,Porto Vitória,ES,CTE Colatina,substituto,estadual ES
+314332,314330,Rio Branco de Venda Nova,ES,Rio Branco VN,equivalente,estadual ES
+301144,301142,Serra,ES,Serra,equivalente,estadual ES
+2107745,2106625,Vilavelhense,ES,Estrela de Cachoeiro,substituto,estadual ES
+301146,301144,Anapolina,GO,Anapolina,equivalente,estadual GO
+301157,301155,Centro Oeste,GO,Goiânia,substituto,estadual GO
+301367,301364,Jataiense,GO,Jataiense,equivalente,estadual GO
+313284,313283,ITZ Sport,MA,Santa Inês,substituto,estadual MA
+309654,309653,Luminense,MA,Bacabal,substituto,estadual MA
+311949,311870,Tuntum,MA,Caxiense,substituto,estadual MA
+301182,301181,Itabirito,MG,Caldense,substituto,estadual MG
+301194,301192,North,MG,Mamoré,substituto,estadual MG
+301202,301200,URT,MG,URT,equivalente,estadual MG
+301181,301179,Bataguassu,MS,Comercial (MS),substituto,estadual MS
+313234,313232,CRA,MS,Cassilandense,substituto,estadual MS
+313901,313900,Corumbaense,MS,Corumbaense,equivalente,estadual MS
+313900,313789,Costa Rica,MS,Chapadão,substituto,estadual MS
+313238,313236,Dourados,MS,Operário de Dourados,equivalente,estadual MS
+313248,313247,Ivinhema,MS,Ivinhema,equivalente,estadual MS
+314721,314695,Naviraiense,MS,Naviraiense,equivalente,estadual MS
+314963,314962,Águia Negra,MS,Águia Negra,equivalente,estadual MS
+313224,313222,Chapada,MT,Dom Bosco,substituto,estadual MT
+313225,313224,Nova Mutum,MT,Sorriso,substituto,estadual MT
+301175,301173,Sport Sinop,MT,Sinop,equivalente,estadual MT
+314751,314749,Várzea Grande,MT,Nova Xavantina,substituto,estadual MT
+308945,308944,Amazônia,PA,Sport Belém,substituto,estadual PA
+313279,313277,Bragantino-PA,PA,Bragantino (PA),equivalente,estadual PA
+308946,308945,Cametá,PA,Tiradentes (PA),substituto,estadual PA
+308940,308939,Capitão Poço,PA,Carajás,substituto,estadual PA
+301206,301204,Castanhal,PA,Castanhal,equivalente,estadual PA
+308941,308940,Santa Rosa,PA,Santa Rosa,equivalente,estadual PA
+308942,308941,São Francisco-PA,PA,São Francisco (PA),equivalente,estadual PA
+308943,308942,São Raimundo-PA,PA,São Raimundo (PA),equivalente,estadual PA
+311951,311949,Atlético de Cajazeiras,PB,Atlético Cajazeirense,equivalente,estadual PB
+301210,301208,Campinense,PB,Campinense,equivalente,estadual PB
+309643,309641,Confiança de Sapé,PB,Auto Esporte (PB),substituto,estadual PB
+314962,314960,Esporte de Patos,PB,Esporte,equivalente,estadual PB
+313293,313291,Nacional de Patos,PB,Nacional de Patos,equivalente,estadual PB
+313291,313289,Pombal,PB,Santa Cruz (PB),substituto,estadual PB
+301235,301234,Jaguar,PE,Porto (PE),substituto,estadual PE
+301240,301239,Vitória das Tabocas,PE,Vitória (PE),substituto,estadual PE
+308183,308111,Atlético Piauiense,PI,Flamengo (PI),substituto,estadual PI
+313303,313301,Corisabbá,PI,Oeiras,substituto,estadual PI
+301244,301242,Oeirense,PI,Picos,substituto,estadual PI
+301242,301240,Teresina,PI,4 de Julho,substituto,estadual PI
+314604,314602,Andraus,PR,Paranavaí,substituto,estadual PR
+311082,311042,Foz do Iguaçu,PR,Foz do Iguaçu,equivalente,estadual PR
+303022,303020,Galo Maringá,PR,Iraty,substituto,estadual PR
+104775,104750,Bangu,RJ,Bangu,equivalente,estadual RJ
+309137,308947,Boavista,RJ,Boavista (RJ),equivalente,estadual RJ
+301257,301255,Globo,RN,Alecrim,substituto,estadual RN
+309635,309633,Potiguar de Mossoró,RN,São Gonçalo,substituto,estadual RN
+309629,309628,Potyguar Seridoense,RN,Coríntians (RN),substituto,estadual RN
+314734,314730,QFC,RN,Atlético Piranhas,substituto,estadual RN
+2107947,2107913,Santa Cruz de Natal,RN,Vila Nova (RN),substituto,estadual RN
+309618,309616,Barcelona-RO,RO,Guajará,substituto,estadual RO
+301290,301288,Genus,RO,Gênus,equivalente,estadual RO
+301292,301290,Ji-Paraná,RO,Ji-Paraná,equivalente,estadual RO
+314082,314078,Rondoniense,RO,Grêmio Rondoniense,equivalente,estadual RO
+309619,309618,União Cacoalense,RO,União Cacoalense,equivalente,estadual RO
+309145,309144,Atlético Roraima,RR,Atlético Roraima,equivalente,estadual RR
+301296,301294,Baré,RR,Baré,equivalente,estadual RR
+309143,309142,Náutico-RR,RR,Náutico (RR),equivalente,estadual RR
+309144,309143,Progresso,RR,Progresso (RR),equivalente,estadual RR
+301299,301298,Rio Negro-RR,RR,Rio Negro (RR),equivalente,estadual RR
+313314,313313,River-RR,RR,River (RR),equivalente,estadual RR
+301262,301260,Avenida,RS,Avenida,equivalente,estadual RS
+301272,301270,Internacional de Santa Maria,RS,Inter de Santa Maria,equivalente,estadual RS
+301278,301276,Monsoon,RS,Rio Grande,substituto,estadual RS
+308628,308516,Novo Hamburgo,RS,Novo Hamburgo,equivalente,estadual RS
+319162,319160,Camboriú,SC,Camboriú,equivalente,estadual SC
+309770,309769,Carlos Renaux,SC,Carlos Renaux,equivalente,estadual SC
+8832365,8832364,Concórdia,SC,Concórdia,equivalente,estadual SC
+309621,309619,América de Propriá,SE,Coritiba (SE),substituto,estadual SE
+313315,313314,Atlético Gloriense,SE,Amadense,substituto,estadual SE
+313321,313319,Desportiva Aracaju,SE,Maruinense,substituto,estadual SE
+313317,313315,Dorense,SE,Dorense,equivalente,estadual SE
+313329,313327,Falcon,SE,Propriá,substituto,estadual SE
+314293,314291,Guarany de Porto da Folha,SE,Vasco (SE),substituto,estadual SE
+318891,318889,Capivariano,SP,Capivariano,equivalente,estadual SP
+318907,318905,Primavera-SP,SP,Primavera,equivalente,estadual SP
+309626,309624,Bela Vista,TO,Intercap,substituto,estadual TO
+313339,313337,Capital-TO,TO,Tocantins (TO),substituto,estadual TO
+313335,313333,Guaraí,TO,Clube dos XXX,substituto,estadual TO
+309624,309622,Gurupi,TO,Gurupi,equivalente,estadual TO
+301329,301327,Palmas,TO,Palmas,equivalente,estadual TO
+313343,313342,União-TO,TO,União Araguainense,equivalente,estadual TO

@@ -214,3 +214,26 @@ def clubs_by_uid(data: bytes) -> dict[int, tuple[str, str]]:
         if long_name:
             names[struct.unpack_from("<I", data, following)[0]] = (long_name, short_name or long_name)
     return names
+
+
+def true_uids(data: bytes) -> dict[int, int]:
+    """UID do repositório (o par lido por club_names) -> UID verdadeiro do mesmo clube.
+
+    O par (índice, UID) do clube fecha o registro: é o início do registro seguinte. No
+    último clube de um bloco o registro seguinte é de outro tipo; o par é então o
+    primeiro (índice anterior + 1, UID) depois dos nomes."""
+    starts = [m.start() - 4 for m in re.finditer(re.escape(_CLUB_TAIL), data) if m.start() >= 8]
+    uids: dict[int, int] = {}
+    for start, following in zip(starts, starts[1:] + [len(data)]):
+        mark = data.find(_DATES, start, min(start + 0x600, following))
+        if mark < 0:
+            continue
+        repo = struct.unpack_from("<I", data, start)[0]
+        if following - start <= 0x2000:
+            uids.setdefault(repo, struct.unpack_from("<I", data, following)[0])
+            continue
+        index = struct.unpack_from("<I", data, start - 4)[0]
+        own = data.find(struct.pack("<I", index + 1), mark, start + 0x2000)
+        if own > 0:
+            uids.setdefault(repo, struct.unpack_from("<I", data, own + 4)[0])
+    return uids
