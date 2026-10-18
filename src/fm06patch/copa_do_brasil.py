@@ -55,6 +55,15 @@ COMPS = 0x014EAA34
 S0 = SECTION_VA + 0x3000           # cópia da montagem: fase 1 (48)
 S1 = SECTION_VA + 0x3400           # cópia da montagem: fase 2 (32)
 STUBS = SECTION_VA + 0x3800        # despachante, fim da fase 1, método 72, filtro
+POSITIONS = SECTION_VA + 0x3C00    # posições finais de quem cai na fase 1
+ROUND_ADD = 0x00B482E0             # fase.adiciona_rodada(modelo em ecx)
+ROUND_POSITIONS = 0x00B3BAD0       # modelo.posições(0 vencedor / 1 perdedor, pos, pos, pos)
+# Cada fase calcula a posição final a partir da própria última rodada: com a Copa em duas
+# fases, quem caía na 4ª fase virava "vice" (posição 1) e quem caía na 3ª, "3º" (2). Com 13
+# vices 0x00AB7E00 não acha o vice e o campeão não vai para o histórico (probe de 7/12/2026:
+# Santos campeão, 13 com posição 1, 26 com posição 2). Como a Libertadores faz na
+# Pré-Libertadores (0x00C07AD9), a fase 1 grava posições abaixo das da fase 2 (5ª fase = 5).
+STAGE1_POSITIONS = ((0x14F, 7), (0x1CA, 6))   # (lea ecx,[esp+0x10]; call 0x00B482E0), posição
 NEXT_CODE = 0xA7                   # nome da fase 2 (o mesmo da fase final da antiga C)
 
 STAGE1_TEAMS, STAGE2_TEAMS = 48, 32
@@ -109,7 +118,24 @@ def _stage1(data: bytes, tail: int) -> bytes:
     _replace(code, R2_OUT_AT, b"\x66\xC7\x44\x24\x38" + _word(0x10), b"\x66\xC7\x44\x24\x38" + _word(12))
     _date(code, R2_DATE, 18, 2)                                   # 4ª fase: 18/3
     _replace(code, R3_AT, code[R3_AT:R3_AT + 5], b"\xE9" + u32(tail - (S0 + R3_AT + 5)))
+    for (at, _), stub in zip(STAGE1_POSITIONS, _position_stubs()[1]):
+        if code[at:at + 5] != b"\x8D\x4C\x24\x10\xE8":
+            raise ValueError(f"copa do brasil: esperava lea ecx,[esp+0x10]; call em +0x{at:X}")
+        code[at:at + 9] = b"\xE9" + u32(stub - (S0 + at + 5)) + b"\x90" * 4
     return bytes(code)
+
+
+def _position_stubs() -> tuple[bytes, list[int]]:
+    """Para cada rodada da fase 1: posições do perdedor e depois a chamada original."""
+    a = Asm(POSITIONS)
+    entries = []
+    for at, position in STAGE1_POSITIONS:
+        entries.append(a.here)
+        a.push(position).push(position).push(position).push(1)
+        a.raw(b"\x8D\x4C\x24\x20").call(ROUND_POSITIONS)        # modelo em [esp+0x10] (+4 push)
+        a.raw(b"\x8D\x4C\x24\x10").call(ROUND_ADD)               # instrução original
+        a.jmp(S0 + at + 9)
+    return bytes(a.code), entries
 
 
 def _stage2(data: bytes, draw: int) -> bytes:
@@ -256,6 +282,7 @@ def build(data: bytes):
         Swap(sec_off(S0), bytes(len(s0)), s0),
         Swap(sec_off(S1), bytes(len(s1)), s1),
         Swap(sec_off(STUBS), bytes(len(stubs)), stubs),
+        Swap(sec_off(POSITIONS), bytes(len(_position_stubs()[0])), _position_stubs()[0]),
         Swap(off(CUP_VTABLE + 4 * 71), u32(BUILDER), u32(entry["dispatch"])),
         Swap(off(CUP_VTABLE + 4 * 72), u32(DEFAULT_NEXT_STAGE), u32(entry["next"])),
         Swap(at(SEASON_SETUP_STAGES), b"\x6A\x01", b"\x6A\x02"),              # 2 fases
