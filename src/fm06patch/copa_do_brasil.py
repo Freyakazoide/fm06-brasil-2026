@@ -118,15 +118,16 @@ def _stage1(data: bytes, tail: int) -> bytes:
     _replace(code, R2_OUT_AT, b"\x66\xC7\x44\x24\x38" + _word(0x10), b"\x66\xC7\x44\x24\x38" + _word(12))
     _date(code, R2_DATE, 18, 2)                                   # 4ª fase: 18/3
     _replace(code, R3_AT, code[R3_AT:R3_AT + 5], b"\xE9" + u32(tail - (S0 + R3_AT + 5)))
-    for (at, _), stub in zip(STAGE1_POSITIONS, _position_stubs()[1]):
+    for (at, _), stub in zip(STAGE1_POSITIONS, _position_stubs()[1]):  # noqa: B020
         if code[at:at + 5] != b"\x8D\x4C\x24\x10\xE8":
             raise ValueError(f"copa do brasil: esperava lea ecx,[esp+0x10]; call em +0x{at:X}")
         code[at:at + 9] = b"\xE9" + u32(stub - (S0 + at + 5)) + b"\x90" * 4
     return bytes(code)
 
 
-def _position_stubs() -> tuple[bytes, list[int]]:
-    """Para cada rodada da fase 1: posições do perdedor e depois a chamada original."""
+def _position_stubs() -> tuple[bytes, list[int], int]:
+    """Para cada rodada da fase 1: posições do perdedor e depois a chamada original. No fim,
+    a rotina que rebaixa as posições da fase 1 (endereço no 3º valor)."""
     a = Asm(POSITIONS)
     entries = []
     for at, position in STAGE1_POSITIONS:
@@ -135,7 +136,46 @@ def _position_stubs() -> tuple[bytes, list[int]]:
         a.raw(b"\x8D\x4C\x24\x20").call(ROUND_POSITIONS)        # modelo em [esp+0x10] (+4 push)
         a.raw(b"\x8D\x4C\x24\x10").call(ROUND_ADD)               # instrução original
         a.jmp(S0 + at + 9)
-    return bytes(a.code), entries
+    reset = a.here
+    a.raw(_reset_positions_code())
+    return bytes(a.code), entries, reset
+
+
+def _reset_positions_code() -> bytes:
+    """esi = Copa do Brasil. Ao fim da fase 1, toda posição final de 0 a 5 na tabela da
+    competição (+0xA4; itens pelo método +0x28 da lista em +0x2C, quantidade word +0x34;
+    posição no byte +8 do item) vira 7. A fase 2 grava as dela por cima, e no fim só o
+    campeão tem 0 e só o vice tem 1, independentemente de como a fase 1 calculou as suas."""
+    code = bytearray()
+    fix: list[tuple[int, str]] = []
+    marks: dict[str, int] = {}
+
+    def jump(op: int, label: str) -> None:
+        code.extend(bytes([op, 0]))
+        fix.append((len(code) - 1, label))
+
+    code += b"\x53\x57\x8B\xBE\xA4\x00\x00\x00\x85\xFF"      # push ebx/edi ; edi = tabela
+    jump(0x74, "done")
+    code += b"\x33\xDB"                                         # xor ebx, ebx
+    marks["loop"] = len(code)
+    code += b"\x0F\xB7\x47\x34\x3B\xD8"                         # movzx eax, word [edi+0x34] ; cmp ebx, eax
+    jump(0x7D, "done")
+    code += b"\x8D\x4F\x2C\x8B\x01\x53\xFF\x50\x28"             # item = lista.item(ebx)
+    code += b"\x85\xC0"
+    jump(0x74, "next")
+    code += b"\x83\x38\x00"                                     # item sem clube
+    jump(0x74, "next")
+    code += b"\x80\x78\x08\x05"                                 # cmp byte [item+8], 5
+    jump(0x77, "next")
+    code += b"\xC6\x40\x08\x07"                                 # posição = 7
+    marks["next"] = len(code)
+    code += b"\x43"
+    jump(0xEB, "loop")
+    marks["done"] = len(code)
+    code += b"\x5F\x5B\xC3"
+    for at, label in fix:
+        code[at] = (marks[label] - (at + 1)) & 0xFF
+    return bytes(code)
 
 
 def _stage2(data: bytes, draw: int) -> bytes:
@@ -195,6 +235,7 @@ def _stubs() -> tuple[bytes, dict[str, int]]:
     a.raw(b"\x80\xB9\x98\x00\x00\x00\x01")                  # cmp byte [ecx+0x98], 1
     jne2 = len(a.code); a.raw(b"\x0F\x85" + u32(0))
     a.raw(b"\x56\x57\x8B\xF1")                              # push esi ; push edi ; mov esi, ecx
+    a.call(_position_stubs()[2])                            # posições da fase 1 abaixo das da fase 2
     a.raw(b"\x81\xEC" + u32(0xA0))                          # lista [esp], NSI [esp+0x10], cabeças [esp+0x20]
     a.raw(b"\xC7\x04\x24" + u32(TEAM_LIST_VTABLE))
     a.raw(b"\x31\xC0\x89\x44\x24\x04\x89\x44\x24\x08\x89\x44\x24\x0C")
