@@ -12,8 +12,7 @@ O FM06 monta a Libertadores com 38 clubes:
 Patch: Brasil 7, Argentina 6, México 0 (continua 38). A vaga do México na
 preliminar vai para a Argentina (com 11 clubes o 11º ficava sem adversário e
 o jogo caía); nos grupos o Brasil leva 6 e o México 0; o pote 1 fica com 10 e
-um desvio passa os 2 brasileiros piores para o pote 2, como estavam os
-mexicanos.
+um desvio refaz os potes com 8 clubes cada (ver _pots_stub).
 """
 
 from __future__ import annotations
@@ -36,28 +35,79 @@ IMMEDIATES = (
 
 
 def _pots_stub() -> bytes:
-    """Pote 1 com mais de 8: passa para o pote 2 os primeiros do pote 1 a partir da posição 4.
+    """Potes da fase de grupos: 4 potes de exatamente 8 clubes.
 
-    A lista dos grupos começa com os 4 argentinos e segue com os brasileiros do
-    pior para o melhor (0x00C04E00 pega do fim dos participantes). Potes:
-    bytes em [esp+0x38+i]; quantidade de clubes: word em [esp+0x30].
+    Pote original pelo país (0x00C05595): Argentina e Brasil 1; Colômbia, Uruguai e
+    Paraguai 2; Bolívia, Chile, Equador e Peru 3; Venezuela 4; o campeão 1; quem vem da
+    Pré-Libertadores leva o pote do país. Com o Brasil com 6 diretos e brasileiros e
+    argentinos vindos da Pré, o pote 1 pode chegar a 14 e o pote 2 a 12. No teste de
+    1/3/2026 o jogo caiu ao montar os jogos de um grupo com um clube faltando
+    (0x00B07E4A, ordenação dos 4 clubes do grupo em 0x00B0D800).
+
+    Lista dos grupos: 0–3 argentinos, 4–9 brasileiros do pior para o melhor, depois os
+    demais países, os vindos da Pré e a Venezuela. Os clubes são ordenados pelo pote
+    original e, dentro dele, pela ordem 0–3, 9 a 4, 10 em diante; os 8 primeiros vão
+    para o pote 1, os 8 seguintes para o 2... Potes: bytes em [esp+0x38+i]; quantidade:
+    word em [esp+0x30] (no desvio, depois de 4 push: +0x48 e +0x40).
     """
+    code = bytearray()
+    labels: dict[str, int] = {}
+    fixups: list[tuple[int, str]] = []
+
+    def emit(raw: bytes) -> None:
+        code.extend(raw)
+
+    def jump(opcode: int, label: str) -> None:       # salto curto
+        code.extend(bytes([opcode, 0]))
+        fixups.append((len(code) - 1, label))
+
+    def mark(label: str) -> None:
+        labels[label] = len(code)
+
+    emit(b"\x53\x56\x57\x55")                       # push ebx, esi, edi, ebp
+    emit(b"\x0F\xB7\x4C\x24\x40")                   # movzx ecx, word [esp+0x40]
+    emit(b"\x33\xD2")                               # xor edx, edx        (posição no ranking)
+    emit(b"\xBE\x01\x00\x00\x00")                   # mov esi, 1          (pote original)
+    mark("pot")
+    emit(b"\x33\xFF")                               # xor edi, edi        (ordem k)
+    mark("k")
+    emit(b"\x3B\xF9"); jump(0x7D, "k_end")           # cmp edi, ecx ; jge
+    emit(b"\x8B\xC7")                               # mov eax, edi        (i = k)
+    emit(b"\x83\xFF\x04"); jump(0x7C, "use")         # cmp edi, 4 ; jl
+    emit(b"\x83\xFF\x09"); jump(0x7F, "use")         # cmp edi, 9 ; jg
+    emit(b"\xB8\x0D\x00\x00\x00\x2B\xC7")           # i = 13 - k (brasileiros, melhor primeiro)
+    mark("use")
+    emit(b"\x3B\xC1"); jump(0x7D, "next")            # cmp eax, ecx ; jge
+    emit(b"\x0F\xB6\x5C\x04\x48")                   # movzx ebx, byte [esp+eax+0x48]
+    emit(b"\x3B\xDE"); jump(0x75, "next")            # cmp ebx, esi ; jne
+    emit(b"\x8B\xDA\xC1\xEB\x03")                   # ebx = posição / 8
+    emit(b"\x83\xFB\x03"); jump(0x7E, "ok")          # cmp ebx, 3 ; jle
+    emit(b"\xBB\x03\x00\x00\x00")                   # mov ebx, 3
+    mark("ok")
+    emit(b"\x83\xC3\x11")                           # pote novo + 0x10 (marca)
+    emit(b"\x88\x5C\x04\x48")                       # mov [esp+eax+0x48], bl
+    emit(b"\x42")                                   # inc edx
+    mark("next")
+    emit(b"\x47"); jump(0xEB, "k")                   # inc edi ; jmp
+    mark("k_end")
+    emit(b"\x46\x83\xFE\x04"); jump(0x7E, "pot")     # inc esi ; cmp esi, 4 ; jle
+    emit(b"\x33\xFF")                               # xor edi, edi
+    mark("strip")
+    emit(b"\x3B\xF9"); jump(0x7D, "done")            # cmp edi, ecx ; jge
+    emit(b"\x8A\x5C\x3C\x48")                       # mov bl, [esp+edi+0x48]
+    emit(b"\x80\xFB\x10"); jump(0x72, "skip")        # cmp bl, 0x10 ; jb
+    emit(b"\x80\xEB\x10\x88\x5C\x3C\x48")           # tira a marca
+    mark("skip")
+    emit(b"\x47"); jump(0xEB, "strip")               # inc edi ; jmp
+    mark("done")
+    emit(b"\x5D\x5F\x5E\x5B")                       # pop ebp, edi, esi, ebx
+    for at, label in fixups:
+        rel = labels[label] - (at + 1)
+        if not -128 <= rel <= 127:
+            raise ValueError("desvio dos potes: salto longe demais")
+        code[at] = rel & 0xFF
     a = Asm(POTS_STUB)
-    a.raw(b"\x0F\xB7\x4C\x24\x30")             # movzx ecx, word [esp+0x30]
-    a.raw(b"\x33\xC0\x33\xD2")                 # xor eax, eax ; xor edx, edx
-    count = len(a.code)
-    a.raw(b"\x3B\xC1\x7D\x0B")                 # cmp eax, ecx ; jge +11
-    a.raw(b"\x80\x7C\x04\x38\x01\x75\x01\x42") # cmp byte [esp+eax+0x38], 1 ; jne +1 ; inc edx
-    a.raw(b"\x40\xEB\x00")                     # inc eax ; jmp count
-    a.code[-1] = (count - len(a.code)) & 0xFF
-    a.raw(b"\xB8\x04\x00\x00\x00")             # mov eax, 4
-    demote = len(a.code)
-    a.raw(b"\x83\xFA\x08\x7E\x14")             # cmp edx, 8 ; jle done
-    a.raw(b"\x3B\xC1\x7D\x10")                 # cmp eax, ecx ; jge done
-    a.raw(b"\x80\x7C\x04\x38\x01\x75\x06")     # cmp byte [esp+eax+0x38], 1 ; jne +6
-    a.raw(b"\xC6\x44\x04\x38\x02\x4A")         # mov byte [esp+eax+0x38], 2 ; dec edx
-    a.raw(b"\x40\xEB\x00")                     # inc eax ; jmp demote
-    a.code[-1] = (demote - len(a.code)) & 0xFF
+    a.raw(bytes(code))
     a.push(-1).push(-1).push(-1)               # instruções substituídas
     a.jmp(POTS_BACK)
     return bytes(a.code)
