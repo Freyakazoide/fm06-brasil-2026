@@ -10,9 +10,13 @@ O lang_db tem no início um índice com posições absolutas das seções, entã
 tamanho do arquivo não pode mudar: o texto novo tem de caber no antigo e é
 completado com espaços no fim.
 
-Três códigos que só a Sul-Americana usava (e que ela deixa de usar) ou que
-nenhuma competição usa direto passam a ter nomes próprios:
-0x19 "Pré-Libertadores", 0x1A "Oitavas de Final", 0x1D "Terceira Fase".
+Só o texto muda. O código não pode ser trocado no fm.exe: ele também é o
+identificador da rodada. Ex.: a Libertadores manda os vencedores da rodada 0x1C
+(Fase Preliminar) para a Fase de Grupos com 0x00B45500(0x1C, ...) em
+0x00C07B35; com a rodada renomeada para 0x19 ninguém se classificou, a fase de
+grupos nasceu com 26 clubes e o jogo caiu em 1/3/2026 (teste). Como os códigos
+valem para todas as competições, um nome só da Libertadores (Pré-Libertadores,
+Oitavas de Final) exige trocar o código em todas as referências da rodada.
 """
 
 from __future__ import annotations
@@ -30,9 +34,6 @@ RENAMES: dict[int, tuple[str | None, str | None, str | None]] = {
     0x12: ("Semifinal", "Semifinal", "Semifinais"),
     0x13: ("Disputa do 3º Lugar", "3º Lugar", "Disputa 3º Lugar"),
     0x17: ("Semifinal do Playoff", "Semifinal Pl.", "Semifinais dos Playoffs"),
-    0x19: ("Pré-Libertadores", "Pré-Liber.", "Pré-Libertadores"),
-    0x1A: ("Oitavas de Final", "Oitavas", "Oitavas de Final"),
-    0x1D: ("Terceira Fase", "3ª Fase", "Terceira Fase"),
     0x24: ("Disputa do 3º Lugar", "3º Lugar", "Disputa 3º Lugar"),
     0x26: ("Semifinal Menor", "Semifinal Menor", "Semifinais Menores"),
     0x27: ("Semifinal Maior", "Semifinal Maior", "Semifinais Maiores"),

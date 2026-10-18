@@ -243,22 +243,6 @@ PATCHES = {
             build=_ano_exibido_swaps,
         ),
         Patch(
-            "nomes_fases_2026",
-            "Nomes reais das fases (com os textos do lang_db de src/fm06patch/nomes_fases.py): "
-            "Libertadores Pré-Libertadores e Oitavas de Final; Sul-Americana Primeira Fase, Segunda "
-            "Fase e Oitavas de Final; Série D Primeira, Segunda e Terceira Fase.",
-            (
-                _imm8(0x807A0F, b"\x6A", 0x1C, 0x19),   # Libertadores: Fase Preliminar -> Pré-Libertadores
-                _imm8(0x807EBE, b"\x6A", 0x07, 0x1A),   # Libertadores: 2ª Eliminatória -> Oitavas de Final
-                _imm8(0x807408, b"\x6A", 0x19, 0x5F),   # Sul-Americana: 1ª Elim. Preliminar -> Primeira Fase
-                _imm8(0x807638, b"\x6A", 0x1A, 0x60),   # Sul-Americana: 2ª Elim. Preliminar -> Segunda Fase
-                _imm8(0x807698, b"\x6A", 0x06, 0x1A),   # Sul-Americana: 1ª Eliminatória -> Oitavas de Final
-                _imm8(0x7BFDEA, b"\x6A", 0x49, 0x5F),   # Série D: Fase de Grupos -> Primeira Fase
-                _imm8(0x7C019C, b"\x6A", 0x07, 0x60),   # Série D: 2ª Eliminatória -> Segunda Fase
-                _imm8(0x7C0255, b"\x6A", 0x08, 0x1D),   # Série D: 3ª Eliminatória -> Terceira Fase
-            ),
-        ),
-        Patch(
             "copa_do_brasil_2026",
             "Copa do Brasil em duas fases: 48 clubes sem a Série A (11/3 e 18/3); depois os 12 "
             "classificados + os 20 da Série A da 5ª fase à final (22/4, 1/8, 26/8, 1/11, 6/12). "

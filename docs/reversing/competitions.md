@@ -234,3 +234,10 @@ textos no `lang_db.dat` (tabela de 167 registros que começa em "Repetição";
 ver `src/fm06patch/nomes_fases.py`). O índice do `lang_db` guarda posições
 absolutas, então os textos novos ocupam o mesmo tamanho (completados com
 espaços).
+
+O código do nome também identifica a rodada: as ações de classificação
+apontam para ele (Libertadores: `0x00B45500(0x1C, 0, {…, 0x49, -1})` =
+vencedores da rodada 0x1C vão para a fase 0x49). Trocar só o código no
+`B43720` deixou a fase de grupos sem os 6 da Pré-Libertadores (26 clubes) e o
+jogo caiu ao montar os jogos (`0x00B07E4A`, 1/3/2026). Por isso só os textos
+mudam.
