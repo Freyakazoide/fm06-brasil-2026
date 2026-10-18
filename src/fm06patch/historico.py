@@ -18,8 +18,9 @@ O campeão anterior de cada competição (competição+0x1C, usado pela Libertad
 para o campeão da Libertadores e o da Copa do Brasil) é o registro de ano mais
 alto (0x00AFD370). Os campeões reais de 2025 entram como o ano 2005 do motor
 (ano exibido + 20). Sem inserir registros (o arquivo fica do mesmo tamanho):
-Libertadores e Copa do Brasil já têm 2005; Sul-Americana e Série A reaproveitam
-o registro mais antigo.
+Libertadores e Copa do Brasil já têm 2005; a Série A reaproveita o registro
+mais antigo. A Sul-Americana 2005 é jogada pelo próprio jogo antes do primeiro
+dia do jogador (ver CHAMPIONS_2025).
 """
 
 from __future__ import annotations
@@ -34,7 +35,9 @@ LAST_YEAR = 2005                  # 2025 na tela
 # competição: (campeão, vice) pelo UID do server_teams (convenção do repositório)
 CHAMPIONS_2025 = {
     LIBERTADORES: (321, 328),     # Flamengo x Palmeiras
-    SUL_AMERICANA: (89, 312),     # Lanús x Atlético Mineiro
+    # Sul-Americana fica de fora: a de 2005 do motor (agosto a novembro) é jogada entre o
+    # início do New Game (julho de 2005) e o primeiro dia do jogador, e o campeão simulado
+    # entra no histórico; gravar o Lanús deixava dois campeões de 2025 (teste).
     COPA_DO_BRASIL: (317, 338),   # Corinthians x Vasco
     SERIE_A: (321, 328),          # Flamengo campeão, Palmeiras vice (classificação 2025)
 }

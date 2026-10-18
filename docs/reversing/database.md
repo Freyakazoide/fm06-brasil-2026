@@ -14,6 +14,7 @@ O campeão anterior de cada competição (competição+0x1C, lido pela Libertado
 como `[+0x1C]+0x24`) é o registro de ano mais alto (`0x00AFD370`).
 `src/fm06patch/historico.py` grava os campeões reais de 2025 como ano 2005 do
 motor sem mudar o tamanho do arquivo: Libertadores e Copa do Brasil já têm
-2005; Sul-Americana (2002) e Série A (1971) reaproveitam o registro mais antigo.
-A Sul-Americana 2005 do motor ainda é jogada depois do New Game (julho de
-2005), e o resultado simulado substitui o Lanús como campeão anterior.
+2005; a Série A reaproveita o registro mais antigo (1971). A Sul-Americana não
+é gravada: a de 2005 do motor é jogada entre o início do New Game (julho de
+2005) e o primeiro dia do jogador, e com o Lanús gravado o histórico mostrava
+dois campeões de 2025.
