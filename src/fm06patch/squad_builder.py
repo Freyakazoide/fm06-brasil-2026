@@ -123,6 +123,7 @@ class Target:
     ca: int
     pa: int
     highlights: dict[str, int] = field(default_factory=dict)
+    contract: dict = field(default_factory=dict)   # inicio, fim (AAAA-MM-DD), numero, salario_mensal_brl
 
     @property
     def display_name(self) -> str:
@@ -225,6 +226,8 @@ def build(targets: list[Target], hosts: list[dict], year_shift: int = -20):
             "attributes": estimate_attributes(target),
             "positions": positions(target),
         }
+        if target.contract:
+            entry["contract"] = target.contract
         donor = NATIONALITY_DONORS.get(target.nationality)
         if donor:
             entry["nationality_like"] = donor

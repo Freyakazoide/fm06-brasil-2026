@@ -27,6 +27,7 @@ import hashlib
 import json
 import math
 import sys
+import unicodedata
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -130,15 +131,57 @@ def estimate_salary(value, serie: str, youth: bool) -> int:
     return int(round(max(floor, salary), -2))
 
 
+PARTICLES = {"de", "da", "do", "dos", "das", "del", "della", "la", "las", "los", "van", "von", "di", "du", "le"}
+SUFFIXES = {"filho", "júnior", "junior", "jr", "jr.", "neto", "sobrinho", "segundo"}
+
+
+def _plain(text: str) -> str:
+    return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
+
+
+def _surname(parts: list[str]) -> str:
+    """Último sobrenome, com partícula (de Arrascaeta, de la Cruz) e sufixo (Silva Filho)."""
+    end = len(parts)
+    start = end - 1
+    if parts[start].lower() in SUFFIXES and start > 1:
+        start -= 1
+    while start > 1 and parts[start - 1].lower() in PARTICLES:
+        start -= 1
+    return " ".join(parts[start:end])
+
+
 def _names(player: dict) -> tuple[str, str, str]:
-    """(nome comum, primeiro nome, sobrenome)."""
+    """(nome comum, primeiro nome, sobrenome). Sem apelido no Sofascore, o nome curto vem do
+    endereço do jogador (fabio-ferreira -> Fábio Ferreira) ou é primeiro nome + último
+    sobrenome (Renan Peixoto Nepomuceno -> Renan Nepomuceno), como o FM mostra."""
     full = (player.get("name") or "").replace('"', "").strip()      # aspas quebram o .lnc
     short = (player.get("shortName") or "").replace('"', "").strip()
     parts = full.split() or [short]
     if len(parts) == 1:
         return parts[0], parts[0], ""
-    common = short if short and "." not in short and short != full else ""
-    return common, parts[0], " ".join(parts[1:])
+    if short and "." not in short and short != full and len(short.split()) <= 2:
+        return short, parts[0], " ".join(parts[1:])
+    slug = [w for w in (player.get("slug") or "").split("-") if w]
+    if 0 < len(slug) < len(parts):                      # endereço com o nome conhecido
+        plain = [_plain(w) for w in parts]
+        picked, at = [], 0
+        for word in slug:
+            if word in plain[at:]:
+                at = plain.index(word, at) + 1
+                picked.append(parts[at - 1])
+            else:
+                picked = []
+                break
+        if picked and picked != parts and len(picked) <= 3:
+            known = " ".join(picked)
+            return known[0].upper() + known[1:], parts[0], " ".join(parts[1:])
+    surname = _surname(parts)
+    if (player.get("country") or {}).get("alpha2") in ("BR", "PT"):  # Enzo Souza, não Enzo de Souza
+        words = surname.split()
+        while len(words) > 1 and words[0].lower() in {"de", "da", "do", "dos", "das"}:
+            words.pop(0)
+        surname = " ".join(words)
+    return "", parts[0], surname
 
 
 def _positions(player: dict) -> tuple[list[str], bool]:

@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import csv
 import ctypes
+import datetime as dt
 import json
 import struct
 import sys
@@ -33,6 +34,9 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from fm06patch.live_player import (  # noqa: E402
     NATIONALITY_REL,
+    decode_date,
+    encode_date,
+    shift_years,
     OBJECT_SPAN,
     SIGNATURES,
     LivePlayer,
@@ -241,6 +245,38 @@ def cmd_edit(spec_path: Path, apply: bool) -> None:
     print(f"\n{len(addresses)} de {len(uids)} jogadores achados na memória; {total} alterações"
           + (f"; {done} jogadores gravados" if apply else ""))
 
+    with_contract = [e for e in players if e.get("contract") and int(e["uid"]) in addresses]
+    if with_contract:
+        print("Lendo contratos...", flush=True)
+        by_player: dict[int, list[dict]] = {}
+        for c in contracts(handle):
+            if c["kind"] == "contrato":
+                by_player.setdefault(c["player_uid"], []).append(c)
+        factor = wage_factor()
+        changed = missing = 0
+        for entry in with_contract:
+            uid = int(entry["uid"])
+            options = by_player.get(uid, [])
+            mine = [c for c in options if c["club_uid"] == entry.get("club_uid")] or options
+            if not mine:
+                missing += 1
+                continue
+            address = mine[0]["address"]
+            raw = read_memory(handle, address, CONTRACT_SIZE)
+            writes = contract_writes(raw, entry["contract"], year_shift, factor)
+            if verbose:
+                print(f"Contrato de {entry.get('name', uid)}: {describe_contract(raw)}")
+                for offset, data, label in writes:
+                    print(f"  contrato +{offset}: {label}")
+            if not apply or not writes:
+                continue
+            backup["objects"].append({"uid": uid, "kind": "Contract", "address": address, "data": raw.hex()})
+            for offset, data, _ in writes:
+                write_memory(handle, address + offset, data)
+            changed += 1
+        print(f"Contratos: {changed} gravados, {missing} jogadores sem contrato achado"
+              + ("" if factor else " (salário não muda: falta o wage_factor no config/local.json)"))
+
     if apply and backup["objects"]:
         BACKUP_DIR.mkdir(parents=True, exist_ok=True)
         path = BACKUP_DIR / f"backup_{time.strftime('%Y%m%d_%H%M%S')}.json"
@@ -256,7 +292,7 @@ def cmd_restore(path: Path) -> None:
     handle = open_for_write(game_pid())
     for item in backup["objects"]:
         data = bytes.fromhex(item["data"])
-        before = OBJECT_SPAN[item["kind"]][0]
+        before = OBJECT_SPAN[item["kind"]][0] if item["kind"] in OBJECT_SPAN else 0   # Contract: confere a raiz
         current = read_memory(handle, item["address"], len(data))
         if not current or current[before:before + 4] != data[before:before + 4]:
             raise RuntimeError(
@@ -270,6 +306,10 @@ def cmd_restore(path: Path) -> None:
 def cmd_show(uid: int) -> None:
     handle = open_for_write(game_pid())
     show_summary("ATUAL", load_player(handle, uid, resolve(handle, [uid])[uid]))
+    for c in contracts(handle):
+        if c["player_uid"] == uid:
+            raw = read_memory(handle, c["address"], CONTRACT_SIZE)
+            print(f"Contrato ({c['kind']}, clube UID {c['club_uid']}): {describe_contract(raw)}")
 
 
 # ------------------------------------------------------------------
@@ -278,6 +318,47 @@ def cmd_show(uid: int) -> None:
 
 CONTRACT_ROOTS = {"contrato": 0x00EB3954, "empréstimo": 0x010BAAD4}
 PLAYER_SIG = struct.pack("<5I", *SIGNATURES["Player"])
+# Contrato principal (reverse/fmm/FMM_SCHEMA.md): 120 bytes; +16 salário (valor*10+2),
+# +24 início e +32 fim {u16 dia do ano base 0, u16 ano}, +49 número da camisa (0xFF = sem).
+CONTRACT_SIZE, WAGE, STARTED, EXPIRES, SQUAD_NUMBER = 120, 16, 24, 32, 49
+
+
+def wage_factor() -> float | None:
+    """Unidade do salário no contrato por R$ mensal (config/local.json "wage_factor"),
+    medida com --show de um jogador cujo salário o jogo mostra."""
+    config = ROOT / "config" / "local.json"
+    if config.exists():
+        value = json.loads(config.read_text(encoding="utf-8")).get("wage_factor")
+        return float(value) if value else None
+    return None
+
+
+def contract_writes(raw: bytes, spec: dict, year_shift: int, factor: float | None) -> list[tuple[int, bytes, str]]:
+    """(offset, bytes, rótulo) para gravar no contrato: datas reais + year_shift, sem início
+    depois do 1º dia do jogo nem fim antes dele (o jogo começa em 1/1 de 2026 + year_shift)."""
+    first_day = dt.date(2026 + year_shift, 1, 1)
+    writes = []
+    if spec.get("inicio"):
+        start = min(shift_years(dt.date.fromisoformat(spec["inicio"]), year_shift), first_day)
+        writes.append((STARTED, encode_date(start), f"início {start}"))
+    if spec.get("fim"):
+        end = shift_years(dt.date.fromisoformat(spec["fim"]), year_shift)
+        if end <= first_day:
+            end = dt.date(first_day.year, 12, 31)
+        writes.append((EXPIRES, encode_date(end), f"fim {end}"))
+    number = int(spec.get("numero") or 0)
+    if 1 <= number <= 99:
+        writes.append((SQUAD_NUMBER, bytes([number]), f"número {number}"))
+    if factor and spec.get("salario_mensal_brl"):
+        value = max(1, round(float(spec["salario_mensal_brl"]) * factor))
+        writes.append((WAGE, struct.pack("<I", value * 10 + 2), f"salário {value}"))
+    return [w for w in writes if raw[w[0]:w[0] + len(w[1])] != w[1]]
+
+
+def describe_contract(raw: bytes) -> str:
+    wage = struct.unpack_from("<I", raw, WAGE)[0]
+    return (f"salário bruto {wage // 10} (u32 {wage}), início {decode_date(raw[STARTED:STARTED + 4])}, "
+            f"fim {decode_date(raw[EXPIRES:EXPIRES + 4])}, número (byte) {raw[SQUAD_NUMBER]}")
 
 
 def u32_at(handle, address: int) -> int | None:

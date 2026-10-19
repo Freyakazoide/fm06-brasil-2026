@@ -26,6 +26,17 @@ que falta).
 
 O que foi estimado por falta de dado está na coluna `obs`.
 
+Nome: apelido do Sofascore quando há (Pedro, Danilo); se não, o nome conhecido do
+endereço do jogador (fabio-ferreira -> Fábio Ferreira); se não, primeiro nome +
+último sobrenome, como o FM mostra (Renan Peixoto Nepomuceno -> Renan Nepomuceno;
+brasileiro sem "de": Enzo Souza; com sufixo: Silva Filho).
+
+Contrato (gravado pelo injetor no contrato do clube, `reverse/fmm/FMM_SCHEMA.md`):
+início (+24) e fim (+32) com o year_shift, número da camisa (+49, byte) e, quando
+`config/local.json` tiver `"wage_factor"`, o salário (+16, valor×10+2). O fator é a
+unidade do jogo por R$ mensal: `live_player_editor.py --show <UID>` mostra o
+salário bruto de um jogador, para comparar com o que a ficha mostra.
+
 ## No jogo
 
 Cada jogador de 2026 ocupa um jogador de 2005 do mesmo clube (o jogo não cria

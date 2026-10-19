@@ -56,7 +56,12 @@ def _targets(path: Path) -> dict[str, list[tuple[Target, dict]]]:
                         first=row.get("primeiro_nome") or "", second=row.get("sobrenome") or "",
                         born=str(row["nascimento"])[:10], nationality=row.get("nacionalidade") or "Brasil",
                         roles=roles, foot=row.get("pe") or "D", height=int(row["altura"]), weight=int(row["peso"]),
-                        ca=int(row["ca"]), pa=int(row["pa"]), highlights=highlights)
+                        ca=int(row["ca"]), pa=int(row["pa"]), highlights=highlights,
+                        contract={k: v for k, v in (
+                            ("inicio", str(row.get("contrato_inicio") or "")[:10] or None),
+                            ("fim", str(row.get("contrato_fim") or "")[:10] or None),
+                            ("numero", int(row["numero"]) if str(row.get("numero") or "").isdigit() else None),
+                            ("salario_mensal_brl", row.get("salario_mensal_brl"))) if v})
         clubs[row["clube"]].append((target, row))
     return clubs
 
@@ -117,6 +122,8 @@ def main() -> None:
                      for t, _ in (senior + youth)[len(pool):]]
         text, spec, club_map, club_warnings = build([t for t, _ in chosen], pool, args.year_shift)
         lnc += text.splitlines()[1:]
+        for entry in spec["players"]:
+            entry["club_uid"] = uid                     # o contrato com este clube
         players += spec["players"]
         mapping += [{"clube": club, **m} for m in club_map]
         warnings += [f"{club}: {w}" for w in club_warnings]

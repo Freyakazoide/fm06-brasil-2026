@@ -1,0 +1,157 @@
+clube,estado,estadio,capacidade,cidade
+Athletico-PR,PR,Arena da Baixada,43000,Curitiba
+Atlético-MG,MG,Arena MRV,44892,Belo Horizonte
+Bahia,BA,Arena Fonte Nova,48902,Salvador
+Botafogo,RJ,Estádio Nilton Santos,46831,Rio de Janeiro
+Chapecoense,SC,Arena Condá,21000,Chapecó
+Corinthians,SP,Neo Química Arena,49205,Sao Paulo
+Coritiba,PR,Estádio Major Antônio Couto Pereira,40502,Curitiba
+Cruzeiro,MG,Governador Magalhães Pinto,61927,Belo Horizonte
+Flamengo,RJ,Estádio do Maracanã,78838,Rio de Janeiro
+Fluminense,RJ,Estádio do Maracanã,78838,Rio de Janeiro
+Grêmio,RS,Arena do Grêmio,60540,Porto Alegre
+Internacional,RS,Estádio Beira-Rio,50842,Porto Alegre
+Mirassol,SP,Estádio José Maria de Campos Maia,15000,Mirassol
+Palmeiras,SP,Nubank Parque,43713,Sao Paulo
+Red Bull Bragantino,SP,Estádio Nabi Abi Chedid,15010,Bragança Paulista
+Remo,PA,Mangueirão,53635,Belem
+Santos,SP,Estádio Urbano Caldeira,16080,Santos
+São Paulo,SP,MorumBIS,66795,Sao Paulo
+Vasco da Gama,RJ,Estádio São Januário,21880,Rio de Janeiro
+Vitória,BA,Estádio Manoel Barradas,34535,Salvador
+América-MG,MG,Arena Independência,23000,Belo Horizonte
+Athletic,MG,Estádio Joaquim Portugal,8000,São João del Rei
+Atlético-GO,GO,Estádio Antônio Accioly,12500,Goiânia
+Avaí,SC,Estádio da Ressacada,17800,Florianópolis
+Botafogo-SP,SP,Estádio Santa Cruz,29292,Ribeirao Preto
+Ceará,CE,Estádio Governador Plácido Castelo,63904,Fortaleza
+CRB,AL,Estádio Rei Pelé,20800,Maceio
+Criciúma,SC,Estádio Heriberto Hülse,19225,Criciúma
+Cuiabá,MT,Arena Pantanal,42968,Cuiabá
+Fortaleza,CE,Estádio Governador Plácido Castelo,63904,Fortaleza
+Goiás,GO,Estádio da Serrinha,14450,Goiânia
+Juventude,RS,Estádio Alfredo Jaconi,19924,Caxias do Sul
+Londrina,PR,Estádio Jacy Scaff,36056,Londrina
+Náutico,PE,Estádio dos Aflitos,22856,Recife
+Novorizontino,SP,Estádio Dr. Jorge Ismael de Biasi,14096,Novo Horizonte
+Operário-PR,PR,Estádio Germano Krüger,10632,Ponta Grossa
+Ponte Preta,SP,Moisés Lucarelli,19728,Campinas
+São Bernardo,SP,Estádio Primeiro de Maio,15759,Sao Bernardo do Campo
+Sport,PE,Ilha do Retiro,27500,Recife
+Vila Nova,GO,Estádio Onésio Brasileiro Alvarenga,11788,Goiânia
+Amazonas,AM,Arena da Amazônia,44500,Manaus
+Anápolis,GO,Estádio Jonas Duarte,20000,Anápolis
+Barra,SC,Estadio Camilo Mussi,1760,Itajai
+Botafogo-PB,PB,Estádio José Américo de Almeida Filho,25770,João Pessoa
+Brusque,SC,Arena Simon,5000,Brusque
+Caxias,RS,Estádio Centenário,22132,Caxias do Sul
+Confiança,SE,Estádio Lourival Baptista,15575,"Aracaju, Sergipe"
+Ferroviária,SP,Fonte Luminosa,25000,Araraquara
+Figueirense,SC,Orlando Scarpelli,19584,Florianópolis
+Floresta,CE,Estádio Domingão,10500,Horizonte
+Guarani,SP,Estádio Brinco de Ouro da Princesa,20580,Campinas
+Inter de Limeira,SP,Estádio Major José Levy Sobrinho,18000,Limeira
+Itabaiana,SE,Estádio Etelvino Mendonça,11000,Itabaiana
+Ituano,SP,Estádio Municipal Dr. Novelli Junior,18500,Itu
+Maranhão,MA,Estádio Governador João Castelo,40000,São Luís
+Maringá,PR,Estádio Willie Davids,16226,Maringa
+Paysandu,PA,Estádio Banpará Curuzu,16200,Belem
+Santa Cruz,PE,Estádio do Arruda,60044,Recife
+Volta Redonda,RJ,Estádio Raulino de Oliveira,18230,Volta Redonda
+Ypiranga,RS,Colosso da Lagoa,22000,Erechim
+Galvez,Acre,Estádio Antônio Aquino Lopes (Florestão),10000,Rio Branco
+Humaitá,Acre,Arena da Floresta,13700,Rio Branco
+Independência,Acre,Arena da Floresta,13700,Rio Branco
+ASA,Alagoas,Fumeirão,17000,Arapiraca
+CSE,Alagoas,Estádio Juca Sampaio,8000,Palmeira dos Índios
+Oratório,Amapá,Estádio Zerão,13680,Macapá
+Trem,Amapá,Estádio Zerão,13680,Macapá
+Manaus,Amazonas,Arena da Amazônia,44500,Manaus
+Nacional,Amazonas,Estádio Jacques da Luz,3300,Campo Grande
+Atlético de Alagoinhas,Bahia,Estádio Municipal Antônio Carneiro,16000,Alagoinhas
+Jacuipense,Bahia,Estadio Eliel Martins,5000,Salvador
+Juazeirense,Bahia,Estádio Adauto Moraes,8000,Juazeiro
+Porto,Bahia,Estádio Agnaldo Bento,5000,Porto Seguro
+Atlético Cearense,Ceará,Estadio Antonio Cruz,5000,Fortaleza
+Ferroviário,Ceará,Estádio Presidente Vargas,20600,Fortaleza
+Maracanã,Ceará,Estádio Prefeito Almir Dutra,10000,Maracanaú
+Tirol,Ceará,,,
+Brasiliense,Distrito Federal,Estádio Elmo Serejo Farias,27000,Taguatinga
+Capital,Distrito Federal,Arena BRB Mané Garrincha,72788,Brasilia
+Ceilândia,Distrito Federal,Estádio Maria de Lourdes Abadia,5000,Ceilândia
+Gama,Distrito Federal,Estádio Valmir Campelo Bezerra,20310,Gama
+Real Noroeste,Espírito Santo,,,
+Rio Branco-ES,Espírito Santo,Estádio Salvador Costa,3000,Vitória
+Vitória-ES,Espírito Santo,Estádio Salvador Costa,3000,Vitória
+ABECAT,Goiás,Estádio Luiz Benedito,1000,Ouvidor
+Aparecidense,Goiás,Annibal Batista de Toledo,6645,Aparecida de Goiania
+CRAC,Goiás,Estádio Genervino da Fonseca,8500,Catalão
+Goiatuba,Goiás,Estádio Divino Garcia Rosa,15000,Goiatuba
+Inhumas,Goiás,Zico Brandão,,Inhumas
+IAPE,Maranhão,Estádio Municipal Nhozinho Santos,12891,São Luís
+Imperatriz,Maranhão,Estádio Frei Epifânio D'Abadia,12000,Imperatriz
+Moto Club,Maranhão,Estádio Municipal Nhozinho Santos,12891,São Luís
+Sampaio Corrêa,Maranhão,Estádio Governador João Castelo,40000,São Luís
+Luverdense,Mato Grosso,Estádio Municipal Passo das Emas,10000,Lucas do Rio Verde
+Mixto,Mato Grosso,Arena Pantanal,42968,Cuiabá
+Operário VG,Mato Grosso,Estadio Governador Jose Fragelli,,Cuiabá
+Primavera,Mato Grosso,Estadio Municipal Antonio Santo Renosto,4000,Mato Grosso do Sul
+União Rondonópolis,Mato Grosso,Estádio Engenheiro Luthero Lopes,19000,Rondonópolis
+Ivinhema,Mato Grosso do Sul,Estádio Luiz Saraiva Vieira,5000,Ivinhema
+Operário-MS,Mato Grosso do Sul,Estádio Morenão,3300,Campo Grande
+Betim,Minas Gerais,Arena Urbsan,1834,Betim
+Democrata GV,Minas Gerais,Estádio José Mammoud Abbas,8678,Governador Valadares
+Pouso Alegre,Minas Gerais,Estádio Manduzão,26000,Pouso Alegre
+Tombense,Minas Gerais,Estádio Antônio Guimarães de Almeida,6555,Tombos
+Uberlândia,Minas Gerais,Parque do Sabiá,53500,Uberlandia
+Águia de Marabá,Pará,Estádio Municipal Zinho de Oliveira,5000,Marabá
+Tuna Luso,Pará,Estádio Francisco Vasques,5000,Belem
+Serra Branca,Paraíba,O Amigão,30000,Campina Grande
+Sousa,Paraíba,Estádio Antônio Mariz,12000,Sousa
+Treze,Paraíba,Estadio Presidente Vargas,21000,Campina Grande
+Azuriz,Paraná,Estádio Os Pioneiros,1500,Pato Branco
+FC Cascavel,Paraná,Estádio Olímpico Regional,25000,Cascavel
+Cianorte,Paraná,Estádio Olímpico Albino Turbay,4000,Cianorte
+PSTC/São Joseense,Paraná,Estádio do Pinhão,4047,Sao Jose dos Pinhais
+Central,Pernambuco,Estádio Luiz José de Lacerda,19478,Caruaru
+Decisão Goiana,Pernambuco,Estádio Municipal Arthur Tavares de Melo,4000,Bonito
+Maguary,Pernambuco,Estádio Municipal Arthur Tavares de Melo,4000,Bonito
+Retrô,Pernambuco,Arena de Pernambuco,46154,São Lourenço da Mata
+Altos,Piauí,Estadio Municipal Felipe Raulino,5000,Altos
+Fluminense-PI,Piauí,Governador Alberto Tavares Silva,50000,Teresina
+Parnahyba,Piauí,Estádio Pedro Alelaf,4700,Parnaíba
+Piauí,Piauí,Lindolfo Monteiro,,Teresina
+América-RJ,Rio de Janeiro,Estádio Giulite Coutinho,13544,Mesquita
+Madureira,Rio de Janeiro,Estádio Conselheiro Galvão,10000,Rio de Janeiro
+Maricá,Rio de Janeiro,Estadio Municipal Alziro de Almeida Alzirao,900,Itaborai
+Nova Iguaçu,Rio de Janeiro,Estádio Jânio Moraes,5000,Nova Iguaçu
+Portuguesa-RJ,Rio de Janeiro,Estádio Luso Brasileiro,20113,Rio de Janeiro
+Sampaio Corrêa-RJ,Rio de Janeiro,Estádio Lourival Gomes de Almeida,4000,Saquarema
+América-RN,Rio Grande do Norte,Estadio Arena das Dunas,31375,Natal
+Laguna,Rio Grande do Norte,Frasqueirão,18017,Natal
+ABC,Rio Grande do Norte,Frasqueirão,18017,Natal
+Brasil de Pelotas,Rio Grande do Sul,Estádio Bento Freitas,18000,Pelotas
+Guarany de Bagé,Rio Grande do Sul,Estádio Estrela d'Alva,10000,Bage
+São José-RS,Rio Grande do Sul,Estádio Passo d'Areia,8000,Porto Alegre
+São Luiz,Rio Grande do Sul,Estádio 19 de Outubro,5300,Ijuí
+Gazin Porto Velho,Rondônia,Estádio Aluízio Ferreira,7000,Porto Velho
+Guaporé,Rondônia,Estádio José Ângelo Cassol,4300,Rolim de Moura
+GAS,Roraima,Estádio Flamarion Vasconcelos,4556,Boa Vista
+Monte Roraima,Roraima,Estadio Canarinho,4556,Boa Vista
+São Raimundo-RR,Roraima,Estádio Flamarion Vasconcelos,4556,Boa Vista
+Blumenau,Santa Catarina,,,
+Joinville,Santa Catarina,Arena Joinville,22400,Joinville
+Marcílio Dias,Santa Catarina,Estádio Dr. Hercílio Luz,6000,Itajai
+Santa Catarina,Santa Catarina,,,
+Água Santa,São Paulo,Distrital do Inamar,10000,Diadema
+Noroeste,São Paulo,Estádio Alfredo de Castilho,18866,Bauru
+Portuguesa,São Paulo,Estádio Doutor Oswaldo Teixeira Duarte,21004,Sao Paulo
+Velo Clube,São Paulo,Estádio Benito Agnelo Castellano,8198,Rio Claro
+XV de Piracicaba,São Paulo,Estádio Barão de Serra Negra,18799,Piracicaba
+Lagarto,Sergipe,Estádio Paulo Barreto de Menezes,8000,Lagarto
+Sergipe,Sergipe,Estádio João Hora de Oliveira,6000,"Aracaju, Sergipe"
+Araguaína,Tocantins,Estádio Leôncio de Souza Miranda,,Araguaína
+Tocantinópolis,Tocantins,Estádio João Ribeiro,10000,Tocantinópolis
+CSA,Alagoas,Estádio Rei Pelé,20800,Maceio
+Manauara,Amazonas,Estadio Manauara,,Manaus
+Iguatu,Ceará,Estádio Antônio Moreno de Mello,3300,Iguatu

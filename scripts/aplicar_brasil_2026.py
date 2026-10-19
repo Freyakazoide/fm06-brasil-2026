@@ -28,6 +28,7 @@ import argparse
 import hashlib
 import json
 import shutil
+import struct
 import sys
 from collections import Counter
 from pathlib import Path
@@ -36,8 +37,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
+from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import cores, estaduais_clubes, historico, identidade, nomes_fases, reputacao  # noqa: E402
+from fm06patch import cores, estaduais_clubes, estadios, historico, identidade, nomes_fases, reputacao  # noqa: E402
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -174,6 +176,31 @@ def main() -> None:
     identities = identidade.build(data, placements, states)
     db, painted = cores.apply(db, cores.plan(identities))
     print(f"[OK] cores de 2026 (tela do clube e uniforme da partida) em {painted} substitutos")
+    teams_by_repo = {p.team.club_uid: p.team.offset for p in placements}
+    teams_by_repo.update({e.team.club_uid: e.team.offset for e in states})
+    sheet = next((x for x in (DATA_DIR / "clubes" / "estadios_2026.xlsx", DATA_DIR / "clubes" / "estadios_2026_modelo.xlsx")
+                  if x.exists()), None)
+    wanted, sheet_reputation = estadios.wanted_from_sheets(identities, teams_by_repo,
+                                                           DATA_DIR / "clubes" / "estadios_sofascore.csv", sheet)
+    ours = {i.repo_uid for i in identities}
+    others = [t.offset for t in find_brazil_teams(data) if t.club_uid not in ours]
+    keep = [teams_by_repo[i.repo_uid] for i in identities
+            if i.repo_uid in teams_by_repo and teams_by_repo[i.repo_uid] not in {w.team_offset for w in wanted}]
+    venues = estadios.plan(data, original_lang_db(lang) or b"", wanted, others, keep)
+    db = estadios.apply(db, venues)
+    print(f"[OK] estádios de 2026: {len(venues.stadium_names)} nomes, {len(venues.capacity)} capacidades, "
+          f"{len(venues.team_stadium)} clubes trocam de estádio, {len(venues.stadium_city)} cidades")
+    for line in venues.report:
+        if "sem estádio" in line:
+            print("[AVISO]", line)
+    by_uid = {i.uid: i.repo_uid for i in identities}
+    buffer = bytearray(db)
+    for uid, value in sheet_reputation.items():                 # reputação da planilha de estádios
+        if by_uid.get(uid) in teams_by_repo:
+            struct.pack_into("<H", buffer, teams_by_repo[by_uid[uid]] + 3, max(1, min(10000, value)))
+    db = bytes(buffer)
+    if sheet_reputation:
+        print(f"[OK] reputação da planilha em {len(sheet_reputation)} clubes")
     db, cleared = historico.clear_brazil_continental(db)
     if cleared:
         print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))
@@ -187,7 +214,8 @@ def main() -> None:
         print(f"[OK] gravado {lang} (nomes das fases: {len(renamed)} trocados)")
 
     lnc.parent.mkdir(parents=True, exist_ok=True)
-    lnc.write_bytes(lnc_text().encode("utf-16"))
+    lnc.write_bytes((lnc_text() + "\r\n".join(estadios.lnc_lines(venues)) + "\r\n").encode("utf-16"))
+    (DATA_DIR / "clubes" / "estadios_2026_relatorio.txt").write_text("\n".join(venues.report) + "\n", encoding="utf-8")
     print(f"[OK] gravado {lnc}")
 
     write_report(DATA_DIR / "mapa_2026.csv", placements)

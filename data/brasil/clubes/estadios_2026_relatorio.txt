@@ -1,0 +1,138 @@
+Bahia: Arena Fonte Nova (50052), cidade Salvador (BA)
+Vitória: Barradão (30793), cidade Salvador (BA)
+Atlético-MG: Arena MRV (44892), cidade Belo Horizonte (MG)
+Cruzeiro: Mineirão (66658), cidade Belo Horizonte (MG); estádio trocado: Cruzeiro
+Remo: Mangueirão (53645), cidade Belém (PA); estádio trocado: Remo
+Athletico-PR: Ligga Arena (42372), cidade Curitiba (PR)
+Coritiba: Couto Pereira (40502), cidade Curitiba (PR)
+Botafogo: Nilton Santos (44661), cidade Rio de Janeiro (RJ)
+Flamengo, Fluminense: Maracanã (78838), cidade Rio de Janeiro (RJ)
+Vasco da Gama: São Januário (24584), cidade Rio de Janeiro (RJ); estádio trocado: Vasco da Gama
+Grêmio: Arena do Grêmio (60540), cidade Porto Alegre (RS)
+Internacional: Beira-Rio (49055), cidade Porto Alegre (RS); estádio trocado: Internacional
+Chapecoense: Arena Condá (20089), cidade Chapecó (SC)
+Corinthians: Neo Química Arena (47252), cidade São Paulo (SP); estádio trocado: Corinthians
+Mirassol: José Maria de Campos Maia (14534), cidade Mirassol (SP)
+Palmeiras: Allianz Parque (43713), cidade São Paulo (SP); estádio trocado: Palmeiras
+Red Bull Bragantino: Cícero de Souza Marques (12000), cidade Bragança Paulista (SP)
+Santos: Vila Belmiro (16068), cidade Santos (SP); estádio trocado: Santos
+São Paulo: MorumBIS (66671), cidade São Paulo (SP)
+CRB, CSA: Rei Pelé (17126), cidade Maceió (AL); estádio trocado: CRB
+Ceará, Fortaleza: Castelão (57876), cidade Fortaleza (CE); estádio trocado: Fortaleza
+Atlético-GO: Antônio Accioly (12500), cidade Goiânia (GO)
+Goiás: Hailé Pinheiro (Serrinha) (14450), cidade Goiânia (GO); estádio trocado: Goiás
+Vila Nova: Onésio Brasileiro Alvarenga (OBA) (6500), cidade Goiânia (GO); estádio trocado: Vila Nova
+América-MG: Independência (23018), cidade Belo Horizonte (MG)
+Athletic: Arena Sicredi (6000), cidade São João del-Rei (MG) (nova)
+Cuiabá, Mixto: Arena Pantanal (44000), cidade Cuiabá (MT); estádio trocado: Mixto
+Náutico: Aflitos (22856), cidade Recife (PE)
+Sport: Ilha do Retiro (32983), cidade Recife (PE)
+Londrina: Estádio do Café (31000), cidade Londrina (PR)
+Operário-PR: Germano Krüger (10632), cidade Ponta Grossa (PR)
+Juventude: Alfredo Jaconi (19924), cidade Caxias do Sul (RS) (nova)
+Avaí: Ressacada (17826), cidade Florianópolis (SC)
+Criciúma: Heriberto Hülse (19225), cidade Criciúma (SC)
+Botafogo-SP: Santa Cruz (29292), cidade Ribeirão Preto (SP) (nova)
+Novorizontino: Jorge Ismael de Biasi (16000), cidade Novo Horizonte (SP)
+Ponte Preta: Moisés Lucarelli (19728), cidade Campinas (SP); estádio trocado: Ponte Preta
+São Bernardo: Primeiro de Maio (15159), cidade São Bernardo do Campo (SP)
+Ferroviária: Fonte Luminosa (25000), cidade Araraquara (SP)
+Inter de Limeira: Estádio Major José Levy Sobrinho (18000), cidade Limeira (SP)
+Ituano: Estádio Municipal Dr. Novelli Junior (18500), cidade Itu (SP)
+Amazonas, Manaus: Arena da Amazônia (44500), cidade Manaus (AM); estádio trocado: Amazonas
+Floresta: Estádio Domingão (10500), cidade Fortaleza (CE)
+Anápolis: Estádio Jonas Duarte (20000), cidade Anápolis (GO); estádio trocado: Anápolis
+Maranhão, Sampaio Corrêa: Estádio Governador João Castelo (40000), cidade São Luís (MA) (nova)
+Paysandu: Estádio Banpará Curuzu (16200), cidade Belém (PA); estádio trocado: Paysandu
+Botafogo-PB: Estádio José Américo de Almeida Filho (25770), cidade João Pessoa (PB); estádio trocado: Botafogo-PB
+Santa Cruz: Estádio do Arruda (60044), cidade Recife (PE)
+Maringá: Estádio Willie Davids (16226), cidade Maringá (PR)
+Volta Redonda: Estádio Raulino de Oliveira (18230), cidade Volta Redonda (RJ)
+Caxias: Estádio Centenário (22132), cidade Caxias do Sul (RS) (nova)
+Ypiranga: Colosso da Lagoa (22000), cidade Erechim (RS)
+Barra: Estadio Camilo Mussi (1760), cidade Balneário Camboriú (SC) (nova)
+Brusque: Arena Simon (5000), cidade Brusque (SC); estádio trocado: Brusque
+Figueirense: Orlando Scarpelli (19584), cidade Florianópolis (SC)
+Confiança: Estádio Lourival Baptista (15575), cidade Aracaju (SE)
+Itabaiana: Estádio Etelvino Mendonça (11000), cidade Itabaiana (SE); estádio trocado: Itabaiana
+Guarani: Estádio Brinco de Ouro da Princesa (20580), cidade Campinas (SP); estádio trocado: Guarani
+América-RJ: Estádio Giulite Coutinho (13544), cidade Mesquita (RJ) (nova)
+Atlético Cearense: Estadio Antonio Cruz (5000), cidade Fortaleza (CE)
+Brasil de Pelotas: Estádio Bento Freitas (18000), cidade Pelotas (RS)
+Central: Estádio Luiz José de Lacerda (19478), cidade Caruaru (PE)
+XV de Piracicaba: Estádio Barão de Serra Negra (18799), cidade Piracicaba (SP)
+Água Santa: Distrital do Inamar (10000), cidade Diadema (SP)
+Galvez: Estádio Antônio Aquino Lopes (Florestão) (10000), cidade Rio Branco (AC)
+Humaitá, Independência: Arena da Floresta (13700), cidade Porto Acre (AC) (nova); estádio trocado: Independência
+ASA: Fumeirão (17000), cidade Arapiraca (AL)
+CSE: Estádio Juca Sampaio (8000), cidade Palmeira dos Índios (AL)
+Manauara: Estadio Manauara, cidade Horizonte (AM) (nova)
+Nacional: Estádio Jacques da Luz (3300), cidade Campo Grande (AM) (nova); estádio trocado: Nacional
+Oratório, Trem: Estádio Zerão (13680), cidade Macapá (AP) (nova); estádio trocado: Oratório, Trem
+Atlético de Alagoinhas: Estádio Municipal Antônio Carneiro (16000), cidade Alagoinhas (BA)
+Jacuipense: Estadio Eliel Martins (5000), cidade Riachão do Jacuípe (BA)
+Juazeirense: Estádio Adauto Moraes (8000), cidade Juazeiro (BA)
+Porto: Estádio Agnaldo Bento (5000), cidade Porto Seguro (BA) (nova)
+Ferroviário, Treze: Estádio Presidente Vargas (20600), cidade Fortaleza (CE); estádio trocado: Treze
+Iguatu: Estádio Antônio Moreno de Mello (3300), cidade Bataguassu (CE) (nova)
+Maracanã: Estádio Prefeito Almir Dutra (10000), cidade Maracanaú (CE)
+Brasiliense: Estádio Elmo Serejo Farias (27000), cidade Taguatinga (DF) (nova)
+Capital: Arena BRB Mané Garrincha (72788), cidade Brasilia (DF) (nova)
+Ceilândia: Estádio Maria de Lourdes Abadia (5000), cidade Ceilândia (DF) (nova)
+Gama: Estádio Valmir Campelo Bezerra (20310), cidade Gama (DF) (nova); estádio trocado: Gama
+Rio Branco-ES, Vitória-ES: Estádio Salvador Costa (3000), cidade Vitória (ES); estádio trocado: Rio Branco-ES
+ABECAT: Estádio Luiz Benedito (1000), cidade Ouvidor (GO) (nova)
+Aparecidense: Annibal Batista de Toledo (6645), cidade Aparecida de Goiânia (GO) (nova)
+CRAC: Estádio Genervino da Fonseca (8500), cidade Catalão (GO)
+Goiatuba: Estádio Divino Garcia Rosa (15000), cidade Goiatuba (GO)
+Inhumas: Zico Brandão, cidade Inhumas (GO)
+IAPE, Moto Club: Estádio Municipal Nhozinho Santos (12891), cidade São Luís (MA) (nova); estádio trocado: Moto Club
+Imperatriz: Estádio Frei Epifânio D'Abadia (12000), cidade Imperatriz (MA)
+Betim: Arena Urbsan (1834), cidade Betim (MG)
+Democrata GV: Estádio José Mammoud Abbas (8678), cidade Governador Valadares (MG)
+Pouso Alegre: Estádio Manduzão (26000), cidade Pouso Alegre (MG)
+Tombense: Estádio Antônio Guimarães de Almeida (6555), cidade Tombos (MG)
+Uberlândia: Parque do Sabiá (53500), cidade Uberlândia (MG)
+Ivinhema: Estádio Luiz Saraiva Vieira (5000), cidade Ivinhema (MS)
+Operário-MS: Estádio Morenão (3300), cidade Campo Grande (MS); estádio trocado: Operário-MS
+Luverdense: Estádio Municipal Passo das Emas (10000), cidade Lucas do Rio Verde (MT)
+Operário VG: Estadio Governador Jose Fragelli, cidade Cuiabá (MT); estádio trocado: Operário VG
+Primavera: Estadio Municipal Antonio Santo Renosto (4000), cidade Primavera do Leste (MT); estádio trocado: Primavera
+União Rondonópolis: Estádio Engenheiro Luthero Lopes (19000), cidade Rondonópolis (MT)
+Tuna Luso: Estádio Francisco Vasques (5000), cidade Belém (PA)
+Águia de Marabá: Estádio Municipal Zinho de Oliveira (5000), cidade Marabá (PA)
+Serra Branca: O Amigão (30000), cidade Campina Grande (PB)
+Sousa: Estádio Antônio Mariz (12000), cidade Sousa (PB)
+Decisão Goiana, Maguary: Estádio Municipal Arthur Tavares de Melo (4000), cidade Bonito (PE) (nova); estádio trocado: Decisão Goiana
+Retrô: Arena de Pernambuco (46154), cidade Camaragibe (PE)
+Altos: Estadio Municipal Felipe Raulino (5000), cidade Altos (PI) (nova)
+Fluminense-PI: Governador Alberto Tavares Silva (50000), cidade Teresina (PI); estádio trocado: Fluminense-PI
+Parnahyba: Estádio Pedro Alelaf (4700), cidade Parnaíba (PI)
+Piauí: Lindolfo Monteiro, cidade Teresina (PI)
+Azuriz: Estádio Os Pioneiros (1500), cidade Pato Branco (PR)
+Cianorte: Estádio Olímpico Albino Turbay (4000), cidade Cianorte (PR)
+FC Cascavel: Estádio Olímpico Regional (25000), cidade Cascavel (PR)
+PSTC/São Joseense: Estádio do Pinhão (4047), cidade Sao Jose dos Pinhais (PR) (nova)
+Madureira: Estádio Conselheiro Galvão (10000), cidade Rio de Janeiro (RJ)
+Maricá: Estadio Municipal Alziro de Almeida Alzirao (900), cidade Maricá (RJ); estádio trocado: Maricá
+Nova Iguaçu: Estádio Jânio Moraes (5000), cidade Nova Iguaçu (RJ)
+Portuguesa-RJ: Estádio Luso Brasileiro (20113), cidade Rio de Janeiro (RJ); estádio trocado: Portuguesa-RJ
+Sampaio Corrêa-RJ: Estádio Lourival Gomes de Almeida (4000), cidade Saquarema (RJ); estádio trocado: Sampaio Corrêa-RJ
+ABC, Laguna: Frasqueirão (18017), cidade Natal (RN); estádio trocado: ABC
+América-RN: Estadio Arena das Dunas (31375), cidade Natal (RN); estádio trocado: América-RN
+Gazin Porto Velho: Estádio Aluízio Ferreira (7000), cidade Porto Velho (RO); estádio trocado: Gazin Porto Velho
+Guaporé: Estádio José Ângelo Cassol (4300), cidade Rolim de Moura (RO); estádio trocado: Guaporé
+GAS, São Raimundo-RR: Estádio Flamarion Vasconcelos (4556), cidade Boa Vista (RR); estádio trocado: GAS, São Raimundo-RR
+Monte Roraima: Estadio Canarinho (4556), cidade Boa Vista (RR); estádio trocado: Monte Roraima
+Guarany de Bagé: Estádio Estrela d'Alva (10000), cidade Bagé (RS)
+São José-RS: Estádio Passo d'Areia (8000), cidade Porto Alegre (RS)
+São Luiz: Estádio 19 de Outubro (5300), cidade Ijuí (RS)
+Joinville: Arena Joinville (22400), cidade Joinville (SC)
+Marcílio Dias: Estádio Dr. Hercílio Luz (6000), cidade Itajaí (SC)
+Lagarto: Estádio Paulo Barreto de Menezes (8000), cidade Lagarto (SE)
+Sergipe: Estádio João Hora de Oliveira (6000), cidade Aracaju (SE)
+Noroeste: Estádio Alfredo de Castilho (18866), cidade Bauru (SP)
+Portuguesa: Estádio Doutor Oswaldo Teixeira Duarte (21004), cidade São Paulo (SP)
+Velo Clube: Estádio Benito Agnelo Castellano (8198), cidade Rio Claro (SP)
+Araguaína: Estádio Leôncio de Souza Miranda, cidade Araguaína (TO); estádio trocado: Araguaína
+Tocantinópolis: Estádio João Ribeiro (10000), cidade Tocantinópolis (TO)
