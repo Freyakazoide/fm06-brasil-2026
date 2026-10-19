@@ -36,7 +36,6 @@ from fm06patch.live_player import (  # noqa: E402
     OBJECT_SPAN,
     SIGNATURES,
     LivePlayer,
-    signature_needle,
 )
 from live_player_memory import (  # noqa: E402
     find_process_id,
@@ -115,12 +114,33 @@ def scan(handle, needles: dict) -> dict:
 
 
 def find_objects(handle, uids: list[int]) -> dict[int, dict[str, list[int]]]:
-    """Endereço do UID de cada objeto (Player, PData, Playing) de cada jogador."""
-    needles = {(uid, kind): signature_needle(kind, uid) for uid in uids for kind in OBJECT_SPAN}
-    hits = scan(handle, needles)
+    """Endereço do UID de cada objeto (Player, PData, Playing) de cada jogador.
+
+    Uma varredura só: procura a assinatura (20 bytes) de cada tipo e lê o UID
+    que vem logo depois, em vez de varrer a memória uma vez por jogador."""
+    wanted = set(uids)
+    signatures = {kind: struct.pack("<5I", *SIGNATURES[kind]) for kind in OBJECT_SPAN}
     found: dict[int, dict[str, list[int]]] = {uid: {kind: [] for kind in OBJECT_SPAN} for uid in uids}
-    for (uid, kind), starts in hits.items():
-        found[uid][kind] = [start + 20 for start in starts]  # assinatura tem 20 bytes
+    chunk, keep = 4 * 1024 * 1024, 24
+    for base, size in iter_regions(handle):
+        offset, tail = 0, b""
+        while offset < size:
+            data = read_memory(handle, base + offset, min(chunk, size - offset))
+            if not data:
+                break
+            blob, blob_base = tail + data, base + offset - len(tail)
+            for kind, signature in signatures.items():
+                pos = blob.find(signature)
+                while 0 <= pos <= len(blob) - 24:
+                    uid = struct.unpack_from("<I", blob, pos + 20)[0]
+                    if uid in wanted:
+                        found[uid][kind].append(blob_base + pos + 20)   # assinatura tem 20 bytes
+                    pos = blob.find(signature, pos + 1)
+            tail = blob[-keep:]
+            offset += len(data)
+    for uid in found:                                   # a mesma ocorrência pode vir no fim de um bloco e no
+        for kind in found[uid]:                         # começo do seguinte
+            found[uid][kind] = sorted(set(found[uid][kind]))
     return found
 
 
@@ -137,15 +157,20 @@ def load_player(handle, uid: int, addresses: dict[str, int]) -> LivePlayer:
 def resolve(handle, uids: list[int]) -> dict[int, dict[str, int]]:
     print(f"Procurando {len(uids)} jogador(es) na memória...", flush=True)
     found = find_objects(handle, uids)
-    result = {}
+    result, skipped = {}, []
     for uid in uids:
-        for kind, hits in found[uid].items():
-            if len(hits) != 1:
-                raise RuntimeError(
-                    f"UID {uid}: {len(hits)} objetos {kind} encontrados (esperado 1). "
-                    "O jogador está carregado nesta partida?"
-                )
+        bad = {kind: len(hits) for kind, hits in found[uid].items() if len(hits) != 1}
+        if bad:
+            message = f"UID {uid}: objetos {bad} (esperado 1 de cada). O jogador está carregado nesta partida?"
+            if len(uids) == 1:
+                raise RuntimeError(message)
+            skipped.append(message)
+            continue
         result[uid] = {kind: hits[0] for kind, hits in found[uid].items()}
+    for message in skipped[:10]:
+        print("[AVISO] pulado:", message)
+    if skipped:
+        print(f"[AVISO] {len(skipped)} jogador(es) pulado(s)")
     return result
 
 
@@ -183,16 +208,23 @@ def cmd_edit(spec_path: Path, apply: bool) -> None:
         entry["nationality_ptr"] = struct.unpack("<I", ptr)[0]
 
     backup = {"created": time.strftime("%Y-%m-%d %H:%M:%S"), "spec": str(spec_path), "objects": []}
+    verbose = len(players) <= 5                         # elenco inteiro: só o resumo
+    total = done = 0
     for entry in players:
         uid = int(entry["uid"])
+        if uid not in addresses:
+            continue
         player = load_player(handle, uid, addresses[uid])
-        show_summary(f"ANTES {entry.get('name', '')}", player)
         writes = player.plan(entry, year_shift=year_shift)
-        print(f"\n{len(writes)} alteração(ões):")
-        for w in writes:
-            print(f"  {w.obj:8} UID{w.rel:+5d}  {w.old.hex()} -> {w.new.hex()}  {w.label}")
+        total += len(writes)
+        if verbose:
+            show_summary(f"ANTES {entry.get('name', '')}", player)
+            print(f"\n{len(writes)} alteração(ões):")
+            for w in writes:
+                print(f"  {w.obj:8} UID{w.rel:+5d}  {w.old.hex()} -> {w.new.hex()}  {w.label}")
         if not apply or not writes:
             continue
+        done += 1
         for kind, (before, after) in OBJECT_SPAN.items():
             original = read_memory(handle, addresses[uid][kind] - before, before + after)
             backup["objects"].append({
@@ -202,7 +234,12 @@ def cmd_edit(spec_path: Path, apply: bool) -> None:
             })
         for w in writes:
             write_memory(handle, addresses[uid][w.obj] + w.rel, w.new)
-        show_summary("DEPOIS (lido de volta da memória)", load_player(handle, uid, addresses[uid]))
+        if verbose:
+            show_summary("DEPOIS (lido de volta da memória)", load_player(handle, uid, addresses[uid]))
+        elif done % 250 == 0:
+            print(f"  {done} jogadores gravados...", flush=True)
+    print(f"\n{len(addresses)} de {len(uids)} jogadores achados na memória; {total} alterações"
+          + (f"; {done} jogadores gravados" if apply else ""))
 
     if apply and backup["objects"]:
         BACKUP_DIR.mkdir(parents=True, exist_ok=True)
@@ -289,7 +326,7 @@ def squad_table(handle, rows: list[dict]) -> list[dict]:
     clubs = {c["player_uid"]: c["club_uid"] for c in rows}
     addresses = resolve(handle, uids)
     table = []
-    for uid in uids:
+    for uid in (u for u in uids if u in addresses):
         s = load_player(handle, uid, addresses[uid]).summary()
         positions = [n for n, v in s["attributes"].items() if v >= 15 and n in POSITION_NAMES]
         table.append({
