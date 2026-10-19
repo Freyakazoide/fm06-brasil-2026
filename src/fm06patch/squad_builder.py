@@ -92,16 +92,18 @@ POSITION_FIELDS = (
     "Wing B.L.", "Wing B.R.",
 )
 
+# Nota 15+ aparece na posição do jogador; as vizinhas ficam abaixo disso (o meia central com
+# "meia ofensivo" 16 aparecia como "MD, MA C" no lugar de volante/meia).
 ROLE_POSITIONS = {
     "GK": {"Goalkeeper": 20},
     "CB": {"Defender": 20, "Center side": 20, "Center Def.": 20},
-    "RB": {"Defender": 20, "Wing back": 18, "Right side": 20, "Right Def.": 20, "Wing B.R.": 18},
-    "LB": {"Defender": 20, "Wing back": 18, "Left side": 20, "Left Def.": 20, "Wing B.L.": 18},
-    "DM": {"Def. Mid.": 20, "Midfielder": 16, "Center side": 20, "Def. C.M.": 20, "Mid. Center": 16},
-    "CM": {"Midfielder": 20, "Att. Mid.": 16, "Center side": 20, "Mid. Center": 20, "Att. M.C.": 16},
-    "AM": {"Att. Mid.": 20, "Midfielder": 16, "Center side": 20, "Att. M.C.": 20, "Mid. Center": 16},
-    "RW": {"Att. Mid.": 20, "Midfielder": 15, "Right side": 20, "Att. M.R.": 20, "Mid. Right": 15},
-    "LW": {"Att. Mid.": 20, "Midfielder": 15, "Left side": 20, "Att. M.L.": 20, "Mid. Left": 15},
+    "RB": {"Defender": 20, "Wing back": 15, "Right side": 20, "Right Def.": 20, "Wing B.R.": 15},
+    "LB": {"Defender": 20, "Wing back": 15, "Left side": 20, "Left Def.": 20, "Wing B.L.": 15},
+    "DM": {"Def. Mid.": 20, "Midfielder": 13, "Center side": 20, "Def. C.M.": 20, "Mid. Center": 13},
+    "CM": {"Midfielder": 20, "Def. Mid.": 12, "Att. Mid.": 12, "Center side": 20, "Mid. Center": 20},
+    "AM": {"Att. Mid.": 20, "Midfielder": 13, "Center side": 20, "Att. M.C.": 20, "Mid. Center": 13},
+    "RW": {"Att. Mid.": 20, "Midfielder": 12, "Right side": 20, "Att. M.R.": 20, "Mid. Right": 13},
+    "LW": {"Att. Mid.": 20, "Midfielder": 12, "Left side": 20, "Att. M.L.": 20, "Mid. Left": 13},
     "ST": {"Attacker": 20, "Center side": 20, "Att. Center": 20},
 }
 

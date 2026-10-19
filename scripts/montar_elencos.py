@@ -28,13 +28,14 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch.squad_builder import ROLE_POSITIONS, Target, build  # noqa: E402
+from fm06patch.squad_builder import NATIONALITY_DONORS, ROLE_POSITIONS, Target, build  # noqa: E402
 
 PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 HOSTS = ROOT / "workspace" / "elencos_2005.csv"
 OUT = ROOT / "workspace" / "mods"
 NAME = "brasil_2026_jogadores"
+DONORS = OUT / "doadores.json"          # do reforcar_elencos.py: doadores carregados no jogo
 
 
 def _targets(path: Path) -> dict[str, list[tuple[Target, dict]]]:
@@ -95,6 +96,8 @@ def main() -> None:
     parser.add_argument("--hospedeiros", type=Path, default=HOSTS)
     parser.add_argument("--year-shift", type=int, default=-20)   # motor 2006 = 2026 (ano exibido + 20)
     args = parser.parse_args()
+    if DONORS.exists():
+        NATIONALITY_DONORS.update(json.loads(DONORS.read_text(encoding="utf-8")))
     clubs = _targets(PLAYERS)
     hosts = _hosts(args.hospedeiros)
     uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))}

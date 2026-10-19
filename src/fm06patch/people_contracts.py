@@ -32,14 +32,16 @@ class Contract:
     at: int          # posição do u32 índice do clube
     club: int        # índice do clube
     until: int       # ano do fim do contrato
+    others: tuple[int, ...] = ()   # outros blocos do mesmo registro (empréstimo), com multi=True
 
 
 def player_uids(people: bytes) -> set[int]:
     return {struct.unpack_from("<I", people, at + 4)[0] for at in range(T3_START, T3_END, T3_SIZE)}
 
 
-def contracts(people: bytes) -> dict[int, Contract]:
-    """UID -> contrato, só de quem tem exatamente um bloco de contrato no registro."""
+def contracts(people: bytes, multi: bool = False) -> dict[int, Contract]:
+    """UID -> contrato, só de quem tem exatamente um bloco de contrato no registro
+    (multi=True: também quem tem vários; o primeiro vale, os outros vão em others)."""
     players = player_uids(people)
     found: dict[int, Contract] = {}
     previous = 0
@@ -49,10 +51,10 @@ def contracts(people: bytes) -> dict[int, Contract]:
             continue
         blocks = [b for b in _CONTRACT.finditer(people, previous, match.start())
                   if struct.unpack("<H", b.group(3))[0] <= 365]
-        if len(blocks) == 1 and uid not in found:
+        if blocks and (len(blocks) == 1 or multi) and uid not in found:
             block = blocks[0]
             found[uid] = Contract(uid, block.start() + 1, struct.unpack("<I", block.group(1))[0],
-                                  struct.unpack("<H", block.group(4))[0])
+                                  struct.unpack("<H", block.group(4))[0], tuple(b.start() + 1 for b in blocks[1:]))
         previous = match.end()
     return found
 
@@ -68,8 +70,7 @@ def brazil_club_indexes(server: bytes) -> dict[int, int]:
         own = struct.unpack_from("<I", server, start - 4)[0] + 1
         if following - start <= 0x2000:
             index, uid = struct.unpack_from("<II", server, following - 4)
-            if index == own:
-                indexes.setdefault(uid, index)
+            indexes.setdefault(uid, index)
             continue
         at = server.find(struct.pack("<I", own), mark, start + 0x2000)
         if at > 0:
@@ -81,5 +82,46 @@ def move(people: bytes, moves: dict[int, int], found: dict[int, Contract]) -> by
     """moves: UID do jogador -> índice do clube novo."""
     out = bytearray(people)
     for uid, club in moves.items():
-        struct.pack_into("<I", out, found[uid].at, club)
+        for at in (found[uid].at,) + found[uid].others:
+            struct.pack_into("<I", out, at, club)
     return bytes(out)
+
+
+# Código da nação no people_db (byte depois do ano de nascimento, após o nome completo).
+NATION_CODES = {
+    "Argentina": 0xBB, "Bolívia": 0xBC, "Brasil": 0xBD, "Chile": 0xBE, "Colômbia": 0xBF, "Equador": 0xC0,
+    "Paraguai": 0xC1, "Peru": 0xC2, "Uruguai": 0xC3, "Venezuela": 0xC4, "Portugal": 0xA2, "Espanha": 0xAA,
+    "França": 0x8F, "Inglaterra": 0x8B, "Holanda": 0x9E, "Suécia": 0xAB, "Dinamarca": 0x8A, "Croácia": 0x87,
+    "Bulgária": 0x86, "Camarões": 0x06, "Nigéria": 0x21, "Gana": 0x10, "Senegal": 0x24,
+    "Costa do Marfim": 0x13, "Marrocos": 0x1D, "Angola": 0x01, "Guiné": 0x11, "RD Congo": 0x30,
+    "México": 0x6D, "Panamá": 0x70, "Estados Unidos": 0x78, "Moçambique": 0x1E, "Mali": 0x1A,
+}
+_NAME = re.compile(rb"[\x03-\x28]\x00\x00\x00")
+
+
+def nationalities(people: bytes) -> dict[int, list[tuple[int, int]]]:
+    """Código da nação -> [(UID, ano de nascimento)] das pessoas com nome completo no registro
+    (u32 tamanho, nome, 00 00, u16, u16 ano, u8, u32 nação; o registro termina em (índice, UID))."""
+    found: dict[int, list[tuple[int, int]]] = {}
+    for match in _NAME.finditer(people, 0, PEOPLE_END):
+        start = match.start()
+        end = start + 4 + 2 * people[start]
+        if people[end:end + 2] != b"\0\0":
+            continue
+        try:
+            name = people[start + 4:end].decode("utf-16-le")
+        except UnicodeDecodeError:
+            continue
+        if not name.replace(" ", "").replace("-", "").replace("'", "").replace(".", "").isalpha():
+            continue
+        end += 2
+        year = struct.unpack_from("<H", people, end + 2)[0]
+        nation = struct.unpack_from("<I", people, end + 5)[0]
+        if not (1940 <= year <= 1995 and nation < 400):
+            continue
+        for tail in _TAIL.finditer(people, end, end + 0x400):
+            index, uid = struct.unpack("<II", tail.group(1) + tail.group(2))
+            if people.find(struct.pack("<I", index), end, tail.start()) >= 0:
+                found.setdefault(nation, []).append((uid, year))
+                break
+    return found
