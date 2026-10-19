@@ -53,7 +53,7 @@ NO_VALUE_CA = {"A": 118, "B": 100, "C": 88, "D": 76}
 YOUTH_CA = {"A": 82, "B": 74, "C": 66, "D": 58}
 SALARY_FLOOR = {"A": 30_000, "B": 15_000, "C": 6_000, "D": 2_500}   # R$ por mês
 EUR_BRL = 5.8
-MAX_AGE = 42                                            # mais velho que isso: erro de cadastro ou comissão
+MAX_AGE = 47                                            # mais velho que isso: erro de cadastro ou comissão (Fábio tem 45)
 YOUTH_LIMIT = 30                                        # sub-20 por clube (os de maior PA)
 GROWTH = {15: 40, 16: 38, 17: 35, 18: 30, 19: 26, 20: 22, 21: 18, 22: 14, 23: 10, 24: 7, 25: 4, 26: 2}
 COUNTRIES = {
@@ -132,8 +132,8 @@ def estimate_salary(value, serie: str, youth: bool) -> int:
 
 def _names(player: dict) -> tuple[str, str, str]:
     """(nome comum, primeiro nome, sobrenome)."""
-    full = (player.get("name") or "").strip()
-    short = (player.get("shortName") or "").strip()
+    full = (player.get("name") or "").replace('"', "").strip()      # aspas quebram o .lnc
+    short = (player.get("shortName") or "").replace('"', "").strip()
     parts = full.split() or [short]
     if len(parts) == 1:
         return parts[0], parts[0], ""

@@ -207,9 +207,8 @@ def build(targets: list[Target], hosts: list[dict], year_shift: int = -20):
     lnc_lines = ['# Gerado por scripts/build_squad.py: nomes do elenco']
     players, mapping, warnings = [], [], []
     for target, host in pairs:
-        lnc_lines.append(
-            f'"CHANGE_PLAYER_NAME"\t{host["uid"]}\t"{target.first}"\t"{target.common}"\t"{target.second}"'
-        )
+        first, common, second = (n.replace('"', "") for n in (target.first, target.common, target.second))
+        lnc_lines.append(f'"CHANGE_PLAYER_NAME"\t{host["uid"]}\t"{first}"\t"{common}"\t"{second}"')
         entry = {
             "uid": host["uid"],
             "name": target.display_name,

@@ -115,6 +115,10 @@ def main() -> None:
         if LANG_BACKUP.exists():
             shutil.copy2(LANG_BACKUP, lang)
             print(f"[OK] lang_db original restaurado em {lang}")
+        people_backup = BACKUP.with_name("people_db.original.dat")      # do reforcar_elencos.py
+        if people_backup.exists():
+            shutil.copy2(people_backup, game / "data" / "db" / "people_db.dat")
+            print("[OK] people_db original restaurado")
         for path in (lnc, lnc.with_name("brasil_2026_clubes.lnc")):   # o 2º vem do pacote de gráficos
             if path.exists():
                 path.unlink()
