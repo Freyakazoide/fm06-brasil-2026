@@ -85,7 +85,7 @@ def other_name_files() -> list[Path]:
     found = []
     for folder in (game / "data" / "db", game / "data" / "db" / "lnc", game / "data" / "db" / "lnc" / "all"):
         for path in folder.glob("*.lnc") if folder.exists() else []:
-            if path.name == f"{NAME}.lnc":
+            if path.name in (f"{NAME}.lnc", "brasil_2026_comissao.lnc"):    # a comissão usa outros UIDs
                 continue
             try:
                 text = path.read_bytes().decode("utf-16", errors="ignore")

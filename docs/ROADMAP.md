@@ -44,7 +44,8 @@ Por onde cada alteração é feita:
 | Divisão em que joga | ✅ | texto / banco | `SWAP_TEAMS` (troca 1 por 1); no banco, `scripts/server_db_teams.py --set` (a testar no jogo) |
 | Cores do uniforme | 🟡 | texto | `COLOUR_CHANGE` |
 | Estádio e capacidade | 🟡 | texto | `STADIUM_MOVE`, `STADIUM_CAPACITY_CHANGE`, `GROUND_SHARE` |
-| Dinheiro, reputação, público | 🟡 | texto / injetor | `BOOST_TEAM`; Cash no injetor |
+| Dinheiro, reputação, público | 🟡 | banco | saldo e público no registro do clube (`financas.py`), a validar; `BOOST_TEAM` não grava caixa nos clubes brasileiros |
+| Técnico e comissão técnica | 🟡 | banco + texto | `comissao.py` + `CHANGE_PLAYER_NAME`, a validar (docs/COMISSAO_E_FINANCAS_2026.md) |
 | Orçamentos, instalações, base | ❌ | injetor | campos do clube não localizados |
 
 ## Competições

@@ -27,6 +27,7 @@ Depois é só abrir o fm_brasil.exe e começar um New Game.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import shutil
@@ -41,8 +42,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import (campeoes, cores, estaduais_clubes, estadios, historico, identidade,  # noqa: E402
-                       nomes_fases, reputacao)
+from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico,  # noqa: E402
+                       identidade, nomes_fases, reputacao)
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -64,6 +65,7 @@ LANG_SHA256 = "313B5D388208389E1C97FCE8270B880BB9B95BA444FCC392AFF90474DD24EEF4"
 LANG_BACKUP = ROOT / "workspace" / "baseline" / "lang_db.original.dat"
 DATA_DIR = ROOT / "data" / "brasil"
 HISTORY_REPORT = DATA_DIR / "historico" / "sem_clube_no_jogo.txt"
+FINANCES = DATA_DIR / "clubes" / "financas_2026.csv"
 
 
 def game_dir() -> Path:
@@ -209,6 +211,23 @@ def main() -> None:
     db = bytes(buffer)
     if sheet_reputation:
         print(f"[OK] reputação da planilha em {len(sheet_reputation)} clubes")
+    if FINANCES.exists():                                        # saldo e público de 2026
+        by_name = {i.clube: i.repo_uid for i in identities}
+        money = {}
+        for row in csv.DictReader(FINANCES.open(encoding="utf-8-sig")):
+            if row["clube"] in by_name and (row["saldo_rs"] or row["publico_medio"]):
+                money[by_name[row["clube"]]] = (float(row["saldo_rs"]) if row["saldo_rs"] else None,
+                                                int(float(row["publico_medio"])) if row["publico_medio"] else None)
+        skipped = []
+        for repo_uid in list(money):
+            try:
+                financas.read(data, financas.record_start(data, repo_uid))
+            except ValueError:
+                skipped.append(repo_uid)
+                money.pop(repo_uid)
+        db = financas.apply(data, money, into=db)
+        print(f"[OK] saldo de 2026 em {len(money)} clubes, público médio em "
+              f"{sum(1 for _, crowd in money.values() if crowd)}" + (f" ({len(skipped)} sem registro legível)" if skipped else ""))
     db, cleared = historico.clear_brazil_continental(db)
     if cleared:
         print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))

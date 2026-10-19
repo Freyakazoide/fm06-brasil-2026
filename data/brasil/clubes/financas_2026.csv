@@ -1,0 +1,157 @@
+﻿serie,clube,uf,torcida_sofascore,saldo_rs,publico_medio,fonte_publico
+A,Athletico-PR,PR,105073,27950000,17600,estimativa
+A,Atlético-MG,MG,239283,45800000,26600,estimativa
+A,Bahia,BA,180441,38670000,23100,estimativa
+A,Botafogo,RJ,255998,47700000,27500,estimativa
+A,Chapecoense,SC,50674,18050000,12200,estimativa
+A,Corinthians,SP,566026,76780000,40900,estimativa
+A,Coritiba,PR,62715,20510000,13600,estimativa
+A,Cruzeiro,MG,273789,49660000,28500,estimativa
+A,Flamengo,RJ,1035448,110310000,55400,estimativa
+A,Fluminense,RJ,289149,51310000,29300,estimativa
+A,Grêmio,RS,225388,44190000,25800,estimativa
+A,Internacional,RS,185118,39270000,23400,estimativa
+A,Mirassol,SP,98618,26910000,17100,estimativa
+A,Palmeiras,SP,594786,79100000,42000,estimativa
+A,Red Bull Bragantino,SP,101524,27380000,17300,estimativa
+A,Remo,PA,70768,22050000,14500,estimativa
+A,Santos,SP,522352,73170000,39300,estimativa
+A,São Paulo,SP,370347,59530000,33100,estimativa
+A,Vasco da Gama,RJ,321381,54670000,30800,estimativa
+A,Vitória,BA,113756,29320000,18300,estimativa
+B,América-MG,MG,38537,8360000,9300,estimativa
+B,Athletic,MG,19284,5520000,6600,estimativa
+B,Atlético-GO,GO,35193,7920000,8900,estimativa
+B,Avaí,SC,27896,6890000,7900,estimativa
+B,Botafogo-SP,SP,28529,6980000,8000,estimativa
+B,Ceará,CE,80670,13030000,13500,estimativa
+B,CRB,AL,33280,7660000,8700,estimativa
+B,Criciúma,SC,43613,9010000,9900,estimativa
+B,Cuiabá,MT,36359,8080000,9100,estimativa
+B,Fortaleza,CE,122082,16710000,16600,estimativa
+B,Goiás,GO,47424,9470000,10400,estimativa
+B,Juventude,RS,58974,10800000,11600,estimativa
+B,Londrina,PR,19717,5600000,6700,estimativa
+B,Náutico,PE,28804,7020000,8100,estimativa
+B,Novorizontino,SP,37393,8220000,9200,estimativa
+B,Operário-PR,PR,25236,6490000,7600,estimativa
+B,Ponte Preta,SP,25052,6460000,7500,estimativa
+B,São Bernardo,SP,18526,5390000,6500,estimativa
+B,Sport,PE,88273,13750000,14100,estimativa
+B,Vila Nova,GO,38548,8370000,9300,estimativa
+C,Amazonas,AM,18887,3390000,5800,estimativa
+C,Anápolis,GO,5833,1670000,3200,estimativa
+C,Barra,SC,6939,1860000,3500,estimativa
+C,Botafogo-PB,PB,13404,2760000,4900,estimativa
+C,Brusque,SC,12016,2580000,4600,estimativa
+C,Caxias,RS,8816,2150000,4000,estimativa
+C,Confiança,SE,11961,2580000,4600,estimativa
+C,Ferroviária,SP,14030,2840000,5000,estimativa
+C,Figueirense,SC,11223,2480000,4500,estimativa
+C,Floresta,CE,6382,1770000,3400,estimativa
+C,Guarani,SP,18803,3380000,5800,estimativa
+C,Inter de Limeira,SP,7141,1890000,3600,estimativa
+C,Itabaiana,SE,4930,1510000,3000,estimativa
+C,Ituano,SP,11523,2520000,4500,estimativa
+C,Maranhão,MA,4965,1520000,3000,estimativa
+C,Maringá,PR,10091,2330000,4200,estimativa
+C,Paysandu,PA,40046,5320000,8400,estimativa
+C,Santa Cruz,PE,31380,4600000,7500,estimativa
+C,Volta Redonda,RJ,16278,3100000,5400,estimativa
+C,Ypiranga,RS,7129,1890000,3600,estimativa
+D,Galvez,Acre,1159,380000,1200,estimativa
+D,Humaitá,Acre,1278,400000,1300,estimativa
+D,Independência,Acre,1468,430000,1400,estimativa
+D,ASA,Alagoas,5126,920000,2600,estimativa
+D,CSE,Alagoas,983,340000,1100,estimativa
+D,Oratório,Amapá,733,290000,1000,estimativa
+D,Trem,Amapá,2438,590000,1800,estimativa
+D,Manaus,Amazonas,3327,710000,2100,estimativa
+D,Nacional,Amazonas,3170,690000,2000,estimativa
+D,Atlético de Alagoinhas,Bahia,2149,550000,1700,estimativa
+D,Jacuipense,Bahia,3555,740000,2100,estimativa
+D,Juazeirense,Bahia,3225,700000,2000,estimativa
+D,Porto,Bahia,1825,490000,1500,estimativa
+D,Atlético Cearense,Ceará,1471,430000,1400,estimativa
+D,Ferroviário,Ceará,6761,1090000,2900,estimativa
+D,Maracanã,Ceará,2477,590000,1800,estimativa
+D,Tirol,Ceará,1391,420000,1300,estimativa
+D,Brasiliense,Distrito Federal,3472,730000,2100,estimativa
+D,Capital,Distrito Federal,3019,670000,2000,estimativa
+D,Ceilândia,Distrito Federal,1945,510000,1600,estimativa
+D,Gama,Distrito Federal,6769,1090000,3000,estimativa
+D,Real Noroeste,Espírito Santo,1834,500000,1500,estimativa
+D,Rio Branco-ES,Espírito Santo,4168,810000,2300,estimativa
+D,Vitória-ES,Espírito Santo,2767,640000,1900,estimativa
+D,ABECAT,Goiás,754,290000,1000,estimativa
+D,Aparecidense,Goiás,2277,560000,1700,estimativa
+D,CRAC,Goiás,1451,430000,1400,estimativa
+D,Goiatuba,Goiás,1937,510000,1600,estimativa
+D,Inhumas,Goiás,748,290000,1000,estimativa
+D,IAPE,Maranhão,667,270000,900,estimativa
+D,Imperatriz,Maranhão,2558,610000,1800,estimativa
+D,Moto Club,Maranhão,2981,660000,2000,estimativa
+D,Sampaio Corrêa,Maranhão,8911,1280000,3400,estimativa
+D,Luverdense,Mato Grosso,2049,530000,1600,estimativa
+D,Mixto,Mato Grosso,2125,540000,1700,estimativa
+D,Operário VG,Mato Grosso,1080,360000,1200,estimativa
+D,Primavera,Mato Grosso,1367,420000,1300,estimativa
+D,União Rondonópolis,Mato Grosso,1191,380000,1200,estimativa
+D,Ivinhema,Mato Grosso do Sul,982,340000,1100,estimativa
+D,Operário-MS,Mato Grosso do Sul,2248,560000,1700,estimativa
+D,Betim,Minas Gerais,2423,590000,1800,estimativa
+D,Democrata GV,Minas Gerais,2714,630000,1900,estimativa
+D,Pouso Alegre,Minas Gerais,2877,650000,1900,estimativa
+D,Tombense,Minas Gerais,5206,930000,2600,estimativa
+D,Uberlândia,Minas Gerais,5584,970000,2700,estimativa
+D,Águia de Marabá,Pará,3472,730000,2100,estimativa
+D,Tuna Luso,Pará,2889,650000,1900,estimativa
+D,Serra Branca,Paraíba,1732,480000,1500,estimativa
+D,Sousa,Paraíba,4131,810000,2300,estimativa
+D,Treze,Paraíba,5169,920000,2600,estimativa
+D,Azuriz,Paraná,1666,470000,1500,estimativa
+D,FC Cascavel,Paraná,3156,690000,2000,estimativa
+D,Cianorte,Paraná,2783,640000,1900,estimativa
+D,PSTC/São Joseense,Paraná,1336,410000,1300,estimativa
+D,Central,Pernambuco,2311,570000,1700,estimativa
+D,Decisão Goiana,Pernambuco,903,320000,1100,estimativa
+D,Maguary,Pernambuco,2060,530000,1600,estimativa
+D,Retrô,Pernambuco,6490,1060000,2900,estimativa
+D,Altos,Piauí,3797,770000,2200,estimativa
+D,Fluminense-PI,Piauí,2088,540000,1600,estimativa
+D,Parnahyba,Piauí,1232,390000,1300,estimativa
+D,Piauí,Piauí,1560,450000,1400,estimativa
+D,América-RJ,Rio de Janeiro,3935,780000,2300,estimativa
+D,Madureira,Rio de Janeiro,5319,940000,2600,estimativa
+D,Maricá,Rio de Janeiro,5260,930000,2600,estimativa
+D,Nova Iguaçu,Rio de Janeiro,7384,1140000,3100,estimativa
+D,Portuguesa-RJ,Rio de Janeiro,5598,970000,2700,estimativa
+D,Sampaio Corrêa-RJ,Rio de Janeiro,3971,790000,2300,estimativa
+D,América-RN,Rio Grande do Norte,9992,1370000,3600,estimativa
+D,Laguna,Rio Grande do Norte,780,300000,1000,estimativa
+D,ABC,Rio Grande do Norte,11812,1520000,3900,estimativa
+D,Brasil de Pelotas,Rio Grande do Sul,6140,1020000,2800,estimativa
+D,Guarany de Bagé,Rio Grande do Sul,2389,580000,1800,estimativa
+D,São José-RS,Rio Grande do Sul,3740,760000,2200,estimativa
+D,São Luiz,Rio Grande do Sul,2341,570000,1700,estimativa
+D,Gazin Porto Velho,Rondônia,2441,590000,1800,estimativa
+D,Guaporé,Rondônia,1225,390000,1300,estimativa
+D,GAS,Roraima,1166,380000,1200,estimativa
+D,Monte Roraima,Roraima,1166,380000,1200,estimativa
+D,São Raimundo-RR,Roraima,1506,440000,1400,estimativa
+D,Blumenau,Santa Catarina,2621,610000,1800,estimativa
+D,Joinville,Santa Catarina,6239,1030000,2800,estimativa
+D,Marcílio Dias,Santa Catarina,3726,760000,2200,estimativa
+D,Santa Catarina,Santa Catarina,2363,580000,1700,estimativa
+D,Água Santa,São Paulo,4088,800000,2300,estimativa
+D,Noroeste,São Paulo,4820,890000,2500,estimativa
+D,Portuguesa,São Paulo,12352,1560000,4000,estimativa
+D,Velo Clube,São Paulo,4377,840000,2400,estimativa
+D,XV de Piracicaba,São Paulo,3851,770000,2200,estimativa
+D,Lagarto,Sergipe,2100,540000,1600,estimativa
+D,Sergipe,Sergipe,3810,770000,2200,estimativa
+D,Araguaína,Tocantins,1438,430000,1400,estimativa
+D,Tocantinópolis,Tocantins,1926,510000,1600,estimativa
+D,CSA,Alagoas,13874,1670000,4000,estimativa
+D,Manauara,Amazonas,2798,640000,1900,estimativa
+D,Iguatu,Ceará,2979,660000,2000,estimativa

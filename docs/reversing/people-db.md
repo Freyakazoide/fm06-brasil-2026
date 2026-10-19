@@ -78,3 +78,24 @@ futuros na T3 devem alterar uma coluna por vez, mantendo valores plausíveis.
   `(memória + base) / 5`, arredondado para baixo e limitado a 20. A base
   depende do CA: 86 com CA 160 (Saviola), 97 com CA 185 (Zidane).
 - As posições ficam direto na escala 1–20.
+
+## Registro da pessoa e staff (técnico, comissão)
+
+Ordem no arquivo (`src/fm06patch/comissao.py`):
+
+- u32 primeiro nome, u32 sobrenome, u32 nome comum (índices das tabelas de nomes
+  do server_db: primeiro 0x5C0000–0x85D000, sobrenome –0xDE5A60, comum –0xEE7000;
+  cada nome é u32 tamanho, UTF-16, 00 00, u16 uso, u32 nação, u32 índice, u32
+  UID, 00), u32 tamanho + nome completo (+ 00 00 se houver);
+- u16 dia do ano e u16 ano do nascimento, 00, u32 nação (0xBD Brasil), u32
+  seleção, u32 jogos, u32, 00, data, **u32 time** (índice do time − 1), **u8
+  cargo**, data de chegada, u32...;
+- contrato: 64, u32 pessoa, 00, u32 índice do clube, u32 salário, u16 dia e u16
+  ano do fim (0 / 1900 = sem data), 02 00 00 00 (é o mesmo bloco dos jogadores;
+  a busca antiga só achava fins de contrato de 2005 a 2014);
+- u32 pessoa, u32 UID (o do `CHANGE_PLAYER_NAME`).
+
+Cargo: 16 técnico, 20 auxiliar, 2 treinador, 12 fisioterapeuta/médico, 14
+olheiro, 1 jogador; 4, 8 e 10 aparecem em poucos clubes (diretoria). Nação: a
+Europa (0x81…) e a CONMEBOL (0xBB Argentina … 0xC4 Venezuela) seguem a ordem
+alfabética em inglês (0x96 Itália, 0x91 Alemanha, 0xAE Ucrânia, 0x9E Holanda).
