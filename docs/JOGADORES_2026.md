@@ -60,7 +60,9 @@ por falta de jogador de 2005 no clube.
 `scripts\reforcar_elencos.py --apply` (depois do passo 1) muda no
 `people_db.dat` o clube do contrato de jogadores de clubes que não usamos
 (brasileiros fora de 2026, depois até 2 por clube estrangeiro), até cada clube
-ter vaga para o elenco de 2026 (até 45). Depois: New Game e passos 1 a 4 de
+ter vaga para o elenco de 2026 (até 45). Ao contrário, os jogadores de 2005 do
+banco que passam do tamanho do elenco de 2026 (Internacional: 93 para 65) saem para
+clubes brasileiros fora de 2026, para não ficarem no elenco com o nome de 2005. Depois: New Game e passos 1 a 4 de
 novo. `src/fm06patch/people_contracts.py`: o contrato fica no fim do registro
 da pessoa (00, u32 índice do clube, u32, u16 dia e u16 ano do fim, 02 00 00
 00); o clube é citado pelo índice, e cada registro de clube do server_db

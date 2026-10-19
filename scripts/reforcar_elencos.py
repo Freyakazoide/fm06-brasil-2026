@@ -154,6 +154,20 @@ def main() -> None:
     print(f"[OK] doadores de nacionalidade: {len(nation_donors)} nações ({len(pins)} levados para clube brasileiro)")
     moves.update(pins)
 
+    # excedentes: jogadores de 2005 (do banco) além do elenco de 2026 ficariam no clube com o
+    # nome de 2005; vão para clubes brasileiros fora de 2026
+    spare = [i for i, u in brazil.items() if u not in ours]
+    removed = 0
+    for row in identities:
+        uid, club = int(row["uid_jogo"]), row["clube_2026"]
+        own = [c for c in found.values() if brazil.get(c.club) == uid and c.uid not in moves]
+        extra = len(own) - sizes.get(club, 0)
+        if sizes.get(club, 0) and extra > 0:
+            for c in sorted(own, key=lambda c: c.until)[:extra]:   # quem tem contrato mais curto sai
+                moves[c.uid] = spare[removed % len(spare)]
+                removed += 1
+    print(f"[OK] {removed} jogadores de 2005 que sobravam nos clubes de 2026 saíram para clubes fora de 2026")
+
     if not args.apply:
         print("\nSimulação. Para gravar, rode de novo com --apply.")
         return
