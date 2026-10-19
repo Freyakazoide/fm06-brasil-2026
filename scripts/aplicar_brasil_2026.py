@@ -12,8 +12,10 @@ Com --apply:
 4. atualiza data\\brasil\\mapa_2026.csv (quem entrou no lugar de quem);
 5. grava os participantes dos estaduais de 2026 (data\\brasil\\estaduais) e o
    mapa em data\\brasil\\estaduais\\mapa_estaduais_2026.csv;
-6. grava a classificação de 2025 (data\\brasil\\classificacao_2025.csv) e os
-   campeões de 2025 (Libertadores, Copa do Brasil, Série A);
+6. grava a classificação de 2025 (data\\brasil\\classificacao_2025.csv) e o
+   histórico real de campeões e vices (data\\brasil\\historico\\campeoes.csv: Séries
+   A–D, Copa do Brasil, Libertadores, Sul-Americana e estaduais, até 2025; com
+   --sem-historico, só os campeões de 2025 de Libertadores, Copa do Brasil e Série A);
 7. grava o lang_db.dat com os nomes das fases em português do Brasil (cópia do
    original em workspace\\baseline\\lang_db.original.dat);
 8. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
@@ -39,7 +41,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import cores, estaduais_clubes, estadios, historico, identidade, nomes_fases, reputacao  # noqa: E402
+from fm06patch import (campeoes, cores, estaduais_clubes, estadios, historico, identidade,  # noqa: E402
+                       nomes_fases, reputacao)
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -60,6 +63,7 @@ BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
 LANG_SHA256 = "313B5D388208389E1C97FCE8270B880BB9B95BA444FCC392AFF90474DD24EEF4"
 LANG_BACKUP = ROOT / "workspace" / "baseline" / "lang_db.original.dat"
 DATA_DIR = ROOT / "data" / "brasil"
+HISTORY_REPORT = DATA_DIR / "historico" / "sem_clube_no_jogo.txt"
 
 
 def game_dir() -> Path:
@@ -98,6 +102,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--restore", action="store_true")
+    parser.add_argument("--sem-historico", action="store_true",
+                        help="não reescreve o histórico de campeões (só os de 2025, como antes)")
     parser.add_argument("--teste-copa", type=int, choices=(1, 2),
                         help="troca as datas da Série A pelo teste de pausa da Copa (exp_a_copa_1 ou _2)")
     args = parser.parse_args()
@@ -166,9 +172,11 @@ def main() -> None:
     db, missing = apply_last_season(apply_db(data, placements), placements, DATA_DIR / "classificacao_2025.csv")
     if missing:
         print("[AVISO] classificação 2025: clubes que não estão nas séries de 2026:", ", ".join(missing))
-    db, notes = historico.apply(estaduais_clubes.apply(db, states))
-    for note in notes:
-        print(f"[OK] campeões 2025: {note}")
+    db = estaduais_clubes.apply(db, states)
+    if args.sem_historico:
+        db, notes = historico.apply(db)
+        for note in notes:
+            print(f"[OK] campeões 2025: {note}")
     changes = reputacao.plan(placements, states)
     db = reputacao.apply(db, changes)
     print(f"[OK] reputação de {len(changes)} substitutos ajustada (ex.: "
@@ -204,6 +212,15 @@ def main() -> None:
     db, cleared = historico.clear_brazil_continental(db)
     if cleared:
         print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))
+    if not args.sem_historico:                                   # por último: muda o tamanho do arquivo
+        print("Reescrevendo o histórico de campeões...", flush=True)
+        db, history = campeoes.rewrite(data, identities, into=db)
+        for line in history.lines:
+            print("     ", line)
+        print(f"[OK] histórico: {history.reused} registros órfãos reaproveitados, {history.appended} novos; "
+              f"{len(history.unmatched)} times sem clube no jogo ficam em branco "
+              f"(lista em {HISTORY_REPORT.relative_to(ROOT)})")
+        HISTORY_REPORT.write_text("\n".join(history.unmatched) + "\n", encoding="utf-8")
     server.write_bytes(db)
     print(f"[OK] gravado {server}")
 
