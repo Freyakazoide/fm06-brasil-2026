@@ -69,6 +69,27 @@ def _hosts(path: Path) -> dict[int, list[dict]]:
     return by_club
 
 
+def other_name_files() -> list[Path]:
+    """Outros .lnc com CHANGE_PLAYER_NAME na pasta do jogo (ex.: o teste antigo flamengo_2026.lnc):
+    eles dão outro nome aos mesmos hospedeiros e trocam os nomes de lugar."""
+    config = ROOT / "config" / "local.json"
+    if not config.exists():
+        return []
+    game = Path(json.loads(config.read_text(encoding="utf-8"))["game_dir"])
+    found = []
+    for folder in (game / "data" / "db", game / "data" / "db" / "lnc", game / "data" / "db" / "lnc" / "all"):
+        for path in folder.glob("*.lnc") if folder.exists() else []:
+            if path.name == f"{NAME}.lnc":
+                continue
+            try:
+                text = path.read_bytes().decode("utf-16", errors="ignore")
+            except OSError:
+                continue
+            if "CHANGE_PLAYER_NAME" in text:
+                found.append(path)
+    return found
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--hospedeiros", type=Path, default=HOSTS)
@@ -118,6 +139,8 @@ def main() -> None:
     if nations:
         print("[AVISO] nacionalidade sem doador (fica a do hospedeiro):", dict(nations))
     print(f"[OK] {len(players)} jogadores em {OUT / NAME}.lnc/.json; {len(left_out)} sem vaga")
+    for path in other_name_files():
+        print(f"[ATENÇÃO] apague {path}: ele também muda nomes de jogadores e embaralha os nomes")
 
 
 if __name__ == "__main__":
