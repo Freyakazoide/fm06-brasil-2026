@@ -70,6 +70,8 @@ PLAYER_FIELDS = {
     "home_reputation": Field("Player", -210, "<H", 0, 10000),
     "current_reputation": Field("Player", -208, "<H", 0, 10000),
     "world_reputation": Field("Player", -206, "<H", 0, 10000),
+    "international_caps": Field("Player", 72, "<B", 0, 255),     # jogos pela seleção
+    "international_goals": Field("Player", 74, "<B", 0, 255),
 }
 
 BORN_REL = 52

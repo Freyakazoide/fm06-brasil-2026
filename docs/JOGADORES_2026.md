@@ -39,6 +39,13 @@ salário bruto de um jogador, para comparar com o que a ficha mostra. Medido no 
 bruto 639 = R$ 13.000 por mês na ficha, ou seja, libras por semana × 4 × 5,08; com o
 salário gravado como valor × 10 + 2, `"wage_factor": 0.00492`.
 
+Perfil (`data/modelos/jogadores_perfil.xlsx`, ligado pelo `montar_elencos.py`):
+personalidade (PData +8..+15), os ocultos consistência, jogos importantes,
+propensão a lesão, versatilidade e jogo sujo (atributos absolutos, 5 × nota + 2) e as
+jogadas preferidas: as da planilha entram e as outras 47 saem. Jogos e gols pela
+seleção (`jogos_selecao`, `gols_selecao` da planilha de jogadores) vão em Player +72
+e +74 (u8).
+
 ## No jogo
 
 Cada jogador de 2026 ocupa um jogador de 2005 do mesmo clube (o jogo não cria

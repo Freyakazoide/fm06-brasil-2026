@@ -68,7 +68,7 @@ def main() -> None:
             unknown.add(row["clube"])
             continue
         wanted.append(comissao.Wanted(uid_of[row["clube"]], row["clube"], row["cargo"], row["nome"],
-                                      row["nacionalidade"], row["nascimento"]))
+                                      row["nacionalidade"] or "BRA", row["nascimento"]))   # sem dado: brasileiro
     if unknown:
         print("[AVISO] clubes da planilha sem identidade no jogo:", ", ".join(sorted(unknown)))
 
@@ -94,7 +94,9 @@ def main() -> None:
         except ValueError:
             pass
     spare = {index for uid, index in indexes.items() if uid not in ours}
-    result = comissao.plan(staff, [w for w in wanted if w.club_uid in team_index], club_index, team_index, spare)
+    foreign = {person.club for person in staff} - set(indexes.values())
+    result = comissao.plan(staff, [w for w in wanted if w.club_uid in team_index], club_index, team_index, spare,
+                           foreign)
     for line in result.report:
         print("  ", line)
     managers = sum(1 for _, row in result.renames if row.cargo == "tecnico")

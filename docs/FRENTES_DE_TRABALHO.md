@@ -69,6 +69,24 @@ As linhas cinzas de exemplo foram removidas das sete planilhas. Dados não
 confirmados não foram apresentados como fatos: estimativas de gameplay estão
 identificadas como editoriais e campos sem fonte confiável permanecem vazios.
 
+### O que já entrou no mod
+
+| frente | situação | onde |
+|---|---|---|
+| A1 | ✅ só o que fica no `lang_db` (prêmios, lesões, fases, descrições: 1.941 textos); as frases das telas ficam em outro arquivo, a achar com `scripts/achar_textos.py` | `traducao.py`, `aplicar_brasil_2026.py`; lista em `data/brasil/traducao_lang_db.csv` |
+| A2 | ✅ os 220 jogadores | `montar_elencos.py` |
+| A3 | ✅ | `montar_elencos.py` + injetor (Player +72/+74) |
+| A4 | ⏳ depois: o `MATCH_BAN` cita o jogador pelo nome de 2005 e o comando de lesão não foi isolado | — |
+| A5 | ✅ 511 pessoas (a versão nova + os 127 da Wikipédia que tinham saído); auxiliares de clubes estrangeiros quando os brasileiros acabam | `aplicar_comissao.py` |
+| B1–B5, C0 | ⏳ dados guardados; precisam de engenharia (nomes de regens no `server_db`, campos de clube) | — |
+
+No glossário, quatro termos não servem nos textos do `lang_db` e ficaram de fora
+lá: "partida" ("perna partida" é perna quebrada), "mão" ("mão partida"),
+"Marcador" ("Melhor Marcador" vira "Artilheiro", não "Melhor Placar") e
+"campeonato nacional" (vale para todos os países). "Eliminatória" vira "Fase" e
+"dos Adeptos", "da Torcida". "equipa" → "time" muda o artigo junto ("antiga
+equipa" → "antigo time"); com adjetivo de nacionalidade no feminino, o texto não muda.
+
 ---
 
 ## A. Entra no mod já

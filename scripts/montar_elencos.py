@@ -36,6 +36,13 @@ HOSTS = ROOT / "workspace" / "elencos_2005.csv"
 OUT = ROOT / "workspace" / "mods"
 NAME = "brasil_2026_jogadores"
 DONORS = OUT / "doadores.json"          # do reforcar_elencos.py: doadores carregados no jogo
+PROFILES = ROOT / "data" / "modelos" / "jogadores_perfil.xlsx"
+# coluna da jogadores_perfil.xlsx -> nome no injetor (live_player.PERSONALITY e atributos ocultos)
+PERSONALITY_COLUMNS = {"adaptabilidade": "Adaptability", "ambicao": "Ambition", "lealdade": "Loyalty",
+                       "pressao": "Pressure", "profissionalismo": "Professional", "desportivismo": "Sportsmanship",
+                       "temperamento": "Temperament", "controversia": "Controversy"}
+HIDDEN_COLUMNS = {"consistencia": "Consistency", "jogos_importantes": "Imp. match", "propensao_lesao": "Injury prone.",
+                  "versatilidade": "Versatility", "jogo_sujo": "Dirtiness"}
 
 
 def _targets(path: Path) -> dict[str, list[tuple[Target, dict]]]:
@@ -75,6 +82,42 @@ def _hosts(path: Path) -> dict[int, list[dict]]:
     return by_club
 
 
+def _grade(value) -> int | None:
+    """Nota 1..20 da planilha (vazio ou fora da escala = não muda)."""
+    text = str(value or "").strip()
+    return int(text) if text.isdigit() and 1 <= int(text) <= 20 else None
+
+
+def _profiles(path: Path) -> dict[tuple[str, str], dict]:
+    """(clube, nome) -> personalidade, ocultos e jogadas preferidas da jogadores_perfil.xlsx."""
+    if not path.exists():
+        return {}
+    from fm06patch.live_player import FMM_DIR
+
+    moves = [m["move_name"] for m in json.loads((FMM_DIR / "preferred_moves_layout.json").read_text(encoding="utf-8"))["moves"]]
+    known = {m.casefold(): m for m in moves}
+    rows = openpyxl.load_workbook(path, read_only=True)["Perfil"].iter_rows(values_only=True)
+    header = next(rows)
+    found = {}
+    for values in rows:
+        row = dict(zip(header, values))
+        if not row.get("clube") or not row.get("nome_comum"):
+            continue
+        personality = {name: _grade(row.get(col)) for col, name in PERSONALITY_COLUMNS.items() if _grade(row.get(col))}
+        hidden = {name: _grade(row.get(col)) for col, name in HIDDEN_COLUMNS.items() if _grade(row.get(col))}
+        chosen = [known[m.strip().casefold()] for m in str(row.get("jogadas_preferidas") or "").split(";")
+                  if m.strip().casefold() in known]
+        profile = {}
+        if personality:
+            profile["personality"] = personality
+        if hidden:
+            profile["hidden"] = hidden
+        if chosen:
+            profile["preferred_moves"] = {"add": chosen, "remove": [m for m in moves if m not in chosen]}
+        found[(row["clube"], str(row["nome_comum"]).strip())] = profile
+    return found
+
+
 def other_name_files() -> list[Path]:
     """Outros .lnc com CHANGE_PLAYER_NAME na pasta do jogo (ex.: o teste antigo flamengo_2026.lnc):
     eles dão outro nome aos mesmos hospedeiros e trocam os nomes de lugar."""
@@ -109,6 +152,8 @@ def main() -> None:
     hosts = {club: [h for h in pool if h["uid"] not in donors] for club, pool in hosts.items()}
     uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))}
 
+    profiles = _profiles(PROFILES)
+    used_profiles, profiled = 0, set()
     lnc = ["# FM06 Brasil 2026: nomes dos jogadores de 2026"]
     players, mapping, left_out, warnings = [], [], [], []
     for club, entries in sorted(clubs.items()):
@@ -124,8 +169,23 @@ def main() -> None:
                      for t, _ in (senior + youth)[len(pool):]]
         text, spec, club_map, club_warnings = build([t for t, _ in chosen], pool, args.year_shift)
         lnc += text.splitlines()[1:]
+        rows = {}
+        for target, row in chosen:
+            rows.setdefault(target.display_name, row)
         for entry in spec["players"]:
             entry["club_uid"] = uid                     # o contrato com este clube
+            row = rows.get(entry["name"], {})
+            for column, field in (("jogos_selecao", "international_caps"), ("gols_selecao", "international_goals")):
+                if str(row.get(column) or "").strip().isdigit():
+                    entry[field] = min(255, int(row[column]))
+            profile = profiles.get((club, entry["name"]))
+            if profile and (club, entry["name"]) not in profiled:   # dois com o mesmo nome: o de CA maior
+                profiled.add((club, entry["name"]))
+                used_profiles += 1
+                entry["attributes"].update(profile.get("hidden", {}))
+                for key in ("personality", "preferred_moves"):
+                    if key in profile:
+                        entry[key] = profile[key]
         players += spec["players"]
         mapping += [{"clube": club, **m} for m in club_map]
         warnings += [f"{club}: {w}" for w in club_warnings]
@@ -150,6 +210,9 @@ def main() -> None:
             print("[AVISO]", w)
     if nations:
         print("[AVISO] nacionalidade sem doador (fica a do hospedeiro):", dict(nations))
+    if profiles:
+        print(f"[OK] perfil (personalidade, ocultos, jogadas preferidas) em {used_profiles} de {len(profiles)} "
+              f"jogadores da {PROFILES.name}")
     print(f"[OK] {len(players)} jogadores em {OUT / NAME}.lnc/.json; {len(left_out)} sem vaga")
     for path in other_name_files():
         print(f"[ATENÇÃO] apague {path}: ele também muda nomes de jogadores e embaralha os nomes")

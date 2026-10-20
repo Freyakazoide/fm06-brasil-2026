@@ -16,8 +16,10 @@ Com --apply:
    histórico real de campeões e vices (data\\brasil\\historico\\campeoes.csv: Séries
    A–D, Copa do Brasil, Libertadores, Sul-Americana e estaduais, até 2025; com
    --sem-historico, só os campeões de 2025 de Libertadores, Copa do Brasil e Série A);
-7. grava o lang_db.dat com os nomes das fases em português do Brasil (cópia do
-   original em workspace\\baseline\\lang_db.original.dat);
+7. grava o lang_db.dat com os nomes das fases e os textos (prêmios, lesões,
+   descrições) em português do Brasil, pelo glossário de
+   data\\modelos\\traducao_ptbr.xlsx (cópia do original em
+   workspace\\baseline\\lang_db.original.dat);
 8. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
    2026), lido pelo scripts\\gerar_graficos.py (escudos, uniformes e nomes).
 
@@ -43,7 +45,7 @@ from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, 
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico,  # noqa: E402
-                       identidade, nomes_fases, reputacao)
+                       identidade, nomes_fases, reputacao, traducao)
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -63,6 +65,8 @@ SERVER_SHA256 = "9FB7A4A2B87798120BF4D9DA9E86E7DABB99C668802B2FB9ECB035230F66BE6
 BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
 LANG_SHA256 = "313B5D388208389E1C97FCE8270B880BB9B95BA444FCC392AFF90474DD24EEF4"
 LANG_BACKUP = ROOT / "workspace" / "baseline" / "lang_db.original.dat"
+TRANSLATION = ROOT / "data" / "modelos" / "traducao_ptbr.xlsx"
+TRANSLATION_REPORT = ROOT / "data" / "brasil" / "traducao_lang_db.csv"
 DATA_DIR = ROOT / "data" / "brasil"
 HISTORY_REPORT = DATA_DIR / "historico" / "sem_clube_no_jogo.txt"
 FINANCES = DATA_DIR / "clubes" / "financas_2026.csv"
@@ -246,8 +250,20 @@ def main() -> None:
     lang_data = original_lang_db(lang)
     if lang_data is not None:
         lang_new, renamed = nomes_fases.apply(lang_data)
+        translated = 0
+        if TRANSLATION.exists():                                 # glossário pt-PT -> pt-BR
+            glossary, phrases = traducao.load_sheet(TRANSLATION)
+            changes, too_long = traducao.plan(lang_new, glossary, phrases)
+            lang_new = traducao.apply(lang_new, changes)
+            translated = len(changes)
+            with TRANSLATION_REPORT.open("w", newline="", encoding="utf-8-sig") as handle:
+                writer = csv.writer(handle, lineterminator="\n")
+                writer.writerow(["antes", "depois"])
+                writer.writerows(sorted({(c.old, c.new) for c in changes}))
+                writer.writerows([(line, "NÃO COUBE") for line in too_long])
         lang.write_bytes(lang_new)
-        print(f"[OK] gravado {lang} (nomes das fases: {len(renamed)} trocados)")
+        print(f"[OK] gravado {lang} (nomes das fases: {len(renamed)} trocados; "
+              f"{translated} textos em pt-BR, lista em {TRANSLATION_REPORT.relative_to(ROOT)})")
 
     lnc.parent.mkdir(parents=True, exist_ok=True)
     lnc.write_bytes((lnc_text() + "\r\n".join(estadios.lnc_lines(venues)) + "\r\n").encode("utf-16"))

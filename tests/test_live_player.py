@@ -114,6 +114,21 @@ class PlanTest(unittest.TestCase):
         self.assertFalse(player.move_active(0))
         self.assertTrue(player.move_active(6))
 
+    def test_profile_and_caps_from_montar_elencos(self) -> None:
+        player = saviola()
+        player.plan({
+            "international_caps": 46, "international_goals": 3,
+            "personality": {"Ambition": 17, "Temperament": 6},
+            "attributes": {"Consistency": 16, "Imp. match": 15, "Injury prone.": 4},
+            "preferred_moves": {"add": ["Cuts Inside"], "remove": ["Runs With Ball Down Left"]},
+        })
+        self.assertEqual((player.get("international_caps"), player.get("international_goals")), (46, 3))
+        self.assertEqual(player.summary()["personality"]["Ambition"], 17)
+        self.assertEqual(player.attribute_value("Consistency"), 16)
+        self.assertEqual(player.attribute_value("Injury prone."), 4)
+        self.assertTrue(player.move_active(39))
+        self.assertFalse(player.move_active(0))
+
     def test_ca_change_keeps_relative_attributes(self) -> None:
         player = saviola()
         player.plan({"ca": 111})

@@ -185,15 +185,18 @@ class Plan:
 
 
 def plan(staff: list[Staff], wanted: list[Wanted], club_index: dict[int, int], team_index: dict[int, int],
-         spare_clubs: set[int]) -> Plan:
+         spare_clubs: set[int], foreign_clubs: set[int] = frozenset()) -> Plan:
     """club_index / team_index: UID do clube -> índice do clube (contrato) / valor do campo time
     do registro da pessoa (o que o staff do clube já tem; sem staff, historico.team_index).
-    spare_clubs: índices dos clubes brasileiros fora de 2026 (doadores)."""
+    spare_clubs: índices dos clubes brasileiros fora de 2026 (doadores); depois deles, um por
+    clube de foreign_clubs que tem mais de um no cargo (os auxiliares dos brasileiros acabam)."""
     result = Plan()
     by_club: dict[int, dict[int, list[Staff]]] = {}
     for person in staff:
         by_club.setdefault(person.club, {}).setdefault(person.job, []).append(person)
     donors = {job: [p for club in sorted(spare_clubs) for p in by_club.get(club, {}).get(job, [])]
+                   + [by_club[club][job][-1] for club in sorted(foreign_clubs)
+                      if len(by_club.get(club, {}).get(job, [])) > 1]
               for job in DONOR_LIMIT}
     grouped: dict[int, list[Wanted]] = {}
     for row in wanted:

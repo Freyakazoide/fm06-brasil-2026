@@ -10,7 +10,9 @@ nacionalidade, nascimento, fonte):
 - comissão (auxiliares, preparadores físicos e de goleiros, analistas, médicos,
   fisioterapeutas, olheiros): a tabela de comissão do artigo do clube na
   Wikipédia em inglês. Nem todo clube tem, e algumas estão desatualizadas (coluna
-  `atualizado`). Dá para editar o CSV à mão.
+  `atualizado`). Dá para editar o CSV à mão. Em 20/10/2026 a lista foi completada
+  com a página de equipe técnica do Transfermarkt de cada clube
+  (`comissao_2026_cobertura.csv` conta, clube a clube, quantos de cada cargo há).
 
 No jogo: `python scripts\aplicar_comissao.py --apply` (depois do
 `reforcar_elencos.py --apply`, porque grava sobre o people_db dele).
@@ -24,7 +26,11 @@ No jogo: `python scripts\aplicar_comissao.py --apply` (depois do
 - A nacionalidade e, do técnico, o nascimento (20 anos antes, como os jogadores)
   vão direto no people_db.
 - Clube sem gente bastante naquele cargo recebe alguém do mesmo cargo de um clube
-  brasileiro fora de 2026 (muda o clube do contrato e o time no registro).
+  brasileiro fora de 2026 (muda o clube do contrato e o time no registro); quando
+  eles acabam (os auxiliares acabam cedo), um de cada clube estrangeiro que tem mais
+  de um no cargo. Até 1 técnico, 3 auxiliares, 5 treinadores, 5 médicos e 2
+  olheiros de fora por clube (`DONOR_LIMIT`).
+- Sem nacionalidade na planilha, a pessoa fica brasileira.
 - Quem sobra continua com o nome de 2005. Clubes só de estadual não mudam.
 - Lista: `workspace\mods\comissao_2026_hospedeiros.csv`.
 
