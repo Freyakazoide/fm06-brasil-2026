@@ -22,6 +22,8 @@ from .server_teams import _CLUB_TAIL, _DATES
 
 T3_START, T3_END, T3_SIZE = 0x0480F422, 0x05AFA48A, 89
 PEOPLE_END = 0x043902BA                     # fim da tabela A (pessoas)
+MAX_CLUB_INDEX = 30000                      # o maior clube do banco tem índice 19164
+MAX_UID = 100_000_000
 _TAIL = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)(....)", re.S)
 _CONTRACT = re.compile(rb"\x00(....)(....)(..)([\xd5-\xde]\x07)\x02\x00\x00\x00", re.S)
 
@@ -60,7 +62,11 @@ def contracts(people: bytes, multi: bool = False) -> dict[int, Contract]:
 
 
 def brazil_club_indexes(server: bytes) -> dict[int, int]:
-    """UID verdadeiro -> índice, dos clubes brasileiros (como server_teams.true_uids)."""
+    """UID verdadeiro -> índice, dos clubes brasileiros (como server_teams.true_uids).
+
+    Fica de fora o par que não é de clube: UID 0, ou um "00 BD 00 00 00" achado por acaso
+    que vira o "registro seguinte" (índice 48128, UID 923074816). Mandar jogador para um
+    índice que não é clube deixa o contrato sem clube e o New Game trava (0x006CAFA7)."""
     starts = [m.start() - 4 for m in re.finditer(re.escape(_CLUB_TAIL), server) if m.start() >= 8]
     indexes: dict[int, int] = {}
     for start, following in zip(starts, starts[1:] + [len(server)]):
@@ -70,11 +76,13 @@ def brazil_club_indexes(server: bytes) -> dict[int, int]:
         own = struct.unpack_from("<I", server, start - 4)[0] + 1
         if following - start <= 0x2000:
             index, uid = struct.unpack_from("<II", server, following - 4)
+        else:
+            at = server.find(struct.pack("<I", own), mark, start + 0x2000)
+            if at < 0:
+                continue
+            index, uid = own, struct.unpack_from("<I", server, at + 4)[0]
+        if 0 < uid < MAX_UID and 0 < index < MAX_CLUB_INDEX:
             indexes.setdefault(uid, index)
-            continue
-        at = server.find(struct.pack("<I", own), mark, start + 0x2000)
-        if at > 0:
-            indexes.setdefault(struct.unpack_from("<I", server, at + 4)[0], own)
     return indexes
 
 
