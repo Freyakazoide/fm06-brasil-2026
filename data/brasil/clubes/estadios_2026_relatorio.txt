@@ -66,7 +66,7 @@ Galvez: Estádio Antônio Aquino Lopes (Florestão) (10000), cidade Rio Branco (
 Humaitá, Independência: Arena da Floresta (13700), cidade Porto Acre (AC) (nova); estádio trocado: Independência
 ASA: Fumeirão (17000), cidade Arapiraca (AL)
 CSE: Estádio Juca Sampaio (8000), cidade Palmeira dos Índios (AL)
-Manauara: Estadio Manauara, cidade Horizonte (AM) (nova)
+Manauara: Estadio Manauara, cidade Manaus (AM)
 Nacional: Estádio Jacques da Luz (3300), cidade Campo Grande (AM) (nova); estádio trocado: Nacional
 Oratório, Trem: Estádio Zerão (13680), cidade Macapá (AP) (nova); estádio trocado: Oratório, Trem
 Atlético de Alagoinhas: Estádio Municipal Antônio Carneiro (16000), cidade Alagoinhas (BA)
@@ -74,7 +74,7 @@ Jacuipense: Estadio Eliel Martins (5000), cidade Riachão do Jacuípe (BA)
 Juazeirense: Estádio Adauto Moraes (8000), cidade Juazeiro (BA)
 Porto: Estádio Agnaldo Bento (5000), cidade Porto Seguro (BA) (nova)
 Ferroviário, Treze: Estádio Presidente Vargas (20600), cidade Fortaleza (CE); estádio trocado: Treze
-Iguatu: Estádio Antônio Moreno de Mello (3300), cidade Bataguassu (CE) (nova)
+Iguatu: Estádio Antônio Moreno de Mello (3300), cidade Iguatu (CE)
 Maracanã: Estádio Prefeito Almir Dutra (10000), cidade Maracanaú (CE)
 Brasiliense: Estádio Elmo Serejo Farias (27000), cidade Taguatinga (DF) (nova)
 Capital: Arena BRB Mané Garrincha (72788), cidade Brasilia (DF) (nova)
