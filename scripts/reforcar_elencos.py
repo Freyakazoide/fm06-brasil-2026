@@ -72,6 +72,10 @@ def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nati
         if code and not candidates:                     # só com mais de um bloco (empréstimo)
             candidates = [(uid, year) for uid, year in by_code.get(code, []) if uid in loose]
             found.update({uid: loose[uid] for uid, _ in candidates})
+        if code and not candidates:                     # sem fim de contrato (Venezuela, Panamá)
+            free = people_contracts.free_contracts(people, [uid for uid, _ in by_code.get(code, [])])
+            candidates = [(uid, year) for uid, year in by_code.get(code, []) if uid in free]
+            found.update(free)
         if not candidates:
             continue
         in_ours = [uid for uid, _ in candidates if brazil.get(found[uid].club) in ours]

@@ -62,6 +62,24 @@ def contracts(people: bytes, multi: bool = False) -> dict[int, Contract]:
     return found
 
 
+def free_contracts(people: bytes, uids) -> dict[int, Contract]:
+    """Contrato de quem não tem fim de contrato (ano 1900, salário 0: os venezuelanos e o
+    panamenho do banco), que contracts() não pega: 64, u32 índice da pessoa, 00, u32
+    clube, ..., 6C 07, 02 00 00 00. O índice tem de ser o do fim do registro."""
+    found: dict[int, Contract] = {}
+    for uid in uids:
+        tail = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)" + re.escape(struct.pack("<I", uid)), re.S)
+        match = tail.search(people, 0, PEOPLE_END)
+        if not match:
+            continue
+        index = match.group(1)
+        at = people.rfind(b"\x64" + index + b"\x00", max(0, match.start() - 0x400), match.start())
+        if at < 0 or people[at + 16:at + 22] != b"\x6c\x07\x02\x00\x00\x00":
+            continue
+        found[uid] = Contract(uid, at + 6, struct.unpack_from("<I", people, at + 6)[0], 1900)
+    return found
+
+
 def brazil_club_indexes(server: bytes) -> dict[int, int]:
     """UID verdadeiro -> índice, dos clubes brasileiros (server_teams.club_pairs).
 

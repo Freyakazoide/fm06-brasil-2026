@@ -87,4 +87,6 @@ de 2026: clube brasileiro fora das séries e dos estaduais de 2026 não carrega 
 jogadores no New Game, e o injetor avisa "doador … não está carregado". O
 `reforcar_elencos.py` leva cada doador para o primeiro clube de 2026 que tem um
 jogador daquela nação; ele fica no elenco com o nome de 2005 (o
-`montar_elencos.py` não o usa como hospedeiro).
+`montar_elencos.py` não o usa como hospedeiro). Os venezuelanos e o panamenho do
+banco não têm fim de contrato (ano 1900, salário 0) e o `contracts()` não os acha;
+`people_contracts.free_contracts` acha o bloco pelo índice da pessoa.
