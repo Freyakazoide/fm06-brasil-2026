@@ -48,6 +48,27 @@ Três regras de ouro:
 depois B1 (nomes de regens). São as três coisas que mais denunciam um jogo de
 2005 vestido de 2026.
 
+## Estado das entregas — 2026-10-20
+
+| frente | estado | conteúdo entregue / observação |
+|---|---|---|
+| A1 | preenchida | 380 entradas de glossário e 35 frases; toda tradução longa tem alternativa que cabe |
+| A2 | preenchida — editorial v2 | 220 titulares, 11 de cada clube da Série A 2026; todos os 13 ocultos e até 5 jogadas foram preenchidos por método explícito e determinístico, com fonte-base e aviso de revisão por scouting |
+| A3 | preenchida para o lote prioritário | corte em 20/10/2026; 90 jogadores do lote foram associados a uma seleção principal e tiveram jogos/gols reaplicados a partir da fonte. Correspondências com data divergente ficam identificadas no histórico, não são silenciosas |
+| A4 | preenchida | 4 lesões e 2 suspensões com fonte e data; somente casos confirmados, sem completar por suposição |
+| A5 | 156 clubes cobertos; apoio público coletado | `comissao_2026.csv` contém 384 registros: 156 técnicos principais (um por clube) e 228 profissionais de apoio; 106 clubes têm pelo menos um auxiliar/preparador/analista/médico/olheiro publicado, e 50 permanecem só com o técnico porque a fonte consultada não expõe outros nomes. A auditoria por clube está em `comissao_2026_cobertura.csv` |
+| B1 | preenchida | 1.650 nomes em 11 grupos e 15 regras de apelido |
+| B2 | parcial para a Série A | 20 clubes com modelo societário; campos financeiros/estrutura sem fonte ficam em branco, salvo balanço verificado do Flamengo |
+| B3 | preenchida | 42 relações de rivalidade |
+| B4 | preenchida | 18 árbitros do quadro FIFA; nível/rigor são parâmetros editoriais |
+| B5 | preenchida com ressalva auditável | 510 passagens de liga para os 100 jogadores de maior CA. Em 17 casos a data do banco diverge de 1 a 10 dias da fonte; as páginas foram validadas por nome completo e clube, e as duas datas aparecem no status e nas observações. A fonte agrega por passagem, não por temporada individual |
+| C0 | preenchida parcialmente | 12 linhas de liga e 60 valores; lacunas ficam em branco quando a fonte não traz a métrica |
+| C1–C14 | especificados | índice em [`docs/jogo_futuro/README.md`](jogo_futuro/README.md) |
+
+As linhas cinzas de exemplo foram removidas das sete planilhas. Dados não
+confirmados não foram apresentados como fatos: estimativas de gameplay estão
+identificadas como editoriais e campos sem fonte confiável permanecem vazios.
+
 ---
 
 ## A. Entra no mod já
@@ -120,10 +141,13 @@ Quem começa janeiro de 2026 machucado ou suspenso.
 Suspensoes). **Como eu uso:** comandos `INJURY` e `BAN` do `.lnc` (falta só
 confirmar a sintaxe).
 
-### A5. Comissão técnica dos clubes que faltam
+### A5. Comissão técnica dos 156 clubes
 
-Só 15 clubes têm a comissão completa. Os outros ficaram só com o técnico, e o
-resto do staff ainda tem nomes de 2005 (você viu isso no Figueirense).
+Os 156 participantes de 2026 (20 A + 20 B + 20 C + 96 D) têm exatamente um
+técnico principal cadastrado. A coleta pública de 20/10/2026 acrescentou 228
+profissionais de apoio e elevou para 106 o número de clubes com pelo menos um
+nome além do treinador. Nos 50 restantes a página consultada não publicou outro
+profissional; não foram criados nomes fictícios para preencher cargo vazio.
 
 **Entregar:** mais linhas no `data/brasil/comissao/comissao_2026.csv`, no mesmo
 formato das que já estão lá (abra no Excel e copie uma linha como modelo):
@@ -135,7 +159,10 @@ formato das que já estão lá (abra no Excel e copie uma linha como modelo):
 
 A fonte boa é o site oficial do clube (página "comissão técnica" ou
 "departamento de futebol"). O `aplicar_comissao.py` já usa o arquivo tal como
-está.
+está. Como fonte de cobertura nacional foi usada a página de equipe técnica do
+Transfermarkt, sempre guardando a URL e a data em cada linha. O arquivo
+`data/brasil/comissao/comissao_2026_cobertura.csv` registra, clube a clube, a
+quantidade por cargo e se a fonte trouxe nomes de apoio.
 
 ---
 

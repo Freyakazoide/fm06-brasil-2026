@@ -1,0 +1,157 @@
+﻿serie,clube,uf,total_nomes,tecnicos,auxiliares,preparadores,analistas,medicos,olheiros,fonte_transfermarkt,status_coleta
+A,Athletico-PR,PR,4,1,1,1,0,0,1,https://www.transfermarkt.com.br/club-athletico-paranaense/mitarbeiter/verein/679,fonte_com_nomes
+A,Atlético-MG,MG,6,1,3,2,0,0,0,https://www.transfermarkt.com.br/clube-atletico-mineiro/mitarbeiter/verein/330,fonte_com_nomes
+A,Bahia,BA,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/esporte-clube-bahia/mitarbeiter/verein/10010,fonte_com_nomes
+A,Botafogo,RJ,7,1,4,2,0,0,0,https://www.transfermarkt.com.br/botafogo-rio-de-janeiro/mitarbeiter/verein/537,fonte_com_nomes
+A,Chapecoense,SC,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/chapecoense/mitarbeiter/verein/17776,fonte_com_nomes
+A,Corinthians,SP,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/corinthians-sao-paulo/mitarbeiter/verein/199,fonte_com_nomes
+A,Coritiba,PR,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/coritiba-fc/mitarbeiter/verein/776,fonte_com_nomes
+A,Cruzeiro,MG,7,1,3,2,1,0,0,https://www.transfermarkt.com.br/ec-cruzeiro-belo-horizonte/mitarbeiter/verein/609,fonte_com_nomes
+A,Flamengo,RJ,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/flamengo-rio-de-janeiro/mitarbeiter/verein/614,fonte_com_nomes
+A,Fluminense,RJ,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/fluminense-rio-de-janeiro/mitarbeiter/verein/2462,fonte_com_nomes
+A,Grêmio,RS,5,1,2,1,1,0,0,https://www.transfermarkt.com.br/gremio-porto-alegre/mitarbeiter/verein/210,fonte_com_nomes
+A,Internacional,RS,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/sc-internacional-porto-alegre/mitarbeiter/verein/6600,fonte_com_nomes
+A,Mirassol,SP,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/mirassol-futebol-clube-sp-/mitarbeiter/verein/3876,fonte_com_nomes
+A,Palmeiras,SP,6,1,3,1,1,0,0,https://www.transfermarkt.com.br/se-palmeiras-sao-paulo/mitarbeiter/verein/1023,fonte_com_nomes
+A,Red Bull Bragantino,SP,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/red-bull-bragantino/mitarbeiter/verein/8793,fonte_com_nomes
+A,Remo,PA,5,1,4,0,0,0,0,https://www.transfermarkt.com.br/clube-do-remo-pa-/mitarbeiter/verein/10997,fonte_com_nomes
+A,Santos,SP,5,1,2,2,0,0,0,https://www.transfermarkt.com.br/fc-santos/mitarbeiter/verein/221,fonte_com_nomes
+A,São Paulo,SP,8,1,5,2,0,0,0,https://www.transfermarkt.com.br/fc-sao-paulo/mitarbeiter/verein/585,fonte_com_nomes
+A,Vasco da Gama,RJ,4,1,2,1,0,0,0,https://www.transfermarkt.com.br/vasco-da-gama-rio-de-janeiro/mitarbeiter/verein/978,fonte_com_nomes
+A,Vitória,BA,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/esporte-clube-vitoria/mitarbeiter/verein/2125,fonte_com_nomes
+B,América-MG,MG,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/america-futebol-clube-mg-/mitarbeiter/verein/2863,fonte_com_nomes
+B,Athletic,MG,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/athletic-club-mg-/mitarbeiter/verein/64918,fonte_com_nomes
+B,Atlético-GO,GO,4,1,2,1,0,0,0,https://www.transfermarkt.com.br/atletico-clube-goianiense/mitarbeiter/verein/15172,fonte_com_nomes
+B,Avaí,SC,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/avai-fc-sc-/mitarbeiter/verein/2035,fonte_com_nomes
+B,Botafogo-SP,SP,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/botafogo-futebol-clube-sp-/mitarbeiter/verein/9030,fonte_com_nomes
+B,CRB,AL,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/clube-de-regatas-brasil-al-/mitarbeiter/verein/11449,fonte_com_nomes
+B,Ceará,CE,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/ceara-sporting-club/mitarbeiter/verein/2029,fonte_com_nomes
+B,Criciúma,SC,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/criciuma-esporte-clube/mitarbeiter/verein/7178,fonte_sem_nomes
+B,Cuiabá,MT,7,1,6,0,0,0,0,https://www.transfermarkt.com.br/cuiaba-ec-mt-/mitarbeiter/verein/28022,fonte_com_nomes
+B,Fortaleza,CE,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/fortaleza-esporte-clube/mitarbeiter/verein/10870,fonte_com_nomes
+B,Goiás,GO,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/goias-ec/mitarbeiter/verein/3197,fonte_com_nomes
+B,Juventude,RS,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/esporte-clube-juventude/mitarbeiter/verein/10492,fonte_com_nomes
+B,Londrina,PR,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/londrina-esporte-clube-pr-/mitarbeiter/verein/1693,fonte_com_nomes
+B,Novorizontino,SP,5,1,4,0,0,0,0,https://www.transfermarkt.com.br/gremio-novorizontino-sp-/mitarbeiter/verein/37474,fonte_com_nomes
+B,Náutico,PE,6,1,2,1,0,2,0,https://www.transfermarkt.com.br/clube-nautico-capibaribe/mitarbeiter/verein/2646,fonte_com_nomes
+B,Operário-PR,PR,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/operario-ferroviario-ec-pr-/mitarbeiter/verein/27214,fonte_com_nomes
+B,Ponte Preta,SP,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/aa-ponte-preta/mitarbeiter/verein/1134,fonte_com_nomes
+B,Sport,PE,5,1,3,1,0,0,0,https://www.transfermarkt.com.br/sport-club-do-recife/mitarbeiter/verein/8718,fonte_com_nomes
+B,São Bernardo,SP,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/sao-bernardo-futebol-clube-sp-/mitarbeiter/verein/16439,fonte_sem_nomes
+B,Vila Nova,GO,5,1,3,1,0,0,0,https://www.transfermarkt.com.br/vila-nova-futebol-clube-go-/mitarbeiter/verein/5677,fonte_com_nomes
+C,Amazonas,AM,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/amazonas-fc/mitarbeiter/verein/87727,fonte_com_nomes
+C,Anápolis,GO,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/anapolis-futebol-clube-go-/mitarbeiter/verein/17568,fonte_com_nomes
+C,Barra,SC,4,1,2,0,0,1,0,https://www.transfermarkt.com.br/barra-futebol-clube-sc-/mitarbeiter/verein/52519,fonte_com_nomes
+C,Botafogo-PB,PB,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/botafogo-futebol-clube-pb-/mitarbeiter/verein/17964,fonte_com_nomes
+C,Brusque,SC,2,1,0,1,0,0,0,https://www.transfermarkt.com.br/brusque-futebol-clube-sc-/mitarbeiter/verein/14390,fonte_com_nomes
+C,Caxias,RS,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/ser-caxias-do-sul-rs-/mitarbeiter/verein/9141,fonte_com_nomes
+C,Confiança,SE,4,1,1,2,0,0,0,https://www.transfermarkt.com.br/associacao-desportiva-confianca-se-/mitarbeiter/verein/3280,fonte_com_nomes
+C,Ferroviária,SP,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/associacao-ferroviaria-de-esportes-sp-/mitarbeiter/verein/15882,fonte_com_nomes
+C,Figueirense,SC,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/figueirense-fc/mitarbeiter/verein/4064,fonte_com_nomes
+C,Floresta,CE,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/floresta-esporte-clube-ce-/mitarbeiter/verein/65477,fonte_sem_nomes
+C,Guarani,SP,4,1,2,0,0,0,1,https://www.transfermarkt.com.br/guarani-fc-sp-/mitarbeiter/verein/1755,fonte_com_nomes
+C,Inter de Limeira,SP,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/aa-internacional-limeira/mitarbeiter/verein/308,fonte_com_nomes
+C,Itabaiana,SE,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/associacao-olimpica-de-itabaiana-se-/mitarbeiter/verein/8547,fonte_com_nomes
+C,Ituano,SP,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/ituano-futebol-clube-sp-/mitarbeiter/verein/4773,fonte_sem_nomes
+C,Maranhão,MA,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/maranhao-atletico-clube-ma-/mitarbeiter/verein/34293,fonte_com_nomes
+C,Maringá,PR,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/maringa-futebol-clube-pr-/mitarbeiter/verein/33003,fonte_sem_nomes
+C,Paysandu,PA,4,1,2,1,0,0,0,https://www.transfermarkt.com.br/paysandu-sport-club-pa-/mitarbeiter/verein/6347,fonte_com_nomes
+C,Santa Cruz,PE,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/santa-cruz-futebol-clube-pe-/mitarbeiter/verein/1785,fonte_com_nomes
+C,Volta Redonda,RJ,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/volta-redonda-futebol-clube-rj-/mitarbeiter/verein/4176,fonte_com_nomes
+C,Ypiranga,RS,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/ypiranga-futebol-clube-rs-/mitarbeiter/verein/16869,fonte_com_nomes
+D,ABC,Rio Grande do Norte,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/abc-futebol-clube-rn-/mitarbeiter/verein/7209,fonte_sem_nomes
+D,ABECAT,Goiás,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/abecat-ouvidorense/mitarbeiter/verein/115027,fonte_sem_nomes
+D,ASA,Alagoas,5,1,0,3,0,0,1,https://www.transfermarkt.com.br/asa-de-arapiraca/mitarbeiter/verein/20092,fonte_com_nomes
+D,Altos,Piauí,4,1,2,1,0,0,0,https://www.transfermarkt.com.br/associacao-atletica-de-altos-pi-/mitarbeiter/verein/62794,fonte_com_nomes
+D,América-RJ,Rio de Janeiro,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/america-football-club-rj-/mitarbeiter/verein/9138,fonte_sem_nomes
+D,América-RN,Rio Grande do Norte,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/america-futebol-clube-rn-/mitarbeiter/verein/1751,fonte_sem_nomes
+D,Aparecidense,Goiás,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/aa-aparecidense-go-/mitarbeiter/verein/25209,fonte_com_nomes
+D,Araguaína,Tocantins,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/araguaina-futebol-e-regatas-to-/mitarbeiter/verein/32639,fonte_sem_nomes
+D,Atlético Cearense,Ceará,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/fc-atletico-cearense/mitarbeiter/verein/27837,fonte_com_nomes
+D,Atlético de Alagoinhas,Bahia,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/alagoinhas-atletico-clube-ba-/mitarbeiter/verein/25229,fonte_com_nomes
+D,Azuriz,Paraná,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/azuriz-futebol-clube-pr-/mitarbeiter/verein/85931,fonte_sem_nomes
+D,Betim,Minas Gerais,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/betim-futebol/mitarbeiter/verein/98702,fonte_com_nomes
+D,Blumenau,Santa Catarina,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/blumenau-esporte-clube-sc-/mitarbeiter/verein/66492,fonte_sem_nomes
+D,Brasil de Pelotas,Rio Grande do Sul,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/gremio-esportivo-brasil-rs-/mitarbeiter/verein/10560,fonte_com_nomes
+D,Brasiliense,Distrito Federal,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/brasiliense-futebol-clube-df-/mitarbeiter/verein/3973,fonte_sem_nomes
+D,CRAC,Goiás,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/clube-recreativo-e-atletico-catalano-go-/mitarbeiter/verein/12602,fonte_com_nomes
+D,CSA,Alagoas,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/centro-sportivo-alagoano-al-/mitarbeiter/verein/18545,fonte_com_nomes
+D,CSE,Alagoas,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/clube-sociedade-esportiva-al-/mitarbeiter/verein/52513,fonte_sem_nomes
+D,Capital,Distrito Federal,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/capital-clube-de-futebol-df-/mitarbeiter/verein/38023,fonte_com_nomes
+D,Ceilândia,Distrito Federal,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/ceilandia-esporte-clube-df-/mitarbeiter/verein/12279,fonte_sem_nomes
+D,Central,Pernambuco,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/central-sport-club-pe-/mitarbeiter/verein/21409,fonte_com_nomes
+D,Cianorte,Paraná,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/cianorte-futebol-clube-pr-/mitarbeiter/verein/16837,fonte_com_nomes
+D,Decisão Goiana,Pernambuco,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/se-decisao-futebol-clube/mitarbeiter/verein/76155,fonte_sem_nomes
+D,Democrata GV,Minas Gerais,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/ec-democrata-mg-/mitarbeiter/verein/3364,fonte_sem_nomes
+D,FC Cascavel,Paraná,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/futebol-clube-cascavel-pr-/mitarbeiter/verein/28621,fonte_com_nomes
+D,Ferroviário,Ceará,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/ferroviario-atletico-clube-ce-/mitarbeiter/verein/11931,fonte_com_nomes
+D,Fluminense-PI,Piauí,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/fluminense-ec-pi-/mitarbeiter/verein/87817,fonte_com_nomes
+D,GAS,Roraima,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/ga-sampaio/mitarbeiter/verein/87822,fonte_sem_nomes
+D,Galvez,Acre,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/galvez-esporte-clube/mitarbeiter/verein/69424,fonte_com_nomes
+D,Gama,Distrito Federal,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/sociedade-esportiva-do-gama-df-/mitarbeiter/verein/7014,fonte_sem_nomes
+D,Gazin Porto Velho,Rondônia,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/porto-velho-esporte-clube-ro-/mitarbeiter/verein/72477,fonte_com_nomes
+D,Goiatuba,Goiás,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/goiatuba-esporte-clube-go-/mitarbeiter/verein/8567,fonte_sem_nomes
+D,Guaporé,Rondônia,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/guapore-fc/mitarbeiter/verein/87821,fonte_sem_nomes
+D,Guarany de Bagé,Rio Grande do Sul,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/guarany-bage-futebol-clube/mitarbeiter/verein/24903,fonte_com_nomes
+D,Humaitá,Acre,2,1,0,1,0,0,0,https://www.transfermarkt.com.br/sport-clube-humaita-ac-/mitarbeiter/verein/60741,fonte_com_nomes
+D,IAPE,Maranhão,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/iape-futebol-clube/mitarbeiter/verein/87160,fonte_sem_nomes
+D,Iguatu,Ceará,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/associacao-desportiva-iguatu-ce-/mitarbeiter/verein/39555,fonte_com_nomes
+D,Imperatriz,Maranhão,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/sociedade-imperatriz-de-desportos-ma-/mitarbeiter/verein/23778,fonte_sem_nomes
+D,Independência,Acre,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/independencia-futebol-clube-ac-/mitarbeiter/verein/32612,fonte_com_nomes
+D,Inhumas,Goiás,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/inhumas-esporte-clube-go-/mitarbeiter/verein/25296,fonte_com_nomes
+D,Ivinhema,Mato Grosso do Sul,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/ivinhema-futebol-clube-ms-/mitarbeiter/verein/36962,fonte_sem_nomes
+D,Jacuipense,Bahia,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/ec-jacuipense-ba-/mitarbeiter/verein/33050,fonte_sem_nomes
+D,Joinville,Santa Catarina,2,1,0,1,0,0,0,https://www.transfermarkt.com.br/joinville-ec-sc-/mitarbeiter/verein/3330,fonte_com_nomes
+D,Juazeirense,Bahia,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/sociedade-desportiva-juazeirense-ba-/mitarbeiter/verein/32991,fonte_sem_nomes
+D,Lagarto,Sergipe,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/lagarto-futebol-clube-se-/mitarbeiter/verein/56341,fonte_sem_nomes
+D,Laguna,Rio Grande do Norte,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/clube-laguna/mitarbeiter/verein/108000,fonte_sem_nomes
+D,Luverdense,Mato Grosso,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/luverdense-esporte-clube-mt-/mitarbeiter/verein/21599,fonte_com_nomes
+D,Madureira,Rio de Janeiro,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/madureira-esporte-clube-rj-/mitarbeiter/verein/4907,fonte_com_nomes
+D,Maguary,Pernambuco,3,1,0,2,0,0,0,https://www.transfermarkt.com.br/associacao-atletica-maguary/mitarbeiter/verein/103697,fonte_com_nomes
+D,Manauara,Amazonas,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/manauara-ec/mitarbeiter/verein/94182,fonte_sem_nomes
+D,Manaus,Amazonas,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/manaus-futebol-clube/mitarbeiter/verein/46022,fonte_sem_nomes
+D,Maracanã,Ceará,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/maracana-esporte-clube-ce-/mitarbeiter/verein/22352,fonte_sem_nomes
+D,Marcílio Dias,Santa Catarina,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/clube-nautico-marcilio-dias-sc-/mitarbeiter/verein/4759,fonte_com_nomes
+D,Maricá,Rio de Janeiro,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/marica-futebol-clube/mitarbeiter/verein/63296,fonte_sem_nomes
+D,Mixto,Mato Grosso,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/mixto-esporte-clube-mt-/mitarbeiter/verein/11900,fonte_com_nomes
+D,Monte Roraima,Roraima,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/monte-roraima-fc/mitarbeiter/verein/119625,fonte_sem_nomes
+D,Moto Club,Maranhão,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/moto-club-de-sao-luis-ma-/mitarbeiter/verein/12009,fonte_sem_nomes
+D,Nacional,Amazonas,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/nacional-futebol-clube-am-/mitarbeiter/verein/22782,fonte_sem_nomes
+D,Noroeste,São Paulo,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/esporte-clube-noroeste-sp-/mitarbeiter/verein/15047,fonte_sem_nomes
+D,Nova Iguaçu,Rio de Janeiro,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/nova-iguacu-futebol-clube-rj-/mitarbeiter/verein/16108,fonte_com_nomes
+D,Operário VG,Mato Grosso,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/ce-operario-varzea-grandense-mt-/mitarbeiter/verein/60520,fonte_sem_nomes
+D,Operário-MS,Mato Grosso do Sul,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/operario-futebol-clube-ms-/mitarbeiter/verein/32386,fonte_sem_nomes
+D,Oratório,Amapá,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/oratorio-recreativo-clube-ap-/mitarbeiter/verein/53471,fonte_sem_nomes
+D,PSTC/São Joseense,Paraná,2,1,0,0,1,0,0,https://www.transfermarkt.com.br/independente-futebol-sao-joseense-pr-/mitarbeiter/verein/80647,fonte_com_nomes
+D,Parnahyba,Piauí,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/parnahyba-sport-club-pi-/mitarbeiter/verein/41872,fonte_com_nomes
+D,Piauí,Piauí,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/piaui-esporte-clube-pi-/mitarbeiter/verein/64925,fonte_sem_nomes
+D,Porto,Bahia,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/porto-sc/mitarbeiter/verein/121518,fonte_sem_nomes
+D,Portuguesa,São Paulo,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/portuguesa-sao-paulo/mitarbeiter/verein/10247,fonte_com_nomes
+D,Portuguesa-RJ,Rio de Janeiro,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/aa-portuguesa-rj-/mitarbeiter/verein/52517,fonte_sem_nomes
+D,Pouso Alegre,Minas Gerais,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/pouso-alegre-fc/mitarbeiter/verein/73407,fonte_sem_nomes
+D,Primavera,Mato Grosso,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/primavera-atletico-clube-mt-/mitarbeiter/verein/98845,fonte_com_nomes
+D,Real Noroeste,Espírito Santo,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/real-noroeste-capixaba-futebol-clube-es-/mitarbeiter/verein/36478,fonte_sem_nomes
+D,Retrô,Pernambuco,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/retro-futebol-clube-brasil/mitarbeiter/verein/76156,fonte_com_nomes
+D,Rio Branco-ES,Espírito Santo,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/rio-branco-atletico-clube-es-/mitarbeiter/verein/30489,fonte_com_nomes
+D,Sampaio Corrêa,Maranhão,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/sampaio-correa-fc-ma-/mitarbeiter/verein/3319,fonte_com_nomes
+D,Sampaio Corrêa-RJ,Rio de Janeiro,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/sampaio-correa-futebol-e-esporte-rj-/mitarbeiter/verein/40120,fonte_com_nomes
+D,Santa Catarina,Santa Catarina,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/santa-catarina-clube-sc-/mitarbeiter/verein/36963,fonte_com_nomes
+D,Sergipe,Sergipe,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/club-sportivo-sergipe-se-/mitarbeiter/verein/7816,fonte_com_nomes
+D,Serra Branca,Paraíba,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/paraiba-esporte-clube-pb-/mitarbeiter/verein/65479,fonte_com_nomes
+D,Sousa,Paraíba,2,1,0,0,1,0,0,https://www.transfermarkt.com.br/sousa-esporte-clube-pb-/mitarbeiter/verein/18236,fonte_com_nomes
+D,São José-RS,Rio Grande do Sul,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/esporte-clube-sao-jose-rs-/mitarbeiter/verein/7535,fonte_com_nomes
+D,São Luiz,Rio Grande do Sul,4,1,3,0,0,0,0,https://www.transfermarkt.com.br/esporte-clube-sao-luiz-rs-/mitarbeiter/verein/27355,fonte_com_nomes
+D,São Raimundo-RR,Roraima,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/sao-raimundo-esporte-clube-rr-/mitarbeiter/verein/73574,fonte_sem_nomes
+D,Tirol,Ceará,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/gremio-pague-menos/mitarbeiter/verein/94170,fonte_sem_nomes
+D,Tocantinópolis,Tocantins,3,1,1,1,0,0,0,https://www.transfermarkt.com.br/tocantinopolis-esporte-clube-to-/mitarbeiter/verein/27242,fonte_com_nomes
+D,Tombense,Minas Gerais,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/tombense-futebol-clube-mg-/mitarbeiter/verein/3234,fonte_com_nomes
+D,Trem,Amapá,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/trem-desportivo-clube-ap-/mitarbeiter/verein/36012,fonte_com_nomes
+D,Treze,Paraíba,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/treze-futebol-clube-pb-/mitarbeiter/verein/11086,fonte_com_nomes
+D,Tuna Luso,Pará,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/tuna-luso-brasileira-pa-/mitarbeiter/verein/20803,fonte_sem_nomes
+D,Uberlândia,Minas Gerais,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/uberlandia-esporte-clube-mg-/mitarbeiter/verein/8825,fonte_com_nomes
+D,União Rondonópolis,Mato Grosso,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/uniao-esporte-clube-mt-/mitarbeiter/verein/28199,fonte_com_nomes
+D,Velo Clube,São Paulo,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/associacao-esportiva-velo-clube-rioclare/mitarbeiter/verein/32037,fonte_sem_nomes
+D,Vitória-ES,Espírito Santo,2,1,1,0,0,0,0,https://www.transfermarkt.com.br/vitoria-futebol-clube-es-/mitarbeiter/verein/32934,fonte_com_nomes
+D,XV de Piracicaba,São Paulo,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/xv-de-piracicaba/mitarbeiter/verein/55335,fonte_sem_nomes
+D,Água Santa,São Paulo,3,1,2,0,0,0,0,https://www.transfermarkt.com.br/esporte-clube-agua-santa-sp-/mitarbeiter/verein/45176,fonte_com_nomes
+D,Águia de Marabá,Pará,1,1,0,0,0,0,0,https://www.transfermarkt.com.br/aguia-de-maraba-futebol-clube-pa-/mitarbeiter/verein/27642,fonte_sem_nomes

@@ -1,289 +1,385 @@
 ﻿serie,clube,uf,cargo,funcao,nome,nacionalidade,nascimento,fonte,atualizado
 A,Athletico-PR,PR,tecnico,Head coach,Odair Hellmann,BRA,1977-01-22,Sofascore,
-A,Athletico-PR,PR,auxiliar,Assistant manager,Rodrigo Belião,BRA,,Wikipédia: Club Athletico Paranaense,26 July 2024
-A,Athletico-PR,PR,auxiliar,Assistant manager,Juca Antonello,BRA,,Wikipédia: Club Athletico Paranaense,26 July 2024
-A,Athletico-PR,PR,preparador,Fitness coach,Gustavo Porto,BRA,,Wikipédia: Club Athletico Paranaense,26 July 2024
-A,Athletico-PR,PR,preparador,Goalkeeping coach,Felipe Faria,BRA,,Wikipédia: Club Athletico Paranaense,26 July 2024
+A,Athletico-PR,PR,auxiliar,Auxiliar Técnico,Fábio Moreno,BRA,,https://www.transfermarkt.com.br/club-athletico-paranaense/mitarbeiter/verein/679,2026-10-20
+A,Athletico-PR,PR,preparador,Instrutor De Fitness,Anderson Nicolau,BRA,,https://www.transfermarkt.com.br/club-athletico-paranaense/mitarbeiter/verein/679,2026-10-20
+A,Athletico-PR,PR,olheiro,Observador,Lucas Honorio,BRA,,https://www.transfermarkt.com.br/club-athletico-paranaense/mitarbeiter/verein/679,2026-10-20
 A,Atlético-MG,MG,tecnico,Head coach,Eduardo Dominguez,ARG,1978-09-01,Sofascore,
+A,Atlético-MG,MG,auxiliar,Auxiliar Técnico,Alan Sánchez,ARG,,https://www.transfermarkt.com.br/clube-atletico-mineiro/mitarbeiter/verein/330,2026-10-20
+A,Atlético-MG,MG,auxiliar,Auxiliar Técnico,Leandro Díaz,ARG,,https://www.transfermarkt.com.br/clube-atletico-mineiro/mitarbeiter/verein/330,2026-10-20
+A,Atlético-MG,MG,auxiliar,Auxiliar Técnico,Lucas Gonçalves,BRA,,https://www.transfermarkt.com.br/clube-atletico-mineiro/mitarbeiter/verein/330,2026-10-20
+A,Atlético-MG,MG,preparador,Instrutor De Fitness,Adrián Vaccarini,ARG,,https://www.transfermarkt.com.br/clube-atletico-mineiro/mitarbeiter/verein/330,2026-10-20
+A,Atlético-MG,MG,preparador,Treinador de Goleiros,Danilo Minutti,BRA,,https://www.transfermarkt.com.br/clube-atletico-mineiro/mitarbeiter/verein/330,2026-10-20
 A,Bahia,BA,tecnico,Head coach,Rogério Ceni,BRA,1973-01-22,Sofascore,
-A,Bahia,BA,auxiliar,Assistant head coach,Nelson Simões,BRA,,Wikipédia: Esporte Clube Bahia,1 January 2024
-A,Bahia,BA,auxiliar,Assistant head coach,Leandro Macagnan,BRA,,Wikipédia: Esporte Clube Bahia,1 January 2024
-A,Bahia,BA,auxiliar,Assistant head coach,Charles Hembert,FRA,,Wikipédia: Esporte Clube Bahia,1 January 2024
-A,Bahia,BA,analista,Performance coordinator,António Bores,ESP,,Wikipédia: Esporte Clube Bahia,1 January 2024
-A,Bahia,BA,preparador,Fitness coach,Danilo Augusto,BRA,,Wikipédia: Esporte Clube Bahia,1 January 2024
-A,Bahia,BA,preparador,Fitness coach,Roberto Nascimento,BRA,,Wikipédia: Esporte Clube Bahia,1 January 2024
-A,Bahia,BA,preparador,Goalkeepers trainer,Eduardo Varjão,BRA,,Wikipédia: Esporte Clube Bahia,1 January 2024
+A,Bahia,BA,auxiliar,Auxiliar Técnico,Charles Hembert,FRA,,https://www.transfermarkt.com.br/esporte-clube-bahia/mitarbeiter/verein/10010,2026-10-20
+A,Bahia,BA,preparador,Instrutor De Fitness,Zé Mário,BRA,,https://www.transfermarkt.com.br/esporte-clube-bahia/mitarbeiter/verein/10010,2026-10-20
 A,Botafogo,RJ,tecnico,Head coach,Tite,BRA,1961-05-25,Sofascore,
+A,Botafogo,RJ,auxiliar,Auxiliar Técnico,Luis Alberto Piedrahita,COL,,https://www.transfermarkt.com.br/botafogo-rio-de-janeiro/mitarbeiter/verein/537,2026-10-20
+A,Botafogo,RJ,auxiliar,Auxiliar Técnico,Marcelo Salles,BRA,,https://www.transfermarkt.com.br/botafogo-rio-de-janeiro/mitarbeiter/verein/537,2026-10-20
+A,Botafogo,RJ,auxiliar,Auxiliar Técnico,Matheus Bachi,BRA,,https://www.transfermarkt.com.br/botafogo-rio-de-janeiro/mitarbeiter/verein/537,2026-10-20
+A,Botafogo,RJ,auxiliar,Auxiliar Técnico,Rodrigo Bellão,BRA,,https://www.transfermarkt.com.br/botafogo-rio-de-janeiro/mitarbeiter/verein/537,2026-10-20
+A,Botafogo,RJ,preparador,Instrutor De Fitness,Fábio Mahseredjian,BRA,,https://www.transfermarkt.com.br/botafogo-rio-de-janeiro/mitarbeiter/verein/537,2026-10-20
+A,Botafogo,RJ,preparador,Instrutor De Fitness,Ronaldo Torres,BRA,,https://www.transfermarkt.com.br/botafogo-rio-de-janeiro/mitarbeiter/verein/537,2026-10-20
 A,Chapecoense,SC,tecnico,Head coach,Rafael Lacerda,BRA,1984-06-12,Sofascore,
+A,Chapecoense,SC,auxiliar,Auxiliar Técnico,João Antonio,BRA,,https://www.transfermarkt.com.br/chapecoense/mitarbeiter/verein/17776,2026-10-20
 A,Corinthians,SP,tecnico,Head coach,Clarence Seedorf,NLD,1976-04-01,Sofascore,
+A,Corinthians,SP,auxiliar,Auxiliar Técnico,Léo Porto,BRA,,https://www.transfermarkt.com.br/corinthians-sao-paulo/mitarbeiter/verein/199,2026-10-20
+A,Corinthians,SP,auxiliar,Auxiliar Técnico,Pablo López,ESP,,https://www.transfermarkt.com.br/corinthians-sao-paulo/mitarbeiter/verein/199,2026-10-20
 A,Coritiba,PR,tecnico,Head coach,Fernando Seabra,BRA,1977-06-19,Sofascore,
-A,Coritiba,PR,auxiliar,Assistant coach,Henrique Américo,BRA,,Wikipédia: Coritiba Foot Ball Club,
-A,Coritiba,PR,auxiliar,Assistant coach,Leonardo Galbes,BRA,,Wikipédia: Coritiba Foot Ball Club,
-A,Coritiba,PR,preparador,Goalkeeping coach,Fernando Correa,Brazil,,Wikipédia: Coritiba Foot Ball Club,
-A,Coritiba,PR,preparador,Goalkeeping coach,Higor Felliny,Brazil,,Wikipédia: Coritiba Foot Ball Club,
-A,Coritiba,PR,preparador,Fitness coach,Rodrigo Chaves,Brazil,,Wikipédia: Coritiba Foot Ball Club,
-A,Coritiba,PR,preparador,Fitness coach,Rodrigo Monginho,Brazil,,Wikipédia: Coritiba Foot Ball Club,
-A,Coritiba,PR,preparador,Fitness coach,Renan Nunes,Brazil,,Wikipédia: Coritiba Foot Ball Club,
+A,Coritiba,PR,auxiliar,Auxiliar Técnico,Alvaro Martins,BRA,,https://www.transfermarkt.com.br/coritiba-fc/mitarbeiter/verein/776,2026-10-20
+A,Coritiba,PR,auxiliar,Auxiliar Técnico,Guila Bossle,BRA,,https://www.transfermarkt.com.br/coritiba-fc/mitarbeiter/verein/776,2026-10-20
+A,Coritiba,PR,auxiliar,Auxiliar Técnico,Vinicius Rovaris,BRA,,https://www.transfermarkt.com.br/coritiba-fc/mitarbeiter/verein/776,2026-10-20
 A,Cruzeiro,MG,tecnico,Head coach,Artur Jorge,PRT,1972-01-01,Sofascore,
+A,Cruzeiro,MG,auxiliar,Auxiliar Técnico,André Cunha,PRT,,https://www.transfermarkt.com.br/ec-cruzeiro-belo-horizonte/mitarbeiter/verein/609,2026-10-20
+A,Cruzeiro,MG,auxiliar,Auxiliar Técnico,João Cardoso,PRT,,https://www.transfermarkt.com.br/ec-cruzeiro-belo-horizonte/mitarbeiter/verein/609,2026-10-20
+A,Cruzeiro,MG,auxiliar,Auxiliar Técnico,Wesley Carvalho,BRA,,https://www.transfermarkt.com.br/ec-cruzeiro-belo-horizonte/mitarbeiter/verein/609,2026-10-20
+A,Cruzeiro,MG,preparador,Treinador de Goleiros,Robertinho,BRA,,https://www.transfermarkt.com.br/ec-cruzeiro-belo-horizonte/mitarbeiter/verein/609,2026-10-20
+A,Cruzeiro,MG,preparador,Instrutor De Fitness,Tiago Lopes,PRT,,https://www.transfermarkt.com.br/ec-cruzeiro-belo-horizonte/mitarbeiter/verein/609,2026-10-20
+A,Cruzeiro,MG,analista,Vídeoanalista,Rodrigo Mira,BRA,,https://www.transfermarkt.com.br/ec-cruzeiro-belo-horizonte/mitarbeiter/verein/609,2026-10-20
 A,Flamengo,RJ,tecnico,Head coach,Leonardo Jardim,PRT,1974-08-01,Sofascore,
-A,Flamengo,RJ,auxiliar,Assistant head coach,Márcio de Moraes Torres,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,preparador,Goalkeepers trainer,Rogério Maia,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,preparador,Goalkeepers trainer,Thiago Eller,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,analista,Performance analyst,Wellington Sales,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,analista,Performance analyst,Eduardo Coimbra,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,analista,Performance analyst,Arthur Souza,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,analista,Performance analyst,Victor Saad,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,olheiro,Head of scouting,Andrii Fedchenkov,UKR,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,medico,Health and high performance manager,Fernando Sassaki,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,preparador,Fitness coach,Diogo Linhares,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,preparador,Fitness coach,Arthur Peixoto,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,preparador,Fitness coach,Júnior Bezerra,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,medico,Doctor,Marcelo Soares,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,medico,Doctor,Fernando Bassan,BRA,,Wikipédia: CR Flamengo,13 May 2025
-A,Flamengo,RJ,medico,Physiotherapist,Laniyan Neves,BRA,,Wikipédia: CR Flamengo,13 May 2025
+A,Flamengo,RJ,auxiliar,Auxiliar Técnico,José Barros,PRT,,https://www.transfermarkt.com.br/flamengo-rio-de-janeiro/mitarbeiter/verein/614,2026-10-20
+A,Flamengo,RJ,auxiliar,Auxiliar Técnico,Márcio Torres,BRA,,https://www.transfermarkt.com.br/flamengo-rio-de-janeiro/mitarbeiter/verein/614,2026-10-20
+A,Flamengo,RJ,auxiliar,Auxiliar Técnico,Vieira,PRT,,https://www.transfermarkt.com.br/flamengo-rio-de-janeiro/mitarbeiter/verein/614,2026-10-20
 A,Fluminense,RJ,tecnico,Head coach,Marcão,BRA,1972-07-22,Sofascore,
-A,Fluminense,RJ,auxiliar,Assistant coaches,Maxi Cuberas,,,Wikipédia: Fluminense FC,
-A,Fluminense,RJ,auxiliar,Technical assistant,Marco Salgado,,,Wikipédia: Fluminense FC,
-A,Fluminense,RJ,preparador,Fitness coaches,Lucas Vivas,,,Wikipédia: Fluminense FC,
-A,Fluminense,RJ,preparador,Goalkeeper coach coordinator,Flavio Tenius,,,Wikipédia: Fluminense FC,
-A,Fluminense,RJ,preparador,Goalkeeper coaches,André Carvalho,,,Wikipédia: Fluminense FC,
+A,Fluminense,RJ,auxiliar,Auxiliar Técnico,Marcão,BRA,,https://www.transfermarkt.com.br/fluminense-rio-de-janeiro/mitarbeiter/verein/2462,2026-10-20
+A,Fluminense,RJ,preparador,Treinador de Goleiros,Flávio Tenius,BRA,,https://www.transfermarkt.com.br/fluminense-rio-de-janeiro/mitarbeiter/verein/2462,2026-10-20
 A,Grêmio,RS,tecnico,Head coach,Renato Gaúcho,BRA,1962-09-09,Sofascore,
+A,Grêmio,RS,auxiliar,Auxiliar Técnico,Alexandre Mendes,BRA,,https://www.transfermarkt.com.br/gremio-porto-alegre/mitarbeiter/verein/210,2026-10-20
+A,Grêmio,RS,auxiliar,Auxiliar Técnico,Mané,PRT,,https://www.transfermarkt.com.br/gremio-porto-alegre/mitarbeiter/verein/210,2026-10-20
+A,Grêmio,RS,preparador,Treinador de Goleiros,Daniel Correia,PRT,,https://www.transfermarkt.com.br/gremio-porto-alegre/mitarbeiter/verein/210,2026-10-20
+A,Grêmio,RS,analista,Vídeoanalista,Nuno Batista,PRT,,https://www.transfermarkt.com.br/gremio-porto-alegre/mitarbeiter/verein/210,2026-10-20
 A,Internacional,RS,tecnico,Head coach,Eduardo Baptista,BRA,1970-03-30,Sofascore,
-A,Internacional,RS,auxiliar,Assistant coach,Pablo Fernandez,,,Wikipédia: SC Internacional,
-A,Internacional,RS,preparador,Fitness coach,Vacant,,,Wikipédia: SC Internacional,
-A,Internacional,RS,preparador,Goalkeeping coach,Rogério Maia,,,Wikipédia: SC Internacional,
-A,Internacional,RS,analista,Analyst,Youssef Kanaan,,,Wikipédia: SC Internacional,
-A,Internacional,RS,medico,Health coordinator,Luiz Crescente,,,Wikipédia: SC Internacional,
-A,Internacional,RS,medico,Doctor,Guilherme Caputo,,,Wikipédia: SC Internacional,
-A,Internacional,RS,medico,Physiologist,Felipe Irala,,,Wikipédia: SC Internacional,
-A,Internacional,RS,medico,Physiotherapist,Guilherme Bergamo,,,Wikipédia: SC Internacional,
-A,Internacional,RS,auxiliar,Performance assistant,Thales Medeiros,,,Wikipédia: SC Internacional,
-A,Internacional,RS,medico,Nutritionist,Maria Julia,,,Wikipédia: SC Internacional,
-A,Internacional,RS,medico,Nutrition intern,Eduarda Dadalt,,,Wikipédia: SC Internacional,
-A,Internacional,RS,medico,Masseur,Juarez Quintanilha,,,Wikipédia: SC Internacional,
+A,Internacional,RS,auxiliar,Auxiliar Técnico,Julio Kenaifes,BRA,,https://www.transfermarkt.com.br/sc-internacional-porto-alegre/mitarbeiter/verein/6600,2026-10-20
+A,Internacional,RS,auxiliar,Auxiliar Técnico,Lucas Matheus,BRA,,https://www.transfermarkt.com.br/sc-internacional-porto-alegre/mitarbeiter/verein/6600,2026-10-20
+A,Internacional,RS,auxiliar,Auxiliar Técnico,Pablo Fernandez,BRA,,https://www.transfermarkt.com.br/sc-internacional-porto-alegre/mitarbeiter/verein/6600,2026-10-20
 A,Mirassol,SP,tecnico,Head coach,Rafael Guanaes,BRA,1981-03-27,Sofascore,
+A,Mirassol,SP,auxiliar,Auxiliar Técnico,Ivan Baitello,BRA,,https://www.transfermarkt.com.br/mirassol-futebol-clube-sp-/mitarbeiter/verein/3876,2026-10-20
+A,Mirassol,SP,auxiliar,Auxiliar Técnico,Rainer Oliveira,BRA,,https://www.transfermarkt.com.br/mirassol-futebol-clube-sp-/mitarbeiter/verein/3876,2026-10-20
 A,Palmeiras,SP,tecnico,Head coach,Abel Ferreira,PRT,1978-12-22,Sofascore,
+A,Palmeiras,SP,auxiliar,Auxiliar Técnico,Andrey Lopes,BRA,,https://www.transfermarkt.com.br/se-palmeiras-sao-paulo/mitarbeiter/verein/1023,2026-10-20
+A,Palmeiras,SP,auxiliar,Auxiliar Técnico,Carlos Martinho,PRT,,https://www.transfermarkt.com.br/se-palmeiras-sao-paulo/mitarbeiter/verein/1023,2026-10-20
+A,Palmeiras,SP,auxiliar,Auxiliar Técnico,Castanheira,PRT,,https://www.transfermarkt.com.br/se-palmeiras-sao-paulo/mitarbeiter/verein/1023,2026-10-20
+A,Palmeiras,SP,preparador,Instrutor De Fitness,João Martins,PRT,,https://www.transfermarkt.com.br/se-palmeiras-sao-paulo/mitarbeiter/verein/1023,2026-10-20
+A,Palmeiras,SP,analista,Analista de jogo,Tiago Magalhães,PRT,,https://www.transfermarkt.com.br/se-palmeiras-sao-paulo/mitarbeiter/verein/1023,2026-10-20
 A,Red Bull Bragantino,SP,tecnico,Head coach,Vagner Mancini,BRA,1966-10-24,Sofascore,
-A,Red Bull Bragantino,SP,auxiliar,Assistant coach,Réver,BRA,,Wikipédia: Red Bull Bragantino,22 September 2026
-A,Red Bull Bragantino,SP,preparador,Fitness coach,Vítor Gonçalves,BRA,,Wikipédia: Red Bull Bragantino,22 September 2026
-A,Red Bull Bragantino,SP,preparador,Goalkeeping coach,Rodrigo Bruns,BRA,,Wikipédia: Red Bull Bragantino,22 September 2026
+A,Red Bull Bragantino,SP,auxiliar,Auxiliar Técnico,Réver,BRA,,https://www.transfermarkt.com.br/red-bull-bragantino/mitarbeiter/verein/8793,2026-10-20
 A,Remo,PA,tecnico,Head coach,Thiago Carpini,BRA,1984-07-16,Sofascore,
+A,Remo,PA,auxiliar,Auxiliar Técnico,Estephano Neto,BRA,,https://www.transfermarkt.com.br/clube-do-remo-pa-/mitarbeiter/verein/10997,2026-10-20
+A,Remo,PA,auxiliar,Auxiliar Técnico,Flávio Garcia,BRA,,https://www.transfermarkt.com.br/clube-do-remo-pa-/mitarbeiter/verein/10997,2026-10-20
+A,Remo,PA,auxiliar,Auxiliar Técnico,Mariozinho,BRA,,https://www.transfermarkt.com.br/clube-do-remo-pa-/mitarbeiter/verein/10997,2026-10-20
+A,Remo,PA,auxiliar,Auxiliar Técnico,Márcio Goiano,BRA,,https://www.transfermarkt.com.br/clube-do-remo-pa-/mitarbeiter/verein/10997,2026-10-20
 A,Santos,SP,tecnico,Head coach,Cuca,BRA,1963-06-07,Sofascore,
+A,Santos,SP,auxiliar,Auxiliar Técnico,Cuquinha,BRA,,https://www.transfermarkt.com.br/fc-santos/mitarbeiter/verein/221,2026-10-20
+A,Santos,SP,auxiliar,Auxiliar Técnico,Vinicius Marques,BRA,,https://www.transfermarkt.com.br/fc-santos/mitarbeiter/verein/221,2026-10-20
+A,Santos,SP,preparador,Instrutor De Fitness,Omar Feitosa,BRA,,https://www.transfermarkt.com.br/fc-santos/mitarbeiter/verein/221,2026-10-20
+A,Santos,SP,preparador,Instrutor De Fitness,William Basso,BRA,,https://www.transfermarkt.com.br/fc-santos/mitarbeiter/verein/221,2026-10-20
 A,São Paulo,SP,tecnico,Head coach,Dorival Júnior,BRA,1962-04-25,Sofascore,
+A,São Paulo,SP,auxiliar,Auxiliar Técnico,James Freitas,BRA,,https://www.transfermarkt.com.br/fc-sao-paulo/mitarbeiter/verein/585,2026-10-20
+A,São Paulo,SP,auxiliar,Auxiliar Técnico,Lucas Silvestre,BRA,,https://www.transfermarkt.com.br/fc-sao-paulo/mitarbeiter/verein/585,2026-10-20
+A,São Paulo,SP,auxiliar,Auxiliar Técnico,Milton Cruz,BRA,,https://www.transfermarkt.com.br/fc-sao-paulo/mitarbeiter/verein/585,2026-10-20
+A,São Paulo,SP,auxiliar,Auxiliar Técnico,Pedro Sotero,BRA,,https://www.transfermarkt.com.br/fc-sao-paulo/mitarbeiter/verein/585,2026-10-20
+A,São Paulo,SP,auxiliar,Auxiliar Técnico,Vizolli,BRA,,https://www.transfermarkt.com.br/fc-sao-paulo/mitarbeiter/verein/585,2026-10-20
+A,São Paulo,SP,preparador,Preparador físico,Paulo Paixão,BRA,,https://www.transfermarkt.com.br/fc-sao-paulo/mitarbeiter/verein/585,2026-10-20
+A,São Paulo,SP,preparador,Preparador físico,Ricardo César,BRA,,https://www.transfermarkt.com.br/fc-sao-paulo/mitarbeiter/verein/585,2026-10-20
 A,Vasco da Gama,RJ,tecnico,Head coach,Pedro Emanuel,PRT,1975-02-11,Sofascore,
+A,Vasco da Gama,RJ,auxiliar,Auxiliar Técnico,Bruno Lazaroni,BRA,,https://www.transfermarkt.com.br/vasco-da-gama-rio-de-janeiro/mitarbeiter/verein/978,2026-10-20
+A,Vasco da Gama,RJ,auxiliar,Auxiliar Técnico,Rui Gomes,PRT,,https://www.transfermarkt.com.br/vasco-da-gama-rio-de-janeiro/mitarbeiter/verein/978,2026-10-20
+A,Vasco da Gama,RJ,preparador,Treinador de Goleiros,Pedro Correia,PRT,,https://www.transfermarkt.com.br/vasco-da-gama-rio-de-janeiro/mitarbeiter/verein/978,2026-10-20
 A,Vitória,BA,tecnico,Head coach,Jair Ventura,BRA,1979-03-14,Sofascore,
+A,Vitória,BA,auxiliar,Auxiliar Técnico,Cleber dos Santos,BRA,,https://www.transfermarkt.com.br/esporte-clube-vitoria/mitarbeiter/verein/2125,2026-10-20
+A,Vitória,BA,auxiliar,Auxiliar Técnico,Emilio Faro,BRA,,https://www.transfermarkt.com.br/esporte-clube-vitoria/mitarbeiter/verein/2125,2026-10-20
+A,Vitória,BA,auxiliar,Auxiliar Técnico,Rodrigo Chagas,BRA,,https://www.transfermarkt.com.br/esporte-clube-vitoria/mitarbeiter/verein/2125,2026-10-20
 B,América-MG,MG,tecnico,Head coach,Moacir Júnior,BRA,1967-02-15,Sofascore,
-B,América-MG,MG,auxiliar,Assistant manager,Renato Gheller,,,Wikipédia: América Futebol Clube (MG),
-B,América-MG,MG,auxiliar,Assistant manager,Eduardo Abdo,,,Wikipédia: América Futebol Clube (MG),
-B,América-MG,MG,preparador,Fitness coach,Diogo Evaristo,,,Wikipédia: América Futebol Clube (MG),
-B,América-MG,MG,preparador,Fitness coach,Guilherme Oliveira,,,Wikipédia: América Futebol Clube (MG),
-B,América-MG,MG,preparador,Fitness coach,João Paulo,,,Wikipédia: América Futebol Clube (MG),
-B,América-MG,MG,preparador,Goalkeeping coach,Tales Superbi,,,Wikipédia: América Futebol Clube (MG),
-B,América-MG,MG,preparador,Goalkeeping coach,Everton Coelho,,,Wikipédia: América Futebol Clube (MG),
+B,América-MG,MG,auxiliar,Auxiliar Técnico,Diogo Giacomini,BRA,,https://www.transfermarkt.com.br/america-futebol-clube-mg-/mitarbeiter/verein/2863,2026-10-20
+B,América-MG,MG,auxiliar,Auxiliar Técnico,Éder Bastos,BRA,,https://www.transfermarkt.com.br/america-futebol-clube-mg-/mitarbeiter/verein/2863,2026-10-20
 B,Athletic,MG,tecnico,Head coach,Alexsandro de Souza,BRA,1977-09-14,Sofascore,
+B,Athletic,MG,auxiliar,Auxiliar Técnico,João Paulo,BRA,,https://www.transfermarkt.com.br/athletic-club-mg-/mitarbeiter/verein/64918,2026-10-20
+B,Athletic,MG,auxiliar,Auxiliar Técnico,Zé Roberto,BRA,,https://www.transfermarkt.com.br/athletic-club-mg-/mitarbeiter/verein/64918,2026-10-20
 B,Atlético-GO,GO,tecnico,Head coach,Roger Rodrigues da Silva,BRA,1985-01-07,Sofascore,
-B,Atlético-GO,GO,auxiliar,Assistant coach,Eduardo Abdo,,,Wikipédia: Atlético Clube Goianiense,
-B,Atlético-GO,GO,preparador,Fitness coach,Robson Gomes,,,Wikipédia: Atlético Clube Goianiense,
-B,Atlético-GO,GO,preparador,Goalkeeping coach,Bruno Uchôa,,,Wikipédia: Atlético Clube Goianiense,
-B,Atlético-GO,GO,analista,Performance analyst,Davy Ferreira,,,Wikipédia: Atlético Clube Goianiense,
-B,Atlético-GO,GO,medico,Doctor,Gleyder Sousa,,,Wikipédia: Atlético Clube Goianiense,
-B,Atlético-GO,GO,medico,Physiotherapy coordinator,Gustavo Ignácio,,,Wikipédia: Atlético Clube Goianiense,
-B,Atlético-GO,GO,medico,Physiotherapist,Roque Alencar,,,Wikipédia: Atlético Clube Goianiense,
-B,Atlético-GO,GO,medico,Nutritionist,Icaro Chalegre,,,Wikipédia: Atlético Clube Goianiense,
-B,Atlético-GO,GO,medico,Psychologist,Ana Isabela Egídio,,,Wikipédia: Atlético Clube Goianiense,
+B,Atlético-GO,GO,auxiliar,Auxiliar Técnico,Eduardo Pacheco,BRA,,https://www.transfermarkt.com.br/atletico-clube-goianiense/mitarbeiter/verein/15172,2026-10-20
+B,Atlético-GO,GO,auxiliar,Auxiliar Técnico,Renan Brito,BRA,,https://www.transfermarkt.com.br/atletico-clube-goianiense/mitarbeiter/verein/15172,2026-10-20
+B,Atlético-GO,GO,preparador,Preparador físico,Anderson de Lazari,BRA,,https://www.transfermarkt.com.br/atletico-clube-goianiense/mitarbeiter/verein/15172,2026-10-20
 B,Avaí,SC,tecnico,Head coach,Marcos Vicente Santos,,1981-09-29,Sofascore,
+B,Avaí,SC,auxiliar,Auxiliar Técnico,Léo Cherede,BRA,,https://www.transfermarkt.com.br/avai-fc-sc-/mitarbeiter/verein/2035,2026-10-20
 B,Botafogo-SP,SP,tecnico,Head coach,Cláudio Tencati,BRA,1973-12-09,Sofascore,
-B,Ceará,CE,tecnico,Head coach,Daniel Paulista,BRA,1982-05-05,Sofascore,
-B,Ceará,CE,auxiliar,Assistant head coach,Anderson Batatais,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,auxiliar,Assistant head coach,Renatinho Negrão,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,preparador,Goalkeepers trainer,Everaldo Santana,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,preparador,Goalkeepers trainer,Marcos Paulo,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,analista,Performance analyst,Alcino Rodrigues,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,analista,Performance analyst,André Maranhão,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,analista,Performance analyst,Renato Bennata,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,preparador,Fitness coach,Valdir Nogueira de Oliveira Júnior,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,preparador,Fitness coach,Eduardo Ballalai,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,preparador,Fitness coach,Roberto Farias,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Doctor,Joaquim Garcia,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Doctor,Leandro Rêgo,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Doctor,Daniel Gomes,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Doctor,Pedro Guilme,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Physiotherapist,Adolfo Bernardo,Brazil,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Physiotherapist,Lucas Freire,Brazil,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Physiotherapist,Perez Maciel,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Physiotherapist,Matheus Carneiro,Brazil,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Physiologist,Filipe Lourenço,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Nutritionists,Walter César,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
-B,Ceará,CE,medico,Nutritionists,Matheus Rodrigues,BRA,,Wikipédia: Ceará Sporting Club,4 July 2025
+B,Botafogo-SP,SP,auxiliar,Auxiliar Técnico,Aléssio Antunes,BRA,,https://www.transfermarkt.com.br/botafogo-futebol-clube-sp-/mitarbeiter/verein/9030,2026-10-20
+B,Botafogo-SP,SP,auxiliar,Auxiliar Técnico,Ivan Izzo,BRA,,https://www.transfermarkt.com.br/botafogo-futebol-clube-sp-/mitarbeiter/verein/9030,2026-10-20
+B,Botafogo-SP,SP,auxiliar,Auxiliar Técnico,Régis Angeli,BRA,,https://www.transfermarkt.com.br/botafogo-futebol-clube-sp-/mitarbeiter/verein/9030,2026-10-20
 B,CRB,AL,tecnico,Head coach,Fábio Matias,BRA,1979-09-25,Sofascore,
+B,CRB,AL,auxiliar,Auxiliar Técnico,Felipe Lucena,BRA,,https://www.transfermarkt.com.br/clube-de-regatas-brasil-al-/mitarbeiter/verein/11449,2026-10-20
+B,CRB,AL,auxiliar,Auxiliar Técnico,Franco Muller,BRA,,https://www.transfermarkt.com.br/clube-de-regatas-brasil-al-/mitarbeiter/verein/11449,2026-10-20
+B,CRB,AL,auxiliar,Auxiliar Técnico,Lucas Batista,BRA,,https://www.transfermarkt.com.br/clube-de-regatas-brasil-al-/mitarbeiter/verein/11449,2026-10-20
+B,Ceará,CE,tecnico,Head coach,Daniel Paulista,BRA,1982-05-05,Sofascore,
+B,Ceará,CE,auxiliar,Auxiliar Técnico,Anderson Batatais,BRA,,https://www.transfermarkt.com.br/ceara-sporting-club/mitarbeiter/verein/2029,2026-10-20
 B,Criciúma,SC,tecnico,Head coach,Umberto Louzer,BRA,1980-02-24,Sofascore,
 B,Cuiabá,MT,tecnico,Head coach,Eduardo Barros,BRA,1985-03-08,Sofascore,
-B,Cuiabá,MT,auxiliar,Assistant coach,Julian Tobar,BRA,,Wikipédia: Cuiabá Esporte Clube,7 December 2024
-B,Cuiabá,MT,preparador,Fitness coach,Jean Carlo,BRA,,Wikipédia: Cuiabá Esporte Clube,7 December 2024
-B,Cuiabá,MT,preparador,Goalkeeper coach,Marcos Medeiros,BRA,,Wikipédia: Cuiabá Esporte Clube,7 December 2024
+B,Cuiabá,MT,auxiliar,Auxiliar Técnico,André Luis,BRA,,https://www.transfermarkt.com.br/cuiaba-ec-mt-/mitarbeiter/verein/28022,2026-10-20
+B,Cuiabá,MT,auxiliar,Auxiliar Técnico,Cyro Bueno,BRA,,https://www.transfermarkt.com.br/cuiaba-ec-mt-/mitarbeiter/verein/28022,2026-10-20
+B,Cuiabá,MT,auxiliar,Auxiliar Técnico,Danilo Benjamim,BRA,,https://www.transfermarkt.com.br/cuiaba-ec-mt-/mitarbeiter/verein/28022,2026-10-20
+B,Cuiabá,MT,auxiliar,Auxiliar Técnico,Felipe Moreira,BRA,,https://www.transfermarkt.com.br/cuiaba-ec-mt-/mitarbeiter/verein/28022,2026-10-20
+B,Cuiabá,MT,auxiliar,Auxiliar Técnico,Gustavo Almeida,BRA,,https://www.transfermarkt.com.br/cuiaba-ec-mt-/mitarbeiter/verein/28022,2026-10-20
+B,Cuiabá,MT,auxiliar,Auxiliar Técnico,Nei,BRA,,https://www.transfermarkt.com.br/cuiaba-ec-mt-/mitarbeiter/verein/28022,2026-10-20
 B,Fortaleza,CE,tecnico,Head coach,Paulo Autuori,BRA,1956-08-25,Sofascore,
-B,Fortaleza,CE,auxiliar,Assistant head coach,Nahuel Martínez,Argentina,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,auxiliar,Assistant head coach,Gastón Liendo,Argentina,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,auxiliar,Assistant head coach,Leonardo Porto,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,preparador,Fitness coach,Luis Aspiazu,Argentina,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,preparador,Fitness coach,Émerson Santana,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,preparador,Fitness coach,Kelmo Bonatto,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,preparador,Fitness coach,Lucas Martins,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,preparador,Goalkeepers trainer,Santiago Piccinini,Argentina,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,preparador,Goalkeepers trainer,Guto Albuquerque,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,analista,Development analyst,Henrique Bittencourt,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,analista,Development analyst,Leonardo Abreu,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Team doctor,Cláudio Maurício,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Team doctor,Glay Maranhão,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Team doctor,Rafael Veras,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Team doctor,Roberto Oliveira,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Team doctor,Vinícius Castelo Branco,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Physiotherapist,Albino Luciano,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Physiotherapist,Egberto Oliveira,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Physiotherapist,Patrício Teixeira,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
-B,Fortaleza,CE,medico,Physiotherapist,Ranielson Xavier,Brazil,,Wikipédia: Fortaleza Esporte Clube,8 December 2025
+B,Fortaleza,CE,auxiliar,Auxiliar Técnico,Reinan Santos,BRA,,https://www.transfermarkt.com.br/fortaleza-esporte-clube/mitarbeiter/verein/10870,2026-10-20
+B,Fortaleza,CE,preparador,Treinador de Goleiros,Bosco,BRA,,https://www.transfermarkt.com.br/fortaleza-esporte-clube/mitarbeiter/verein/10870,2026-10-20
 B,Goiás,GO,tecnico,Head coach,Mozart Santos,BRA,1979-11-08,Sofascore,
+B,Goiás,GO,auxiliar,Auxiliar Técnico,Denis Iwamura,BRA,,https://www.transfermarkt.com.br/goias-ec/mitarbeiter/verein/3197,2026-10-20
 B,Juventude,RS,tecnico,Head coach,Mauricio Barbieri,BRA,1981-09-30,Sofascore,
+B,Juventude,RS,auxiliar,Auxiliar Técnico,Diego Favarin,BRA,,https://www.transfermarkt.com.br/esporte-clube-juventude/mitarbeiter/verein/10492,2026-10-20
+B,Juventude,RS,auxiliar,Auxiliar Técnico,Gerson Ramos,BRA,,https://www.transfermarkt.com.br/esporte-clube-juventude/mitarbeiter/verein/10492,2026-10-20
 B,Londrina,PR,tecnico,Head coach,Hugo Emanuel Barros Chacon,BRA,1992-12-07,Sofascore,
-B,Náutico,PE,tecnico,Head coach,Bruno Pivetti,BRA,1984-02-19,Sofascore,
-B,Náutico,PE,auxiliar,Assistant Coach,Kuki,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,auxiliar,Assistant Coach,Levi Gomes,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,auxiliar,Assistant Coach,Edson Miolo,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,auxiliar,Assistant Coach,Dudu Capixaba,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,preparador,Goalkeeping,Júnior Matos,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,preparador,Fitness coaches,Ricardo Seguins,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,preparador,Fitness coaches,Elior Alves,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,preparador,Fitness coaches,Mauricio Copertino,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,medico,Club doctors,Múcio Vaz,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,medico,Club doctors,Paulo Regueira,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,medico,Club doctors,Jorge Silva,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,medico,Physiotherapists,Cléber Queiroga,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,medico,Physiotherapists,Silmario,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,medico,Physiotherapists,Andre,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,medico,Masseurs,Alexandre,Brazil,,Wikipédia: Clube Náutico Capibaribe,
-B,Náutico,PE,medico,Masseurs,Irapuan,Brazil,,Wikipédia: Clube Náutico Capibaribe,
+B,Londrina,PR,auxiliar,Auxiliar Técnico,Daniel Azambuja,BRA,,https://www.transfermarkt.com.br/londrina-esporte-clube-pr-/mitarbeiter/verein/1693,2026-10-20
 B,Novorizontino,SP,tecnico,Head coach,Enderson Moreira,BRA,1971-09-28,Sofascore,
+B,Novorizontino,SP,auxiliar,Auxiliar Técnico,Ben-Hur,BRA,,https://www.transfermarkt.com.br/gremio-novorizontino-sp-/mitarbeiter/verein/37474,2026-10-20
+B,Novorizontino,SP,auxiliar,Auxiliar Técnico,Caio Mello,BRA,,https://www.transfermarkt.com.br/gremio-novorizontino-sp-/mitarbeiter/verein/37474,2026-10-20
+B,Novorizontino,SP,auxiliar,Auxiliar Técnico,Luís Fernando Flores,BRA,,https://www.transfermarkt.com.br/gremio-novorizontino-sp-/mitarbeiter/verein/37474,2026-10-20
+B,Novorizontino,SP,auxiliar,Auxiliar Técnico,Paulinho,BRA,,https://www.transfermarkt.com.br/gremio-novorizontino-sp-/mitarbeiter/verein/37474,2026-10-20
+B,Náutico,PE,tecnico,Head coach,Bruno Pivetti,BRA,1984-02-19,Sofascore,
+B,Náutico,PE,auxiliar,Auxiliar Técnico,Dudu Capixaba,BRA,,https://www.transfermarkt.com.br/clube-nautico-capibaribe/mitarbeiter/verein/2646,2026-10-20
+B,Náutico,PE,auxiliar,Auxiliar Técnico,Robinho,BRA,,https://www.transfermarkt.com.br/clube-nautico-capibaribe/mitarbeiter/verein/2646,2026-10-20
+B,Náutico,PE,preparador,Treinador de Goleiros,Júnior Matos,BRA,,https://www.transfermarkt.com.br/clube-nautico-capibaribe/mitarbeiter/verein/2646,2026-10-20
+B,Náutico,PE,medico,Fisioterapeuta,Kuki,BRA,,https://www.transfermarkt.com.br/clube-nautico-capibaribe/mitarbeiter/verein/2646,2026-10-20
+B,Náutico,PE,medico,Massagista,Xande,BRA,,https://www.transfermarkt.com.br/clube-nautico-capibaribe/mitarbeiter/verein/2646,2026-10-20
 B,Operário-PR,PR,tecnico,Head coach,Alberto Valentim,BRA,1975-03-22,Sofascore,
+B,Operário-PR,PR,auxiliar,Auxiliar Técnico,Werley,BRA,,https://www.transfermarkt.com.br/operario-ferroviario-ec-pr-/mitarbeiter/verein/27214,2026-10-20
 B,Ponte Preta,SP,tecnico,Head coach,Gilson Kleina,BRA,1968-03-30,Sofascore,
-B,São Bernardo,SP,tecnico,Head coach,Vinícius Bergantin,BRA,1980-07-31,Sofascore,
+B,Ponte Preta,SP,auxiliar,Auxiliar Técnico,Gabriel Remedio,BRA,,https://www.transfermarkt.com.br/aa-ponte-preta/mitarbeiter/verein/1134,2026-10-20
+B,Ponte Preta,SP,preparador,Treinador de Goleiros,Lauro,BRA,,https://www.transfermarkt.com.br/aa-ponte-preta/mitarbeiter/verein/1134,2026-10-20
 B,Sport,PE,tecnico,Head coach,Mariano Soso,ARG,1981-04-30,Sofascore,
+B,Sport,PE,auxiliar,Auxiliar Técnico,Daniel Morales,PER,,https://www.transfermarkt.com.br/sport-club-do-recife/mitarbeiter/verein/8718,2026-10-20
+B,Sport,PE,auxiliar,Auxiliar Técnico,Diego Buján,ARG,,https://www.transfermarkt.com.br/sport-club-do-recife/mitarbeiter/verein/8718,2026-10-20
+B,Sport,PE,auxiliar,Auxiliar Técnico,Sued Lima,BRA,,https://www.transfermarkt.com.br/sport-club-do-recife/mitarbeiter/verein/8718,2026-10-20
+B,Sport,PE,preparador,Treinador de Goleiros,Robinson Puebla,CHI,,https://www.transfermarkt.com.br/sport-club-do-recife/mitarbeiter/verein/8718,2026-10-20
+B,São Bernardo,SP,tecnico,Head coach,Vinícius Bergantin,BRA,1980-07-31,Sofascore,
 B,Vila Nova,GO,tecnico,Head coach,Guto Ferreira,BRA,1965-09-07,Sofascore,
+B,Vila Nova,GO,auxiliar,Auxiliar Técnico,Ariel Mamede,BRA,,https://www.transfermarkt.com.br/vila-nova-futebol-clube-go-/mitarbeiter/verein/5677,2026-10-20
+B,Vila Nova,GO,auxiliar,Auxiliar Técnico,Felipe Endres,BRA,,https://www.transfermarkt.com.br/vila-nova-futebol-clube-go-/mitarbeiter/verein/5677,2026-10-20
+B,Vila Nova,GO,auxiliar,Auxiliar Técnico,Weligton,BRA,,https://www.transfermarkt.com.br/vila-nova-futebol-clube-go-/mitarbeiter/verein/5677,2026-10-20
+B,Vila Nova,GO,preparador,Treinador de Goleiros,Lauro,BRA,,https://www.transfermarkt.com.br/vila-nova-futebol-clube-go-/mitarbeiter/verein/5677,2026-10-20
 C,Amazonas,AM,tecnico,Head coach,Rodrigo Santana,BRA,1982-05-29,Sofascore,
+C,Amazonas,AM,auxiliar,Auxiliar Técnico,Neto Pajolla,BRA,,https://www.transfermarkt.com.br/amazonas-fc/mitarbeiter/verein/87727,2026-10-20
 C,Anápolis,GO,tecnico,Head coach,Luan Carlos Neto,BRA,1992-05-21,Sofascore,
+C,Anápolis,GO,auxiliar,Auxiliar Técnico,Caio Lucas,BRA,,https://www.transfermarkt.com.br/anapolis-futebol-clube-go-/mitarbeiter/verein/17568,2026-10-20
+C,Anápolis,GO,auxiliar,Auxiliar Técnico,Edson Canhão,BRA,,https://www.transfermarkt.com.br/anapolis-futebol-clube-go-/mitarbeiter/verein/17568,2026-10-20
 C,Barra,SC,tecnico,Head coach,Evaristo Piza,BRA,1972-07-02,Sofascore,
+C,Barra,SC,auxiliar,Auxiliar Técnico,Jorge Ferreira,BRA,,https://www.transfermarkt.com.br/barra-futebol-clube-sc-/mitarbeiter/verein/52519,2026-10-20
+C,Barra,SC,auxiliar,Auxiliar Técnico,Rafael Piccinin,BRA,,https://www.transfermarkt.com.br/barra-futebol-clube-sc-/mitarbeiter/verein/52519,2026-10-20
+C,Barra,SC,medico,Fisioterapeuta,Henrique César de Oliveira Viana,BRA,,https://www.transfermarkt.com.br/barra-futebol-clube-sc-/mitarbeiter/verein/52519,2026-10-20
 C,Botafogo-PB,PB,tecnico,Head coach,Marcelo Fernandes,BRA,1971-04-20,Sofascore,
+C,Botafogo-PB,PB,auxiliar,Auxiliar Técnico,Marcos Souza,BRA,,https://www.transfermarkt.com.br/botafogo-futebol-clube-pb-/mitarbeiter/verein/17964,2026-10-20
+C,Botafogo-PB,PB,preparador,Preparador físico,Rafael Velfle,BRA,,https://www.transfermarkt.com.br/botafogo-futebol-clube-pb-/mitarbeiter/verein/17964,2026-10-20
 C,Brusque,SC,tecnico,Head coach,Higo Magalhães Batista,BRA,1982-04-06,Sofascore,
+C,Brusque,SC,preparador,Treinador de Goleiros,Marcio Quevedo,BRA,,https://www.transfermarkt.com.br/brusque-futebol-clube-sc-/mitarbeiter/verein/14390,2026-10-20
 C,Caxias,RS,tecnico,Head coach,Marcelo Cabo,BRA,1966-12-06,Sofascore,
+C,Caxias,RS,auxiliar,Auxiliar Técnico,Jeferson Ribeiro,BRA,,https://www.transfermarkt.com.br/ser-caxias-do-sul-rs-/mitarbeiter/verein/9141,2026-10-20
 C,Confiança,SE,tecnico,Treinador,Ademir Fesan,,,Wikipédia (pt): Associação Desportiva Confiança,
+C,Confiança,SE,auxiliar,Auxiliar Técnico,Xandi,BRA,,https://www.transfermarkt.com.br/associacao-desportiva-confianca-se-/mitarbeiter/verein/3280,2026-10-20
+C,Confiança,SE,preparador,Preparador físico,Aaron Carvalho,BRA,,https://www.transfermarkt.com.br/associacao-desportiva-confianca-se-/mitarbeiter/verein/3280,2026-10-20
+C,Confiança,SE,preparador,Treinador de Goleiros,Moisés Campos,BRA,,https://www.transfermarkt.com.br/associacao-desportiva-confianca-se-/mitarbeiter/verein/3280,2026-10-20
 C,Ferroviária,SP,tecnico,Head coach,Rogério Corrêa,BRA,1981-03-27,Sofascore,
-C,Ferroviária,SP,auxiliar,Assistant coach,Vitor Fortes,BRA,,Wikipédia: Associação Ferroviária de Esportes,7 December 2024
-C,Ferroviária,SP,preparador,Fitness coach,Fábio Jacobasso,BRA,,Wikipédia: Associação Ferroviária de Esportes,7 December 2024
-C,Ferroviária,SP,preparador,Goalkeeper coach,Emerson Marinho,BRA,,Wikipédia: Associação Ferroviária de Esportes,7 December 2024
+C,Ferroviária,SP,auxiliar,Auxiliar Técnico,Felipe Oliveira,BRA,,https://www.transfermarkt.com.br/associacao-ferroviaria-de-esportes-sp-/mitarbeiter/verein/15882,2026-10-20
+C,Ferroviária,SP,auxiliar,Auxiliar Técnico,Vitor Fortes,BRA,,https://www.transfermarkt.com.br/associacao-ferroviaria-de-esportes-sp-/mitarbeiter/verein/15882,2026-10-20
 C,Figueirense,SC,tecnico,Head coach,Raul Cabral,BRA,1981-10-06,Sofascore,
+C,Figueirense,SC,auxiliar,Auxiliar Técnico,André Walter,BRA,,https://www.transfermarkt.com.br/figueirense-fc/mitarbeiter/verein/4064,2026-10-20
+C,Figueirense,SC,auxiliar,Auxiliar Técnico,Henrique Pacheco,BRA,,https://www.transfermarkt.com.br/figueirense-fc/mitarbeiter/verein/4064,2026-10-20
 C,Floresta,CE,tecnico,Head coach,Leston Junior,BRA,1978-11-20,Sofascore,
 C,Guarani,SP,tecnico,Head coach,Elio Sizenando,,,Wikipédia: Guarani FC,
+C,Guarani,SP,auxiliar,Auxiliar Técnico,Alexandre Penna,BRA,,https://www.transfermarkt.com.br/guarani-fc-sp-/mitarbeiter/verein/1755,2026-10-20
+C,Guarani,SP,auxiliar,Auxiliar Técnico,Leandro Niehues,BRA,,https://www.transfermarkt.com.br/guarani-fc-sp-/mitarbeiter/verein/1755,2026-10-20
+C,Guarani,SP,olheiro,Observador,Yuri Correia,BRA,,https://www.transfermarkt.com.br/guarani-fc-sp-/mitarbeiter/verein/1755,2026-10-20
 C,Inter de Limeira,SP,tecnico,Head coach,Matheus Costa,BRA,1987-01-14,Sofascore,
+C,Inter de Limeira,SP,auxiliar,Auxiliar Técnico,Marcelo Cordeiro,BRA,,https://www.transfermarkt.com.br/aa-internacional-limeira/mitarbeiter/verein/308,2026-10-20
 C,Itabaiana,SE,tecnico,Head coach,Marcelo Chamusca,BRA,1966-10-07,Sofascore,
+C,Itabaiana,SE,auxiliar,Auxiliar Técnico,Fabiano Xha,BRA,,https://www.transfermarkt.com.br/associacao-olimpica-de-itabaiana-se-/mitarbeiter/verein/8547,2026-10-20
 C,Ituano,SP,tecnico,Head coach,Mazola Júnior,BRA,1965-02-28,Sofascore,
 C,Maranhão,MA,tecnico,Head coach,Jerson Testoni,BRA,1980-06-18,Sofascore,
+C,Maranhão,MA,auxiliar,Auxiliar Técnico,André Lucas,BRA,,https://www.transfermarkt.com.br/maranhao-atletico-clube-ma-/mitarbeiter/verein/34293,2026-10-20
 C,Maringá,PR,tecnico,Head coach,Moisés Egert,BRA,1977-05-21,Sofascore,
 C,Paysandu,PA,tecnico,Head coach,Mazola Júnior,BRA,1965-02-28,Sofascore,
+C,Paysandu,PA,auxiliar,Auxiliar Técnico,Ignácio Neto,BRA,,https://www.transfermarkt.com.br/paysandu-sport-club-pa-/mitarbeiter/verein/6347,2026-10-20
+C,Paysandu,PA,auxiliar,Auxiliar Técnico,Élton Macaé,BRA,,https://www.transfermarkt.com.br/paysandu-sport-club-pa-/mitarbeiter/verein/6347,2026-10-20
+C,Paysandu,PA,preparador,Treinador de Goleiros,Ronaldo,BRA,,https://www.transfermarkt.com.br/paysandu-sport-club-pa-/mitarbeiter/verein/6347,2026-10-20
 C,Santa Cruz,PE,tecnico,Head coach,Cristian Ziani Souza,BRA,1977-10-06,Sofascore,
+C,Santa Cruz,PE,auxiliar,Auxiliar Técnico,César Lucena,BRA,,https://www.transfermarkt.com.br/santa-cruz-futebol-clube-pe-/mitarbeiter/verein/1785,2026-10-20
+C,Santa Cruz,PE,auxiliar,Auxiliar Técnico,Roberto Maschio,BRA,,https://www.transfermarkt.com.br/santa-cruz-futebol-clube-pe-/mitarbeiter/verein/1785,2026-10-20
+C,Santa Cruz,PE,auxiliar,Auxiliar Técnico,Wilton Bezerra,BRA,,https://www.transfermarkt.com.br/santa-cruz-futebol-clube-pe-/mitarbeiter/verein/1785,2026-10-20
 C,Volta Redonda,RJ,tecnico,Head coach,Mário Jorge,BRA,1978-02-10,Sofascore,
+C,Volta Redonda,RJ,auxiliar,Auxiliar Técnico,Neto Colucci,BRA,,https://www.transfermarkt.com.br/volta-redonda-futebol-clube-rj-/mitarbeiter/verein/4176,2026-10-20
 C,Ypiranga,RS,tecnico,Head coach,Luiz Gabardo Junior,BRA,1983-01-14,Sofascore,
-D,Galvez,Acre,tecnico,Head coach,José Marco Rodrigues,BRA,1981-06-16,Sofascore,
-D,Humaitá,Acre,tecnico,Treinador,Rogério Pina,,,Wikipédia (pt): Sport Clube Humaitá,
-D,Independência,Acre,tecnico,Head coach,Ivan Ricardo  Congilio Mazzuia,BRA,1990-11-20,Sofascore,
-D,ASA,Alagoas,tecnico,Head coach,Itamar Schulle,BRA,1966-04-08,Sofascore,
-D,CSE,Alagoas,tecnico,Head coach,Leandro Campos,BRA,1964-02-06,Sofascore,
-D,Oratório,Amapá,tecnico,Head coach,Thiago Eduardo Amaral Pereira,BRA,1987-02-14,Sofascore,
-D,Trem,Amapá,tecnico,Head coach,Sandro Miranda Frazão,BRA,1978-12-14,Sofascore,
-D,Manaus,Amazonas,tecnico,Head coach,Paulo Roberto dos Santos,BRA,1960-10-23,Sofascore,
-D,Nacional,Amazonas,tecnico,Head coach,Thiago Gomes,BRA,1984-05-12,Sofascore,
-D,Atlético de Alagoinhas,Bahia,tecnico,Treinador,Agnaldo Liz,,,Wikipédia (pt): Alagoinhas Atlético Clube,
-D,Jacuipense,Bahia,tecnico,Head coach,Rodrigo dos Prazeres Ribeiro,BRA,1985-01-18,Sofascore,
-D,Juazeirense,Bahia,tecnico,Head coach,Renatinho Potiguar,BRA,1982-11-19,Sofascore,
-D,Porto,Bahia,tecnico,Head coach,Alexsandro Oliveira Duarte,BRA,1981-01-10,Sofascore,
-D,Ferroviário,Ceará,tecnico,Head coach,Nuno Miguel Gaspar Pereira,PRT,1977-11-05,Sofascore,
-D,Maracanã,Ceará,tecnico,Head coach,José Gerardo Moreira Rocha Júnior,BRA,1977-11-19,Sofascore,
-D,Tirol,Ceará,tecnico,Head coach,Ailton Silva,BRA,1966-10-31,Sofascore,
-D,Brasiliense,Distrito Federal,tecnico,Treinador,Léo Roquete,,,Wikipédia (pt): Brasiliense FC,
-D,Capital,Distrito Federal,tecnico,Head coach,Luizinho Vieira,BRA,1972-02-04,Sofascore,
-D,Ceilândia,Distrito Federal,tecnico,Head coach,Adelson Almeida,BRA,1970-06-29,Sofascore,
-D,Gama,Distrito Federal,tecnico,Head coach,Luiz Carlos Carioca,BRA,1963-09-02,Sofascore,
-D,Real Noroeste,Espírito Santo,tecnico,Head coach,Ednaldo Oliveira dos Reis,,,Sofascore,
-D,Rio Branco-ES,Espírito Santo,tecnico,Head coach,Rodrigo César Oliveira de Moura,BRA,1988-07-08,Sofascore,
-D,Vitória-ES,Espírito Santo,tecnico,Head coach,Rafael Soriano,BRA,1985-07-21,Sofascore,
-D,ABECAT,Goiás,tecnico,Head coach,Hemerson Jose Maria,BRA,1972-05-04,Sofascore,
-D,Aparecidense,Goiás,tecnico,Head coach,Zé Carlos,BRA,1980-08-15,Sofascore,
-D,CRAC,Goiás,tecnico,Treinador,Leandro Sena,,,Wikipédia (pt): Clube Recreativo e Atlético Catalano,
-D,Goiatuba,Goiás,tecnico,Head coach,Glauber Ramos,BRA,1974-11-10,Sofascore,
-D,Inhumas,Goiás,tecnico,Head coach,Marcelo Martelotte,BRA,1968-12-18,Sofascore,
-D,IAPE,Maranhão,tecnico,Head coach,Wallace Kafrume Nassif Lemos,BRA,1968-09-27,Sofascore,
-D,Imperatriz,Maranhão,tecnico,Treinador,Emerson Cris,,,Wikipédia (pt): Sociedade Imperatriz de Desportos,
-D,Moto Club,Maranhão,tecnico,Head coach,Fernando Tonet,BRA,1970-03-12,Sofascore,
-D,Sampaio Corrêa,Maranhão,tecnico,Head coach,Júnior Amorim,BRA,1972-10-03,Sofascore,
-D,Sampaio Corrêa,Maranhão,auxiliar,Assistant manager,Rainer Oliveira,,,Wikipédia: Sampaio Corrêa Futebol Clube,
-D,Sampaio Corrêa,Maranhão,auxiliar,Assistant manager,Marcelo Mendes,,,Wikipédia: Sampaio Corrêa Futebol Clube,
-D,Sampaio Corrêa,Maranhão,auxiliar,Assistant manager,Rafael Gatti,,,Wikipédia: Sampaio Corrêa Futebol Clube,
-D,Luverdense,Mato Grosso,tecnico,Head coach,Wagner Augusto Lopes,BRA,1969-01-29,Sofascore,
-D,Mixto,Mato Grosso,tecnico,Head coach,Lucas Adami Isotton,BRA,1985-04-16,Sofascore,
-D,Primavera,Mato Grosso,tecnico,Treinador,Denis Alves,,,Wikipédia (pt): Primavera Atlético Clube,
-D,Ivinhema,Mato Grosso do Sul,tecnico,Head coach,Douglas Ricardo Braulio,,,Sofascore,
-D,Operário-MS,Mato Grosso do Sul,tecnico,Head coach,Paulo Massaro,,,Sofascore,
-D,Betim,Minas Gerais,tecnico,Head coach,Leandro Zago,BRA,1981-05-27,Sofascore,
-D,Democrata GV,Minas Gerais,tecnico,Head coach,Cícero Júnior,BRA,1980-02-11,Sofascore,
-D,Pouso Alegre,Minas Gerais,tecnico,Head coach,Gabriel Magalhães,BRA,1983-09-03,Sofascore,
-D,Tombense,Minas Gerais,tecnico,Head coach,Cristovao Borges,BRA,1959-06-09,Sofascore,
-D,Uberlândia,Minas Gerais,tecnico,Head coach,Danilo Andrade,BRA,1979-06-11,Sofascore,
-D,Águia de Marabá,Pará,tecnico,Head coach,Luis Carlos Winck,BRA,1963-01-05,Sofascore,
-D,Tuna Luso,Pará,tecnico,Head coach,Alexandre Paes  Lopes,,,Sofascore,
-D,Serra Branca,Paraíba,tecnico,Head coach,Gerson Gusmão,BRA,1974-05-08,Sofascore,
-D,Sousa,Paraíba,tecnico,Head coach,Tardelly Abrantes Ferreira,BRA,1984-03-18,Sofascore,
-D,Treze,Paraíba,tecnico,Head coach,Adriano de Souza Santos,BRA,1984-05-20,Sofascore,
-D,Azuriz,Paraná,tecnico,Head coach,Eduardo Zuma,BRA,1982-09-26,Sofascore,
-D,FC Cascavel,Paraná,tecnico,Head coach,César Bueno,,,Sofascore,
-D,Cianorte,Paraná,tecnico,Head coach,Rafael Ferro,BRA,1984-03-18,Sofascore,
-D,PSTC/São Joseense,Paraná,tecnico,Head coach,Ageu Gonçalves de Siqueira,BRA,1972-04-06,Sofascore,
-D,Central,Pernambuco,tecnico,Head coach,Leandro Sena,BRA,1976-08-08,Sofascore,
-D,Decisão Goiana,Pernambuco,tecnico,Head coach,Maurício Ramos,BRA,1985-04-10,Sofascore,
-D,Maguary,Pernambuco,tecnico,Head coach,Humberto Targino,BRA,1982-01-03,Sofascore,
-D,Retrô,Pernambuco,tecnico,Treinador,Jamerson Andrade,,,Wikipédia (pt): Retrô Futebol Clube Brasil,
-D,Altos,Piauí,tecnico,Head coach,Roberto Fonseca,BRA,1962-06-03,Sofascore,
-D,Fluminense-PI,Piauí,tecnico,Head coach,Adilson Roque,BRA,1968-07-03,Sofascore,
-D,Parnahyba,Piauí,tecnico,Head coach,José Augusto Freitas Sousa,BRA,1978-08-02,Sofascore,
-D,Piauí,Piauí,tecnico,Treinador,Tostão,,,Wikipédia (pt): Piauí Esporte Clube,
-D,América-RJ,Rio de Janeiro,tecnico,Head coach,Robson Pereira da Silveira,BRA,,Sofascore,
-D,Madureira,Rio de Janeiro,tecnico,Head coach,João Carlos Ângelo da Silva,BRA,1966-06-24,Sofascore,
-D,Maricá,Rio de Janeiro,tecnico,Head coach,Marcus Alexandre De Oliveira Cravo,BRA,,Sofascore,
-D,Nova Iguaçu,Rio de Janeiro,tecnico,Head coach,Felipe Conceição,BRA,1979-07-09,Sofascore,
-D,Portuguesa-RJ,Rio de Janeiro,tecnico,Head coach,Jefferson Muniz,BRA,,Sofascore,
-D,Sampaio Corrêa-RJ,Rio de Janeiro,tecnico,Head coach,Reinaldo da Cruz Oliveira,BRA,1979-03-14,Sofascore,
-D,América-RN,Rio Grande do Norte,tecnico,Head coach,Ranielle Ribeiro,BRA,1979-08-25,Sofascore,
-D,Laguna,Rio Grande do Norte,tecnico,Treinador,Daniel Rocha,,,Wikipédia (pt): Clube Laguna,
+C,Ypiranga,RS,auxiliar,Auxiliar Técnico,Anderson Sedrez,BRA,,https://www.transfermarkt.com.br/ypiranga-futebol-clube-rs-/mitarbeiter/verein/16869,2026-10-20
 D,ABC,Rio Grande do Norte,tecnico,Head coach,João Burse,BRA,1982-06-10,Sofascore,
-D,Brasil de Pelotas,Rio Grande do Sul,tecnico,Head coach,Julio Cesar Nunes,BRA,1985-01-03,Sofascore,
-D,Guarany de Bagé,Rio Grande do Sul,tecnico,Treinador,Alessandro Telles,,,Wikipédia (pt): Guarany Futebol Clube,
-D,São José-RS,Rio Grande do Sul,tecnico,Head coach,Argel Fuchs,BRA,1974-09-04,Sofascore,
-D,São Luiz,Rio Grande do Sul,tecnico,Head coach,Paulo Henrique Marques,BRA,1965-03-18,Sofascore,
-D,Gazin Porto Velho,Rondônia,tecnico,Head coach,Rodrigo Fonseca,BRA,1972-08-27,Sofascore,
-D,Guaporé,Rondônia,tecnico,Head coach,Rodrigo Limiro Gomes Da Silva,BRA,,Sofascore,
-D,GAS,Roraima,tecnico,Treinador,Paulo Morgado,,,Wikipédia (pt): Grêmio Atlético Sampaio,
-D,Monte Roraima,Roraima,tecnico,Treinador,Paulo Roberto Junges,,,Wikipédia (pt): Monte Roraima Futebol Clube,
-D,São Raimundo-RR,Roraima,tecnico,Treinador,Chiquinho Viana,,,Wikipédia (pt): São Raimundo Esporte Clube (RR),
-D,Blumenau,Santa Catarina,tecnico,Head coach,Carlos Rodrigo Corrêa,BRA,1980-12-29,Sofascore,
-D,Joinville,Santa Catarina,tecnico,Head coach,Sérgio Roberto de Braga Filho,BRA,1984-09-16,Sofascore,
-D,Marcílio Dias,Santa Catarina,tecnico,Head coach,Lúcio Flávio,BRA,1979-03-02,Sofascore,
-D,Santa Catarina,Santa Catarina,tecnico,Head coach,Gilberto Nascimento,BRA,1966-06-14,Sofascore,
-D,Água Santa,São Paulo,tecnico,Head coach,Jorge Castilho,BRA,1982-04-06,Sofascore,
-D,Noroeste,São Paulo,tecnico,Head coach,Guilherme de Cassio Alves,BRA,1974-05-08,Sofascore,
-D,Portuguesa,São Paulo,tecnico,Head coach,Ademir Ferreira dos Santos,BRA,1977-06-01,Sofascore,
-D,Velo Clube,São Paulo,tecnico,Head coach,Pintado,BRA,1965-09-17,Sofascore,
-D,XV de Piracicaba,São Paulo,tecnico,Head coach,Fernando Marchiori,BRA,1979-06-19,Sofascore,
-D,Lagarto,Sergipe,tecnico,Head coach,Marcelo Vilar e Lima Lopes,BRA,1961-05-13,Sofascore,
-D,Sergipe,Sergipe,tecnico,Head coach,Flávio Araújo,BRA,1963-01-30,Sofascore,
+D,ABECAT,Goiás,tecnico,Head coach,Hemerson Jose Maria,BRA,1972-05-04,Sofascore,
+D,ASA,Alagoas,tecnico,Head coach,Itamar Schulle,BRA,1966-04-08,Sofascore,
+D,ASA,Alagoas,preparador,Preparador físico,Bruno Santos,BRA,,https://www.transfermarkt.com.br/asa-de-arapiraca/mitarbeiter/verein/20092,2026-10-20
+D,ASA,Alagoas,preparador,Treinador de Goleiros,Jorjão,BRA,,https://www.transfermarkt.com.br/asa-de-arapiraca/mitarbeiter/verein/20092,2026-10-20
+D,ASA,Alagoas,preparador,Preparador físico,Victor Barros,BRA,,https://www.transfermarkt.com.br/asa-de-arapiraca/mitarbeiter/verein/20092,2026-10-20
+D,ASA,Alagoas,olheiro,Chefscout,Larissa Kelvia,BRA,,https://www.transfermarkt.com.br/asa-de-arapiraca/mitarbeiter/verein/20092,2026-10-20
+D,Altos,Piauí,tecnico,Head coach,Roberto Fonseca,BRA,1962-06-03,Sofascore,
+D,Altos,Piauí,auxiliar,Auxiliar Técnico,Lino,BRA,,https://www.transfermarkt.com.br/associacao-atletica-de-altos-pi-/mitarbeiter/verein/62794,2026-10-20
+D,Altos,Piauí,auxiliar,Auxiliar Técnico,Marcos Tamandaré,BRA,,https://www.transfermarkt.com.br/associacao-atletica-de-altos-pi-/mitarbeiter/verein/62794,2026-10-20
+D,Altos,Piauí,preparador,Preparador físico,Savyo Gomes,BRA,,https://www.transfermarkt.com.br/associacao-atletica-de-altos-pi-/mitarbeiter/verein/62794,2026-10-20
+D,América-RJ,Rio de Janeiro,tecnico,Head coach,Robson Pereira da Silveira,BRA,,Sofascore,
+D,América-RN,Rio Grande do Norte,tecnico,Head coach,Ranielle Ribeiro,BRA,1979-08-25,Sofascore,
+D,Aparecidense,Goiás,tecnico,Head coach,Zé Carlos,BRA,1980-08-15,Sofascore,
+D,Aparecidense,Goiás,auxiliar,Auxiliar Técnico,João Marcos,BRA,,https://www.transfermarkt.com.br/aa-aparecidense-go-/mitarbeiter/verein/25209,2026-10-20
+D,Aparecidense,Goiás,auxiliar,Auxiliar Técnico,Lusmar,BRA,,https://www.transfermarkt.com.br/aa-aparecidense-go-/mitarbeiter/verein/25209,2026-10-20
 D,Araguaína,Tocantins,tecnico,Head coach,Léo Goiano,BRA,1974-03-28,Sofascore,
-D,Tocantinópolis,Tocantins,tecnico,Head coach,Jairo do Nascimento Moreira,BRA,,Sofascore,
+D,Atlético Cearense,Ceará,tecnico,Treinador,Jazon Vieira,,,https://atleticocearense.com.br/atletico-cearense-anuncia-retorno-do-tecnico-jazon-vieira/,2026-10-20
+D,Atlético Cearense,Ceará,auxiliar,Auxiliar Técnico,Yan Gomes,BRA,,https://www.transfermarkt.com.br/fc-atletico-cearense/mitarbeiter/verein/27837,2026-10-20
+D,Atlético de Alagoinhas,Bahia,tecnico,Treinador,Agnaldo Liz,,,Wikipédia (pt): Alagoinhas Atlético Clube,
+D,Atlético de Alagoinhas,Bahia,auxiliar,Auxiliar Técnico,Pedro Henrique Santos,BRA,,https://www.transfermarkt.com.br/alagoinhas-atletico-clube-ba-/mitarbeiter/verein/25229,2026-10-20
+D,Azuriz,Paraná,tecnico,Head coach,Eduardo Zuma,BRA,1982-09-26,Sofascore,
+D,Betim,Minas Gerais,tecnico,Head coach,Leandro Zago,BRA,1981-05-27,Sofascore,
+D,Betim,Minas Gerais,auxiliar,Auxiliar Técnico,Aloísio Júnior,BRA,,https://www.transfermarkt.com.br/betim-futebol/mitarbeiter/verein/98702,2026-10-20
+D,Betim,Minas Gerais,auxiliar,Auxiliar Técnico,Gladstone,BRA,,https://www.transfermarkt.com.br/betim-futebol/mitarbeiter/verein/98702,2026-10-20
+D,Blumenau,Santa Catarina,tecnico,Head coach,Carlos Rodrigo Corrêa,BRA,1980-12-29,Sofascore,
+D,Brasil de Pelotas,Rio Grande do Sul,tecnico,Head coach,Julio Cesar Nunes,BRA,1985-01-03,Sofascore,
+D,Brasil de Pelotas,Rio Grande do Sul,auxiliar,Auxiliar Técnico,Lucas Guarienti,BRA,,https://www.transfermarkt.com.br/gremio-esportivo-brasil-rs-/mitarbeiter/verein/10560,2026-10-20
+D,Brasiliense,Distrito Federal,tecnico,Treinador,Léo Roquete,,,Wikipédia (pt): Brasiliense FC,
+D,CRAC,Goiás,tecnico,Treinador,Leandro Sena,,,Wikipédia (pt): Clube Recreativo e Atlético Catalano,
+D,CRAC,Goiás,auxiliar,Auxiliar Técnico,Ronaldo Guiaro,BRA,,https://www.transfermarkt.com.br/clube-recreativo-e-atletico-catalano-go-/mitarbeiter/verein/12602,2026-10-20
+D,CRAC,Goiás,preparador,Preparador físico,Leonardo coelho,BRA,,https://www.transfermarkt.com.br/clube-recreativo-e-atletico-catalano-go-/mitarbeiter/verein/12602,2026-10-20
 D,CSA,Alagoas,tecnico,Treinador,Itamar Schülle,,,Wikipédia (pt): Centro Sportivo Alagoano,
-D,Manauara,Amazonas,tecnico,Head coach,Paulo Kobayashi,BRA,1970-01-09,Sofascore,
+D,CSA,Alagoas,auxiliar,Auxiliar Técnico,Everton Vanoni,BRA,,https://www.transfermarkt.com.br/centro-sportivo-alagoano-al-/mitarbeiter/verein/18545,2026-10-20
+D,CSA,Alagoas,preparador,Preparador físico,Leonardo Bassotto,BRA,,https://www.transfermarkt.com.br/centro-sportivo-alagoano-al-/mitarbeiter/verein/18545,2026-10-20
+D,CSE,Alagoas,tecnico,Head coach,Leandro Campos,BRA,1964-02-06,Sofascore,
+D,Capital,Distrito Federal,tecnico,Head coach,Luizinho Vieira,BRA,1972-02-04,Sofascore,
+D,Capital,Distrito Federal,auxiliar,Auxiliar Técnico,Dino Camargo,BRA,,https://www.transfermarkt.com.br/capital-clube-de-futebol-df-/mitarbeiter/verein/38023,2026-10-20
+D,Ceilândia,Distrito Federal,tecnico,Head coach,Adelson Almeida,BRA,1970-06-29,Sofascore,
+D,Central,Pernambuco,tecnico,Head coach,Leandro Sena,BRA,1976-08-08,Sofascore,
+D,Central,Pernambuco,auxiliar,Auxiliar Técnico,Bibi,BRA,,https://www.transfermarkt.com.br/central-sport-club-pe-/mitarbeiter/verein/21409,2026-10-20
+D,Cianorte,Paraná,tecnico,Head coach,Rafael Ferro,BRA,1984-03-18,Sofascore,
+D,Cianorte,Paraná,auxiliar,Auxiliar Técnico,Alemão,BRA,,https://www.transfermarkt.com.br/cianorte-futebol-clube-pr-/mitarbeiter/verein/16837,2026-10-20
+D,Cianorte,Paraná,auxiliar,Auxiliar Técnico,Antonio Costa Junior,BRA,,https://www.transfermarkt.com.br/cianorte-futebol-clube-pr-/mitarbeiter/verein/16837,2026-10-20
+D,Cianorte,Paraná,auxiliar,Auxiliar Técnico,Cirilo,BRA,,https://www.transfermarkt.com.br/cianorte-futebol-clube-pr-/mitarbeiter/verein/16837,2026-10-20
+D,Decisão Goiana,Pernambuco,tecnico,Head coach,Maurício Ramos,BRA,1985-04-10,Sofascore,
+D,Democrata GV,Minas Gerais,tecnico,Head coach,Cícero Júnior,BRA,1980-02-11,Sofascore,
+D,FC Cascavel,Paraná,tecnico,Head coach,César Bueno,,,Sofascore,
+D,FC Cascavel,Paraná,auxiliar,Auxiliar Técnico,Arthur Félix,BRA,,https://www.transfermarkt.com.br/futebol-clube-cascavel-pr-/mitarbeiter/verein/28621,2026-10-20
+D,Ferroviário,Ceará,tecnico,Head coach,Nuno Miguel Gaspar Pereira,PRT,1977-11-05,Sofascore,
+D,Ferroviário,Ceará,auxiliar,Auxiliar Técnico,Afonso Silva,PRT,,https://www.transfermarkt.com.br/ferroviario-atletico-clube-ce-/mitarbeiter/verein/11931,2026-10-20
+D,Ferroviário,Ceará,auxiliar,Auxiliar Técnico,Germano Pires,PRT,,https://www.transfermarkt.com.br/ferroviario-atletico-clube-ce-/mitarbeiter/verein/11931,2026-10-20
+D,Ferroviário,Ceará,auxiliar,Auxiliar Técnico,José Quadros,PRT,,https://www.transfermarkt.com.br/ferroviario-atletico-clube-ce-/mitarbeiter/verein/11931,2026-10-20
+D,Fluminense-PI,Piauí,tecnico,Head coach,Adilson Roque,BRA,1968-07-03,Sofascore,
+D,Fluminense-PI,Piauí,auxiliar,Auxiliar Técnico,Carlão Oliveira,BRA,,https://www.transfermarkt.com.br/fluminense-ec-pi-/mitarbeiter/verein/87817,2026-10-20
+D,GAS,Roraima,tecnico,Treinador,Paulo Morgado,,,Wikipédia (pt): Grêmio Atlético Sampaio,
+D,Galvez,Acre,tecnico,Head coach,José Marco Rodrigues,BRA,1981-06-16,Sofascore,
+D,Galvez,Acre,auxiliar,Auxiliar Técnico,Tiago Teles,BRA,,https://www.transfermarkt.com.br/galvez-esporte-clube/mitarbeiter/verein/69424,2026-10-20
+D,Gama,Distrito Federal,tecnico,Head coach,Luiz Carlos Carioca,BRA,1963-09-02,Sofascore,
+D,Gazin Porto Velho,Rondônia,tecnico,Head coach,Rodrigo Fonseca,BRA,1972-08-27,Sofascore,
+D,Gazin Porto Velho,Rondônia,auxiliar,Auxiliar Técnico,Eberson Antonio,BRA,,https://www.transfermarkt.com.br/porto-velho-esporte-clube-ro-/mitarbeiter/verein/72477,2026-10-20
+D,Gazin Porto Velho,Rondônia,preparador,Preparador físico,Jackson Medeiros,BRA,,https://www.transfermarkt.com.br/porto-velho-esporte-clube-ro-/mitarbeiter/verein/72477,2026-10-20
+D,Goiatuba,Goiás,tecnico,Head coach,Glauber Ramos,BRA,1974-11-10,Sofascore,
+D,Guaporé,Rondônia,tecnico,Head coach,Rodrigo Limiro Gomes Da Silva,BRA,,Sofascore,
+D,Guarany de Bagé,Rio Grande do Sul,tecnico,Treinador,Alessandro Telles,,,Wikipédia (pt): Guarany Futebol Clube,
+D,Guarany de Bagé,Rio Grande do Sul,auxiliar,Auxiliar Técnico,Anderson Paim,BRA,,https://www.transfermarkt.com.br/guarany-bage-futebol-clube/mitarbeiter/verein/24903,2026-10-20
+D,Guarany de Bagé,Rio Grande do Sul,auxiliar,Auxiliar Técnico,Vinícius Nascente,BRA,,https://www.transfermarkt.com.br/guarany-bage-futebol-clube/mitarbeiter/verein/24903,2026-10-20
+D,Humaitá,Acre,tecnico,Treinador,Rogério Pina,,,Wikipédia (pt): Sport Clube Humaitá,
+D,Humaitá,Acre,preparador,Treinador de Goleiros,Ranis Coutinho,BRA,,https://www.transfermarkt.com.br/sport-clube-humaita-ac-/mitarbeiter/verein/60741,2026-10-20
+D,IAPE,Maranhão,tecnico,Head coach,Wallace Kafrume Nassif Lemos,BRA,1968-09-27,Sofascore,
 D,Iguatu,Ceará,tecnico,Head coach,Otacílio Mariano Neto,BRA,1982-11-17,Sofascore,
+D,Iguatu,Ceará,auxiliar,Auxiliar Técnico,Cristiano Leonardo,BRA,,https://www.transfermarkt.com.br/associacao-desportiva-iguatu-ce-/mitarbeiter/verein/39555,2026-10-20
+D,Imperatriz,Maranhão,tecnico,Treinador,Emerson Cris,,,Wikipédia (pt): Sociedade Imperatriz de Desportos,
+D,Independência,Acre,tecnico,Head coach,Ivan Ricardo  Congilio Mazzuia,BRA,1990-11-20,Sofascore,
+D,Independência,Acre,auxiliar,Auxiliar Técnico,Kinho,BRA,,https://www.transfermarkt.com.br/independencia-futebol-clube-ac-/mitarbeiter/verein/32612,2026-10-20
+D,Inhumas,Goiás,tecnico,Head coach,Marcelo Martelotte,BRA,1968-12-18,Sofascore,
+D,Inhumas,Goiás,auxiliar,Auxiliar Técnico,Marcello Cupini,BRA,,https://www.transfermarkt.com.br/inhumas-esporte-clube-go-/mitarbeiter/verein/25296,2026-10-20
+D,Ivinhema,Mato Grosso do Sul,tecnico,Head coach,Douglas Ricardo Braulio,,,Sofascore,
+D,Jacuipense,Bahia,tecnico,Head coach,Rodrigo dos Prazeres Ribeiro,BRA,1985-01-18,Sofascore,
+D,Joinville,Santa Catarina,tecnico,Head coach,Sérgio Roberto de Braga Filho,BRA,1984-09-16,Sofascore,
+D,Joinville,Santa Catarina,preparador,Treinador de Goleiros,Rodrigo Minuzzo,BRA,,https://www.transfermarkt.com.br/joinville-ec-sc-/mitarbeiter/verein/3330,2026-10-20
+D,Juazeirense,Bahia,tecnico,Head coach,Renatinho Potiguar,BRA,1982-11-19,Sofascore,
+D,Lagarto,Sergipe,tecnico,Head coach,Marcelo Vilar e Lima Lopes,BRA,1961-05-13,Sofascore,
+D,Laguna,Rio Grande do Norte,tecnico,Treinador,Daniel Rocha,,,Wikipédia (pt): Clube Laguna,
+D,Luverdense,Mato Grosso,tecnico,Head coach,Wagner Augusto Lopes,BRA,1969-01-29,Sofascore,
+D,Luverdense,Mato Grosso,auxiliar,Auxiliar Técnico,Fernando da Silva,BRA,,https://www.transfermarkt.com.br/luverdense-esporte-clube-mt-/mitarbeiter/verein/21599,2026-10-20
+D,Madureira,Rio de Janeiro,tecnico,Head coach,João Carlos Ângelo da Silva,BRA,1966-06-24,Sofascore,
+D,Madureira,Rio de Janeiro,auxiliar,Auxiliar Técnico,João Carlos Gonçalves,BRA,,https://www.transfermarkt.com.br/madureira-esporte-clube-rj-/mitarbeiter/verein/4907,2026-10-20
+D,Madureira,Rio de Janeiro,preparador,Treinador de Goleiros,Alex Brandão,BRA,,https://www.transfermarkt.com.br/madureira-esporte-clube-rj-/mitarbeiter/verein/4907,2026-10-20
+D,Maguary,Pernambuco,tecnico,Head coach,Humberto Targino,BRA,1982-01-03,Sofascore,
+D,Maguary,Pernambuco,preparador,Treinador de Goleiros,Guilherme Santana,BRA,,https://www.transfermarkt.com.br/associacao-atletica-maguary/mitarbeiter/verein/103697,2026-10-20
+D,Maguary,Pernambuco,preparador,Preparador físico,Sérgio Leonardo,BRA,,https://www.transfermarkt.com.br/associacao-atletica-maguary/mitarbeiter/verein/103697,2026-10-20
+D,Manauara,Amazonas,tecnico,Head coach,Paulo Kobayashi,BRA,1970-01-09,Sofascore,
+D,Manaus,Amazonas,tecnico,Head coach,Paulo Roberto dos Santos,BRA,1960-10-23,Sofascore,
+D,Maracanã,Ceará,tecnico,Head coach,José Gerardo Moreira Rocha Júnior,BRA,1977-11-19,Sofascore,
+D,Marcílio Dias,Santa Catarina,tecnico,Head coach,Lúcio Flávio,BRA,1979-03-02,Sofascore,
+D,Marcílio Dias,Santa Catarina,auxiliar,Auxiliar Técnico,Abraham Mina,ECU,,https://www.transfermarkt.com.br/clube-nautico-marcilio-dias-sc-/mitarbeiter/verein/4759,2026-10-20
+D,Marcílio Dias,Santa Catarina,auxiliar,Auxiliar Técnico,Chiquinho Lima,BRA,,https://www.transfermarkt.com.br/clube-nautico-marcilio-dias-sc-/mitarbeiter/verein/4759,2026-10-20
+D,Maricá,Rio de Janeiro,tecnico,Head coach,Marcus Alexandre De Oliveira Cravo,BRA,,Sofascore,
+D,Mixto,Mato Grosso,tecnico,Head coach,Lucas Adami Isotton,BRA,1985-04-16,Sofascore,
+D,Mixto,Mato Grosso,auxiliar,Auxiliar Técnico,Michel Santos,BRA,,https://www.transfermarkt.com.br/mixto-esporte-clube-mt-/mitarbeiter/verein/11900,2026-10-20
+D,Monte Roraima,Roraima,tecnico,Treinador,Paulo Roberto Junges,,,Wikipédia (pt): Monte Roraima Futebol Clube,
+D,Moto Club,Maranhão,tecnico,Head coach,Fernando Tonet,BRA,1970-03-12,Sofascore,
+D,Nacional,Amazonas,tecnico,Head coach,Thiago Gomes,BRA,1984-05-12,Sofascore,
+D,Noroeste,São Paulo,tecnico,Head coach,Guilherme de Cassio Alves,BRA,1974-05-08,Sofascore,
+D,Nova Iguaçu,Rio de Janeiro,tecnico,Head coach,Felipe Conceição,BRA,1979-07-09,Sofascore,
+D,Nova Iguaçu,Rio de Janeiro,auxiliar,Auxiliar Técnico,Celso Martins,BRA,,https://www.transfermarkt.com.br/nova-iguacu-futebol-clube-rj-/mitarbeiter/verein/16108,2026-10-20
+D,Operário VG,Mato Grosso,tecnico,Treinador,Tiago Costa,PRT,,https://ge.globo.com/mt/futebol/brasileirao-serie-d/noticia/2026/04/30/portugues-e-anunciado-como-novo-tecnico-do-operario-vg-para-sequencia-da-serie-d.ghtml,2026-10-20
+D,Operário-MS,Mato Grosso do Sul,tecnico,Head coach,Paulo Massaro,,,Sofascore,
+D,Oratório,Amapá,tecnico,Head coach,Thiago Eduardo Amaral Pereira,BRA,1987-02-14,Sofascore,
+D,PSTC/São Joseense,Paraná,tecnico,Head coach,Ageu Gonçalves de Siqueira,BRA,1972-04-06,Sofascore,
+D,PSTC/São Joseense,Paraná,analista,Analista de jogo,José Wotecoski,BRA,,https://www.transfermarkt.com.br/independente-futebol-sao-joseense-pr-/mitarbeiter/verein/80647,2026-10-20
+D,Parnahyba,Piauí,tecnico,Head coach,José Augusto Freitas Sousa,BRA,1978-08-02,Sofascore,
+D,Parnahyba,Piauí,auxiliar,Auxiliar Técnico,Wanderson Araujo,BRA,,https://www.transfermarkt.com.br/parnahyba-sport-club-pi-/mitarbeiter/verein/41872,2026-10-20
+D,Piauí,Piauí,tecnico,Treinador,Tostão,,,Wikipédia (pt): Piauí Esporte Clube,
+D,Porto,Bahia,tecnico,Head coach,Alexsandro Oliveira Duarte,BRA,1981-01-10,Sofascore,
+D,Portuguesa,São Paulo,tecnico,Head coach,Ademir Ferreira dos Santos,BRA,1977-06-01,Sofascore,
+D,Portuguesa,São Paulo,auxiliar,Auxiliar Técnico,Caco Espinoza,BRA,,https://www.transfermarkt.com.br/portuguesa-sao-paulo/mitarbeiter/verein/10247,2026-10-20
+D,Portuguesa,São Paulo,auxiliar,Auxiliar Técnico,Fernando Lombardi,BRA,,https://www.transfermarkt.com.br/portuguesa-sao-paulo/mitarbeiter/verein/10247,2026-10-20
+D,Portuguesa,São Paulo,auxiliar,Auxiliar Técnico,Raphael Laruccia,BRA,,https://www.transfermarkt.com.br/portuguesa-sao-paulo/mitarbeiter/verein/10247,2026-10-20
+D,Portuguesa-RJ,Rio de Janeiro,tecnico,Head coach,Jefferson Muniz,BRA,,Sofascore,
+D,Pouso Alegre,Minas Gerais,tecnico,Head coach,Gabriel Magalhães,BRA,1983-09-03,Sofascore,
+D,Primavera,Mato Grosso,tecnico,Treinador,Denis Alves,,,Wikipédia (pt): Primavera Atlético Clube,
+D,Primavera,Mato Grosso,auxiliar,Auxiliar Técnico,Alan Bahia,BRA,,https://www.transfermarkt.com.br/primavera-atletico-clube-mt-/mitarbeiter/verein/98845,2026-10-20
+D,Real Noroeste,Espírito Santo,tecnico,Head coach,Ednaldo Oliveira dos Reis,,,Sofascore,
+D,Retrô,Pernambuco,tecnico,Treinador,Jamerson Andrade,,,Wikipédia (pt): Retrô Futebol Clube Brasil,
+D,Retrô,Pernambuco,auxiliar,Auxiliar Técnico,Nivaldo,BRA,,https://www.transfermarkt.com.br/retro-futebol-clube-brasil/mitarbeiter/verein/76156,2026-10-20
+D,Rio Branco-ES,Espírito Santo,tecnico,Head coach,Rodrigo César Oliveira de Moura,BRA,1988-07-08,Sofascore,
+D,Rio Branco-ES,Espírito Santo,auxiliar,Auxiliar Técnico,Ricardo Campos,BRA,,https://www.transfermarkt.com.br/rio-branco-atletico-clube-es-/mitarbeiter/verein/30489,2026-10-20
+D,Rio Branco-ES,Espírito Santo,auxiliar,Auxiliar Técnico,Thiago Martinelli,BRA,,https://www.transfermarkt.com.br/rio-branco-atletico-clube-es-/mitarbeiter/verein/30489,2026-10-20
+D,Rio Branco-ES,Espírito Santo,auxiliar,Auxiliar Técnico,Wederson,BRA,,https://www.transfermarkt.com.br/rio-branco-atletico-clube-es-/mitarbeiter/verein/30489,2026-10-20
+D,Sampaio Corrêa,Maranhão,tecnico,Head coach,Júnior Amorim,BRA,1972-10-03,Sofascore,
+D,Sampaio Corrêa,Maranhão,auxiliar,Auxiliar Técnico,Gabriel Júnior,BRA,,https://www.transfermarkt.com.br/sampaio-correa-fc-ma-/mitarbeiter/verein/3319,2026-10-20
+D,Sampaio Corrêa-RJ,Rio de Janeiro,tecnico,Head coach,Reinaldo da Cruz Oliveira,BRA,1979-03-14,Sofascore,
+D,Sampaio Corrêa-RJ,Rio de Janeiro,auxiliar,Auxiliar Técnico,Antônio Carlos Roy,BRA,,https://www.transfermarkt.com.br/sampaio-correa-futebol-e-esporte-rj-/mitarbeiter/verein/40120,2026-10-20
+D,Sampaio Corrêa-RJ,Rio de Janeiro,auxiliar,Auxiliar Técnico,Josimar Carvalho,BRA,,https://www.transfermarkt.com.br/sampaio-correa-futebol-e-esporte-rj-/mitarbeiter/verein/40120,2026-10-20
+D,Santa Catarina,Santa Catarina,tecnico,Head coach,Gilberto Nascimento,BRA,1966-06-14,Sofascore,
+D,Santa Catarina,Santa Catarina,auxiliar,Auxiliar Técnico,Gilmar Silva,BRA,,https://www.transfermarkt.com.br/santa-catarina-clube-sc-/mitarbeiter/verein/36963,2026-10-20
+D,Sergipe,Sergipe,tecnico,Head coach,Flávio Araújo,BRA,1963-01-30,Sofascore,
+D,Sergipe,Sergipe,auxiliar,Auxiliar Técnico,Dejair Ferreira,BRA,,https://www.transfermarkt.com.br/club-sportivo-sergipe-se-/mitarbeiter/verein/7816,2026-10-20
+D,Sergipe,Sergipe,auxiliar,Auxiliar Técnico,Edmilson Santos,BRA,,https://www.transfermarkt.com.br/club-sportivo-sergipe-se-/mitarbeiter/verein/7816,2026-10-20
+D,Serra Branca,Paraíba,tecnico,Head coach,Gerson Gusmão,BRA,1974-05-08,Sofascore,
+D,Serra Branca,Paraíba,auxiliar,Auxiliar Técnico,Teco,BRA,,https://www.transfermarkt.com.br/paraiba-esporte-clube-pb-/mitarbeiter/verein/65479,2026-10-20
+D,Serra Branca,Paraíba,preparador,Preparador físico,Bruno Araújo,BRA,,https://www.transfermarkt.com.br/paraiba-esporte-clube-pb-/mitarbeiter/verein/65479,2026-10-20
+D,Sousa,Paraíba,tecnico,Head coach,Tardelly Abrantes Ferreira,BRA,1984-03-18,Sofascore,
+D,Sousa,Paraíba,analista,Analista chefe,Jorge Luís,BRA,,https://www.transfermarkt.com.br/sousa-esporte-clube-pb-/mitarbeiter/verein/18236,2026-10-20
+D,São José-RS,Rio Grande do Sul,tecnico,Head coach,Argel Fuchs,BRA,1974-09-04,Sofascore,
+D,São José-RS,Rio Grande do Sul,auxiliar,Auxiliar Técnico,Claudiomiro,BRA,,https://www.transfermarkt.com.br/esporte-clube-sao-jose-rs-/mitarbeiter/verein/7535,2026-10-20
+D,São José-RS,Rio Grande do Sul,auxiliar,Auxiliar Técnico,Rodrigo Heffner,BRA,,https://www.transfermarkt.com.br/esporte-clube-sao-jose-rs-/mitarbeiter/verein/7535,2026-10-20
+D,São Luiz,Rio Grande do Sul,tecnico,Head coach,Paulo Henrique Marques,BRA,1965-03-18,Sofascore,
+D,São Luiz,Rio Grande do Sul,auxiliar,Auxiliar Técnico,Cleiton Sulzbacher,BRA,,https://www.transfermarkt.com.br/esporte-clube-sao-luiz-rs-/mitarbeiter/verein/27355,2026-10-20
+D,São Luiz,Rio Grande do Sul,auxiliar,Auxiliar Técnico,Fábio Caponi,BRA,,https://www.transfermarkt.com.br/esporte-clube-sao-luiz-rs-/mitarbeiter/verein/27355,2026-10-20
+D,São Luiz,Rio Grande do Sul,auxiliar,Auxiliar Técnico,Tiago Gaúcho,BRA,,https://www.transfermarkt.com.br/esporte-clube-sao-luiz-rs-/mitarbeiter/verein/27355,2026-10-20
+D,São Raimundo-RR,Roraima,tecnico,Treinador,Chiquinho Viana,,,Wikipédia (pt): São Raimundo Esporte Clube (RR),
+D,Tirol,Ceará,tecnico,Head coach,Ailton Silva,BRA,1966-10-31,Sofascore,
+D,Tocantinópolis,Tocantins,tecnico,Head coach,Jairo do Nascimento Moreira,BRA,,Sofascore,
+D,Tocantinópolis,Tocantins,auxiliar,Auxiliar Técnico,Gabriel Xavier,BRA,,https://www.transfermarkt.com.br/tocantinopolis-esporte-clube-to-/mitarbeiter/verein/27242,2026-10-20
+D,Tocantinópolis,Tocantins,preparador,Preparador físico,Fábio Nogueira,BRA,,https://www.transfermarkt.com.br/tocantinopolis-esporte-clube-to-/mitarbeiter/verein/27242,2026-10-20
+D,Tombense,Minas Gerais,tecnico,Head coach,Cristovao Borges,BRA,1959-06-09,Sofascore,
+D,Tombense,Minas Gerais,auxiliar,Auxiliar Técnico,Jordan de Freitas,BRA,,https://www.transfermarkt.com.br/tombense-futebol-clube-mg-/mitarbeiter/verein/3234,2026-10-20
+D,Trem,Amapá,tecnico,Head coach,Sandro Miranda Frazão,BRA,1978-12-14,Sofascore,
+D,Trem,Amapá,auxiliar,Auxiliar Técnico,Mauro César Moraes,BRA,,https://www.transfermarkt.com.br/trem-desportivo-clube-ap-/mitarbeiter/verein/36012,2026-10-20
+D,Treze,Paraíba,tecnico,Head coach,Adriano de Souza Santos,BRA,1984-05-20,Sofascore,
+D,Treze,Paraíba,auxiliar,Auxiliar Técnico,Ítalo Pereira,BRA,,https://www.transfermarkt.com.br/treze-futebol-clube-pb-/mitarbeiter/verein/11086,2026-10-20
+D,Tuna Luso,Pará,tecnico,Head coach,Alexandre Paes  Lopes,,,Sofascore,
+D,Uberlândia,Minas Gerais,tecnico,Head coach,Danilo Andrade,BRA,1979-06-11,Sofascore,
+D,Uberlândia,Minas Gerais,auxiliar,Auxiliar Técnico,Lauro Martins,BRA,,https://www.transfermarkt.com.br/uberlandia-esporte-clube-mg-/mitarbeiter/verein/8825,2026-10-20
+D,União Rondonópolis,Mato Grosso,tecnico,Treinador,Willian Heiler,,,https://uniaoesporteclube.com.br/noticias,2026-10-20
+D,União Rondonópolis,Mato Grosso,auxiliar,Auxiliar Técnico,Lindornei Barros,BRA,,https://www.transfermarkt.com.br/uniao-esporte-clube-mt-/mitarbeiter/verein/28199,2026-10-20
+D,Velo Clube,São Paulo,tecnico,Head coach,Pintado,BRA,1965-09-17,Sofascore,
+D,Vitória-ES,Espírito Santo,tecnico,Head coach,Rafael Soriano,BRA,1985-07-21,Sofascore,
+D,Vitória-ES,Espírito Santo,auxiliar,Auxiliar Técnico,Marcelo Aguiar,BRA,,https://www.transfermarkt.com.br/vitoria-futebol-clube-es-/mitarbeiter/verein/32934,2026-10-20
+D,XV de Piracicaba,São Paulo,tecnico,Head coach,Fernando Marchiori,BRA,1979-06-19,Sofascore,
+D,Água Santa,São Paulo,tecnico,Head coach,Jorge Castilho,BRA,1982-04-06,Sofascore,
+D,Água Santa,São Paulo,auxiliar,Auxiliar Técnico,Bruno Formigoni,BRA,,https://www.transfermarkt.com.br/esporte-clube-agua-santa-sp-/mitarbeiter/verein/45176,2026-10-20
+D,Água Santa,São Paulo,auxiliar,Auxiliar Técnico,Fabiano Braz,BRA,,https://www.transfermarkt.com.br/esporte-clube-agua-santa-sp-/mitarbeiter/verein/45176,2026-10-20
+D,Águia de Marabá,Pará,tecnico,Head coach,Luis Carlos Winck,BRA,1963-01-05,Sofascore,
