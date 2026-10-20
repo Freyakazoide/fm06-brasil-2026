@@ -19,7 +19,7 @@ import struct
 from collections import Counter
 from dataclasses import dataclass
 
-from .server_teams import _CLUB_TAIL, _DATES
+from .server_teams import club_pairs
 
 T3_START, T3_END, T3_SIZE = 0x0480F422, 0x05AFA48A, 89
 PEOPLE_END = 0x043902BA                     # fim da tabela A (pessoas)
@@ -63,25 +63,13 @@ def contracts(people: bytes, multi: bool = False) -> dict[int, Contract]:
 
 
 def brazil_club_indexes(server: bytes) -> dict[int, int]:
-    """UID verdadeiro -> índice, dos clubes brasileiros (como server_teams.true_uids).
+    """UID verdadeiro -> índice, dos clubes brasileiros (server_teams.club_pairs).
 
     Fica de fora o par que não é de clube: UID 0, ou um "00 BD 00 00 00" achado por acaso
     que vira o "registro seguinte" (índice 48128, UID 923074816). Mandar jogador para um
     índice que não é clube deixa o contrato sem clube e o New Game trava (0x006CAFA7)."""
-    starts = [m.start() - 4 for m in re.finditer(re.escape(_CLUB_TAIL), server) if m.start() >= 8]
     indexes: dict[int, int] = {}
-    for start, following in zip(starts, starts[1:] + [len(server)]):
-        mark = server.find(_DATES, start, min(start + 0x600, following))
-        if mark < 0:
-            continue
-        own = struct.unpack_from("<I", server, start - 4)[0] + 1
-        if following - start <= 0x2000:
-            index, uid = struct.unpack_from("<II", server, following - 4)
-        else:
-            at = server.find(struct.pack("<I", own), mark, start + 0x2000)
-            if at < 0:
-                continue
-            index, uid = own, struct.unpack_from("<I", server, at + 4)[0]
+    for _, index, uid, _ in club_pairs(server):
         if 0 < uid < MAX_UID and 0 < index < MAX_CLUB_INDEX:
             indexes.setdefault(uid, index)
     return indexes

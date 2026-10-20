@@ -82,8 +82,8 @@
 		<record from="332_ponte_preta_icon" to="graphics/pictures/club/332/icon"/>
 		<record from="2106553_sao_bernardo" to="graphics/pictures/club/2106553/logo"/>
 		<record from="2106553_sao_bernardo_icon" to="graphics/pictures/club/2106553/icon"/>
-		<record from="302148_ferroviaria" to="graphics/pictures/club/302148/logo"/>
-		<record from="302148_ferroviaria_icon" to="graphics/pictures/club/302148/icon"/>
+		<record from="302144_ferroviaria" to="graphics/pictures/club/302144/logo"/>
+		<record from="302144_ferroviaria_icon" to="graphics/pictures/club/302144/icon"/>
 		<record from="104979_inter_de_limeira" to="graphics/pictures/club/104979/logo"/>
 		<record from="104979_inter_de_limeira_icon" to="graphics/pictures/club/104979/icon"/>
 		<record from="107216_ituano" to="graphics/pictures/club/107216/logo"/>
@@ -140,8 +140,8 @@
 		<record from="104887_galvez_icon" to="graphics/pictures/club/104887/icon"/>
 		<record from="301359_humaita" to="graphics/pictures/club/301359/logo"/>
 		<record from="301359_humaita_icon" to="graphics/pictures/club/301359/icon"/>
-		<record from="104885_independencia" to="graphics/pictures/club/104885/logo"/>
-		<record from="104885_independencia_icon" to="graphics/pictures/club/104885/icon"/>
+		<record from="104874_independencia" to="graphics/pictures/club/104874/logo"/>
+		<record from="104874_independencia_icon" to="graphics/pictures/club/104874/icon"/>
 		<record from="301100_asa" to="graphics/pictures/club/301100/logo"/>
 		<record from="301100_asa_icon" to="graphics/pictures/club/301100/icon"/>
 		<record from="107210_csa" to="graphics/pictures/club/107210/logo"/>
@@ -224,8 +224,8 @@
 		<record from="301247_luverdense_icon" to="graphics/pictures/club/301247/icon"/>
 		<record from="309644_mixto" to="graphics/pictures/club/309644/logo"/>
 		<record from="309644_mixto_icon" to="graphics/pictures/club/309644/icon"/>
-		<record from="313904_operario_vg" to="graphics/pictures/club/313904/logo"/>
-		<record from="313904_operario_vg_icon" to="graphics/pictures/club/313904/icon"/>
+		<record from="313902_operario_vg" to="graphics/pictures/club/313902/logo"/>
+		<record from="313902_operario_vg_icon" to="graphics/pictures/club/313902/icon"/>
 		<record from="107224_primavera" to="graphics/pictures/club/107224/logo"/>
 		<record from="107224_primavera_icon" to="graphics/pictures/club/107224/icon"/>
 		<record from="301179_uniao_rondonopolis" to="graphics/pictures/club/301179/logo"/>
@@ -260,8 +260,8 @@
 		<record from="314600_cianorte_icon" to="graphics/pictures/club/314600/icon"/>
 		<record from="301370_fc_cascavel" to="graphics/pictures/club/301370/logo"/>
 		<record from="301370_fc_cascavel_icon" to="graphics/pictures/club/301370/icon"/>
-		<record from="104873_pstc_sao_joseense" to="graphics/pictures/club/104873/logo"/>
-		<record from="104873_pstc_sao_joseense_icon" to="graphics/pictures/club/104873/icon"/>
+		<record from="104870_pstc_sao_joseense" to="graphics/pictures/club/104870/logo"/>
+		<record from="104870_pstc_sao_joseense_icon" to="graphics/pictures/club/104870/icon"/>
 		<record from="107220_madureira" to="graphics/pictures/club/107220/logo"/>
 		<record from="107220_madureira_icon" to="graphics/pictures/club/107220/icon"/>
 		<record from="311955_marica" to="graphics/pictures/club/311955/logo"/>
@@ -286,8 +286,8 @@
 		<record from="301298_gas_icon" to="graphics/pictures/club/301298/icon"/>
 		<record from="301110_monte_roraima" to="graphics/pictures/club/301110/logo"/>
 		<record from="301110_monte_roraima_icon" to="graphics/pictures/club/301110/icon"/>
-		<record from="309357_sao_raimundo_rr" to="graphics/pictures/club/309357/logo"/>
-		<record from="309357_sao_raimundo_rr_icon" to="graphics/pictures/club/309357/icon"/>
+		<record from="309146_sao_raimundo_rr" to="graphics/pictures/club/309146/logo"/>
+		<record from="309146_sao_raimundo_rr_icon" to="graphics/pictures/club/309146/icon"/>
 		<record from="301333_guarany_de_bage" to="graphics/pictures/club/301333/logo"/>
 		<record from="301333_guarany_de_bage_icon" to="graphics/pictures/club/301333/icon"/>
 		<record from="301284_sao_jose_rs" to="graphics/pictures/club/301284/logo"/>
@@ -334,8 +334,8 @@
 		<record from="309361_penedense_icon" to="graphics/pictures/club/309361/icon"/>
 		<record from="8832363_itacoatiara" to="graphics/pictures/club/8832363/logo"/>
 		<record from="8832363_itacoatiara_icon" to="graphics/pictures/club/8832363/icon"/>
-		<record from="308516_parintins" to="graphics/pictures/club/308516/logo"/>
-		<record from="308516_parintins_icon" to="graphics/pictures/club/308516/icon"/>
+		<record from="308384_parintins" to="graphics/pictures/club/308384/logo"/>
+		<record from="308384_parintins_icon" to="graphics/pictures/club/308384/icon"/>
 		<record from="313259_princesa_do_solimoes" to="graphics/pictures/club/313259/logo"/>
 		<record from="313259_princesa_do_solimoes_icon" to="graphics/pictures/club/313259/icon"/>
 		<record from="301111_sao_raimundo_am" to="graphics/pictures/club/301111/logo"/>
@@ -358,8 +358,8 @@
 		<record from="301115_barcelona_de_ilheus_icon" to="graphics/pictures/club/301115/icon"/>
 		<record from="301363_galicia" to="graphics/pictures/club/301363/logo"/>
 		<record from="301363_galicia_icon" to="graphics/pictures/club/301363/icon"/>
-		<record from="314235_jequie" to="graphics/pictures/club/314235/logo"/>
-		<record from="314235_jequie_icon" to="graphics/pictures/club/314235/icon"/>
+		<record from="314206_jequie" to="graphics/pictures/club/314206/logo"/>
+		<record from="314206_jequie_icon" to="graphics/pictures/club/314206/icon"/>
 		<record from="313749_horizonte" to="graphics/pictures/club/313749/logo"/>
 		<record from="313749_horizonte_icon" to="graphics/pictures/club/313749/icon"/>
 		<record from="314956_maranguape" to="graphics/pictures/club/314956/logo"/>
@@ -378,8 +378,8 @@
 		<record from="313265_samambaia_icon" to="graphics/pictures/club/313265/icon"/>
 		<record from="311004_sobradinho" to="graphics/pictures/club/311004/logo"/>
 		<record from="311004_sobradinho_icon" to="graphics/pictures/club/311004/icon"/>
-		<record from="302141_capixaba" to="graphics/pictures/club/302141/logo"/>
-		<record from="302141_capixaba_icon" to="graphics/pictures/club/302141/icon"/>
+		<record from="302108_capixaba" to="graphics/pictures/club/302108/logo"/>
+		<record from="302108_capixaba_icon" to="graphics/pictures/club/302108/icon"/>
 		<record from="104975_desportiva_ferroviaria" to="graphics/pictures/club/104975/logo"/>
 		<record from="104975_desportiva_ferroviaria_icon" to="graphics/pictures/club/104975/icon"/>
 		<record from="310384_forte" to="graphics/pictures/club/310384/logo"/>
@@ -420,8 +420,8 @@
 		<record from="313234_costa_rica_icon" to="graphics/pictures/club/313234/icon"/>
 		<record from="313238_dourados" to="graphics/pictures/club/313238/logo"/>
 		<record from="313238_dourados_icon" to="graphics/pictures/club/313238/icon"/>
-		<record from="314721_naviraiense" to="graphics/pictures/club/314721/logo"/>
-		<record from="314721_naviraiense_icon" to="graphics/pictures/club/314721/icon"/>
+		<record from="314718_naviraiense" to="graphics/pictures/club/314718/logo"/>
+		<record from="314718_naviraiense_icon" to="graphics/pictures/club/314718/icon"/>
 		<record from="313247_pantanal" to="graphics/pictures/club/313247/logo"/>
 		<record from="313247_pantanal_icon" to="graphics/pictures/club/313247/icon"/>
 		<record from="314963_aguia_negra" to="graphics/pictures/club/314963/logo"/>

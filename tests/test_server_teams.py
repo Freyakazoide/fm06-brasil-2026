@@ -9,7 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch.server_teams import DIVISIONS, find_team, find_teams, write_team  # noqa: E402
+from fm06patch.people_contracts import brazil_club_indexes  # noqa: E402
+from fm06patch.server_teams import DIVISIONS, find_team, find_teams, true_uids, write_team  # noqa: E402
 
 SERVER_DB = os.environ.get("FM06_SERVER_DB")
 
@@ -43,6 +44,13 @@ class ServerTeamsTest(unittest.TestCase):
         self.assertLess(max(diff), team.offset + 15)
         self.assertEqual(struct.unpack_from("<I", buffer, team.offset + 7)[0], DIVISIONS["C"])
         self.assertEqual(find_team(find_teams(bytes(buffer)), "Flamengo").serie, "C")
+
+    def test_club_with_trailing_clubs_keeps_its_own_pair(self) -> None:
+        # o registro da Ferroviária (SP) traz Americano Paulista e Paissandu no fim; o par
+        # do fim (4330, 302148) é o do Paissandu
+        self.assertEqual(true_uids(self.data)[302143], 302144)
+        indexes = brazil_club_indexes(self.data)
+        self.assertEqual((indexes[302144], indexes[104874], indexes[104887]), (4328, 2374, 2377))
 
 
 if __name__ == "__main__":

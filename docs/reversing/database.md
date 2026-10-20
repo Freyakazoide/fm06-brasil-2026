@@ -33,3 +33,14 @@ bloco (Vitória: repositório 339, jogo 340) o registro seguinte é de outro tip
 e o par é o primeiro (índice anterior + 1, UID) depois dos nomes. O UID do jogo
 é o dos gráficos (`club/<UID>/logo`, `team/<UID>/kits/home`, confirmado com
 "Show Unique IDs": Flamengo 322) e o do `CLUB_NAME_CHANGE`.
+
+Alguns registros trazem, depois do clube, outros clubes sem `00 BD 00 00 00`
+(o da Ferroviária (SP), índice 4328, leva Americano Paulista 4329 e Paissandu
+4330). O par do fim do registro é então o do último deles, e não o do clube:
+`server_teams.club_pairs` pega sempre o primeiro (índice anterior + 1, UID)
+depois dos nomes quando o par do fim não tem esse índice. Conferido com o
+técnico de cada clube no `people_db` (contrato 4328, campo "time" 4541 =
+Ferroviária). Até a correção, nove clubes de 2026 (Ferroviária, Independência,
+Operário VG, PSTC/São Joseense, São Raimundo-RR, Parintins, Jequié, Capixaba,
+Naviraiense) apontavam para o clube errado: nome, escudo, elenco e comissão iam
+para o Paissandu e afins, que nem carregam no jogo.

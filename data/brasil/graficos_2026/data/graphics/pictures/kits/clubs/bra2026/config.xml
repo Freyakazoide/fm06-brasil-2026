@@ -82,8 +82,8 @@
 		<record from="332_ponte_preta_away" to="graphics/pictures/team/332/kits/away"/>
 		<record from="2106553_sao_bernardo_home" to="graphics/pictures/team/2106553/kits/home"/>
 		<record from="2106553_sao_bernardo_away" to="graphics/pictures/team/2106553/kits/away"/>
-		<record from="302148_ferroviaria_home" to="graphics/pictures/team/302148/kits/home"/>
-		<record from="302148_ferroviaria_away" to="graphics/pictures/team/302148/kits/away"/>
+		<record from="302144_ferroviaria_home" to="graphics/pictures/team/302144/kits/home"/>
+		<record from="302144_ferroviaria_away" to="graphics/pictures/team/302144/kits/away"/>
 		<record from="104979_inter_de_limeira_home" to="graphics/pictures/team/104979/kits/home"/>
 		<record from="104979_inter_de_limeira_away" to="graphics/pictures/team/104979/kits/away"/>
 		<record from="107216_ituano_home" to="graphics/pictures/team/107216/kits/home"/>
@@ -140,8 +140,8 @@
 		<record from="104887_galvez_away" to="graphics/pictures/team/104887/kits/away"/>
 		<record from="301359_humaita_home" to="graphics/pictures/team/301359/kits/home"/>
 		<record from="301359_humaita_away" to="graphics/pictures/team/301359/kits/away"/>
-		<record from="104885_independencia_home" to="graphics/pictures/team/104885/kits/home"/>
-		<record from="104885_independencia_away" to="graphics/pictures/team/104885/kits/away"/>
+		<record from="104874_independencia_home" to="graphics/pictures/team/104874/kits/home"/>
+		<record from="104874_independencia_away" to="graphics/pictures/team/104874/kits/away"/>
 		<record from="301100_asa_home" to="graphics/pictures/team/301100/kits/home"/>
 		<record from="301100_asa_away" to="graphics/pictures/team/301100/kits/away"/>
 		<record from="107210_csa_home" to="graphics/pictures/team/107210/kits/home"/>
@@ -224,8 +224,8 @@
 		<record from="301247_luverdense_away" to="graphics/pictures/team/301247/kits/away"/>
 		<record from="309644_mixto_home" to="graphics/pictures/team/309644/kits/home"/>
 		<record from="309644_mixto_away" to="graphics/pictures/team/309644/kits/away"/>
-		<record from="313904_operario_vg_home" to="graphics/pictures/team/313904/kits/home"/>
-		<record from="313904_operario_vg_away" to="graphics/pictures/team/313904/kits/away"/>
+		<record from="313902_operario_vg_home" to="graphics/pictures/team/313902/kits/home"/>
+		<record from="313902_operario_vg_away" to="graphics/pictures/team/313902/kits/away"/>
 		<record from="107224_primavera_home" to="graphics/pictures/team/107224/kits/home"/>
 		<record from="107224_primavera_away" to="graphics/pictures/team/107224/kits/away"/>
 		<record from="301179_uniao_rondonopolis_home" to="graphics/pictures/team/301179/kits/home"/>
@@ -260,8 +260,8 @@
 		<record from="314600_cianorte_away" to="graphics/pictures/team/314600/kits/away"/>
 		<record from="301370_fc_cascavel_home" to="graphics/pictures/team/301370/kits/home"/>
 		<record from="301370_fc_cascavel_away" to="graphics/pictures/team/301370/kits/away"/>
-		<record from="104873_pstc_sao_joseense_home" to="graphics/pictures/team/104873/kits/home"/>
-		<record from="104873_pstc_sao_joseense_away" to="graphics/pictures/team/104873/kits/away"/>
+		<record from="104870_pstc_sao_joseense_home" to="graphics/pictures/team/104870/kits/home"/>
+		<record from="104870_pstc_sao_joseense_away" to="graphics/pictures/team/104870/kits/away"/>
 		<record from="107220_madureira_home" to="graphics/pictures/team/107220/kits/home"/>
 		<record from="107220_madureira_away" to="graphics/pictures/team/107220/kits/away"/>
 		<record from="311955_marica_home" to="graphics/pictures/team/311955/kits/home"/>
@@ -286,8 +286,8 @@
 		<record from="301298_gas_away" to="graphics/pictures/team/301298/kits/away"/>
 		<record from="301110_monte_roraima_home" to="graphics/pictures/team/301110/kits/home"/>
 		<record from="301110_monte_roraima_away" to="graphics/pictures/team/301110/kits/away"/>
-		<record from="309357_sao_raimundo_rr_home" to="graphics/pictures/team/309357/kits/home"/>
-		<record from="309357_sao_raimundo_rr_away" to="graphics/pictures/team/309357/kits/away"/>
+		<record from="309146_sao_raimundo_rr_home" to="graphics/pictures/team/309146/kits/home"/>
+		<record from="309146_sao_raimundo_rr_away" to="graphics/pictures/team/309146/kits/away"/>
 		<record from="301333_guarany_de_bage_home" to="graphics/pictures/team/301333/kits/home"/>
 		<record from="301333_guarany_de_bage_away" to="graphics/pictures/team/301333/kits/away"/>
 		<record from="301284_sao_jose_rs_home" to="graphics/pictures/team/301284/kits/home"/>
@@ -334,8 +334,8 @@
 		<record from="309361_penedense_away" to="graphics/pictures/team/309361/kits/away"/>
 		<record from="8832363_itacoatiara_home" to="graphics/pictures/team/8832363/kits/home"/>
 		<record from="8832363_itacoatiara_away" to="graphics/pictures/team/8832363/kits/away"/>
-		<record from="308516_parintins_home" to="graphics/pictures/team/308516/kits/home"/>
-		<record from="308516_parintins_away" to="graphics/pictures/team/308516/kits/away"/>
+		<record from="308384_parintins_home" to="graphics/pictures/team/308384/kits/home"/>
+		<record from="308384_parintins_away" to="graphics/pictures/team/308384/kits/away"/>
 		<record from="313259_princesa_do_solimoes_home" to="graphics/pictures/team/313259/kits/home"/>
 		<record from="313259_princesa_do_solimoes_away" to="graphics/pictures/team/313259/kits/away"/>
 		<record from="301111_sao_raimundo_am_home" to="graphics/pictures/team/301111/kits/home"/>
@@ -358,8 +358,8 @@
 		<record from="301115_barcelona_de_ilheus_away" to="graphics/pictures/team/301115/kits/away"/>
 		<record from="301363_galicia_home" to="graphics/pictures/team/301363/kits/home"/>
 		<record from="301363_galicia_away" to="graphics/pictures/team/301363/kits/away"/>
-		<record from="314235_jequie_home" to="graphics/pictures/team/314235/kits/home"/>
-		<record from="314235_jequie_away" to="graphics/pictures/team/314235/kits/away"/>
+		<record from="314206_jequie_home" to="graphics/pictures/team/314206/kits/home"/>
+		<record from="314206_jequie_away" to="graphics/pictures/team/314206/kits/away"/>
 		<record from="313749_horizonte_home" to="graphics/pictures/team/313749/kits/home"/>
 		<record from="313749_horizonte_away" to="graphics/pictures/team/313749/kits/away"/>
 		<record from="314956_maranguape_home" to="graphics/pictures/team/314956/kits/home"/>
@@ -378,8 +378,8 @@
 		<record from="313265_samambaia_away" to="graphics/pictures/team/313265/kits/away"/>
 		<record from="311004_sobradinho_home" to="graphics/pictures/team/311004/kits/home"/>
 		<record from="311004_sobradinho_away" to="graphics/pictures/team/311004/kits/away"/>
-		<record from="302141_capixaba_home" to="graphics/pictures/team/302141/kits/home"/>
-		<record from="302141_capixaba_away" to="graphics/pictures/team/302141/kits/away"/>
+		<record from="302108_capixaba_home" to="graphics/pictures/team/302108/kits/home"/>
+		<record from="302108_capixaba_away" to="graphics/pictures/team/302108/kits/away"/>
 		<record from="104975_desportiva_ferroviaria_home" to="graphics/pictures/team/104975/kits/home"/>
 		<record from="104975_desportiva_ferroviaria_away" to="graphics/pictures/team/104975/kits/away"/>
 		<record from="310384_forte_home" to="graphics/pictures/team/310384/kits/home"/>
@@ -420,8 +420,8 @@
 		<record from="313234_costa_rica_away" to="graphics/pictures/team/313234/kits/away"/>
 		<record from="313238_dourados_home" to="graphics/pictures/team/313238/kits/home"/>
 		<record from="313238_dourados_away" to="graphics/pictures/team/313238/kits/away"/>
-		<record from="314721_naviraiense_home" to="graphics/pictures/team/314721/kits/home"/>
-		<record from="314721_naviraiense_away" to="graphics/pictures/team/314721/kits/away"/>
+		<record from="314718_naviraiense_home" to="graphics/pictures/team/314718/kits/home"/>
+		<record from="314718_naviraiense_away" to="graphics/pictures/team/314718/kits/away"/>
 		<record from="313247_pantanal_home" to="graphics/pictures/team/313247/kits/home"/>
 		<record from="313247_pantanal_away" to="graphics/pictures/team/313247/kits/away"/>
 		<record from="314963_aguia_negra_home" to="graphics/pictures/team/314963/kits/home"/>

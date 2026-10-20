@@ -82,4 +82,9 @@ Nacionalidade: `nationality_like` copia a de um jogador de 2005
 depois do nome completo vêm o ano de nascimento e o código da nação (0xBB
 Argentina, 0xBC Bolívia, 0xBD Brasil, 0xBE Chile, 0xBF Colômbia, 0xC0 Equador,
 0xC1 Paraguai, 0xC2 Peru, 0xC3 Uruguai, 0xC4 Venezuela, 0xA2 Portugal, 0xAA
-Espanha…); o registro termina com (índice, UID).
+Espanha…); o registro termina com (índice, UID). O doador tem de estar num clube
+de 2026: clube brasileiro fora das séries e dos estaduais de 2026 não carrega os
+jogadores no New Game, e o injetor avisa "doador … não está carregado". O
+`reforcar_elencos.py` leva cada doador para o primeiro clube de 2026 que tem um
+jogador daquela nação; ele fica no elenco com o nome de 2005 (o
+`montar_elencos.py` não o usa como hospedeiro).

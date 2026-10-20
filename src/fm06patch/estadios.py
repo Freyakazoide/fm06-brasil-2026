@@ -246,7 +246,7 @@ def wanted_from_sheets(identities, teams_by_repo: dict[int, int], sofascore_csv,
     sofa = {}
     if sofascore_csv.exists():
         sofa = {r["clube"]: r for r in csv.DictReader(sofascore_csv.open(encoding="utf-8-sig"))}
-    sheet: dict[int, dict] = {}
+    sheet: dict[str, dict] = {}       # pelo nome de 2026: o uid_jogo da planilha pode ser de uma versão antiga
     if sheet_xlsx and sheet_xlsx.exists():
         import openpyxl
 
@@ -254,11 +254,11 @@ def wanted_from_sheets(identities, teams_by_repo: dict[int, int], sofascore_csv,
         header = next(rows)
         for row in rows:
             row = dict(zip(header, row))
-            if row.get("uid_jogo"):
-                sheet[int(row["uid_jogo"])] = row
+            if row.get("clube"):
+                sheet[str(row["clube"]).strip()] = row
     wanted, reputations = [], {}
     for ident in identities:
-        mine, theirs = sheet.get(ident.uid, {}), sofa.get(ident.clube, {})
+        mine, theirs = sheet.get(ident.clube, {}), sofa.get(ident.clube, {})
         name = (mine.get("estadio_2026") or theirs.get("estadio") or "").strip()
         capacity = mine.get("capacidade") or theirs.get("capacidade")
         city = (mine.get("cidade_2026") or theirs.get("cidade") or "").strip()

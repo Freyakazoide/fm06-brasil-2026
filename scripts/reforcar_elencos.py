@@ -56,12 +56,13 @@ def _sheet_rows() -> list[dict]:
 
 
 def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nations: set,
-                       playing: set) -> tuple[dict, dict]:
+                       home: dict[str, int]) -> tuple[dict, dict]:
     """Um doador de nacionalidade por nação, carregado no jogo: um jogador dessa nação
-    que já joga num clube brasileiro, ou um que é levado para um clube brasileiro fora de
-    2026 (as ligas da Ásia, África etc. não carregam, e o doador não estaria na memória).
+    que já joga num clube de 2026, ou um que é levado para um (home: nação -> índice do
+    clube de 2026 que tem um jogador dela). Clube brasileiro fora de 2026 não serve: fora
+    dos estaduais e das séries de 2026, o jogo não carrega os jogadores dele (nem os da
+    Ásia, África etc.), e o injetor não acha o doador na memória.
     Devolve ({nação: UID}, {UID: índice do clube novo})."""
-    spare = sorted(i for i, uid in brazil.items() if uid not in ours and uid in playing)
     by_code = people_contracts.nationalities(people)
     loose = people_contracts.contracts(people, multi=True)
     donors, moves = {}, {}
@@ -73,13 +74,15 @@ def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nati
             found.update({uid: loose[uid] for uid, _ in candidates})
         if not candidates:
             continue
-        in_brazil = [uid for uid, _ in candidates if found[uid].club in brazil]
-        if in_brazil:
-            donors[name] = in_brazil[0]
+        in_ours = [uid for uid, _ in candidates if brazil.get(found[uid].club) in ours]
+        if in_ours:
+            donors[name] = in_ours[0]
+            continue
+        if name not in home:
             continue
         uid = sorted(candidates, key=lambda c: abs(c[1] - 1982))[0][0]
         donors[name] = uid
-        moves[uid] = spare[len(moves) % len(spare)]
+        moves[uid] = home[name]
     return donors, moves
 
 
@@ -144,9 +147,14 @@ def main() -> None:
             by_club[c.club].append(c)
     for club, people_of_club in sorted(by_club.items(), key=lambda kv: -len(kv[1])):
         donors += people_of_club[:PER_FOREIGN_CLUB]
+    uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in identities}
+    home = {}
+    for r in sheet:
+        if r["nacionalidade"] != "Brasil" and uid_of.get(r["clube"]) in indexes:
+            home.setdefault(r["nacionalidade"], indexes[uid_of[r["clube"]]])
     nation_donors, pins = nationality_donors(people, found, brazil, ours,
                                              {r["nacionalidade"] for r in sheet if r["nacionalidade"] != "Brasil"},
-                                             playing)
+                                             home)
     donors = [d for d in donors if d.uid not in host_uids and d.uid not in pins
               and d.uid not in nation_donors.values()]
 
@@ -163,7 +171,7 @@ def main() -> None:
     for club, uid, missing in needs:
         print(f"{club:28} {hosts.get(uid, 0):3} hospedeiros + {taken[club]:3} (faltavam {missing})")
     print(f"[OK] {len(moves)} jogadores movidos para {len(needs)} clubes ({len(donors)} doadores disponíveis)")
-    print(f"[OK] doadores de nacionalidade: {len(nation_donors)} nações ({len(pins)} levados para clube brasileiro)")
+    print(f"[OK] doadores de nacionalidade: {len(nation_donors)} nações ({len(pins)} levados para um clube de 2026)")
     moves.update(pins)
 
     # excedentes: jogadores de 2005 (do banco) além do elenco de 2026 ficariam no clube com o
@@ -172,7 +180,8 @@ def main() -> None:
     removed = 0
     for row in identities:
         uid, club = int(row["uid_jogo"]), row["clube_2026"]
-        own = [c for c in found.values() if brazil.get(c.club) == uid and c.uid not in moves]
+        own = [c for c in found.values() if brazil.get(c.club) == uid and c.uid not in moves
+               and c.uid not in nation_donors.values()]
         extra = len(own) - sizes.get(club, 0)
         if sizes.get(club, 0) and extra > 0:
             for c in sorted(own, key=lambda c: c.until)[:extra]:   # quem tem contrato mais curto sai

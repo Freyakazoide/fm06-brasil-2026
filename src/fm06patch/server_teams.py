@@ -194,46 +194,46 @@ def find_brazil_teams(data: bytes) -> list[TeamRecord]:
     return list(teams.values())
 
 
-def clubs_by_uid(data: bytes) -> dict[int, tuple[str, str]]:
-    """UID verdadeiro -> (nome longo, curto): o UID que o jogo usa na memória (CLUB+0x14).
+def club_pairs(data: bytes) -> list[tuple[int, int, int, int]]:
+    """(UID do repositório, índice, UID verdadeiro, posição das datas) de cada clube brasileiro.
 
-    Cada registro de clube termina com o próprio (índice, UID); o par lido por
-    club_names, logo antes de "00 BD 00 00 00", é o fim do registro anterior. O UID
-    verdadeiro do clube é o par seguinte.
-    """
+    O par (índice, UID) do clube vem depois dos nomes e fecha o registro: é o início do
+    registro seguinte. Alguns registros trazem depois outros clubes sem "00 BD 00 00 00"
+    (Ferroviária (SP) leva Americano Paulista e Paissandu); o par do fim é então o do
+    último deles, e o do clube é o primeiro (índice anterior + 1, UID) depois dos nomes.
+    Pegar o par do fim põe o clube de 2026 no lugar do Paissandu."""
     starts = [m.start() - 4 for m in re.finditer(re.escape(_CLUB_TAIL), data) if m.start() >= 8]
-    names: dict[int, tuple[str, str]] = {}
-    for start, following in zip(starts, starts[1:]):
-        if following - start > 0x2000:
-            continue
-        mark = data.find(_DATES, start, min(start + 0x600, following))
-        if mark < 0:
-            continue
-        long_name, after = _string(data, mark + len(_DATES))
-        short_name, _ = _string(data, after)
-        if long_name:
-            names[struct.unpack_from("<I", data, following)[0]] = (long_name, short_name or long_name)
-    return names
-
-
-def true_uids(data: bytes) -> dict[int, int]:
-    """UID do repositório (o par lido por club_names) -> UID verdadeiro do mesmo clube.
-
-    O par (índice, UID) do clube fecha o registro: é o início do registro seguinte. No
-    último clube de um bloco o registro seguinte é de outro tipo; o par é então o
-    primeiro (índice anterior + 1, UID) depois dos nomes."""
-    starts = [m.start() - 4 for m in re.finditer(re.escape(_CLUB_TAIL), data) if m.start() >= 8]
-    uids: dict[int, int] = {}
+    pairs = []
     for start, following in zip(starts, starts[1:] + [len(data)]):
         mark = data.find(_DATES, start, min(start + 0x600, following))
         if mark < 0:
             continue
         repo = struct.unpack_from("<I", data, start)[0]
-        if following - start <= 0x2000:
-            uids.setdefault(repo, struct.unpack_from("<I", data, following)[0])
+        own = struct.unpack_from("<I", data, start - 4)[0] + 1
+        short = following - start <= 0x2000
+        if short and struct.unpack_from("<I", data, following - 4)[0] == own:
+            pairs.append((repo, own, struct.unpack_from("<I", data, following)[0], mark))
             continue
-        index = struct.unpack_from("<I", data, start - 4)[0]
-        own = data.find(struct.pack("<I", index + 1), mark, start + 0x2000)
-        if own > 0:
-            uids.setdefault(repo, struct.unpack_from("<I", data, own + 4)[0])
+        at = data.find(struct.pack("<I", own), mark, following if short else start + 0x2000)
+        if at > 0:
+            pairs.append((repo, own, struct.unpack_from("<I", data, at + 4)[0], mark))
+    return pairs
+
+
+def clubs_by_uid(data: bytes) -> dict[int, tuple[str, str]]:
+    """UID verdadeiro -> (nome longo, curto): o UID que o jogo usa na memória (CLUB+0x14)."""
+    names: dict[int, tuple[str, str]] = {}
+    for _, _, uid, mark in club_pairs(data):
+        long_name, after = _string(data, mark + len(_DATES))
+        short_name, _ = _string(data, after)
+        if long_name:
+            names.setdefault(uid, (long_name, short_name or long_name))
+    return names
+
+
+def true_uids(data: bytes) -> dict[int, int]:
+    """UID do repositório (o par lido por club_names) -> UID verdadeiro do mesmo clube."""
+    uids: dict[int, int] = {}
+    for repo, _, uid, _ in club_pairs(data):
+        uids.setdefault(repo, uid)
     return uids

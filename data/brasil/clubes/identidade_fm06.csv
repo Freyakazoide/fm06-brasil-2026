@@ -39,7 +39,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 330,329,Novorizontino,SP,Paraná,substituto,"Série B, estadual SP"
 332,331,Ponte Preta,SP,Ponte Preta,equivalente,"Série B, estadual SP"
 2106553,2106412,São Bernardo,SP,São Bernardo,equivalente,"Série B, estadual SP"
-302148,302143,Ferroviária,SP,Ferroviária (SP),equivalente,Série C
+302144,302143,Ferroviária,SP,Ferroviária (SP),equivalente,Série C
 104979,104978,Inter de Limeira,SP,Inter de Limeira,equivalente,Série C
 107216,107214,Ituano,SP,Ituano,equivalente,Série C
 301352,301350,Amazonas,AM,Santo André,substituto,"Série C, estadual AM"
@@ -68,7 +68,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 301340,301338,Água Santa,SP,Francana,substituto,Série D
 104887,104885,Galvez,AC,Americano,substituto,"Série D, estadual AC"
 301359,301357,Humaitá,AC,União Barbarense,substituto,"Série D, estadual AC"
-104885,104873,Independência,AC,Independência,equivalente,"Série D, estadual AC"
+104874,104873,Independência,AC,Independência,equivalente,"Série D, estadual AC"
 301100,201666,ASA,AL,ASA,equivalente,"Série D, estadual AL"
 107210,107208,CSA,AL,CSA,equivalente,"Série D, estadual AL"
 313251,313250,CSE,AL,CSE,equivalente,"Série D, estadual AL"
@@ -110,7 +110,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 107242,107240,Operário-MS,MS,Operário (MS),equivalente,"Série D, estadual MS"
 301247,301245,Luverdense,MT,Cabofriense,substituto,"Série D, estadual MT"
 309644,309643,Mixto,MT,Mixto (MT),equivalente,"Série D, estadual MT"
-313904,313901,Operário VG,MT,Operário (MT),equivalente,"Série D, estadual MT"
+313902,313901,Operário VG,MT,Operário (MT),equivalente,"Série D, estadual MT"
 107224,107222,Primavera,MT,Portuguesa Santista,substituto,"Série D, estadual MT"
 301179,301177,União Rondonópolis,MT,União Rondonópolis,equivalente,"Série D, estadual MT"
 107234,107232,Tuna Luso,PA,Tuna Luso,equivalente,"Série D, estadual PA"
@@ -128,7 +128,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 314757,314755,Azuriz,PR,Hermann Aichinger,substituto,"Série D, estadual PR"
 314600,314598,Cianorte,PR,Cianorte,equivalente,"Série D, estadual PR"
 301370,301367,FC Cascavel,PR,Cascavel,equivalente,"Série D, estadual PR"
-104873,104868,PSTC/São Joseense,PR,Olaria,substituto,"Série D, estadual PR"
+104870,104868,PSTC/São Joseense,PR,Olaria,substituto,"Série D, estadual PR"
 107220,107218,Madureira,RJ,Madureira,equivalente,"Série D, estadual RJ"
 311955,311953,Maricá,RJ,CENE,substituto,"Série D, estadual RJ"
 311107,311105,Nova Iguaçu,RJ,Nova Iguaçu,equivalente,"Série D, estadual RJ"
@@ -141,7 +141,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 313227,313225,Guaporé,RO,Vila Aurora,substituto,"Série D, estadual RO"
 301298,301296,GAS,RR,GAS,equivalente,"Série D, estadual RR"
 301110,301108,Monte Roraima,RR,Rio Negro (AM),substituto,"Série D, estadual RR"
-309357,309145,São Raimundo-RR,RR,São Raimundo (RR),equivalente,"Série D, estadual RR"
+309146,309145,São Raimundo-RR,RR,São Raimundo (RR),equivalente,"Série D, estadual RR"
 301333,301331,Guarany de Bagé,RS,América (SP),substituto,"Série D, estadual RS"
 301284,301282,São José-RS,RS,São José (RS),equivalente,"Série D, estadual RS"
 301286,301284,São Luiz,RS,São Luiz,equivalente,"Série D, estadual RS"
@@ -165,7 +165,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 309358,309357,Murici SC,AL,Murici,equivalente,estadual AL
 309361,309358,Penedense,AL,Penedense,equivalente,estadual AL
 8832363,8832362,Itacoatiara,AM,Grêmio Coariense,substituto,estadual AM
-308516,308281,Parintins,AM,América (AM),substituto,estadual AM
+308384,308281,Parintins,AM,América (AM),substituto,estadual AM
 313259,313258,Princesa do Solimões,AM,Princesa,equivalente,estadual AM
 301111,301110,São Raimundo-AM,AM,São Raimundo (AM),equivalente,estadual AM
 313254,313253,Cristal,AP,Cristal,equivalente,estadual AP
@@ -177,7 +177,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 320262,319623,Bahia de Feira,BA,Bahia de Feira,equivalente,estadual BA
 301115,301113,Barcelona de Ilhéus,BA,Camaçari,substituto,estadual BA
 301363,301361,Galícia,BA,Galícia,equivalente,estadual BA
-314235,314204,Jequié,BA,Jequié,equivalente,estadual BA
+314206,314204,Jequié,BA,Jequié,equivalente,estadual BA
 313749,313675,Horizonte,CE,Icasa,substituto,estadual CE
 314956,314946,Maranguape,CE,Maranguape,equivalente,estadual CE
 313261,313259,Quixadá,CE,Quixadá,equivalente,estadual CE
@@ -187,7 +187,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 303861,303817,Real Brasília,DF,Bandeirante (DF),substituto,estadual DF
 313265,313264,Samambaia,DF,Samambaia,equivalente,estadual DF
 311004,311002,Sobradinho,DF,Sobradinho,equivalente,estadual DF
-302141,301919,Capixaba,ES,Estrela do Norte,substituto,estadual ES
+302108,301919,Capixaba,ES,Estrela do Norte,substituto,estadual ES
 104975,104887,Desportiva Ferroviária,ES,Desportiva,equivalente,estadual ES
 310384,310357,Forte,ES,São Mateus,substituto,estadual ES
 318868,318866,Porto Vitória,ES,CTE Colatina,substituto,estadual ES
@@ -208,7 +208,7 @@ uid_jogo,uid_repo,clube_2026,uf,fm06_nome,tipo,onde
 313901,313900,Corumbaense,MS,Corumbaense,equivalente,estadual MS
 313234,313232,Costa Rica,MS,Cassilandense,substituto,estadual MS
 313238,313236,Dourados,MS,Operário de Dourados,equivalente,estadual MS
-314721,314695,Naviraiense,MS,Naviraiense,equivalente,estadual MS
+314718,314695,Naviraiense,MS,Naviraiense,equivalente,estadual MS
 313247,313245,Pantanal,MS,Pantanal,equivalente,estadual MS
 314963,314962,Águia Negra,MS,Águia Negra,equivalente,estadual MS
 313224,313222,Chapada,MT,Dom Bosco,substituto,estadual MT

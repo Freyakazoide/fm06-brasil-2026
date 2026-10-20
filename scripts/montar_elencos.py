@@ -105,6 +105,8 @@ def main() -> None:
         NATIONALITY_DONORS.update(json.loads(DONORS.read_text(encoding="utf-8")))
     clubs = _targets(PLAYERS)
     hosts = _hosts(args.hospedeiros)
+    donors = set(NATIONALITY_DONORS.values())       # o doador fica como está: o injetor copia a nação dele
+    hosts = {club: [h for h in pool if h["uid"] not in donors] for club, pool in hosts.items()}
     uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))}
 
     lnc = ["# FM06 Brasil 2026: nomes dos jogadores de 2026"]
