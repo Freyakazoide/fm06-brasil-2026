@@ -19,7 +19,8 @@ Com --apply:
 7. grava o lang_db.dat com os nomes das fases e os textos (prêmios, lesões,
    descrições) em português do Brasil, pelo glossário de
    data\\modelos\\traducao_ptbr.xlsx (cópia do original em
-   workspace\\baseline\\lang_db.original.dat);
+   workspace\\baseline\\lang_db.original.dat), e as telas
+   (data\\languages\\portuguese.ltc, scripts\\traduzir_telas.py);
 8. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
    2026), lido pelo scripts\\gerar_graficos.py (escudos, uniformes e nomes).
 
@@ -46,6 +47,7 @@ from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico,  # noqa: E402
                        identidade, nomes_fases, reputacao, traducao)
+import traduzir_telas  # noqa: E402
 
 EXE_PATCHES = [
     "serie_a_calendario_copa",
@@ -129,6 +131,7 @@ def main() -> None:
         if LANG_BACKUP.exists():
             shutil.copy2(LANG_BACKUP, lang)
             print(f"[OK] lang_db original restaurado em {lang}")
+        traduzir_telas.restore(game)
         people_backup = BACKUP.with_name("people_db.original.dat")      # do reforcar_elencos.py
         if people_backup.exists():
             shutil.copy2(people_backup, game / "data" / "db" / "people_db.dat")
@@ -252,8 +255,8 @@ def main() -> None:
         lang_new, renamed = nomes_fases.apply(lang_data)
         translated = 0
         if TRANSLATION.exists():                                 # glossário pt-PT -> pt-BR
-            glossary, phrases = traducao.load_sheet(TRANSLATION)
-            changes, too_long = traducao.plan(lang_new, glossary, phrases)
+            sheet = traducao.load_sheet(TRANSLATION)
+            changes, too_long = traducao.plan(lang_new, sheet.glossary(), sheet.phrases, sheet.short_phrases)
             lang_new = traducao.apply(lang_new, changes)
             translated = len(changes)
             with TRANSLATION_REPORT.open("w", newline="", encoding="utf-8-sig") as handle:
@@ -264,6 +267,7 @@ def main() -> None:
         lang.write_bytes(lang_new)
         print(f"[OK] gravado {lang} (nomes das fases: {len(renamed)} trocados; "
               f"{translated} textos em pt-BR, lista em {TRANSLATION_REPORT.relative_to(ROOT)})")
+    traduzir_telas.translate(game, apply=True)                   # telas (portuguese.ltc)
 
     lnc.parent.mkdir(parents=True, exist_ok=True)
     lnc.write_bytes((lnc_text() + "\r\n".join(estadios.lnc_lines(venues)) + "\r\n").encode("utf-16"))

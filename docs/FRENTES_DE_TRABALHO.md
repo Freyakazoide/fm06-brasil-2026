@@ -73,12 +73,23 @@ identificadas como editoriais e campos sem fonte confiável permanecem vazios.
 
 | frente | situação | onde |
 |---|---|---|
-| A1 | ✅ só o que fica no `lang_db` (prêmios, lesões, fases, descrições: 1.941 textos); as frases das telas ficam em outro arquivo, a achar com `scripts/achar_textos.py` | `traducao.py`, `aplicar_brasil_2026.py`; lista em `data/brasil/traducao_lang_db.csv` |
+| A1 | ✅ `lang_db` (prêmios, lesões, fases, descrições: 1.942 textos) e telas (`data/languages/portuguese.ltc`: 11.903 textos) | `traducao.py`, `ltc.py`, `traduzir_telas.py` (também roda no `aplicar_brasil_2026.py`); listas em `data/brasil/traducao_lang_db.csv` e `traducao_telas.csv` |
 | A2 | ✅ os 220 jogadores | `montar_elencos.py` |
 | A3 | ✅ | `montar_elencos.py` + injetor (Player +72/+74) |
 | A4 | ⏳ depois: o `MATCH_BAN` cita o jogador pelo nome de 2005 e o comando de lesão não foi isolado | — |
 | A5 | ✅ 511 pessoas (a versão nova + os 127 da Wikipédia que tinham saído); auxiliares de clubes estrangeiros quando os brasileiros acabam | `aplicar_comissao.py` |
 | B1–B5, C0 | ⏳ dados guardados; precisam de engenharia (nomes de regens no `server_db`, campos de clube) | — |
+
+Das 35 frases da aba Frases, só "Utilizado num sistema de rotatividade do plantel"
+existe igual no jogo; as outras não aparecem em nenhuma tela (o texto do jogo é outro)
+e não mudam nada. Para acrescentar frases, copie o texto exato de
+`data/brasil/traducao_telas.csv` (coluna "antes") ou de um print.
+
+Nas telas, "equipa" vira "equipe" (feminino, como no original, para a frase continuar
+certa), "médio" muda só nas posições ("Médio Direito" → "Meia Direita"; "Salário
+Médio" fica), "subida"/"descida" só "de divisão" (acesso, rebaixamento), "desarme"
+fica e "cabeceamento" vira "cabeceio". Termo que não cabe fica como está e o resto da
+frase muda.
 
 No glossário, quatro termos não servem nos textos do `lang_db` e ficaram de fora
 lá: "partida" ("perna partida" é perna quebrada), "mão" ("mão partida"),

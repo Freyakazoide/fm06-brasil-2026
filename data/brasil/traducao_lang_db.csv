@@ -246,9 +246,7 @@ Equipa do Mês,Time do Mês
 Equipa do Mês - 1ª Divisão Dinamarquesa,Time do Mês - 1ª Divisão Dinamarquesa
 Equipa do Mês - 1ª Divisão Russa,Time do Mês - 1ª Divisão Russa
 Equipa do Mês - 1ª Liga Russa,Time do Mês - 1ª Liga Russa
-Escolha dos Adeptos - Singapura,Escolha da Torcida - Singapura
-Fase de Grupos,Fase de grupos
-Fase de Grupos da 2ªFase,Fase de grupos da 2ªFase
+Escolha dos Adeptos - Singapura,Escolha Da Torcida - Singapura
 Finais Eliminatórias,Finais Fases
 Final Eliminatória,Final Fase
 Golo Mais Rápido,Gol Mais Rápido
@@ -447,7 +445,7 @@ Guarda-Redes do Ano dos Jogadores - 2ªDiv. França,Goleiro do Ano dos Jogadores
 Guarda-Redes do Mês,Goleiro do Mês
 Guarda-Redes do Mês - 1ª Divisão Coreia do Sul,Goleiro do Mês - 1ª Divisão Coreia do Sul
 Guarda-redes do Ano - 1ª Divisão Belga,Goleiro do Ano - 1ª Divisão Belga
-Jogador Ano dos Adeptos,Jogador Ano da Torcida
+Jogador Ano dos Adeptos,Jogador Ano Da Torcida
 Jogador Mais Valioso - Taça das Nações Asiáticas,Jogador Mais Valioso - Copa das Nações Asiáticas
 Jogador da Jornada,Jogador da Rodada
 Jogador da Jornada - 1ª Divisão,Jogador da Rodada - 1ª Divisão
@@ -456,8 +454,8 @@ Jogador da Jornada - 2ª Divisão Montenegro,Jogador da Rodada - 2ª Divisão Mo
 Jogador da Jornada - 2ª Divisão Norte,Jogador da Rodada - 2ª Divisão Norte
 Jogador da Jornada - 2ª Divisão Oeste,Jogador da Rodada - 2ª Divisão Oeste
 Jogador da Jornada - 2ª Divisão Sérvia,Jogador da Rodada - 2ª Divisão Sérvia
-Jogador do Ano dos Adeptos - Hong Kong,Jogador do Ano da Torcida - Hong Kong
-Jogador do Ano dos Adeptos - Suécia,Jogador do Ano da Torcida - Suécia
+Jogador do Ano dos Adeptos - Hong Kong,Jogador do Ano Da Torcida - Hong Kong
+Jogador do Ano dos Adeptos - Suécia,Jogador do Ano Da Torcida - Suécia
 Jogador do Ano dos Treinadores,Jogador do Ano dos Técnicos
 Jogador do Ano dos Treinadores - 1ª Divisão SCG,Jogador do Ano dos Técnicos - 1ª Divisão SCG
 MVP - Taça da Coreia do Sul,MVP - Copa da Coreia do Sul
@@ -681,9 +679,9 @@ Médio do Ano - Singapura,Meia do Ano - Singapura
 Médio do Ano - Suécia,Meia do Ano - Suécia
 Médio do Ano - Índia,Meia do Ano - Índia
 Oitava Eliminatória,Oitava Fase
-Onze de Ouro dos Adeptos - México,Onze de Ouro da Torcida - México
-Onze dos Adeptos,Onze da Torcida
-Onze dos Adeptos - México,Onze da Torcida - México
+Onze de Ouro dos Adeptos - México,Onze de Ouro Da Torcida - México
+Onze dos Adeptos,Onze Da Torcida
+Onze dos Adeptos - México,Onze Da Torcida - México
 Personalidade da Ronda - Taça da Irlanda do Norte,Personalidade da Ronda - Copa da Irlanda do Norte
 Primeira Eliminatória Preliminar,Primeira Fase Preliminar
 Prémio Contrinuição Geral dos Jogadores Búlgaros,Prêmio Contrinuição Geral dos Jogadores Búlgaros
@@ -1080,8 +1078,6 @@ avançado poderoso,atacante poderoso
 avançado versátil,atacante versátil
 equipa em apuros {no}<%comp#1-short>,time em apuros {no}<%comp#1-short>
 equipa internacional,time internacional
-equipa problema <%nation#1-nationality1>,time problema <%nation#1-nationality1>
-equipa surpresa {do}<%comp#1-short>,time surpresa {do}<%comp#1-short>
 equipa {do}<%comp#1-short>,time {do}<%comp#1-short>
 equipa {do}<%comp#1-short> com problemas,time {do}<%comp#1-short> com problemas
 guarda-redes de classe mundial,goleiro de classe mundial
@@ -1108,7 +1104,7 @@ médio organizador,meia organizador
 médio seguro,meia seguro
 selecção <%continent#1-continentality1>,seleção <%continent#1-continentality1>
 sem treinador,sem técnico
-treinador actual,técnico actual
+treinador actual,técnico atual
 treinador alvo de ataques,técnico alvo de ataques
 treinador com talento,técnico com talento
 treinador irregular,técnico irregular
@@ -1122,3 +1118,14 @@ treinador ultrapassado,técnico ultrapassado
 Árbitro Assistente do Ano - Japão,Bandeirinha do Ano - Japão
 Árbitro Assistente do Ano - Singapura,Bandeirinha do Ano - Singapura
 Árbitro Assistente do Ano - Ásia,Bandeirinha do Ano - Ásia
+óptima noite,ótima noite
+óptima noite de outono,ótima noite de outono
+óptima noite de primavera,ótima noite de primavera
+óptima noite de verão,ótima noite de verão
+óptima tarde,ótima tarde
+óptima tarde de outono,ótima tarde de outono
+óptima tarde de primavera,ótima tarde de primavera
+óptima tarde de verão,ótima tarde de verão
+Onze Ouro Adeptos -> Onze Ouro Torcedores,NÃO COUBE
+Época de Outono -> Temporada de Outono,NÃO COUBE
+Época de Outono -> Temporada de Outono,NÃO COUBE
