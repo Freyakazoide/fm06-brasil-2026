@@ -5,7 +5,7 @@ Registro da pessoa (staff e jogador), na ordem em que aparece no arquivo:
     u32 primeiro nome, u32 sobrenome, u32 nome comum (índices das tabelas de nomes
     do server_db; FFFFFFFF = sem), u32 tamanho + nome completo UTF-16 (+ 00 00 se
     houver), u16 dia do ano e u16 ano do nascimento, 00, u32 nação (0xBD Brasil),
-    u32 seleção, u32 jogos, u32, 00, data, u32 time (índice do time - 1), u8 cargo,
+    u32 seleção, u32 jogos, u32, 00, data, u32 time (historico.team_index), u8 cargo,
     data de chegada, ...
     ... bloco de contrato: 64, u32 pessoa, 00, u32 clube (índice), u32 salário,
     u16 dia e u16 ano do fim (0 / 1900 = sem data), 02 00 00 00 ...
@@ -180,14 +180,15 @@ class Wanted:
 @dataclass
 class Plan:
     renames: list[tuple[Staff, Wanted]] = field(default_factory=list)
-    moves: list[tuple[Staff, int, int]] = field(default_factory=list)      # (pessoa, clube, time - 1)
+    moves: list[tuple[Staff, int, int]] = field(default_factory=list)      # (pessoa, clube, time)
     report: list[str] = field(default_factory=list)
 
 
 def plan(staff: list[Staff], wanted: list[Wanted], club_index: dict[int, int], team_index: dict[int, int],
          spare_clubs: set[int]) -> Plan:
-    """club_index / team_index: UID do clube -> índice do clube (contrato) / índice do time
-    (historico.team_index). spare_clubs: índices dos clubes brasileiros fora de 2026 (doadores)."""
+    """club_index / team_index: UID do clube -> índice do clube (contrato) / valor do campo time
+    do registro da pessoa (o que o staff do clube já tem; sem staff, historico.team_index).
+    spare_clubs: índices dos clubes brasileiros fora de 2026 (doadores)."""
     result = Plan()
     by_club: dict[int, dict[int, list[Staff]]] = {}
     for person in staff:
@@ -209,7 +210,7 @@ def plan(staff: list[Staff], wanted: list[Wanted], club_index: dict[int, int], t
             borrowed = 0
             while len(slots) < len(targets) and borrowed < DONOR_LIMIT[job] and donors[job]:
                 donor = donors[job].pop(0)
-                result.moves.append((donor, club, team_index[club_uid] - 1))
+                result.moves.append((donor, club, team_index[club_uid]))
                 slots.append(donor)
                 borrowed += 1
             for person, row in zip(slots, targets):

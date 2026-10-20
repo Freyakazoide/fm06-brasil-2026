@@ -23,7 +23,9 @@ import argparse
 import csv
 import json
 import shutil
+import struct
 import sys
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -75,8 +77,18 @@ def main() -> None:
     indexes = people_contracts.brazil_club_indexes(server)
     ours = set(repo_of)
     club_index = {uid: indexes[uid] for uid in ours if uid in indexes}
+    # campo "time" de quem vem de fora: o mesmo do staff que o clube já tem (é o índice do time,
+    # historico.team_index; um a menos aponta para outro time e o New Game trava)
+    current: dict[int, Counter] = {}
+    for person in staff:
+        value = struct.unpack_from("<I", original, person.team_at)[0]
+        if value != comissao.NONE:
+            current.setdefault(person.club, Counter())[value] += 1
     team_index = {}
     for uid in ours:
+        if uid in club_index and club_index[uid] in current:
+            team_index[uid] = current[club_index[uid]].most_common(1)[0][0]
+            continue
         try:
             team_index[uid] = historico.team_index(server, repo_of[uid])
         except ValueError:
