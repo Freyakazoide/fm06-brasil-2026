@@ -35,7 +35,9 @@ Contrato (gravado pelo injetor no contrato do clube, `reverse/fmm/FMM_SCHEMA.md`
 início (+24) e fim (+32) com o year_shift, número da camisa (+49, byte) e, quando
 `config/local.json` tiver `"wage_factor"`, o salário (+16, valor×10+2). O fator é a
 unidade do jogo por R$ mensal: `live_player_editor.py --show <UID>` mostra o
-salário bruto de um jogador, para comparar com o que a ficha mostra.
+salário bruto de um jogador, para comparar com o que a ficha mostra. Medido no Pulgar:
+bruto 639 = R$ 13.000 por mês na ficha, ou seja, libras por semana × 4 × 5,08; com o
+salário gravado como valor × 10 + 2, `"wage_factor": 0.00492`.
 
 ## No jogo
 
@@ -63,7 +65,10 @@ por falta de jogador de 2005 no clube.
 ter vaga para o elenco de 2026 (até 45). Ao contrário, os jogadores de 2005 do
 banco que passam do tamanho do elenco de 2026 (Internacional: 93 para 65) saem para
 clubes brasileiros fora de 2026, para não ficarem no elenco com o nome de 2005. Depois: New Game e passos 1 a 4 de
-novo. `src/fm06patch/people_contracts.py`: o contrato fica no fim do registro
+novo. O jogo põe a pessoa no time do campo "time" do registro (o mesmo do staff,
+`docs/reversing/people-db.md`), que tem de bater com o clube do contrato: o reforço
+muda os dois (mudar só o contrato tirava o jogador do clube antigo sem pô-lo no novo).
+`src/fm06patch/people_contracts.py`: o contrato fica no fim do registro
 da pessoa (00, u32 índice do clube, u32, u16 dia e u16 ano do fim, 02 00 00
 00); o clube é citado pelo índice, e cada registro de clube do server_db
 termina com o próprio (índice, UID).

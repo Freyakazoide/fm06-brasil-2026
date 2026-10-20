@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import re
 import struct
+from collections import Counter
 from dataclasses import dataclass
 
 from .server_teams import _CLUB_TAIL, _DATES
@@ -86,13 +87,53 @@ def brazil_club_indexes(server: bytes) -> dict[int, int]:
     return indexes
 
 
-def move(people: bytes, moves: dict[int, int], found: dict[int, Contract]) -> bytes:
-    """moves: UID do jogador -> índice do clube novo."""
+def team_field(people: bytes, contract_at: int, tables) -> int | None:
+    """Posição do u32 "time" do registro da pessoa (comissao.py): o jogo põe a pessoa no
+    time desse campo, que tem de bater com o clube do contrato (mudar só o contrato tira o
+    jogador do clube antigo sem pô-lo no novo)."""
+    from .comissao import _names_before
+
+    names_at = _names_before(people, contract_at, tables)
+    if names_at is None:
+        return None
+    size = struct.unpack_from("<I", people, names_at + 12)[0]
+    return names_at + 16 + 2 * size + (2 if size else 0) + 26
+
+
+def club_team_values(people: bytes, found: dict[int, Contract], clubs: set[int], tables,
+                     sample: int = 5) -> dict[int, int]:
+    """Índice do clube -> valor do campo "time" que os jogadores dele têm."""
+    values: dict[int, Counter] = {}
+    for contract in found.values():
+        if contract.club not in clubs or sum(values.get(contract.club, Counter()).values()) >= sample:
+            continue
+        at = team_field(people, contract.at, tables)
+        if at is not None:
+            values.setdefault(contract.club, Counter())[struct.unpack_from("<I", people, at)[0]] += 1
+    return {club: counter.most_common(1)[0][0] for club, counter in values.items()}
+
+
+def move(people: bytes, moves: dict[int, int], found: dict[int, Contract], server: bytes | None = None,
+         teams: dict[int, int] | None = None) -> tuple[bytes, list[int]]:
+    """moves: UID do jogador -> índice do clube novo. Com server, grava também o campo "time"
+    (teams: índice do clube -> valor; sem valor conhecido o jogador não muda). Devolve o
+    arquivo e os UIDs que ficaram onde estavam."""
     out = bytearray(people)
+    tables = None
+    if server is not None:
+        from .comissao import name_tables
+        tables = name_tables(server)
+    skipped = []
     for uid, club in moves.items():
+        if tables is not None:
+            at = team_field(people, found[uid].at, tables)
+            if at is None or club not in (teams or {}):
+                skipped.append(uid)
+                continue
+            struct.pack_into("<I", out, at, teams[club])
         for at in (found[uid].at,) + found[uid].others:
             struct.pack_into("<I", out, at, club)
-    return bytes(out)
+    return bytes(out), skipped
 
 
 # Código da nação no people_db (byte depois do ano de nascimento, após o nome completo).

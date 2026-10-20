@@ -32,7 +32,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import people_contracts  # noqa: E402
+from fm06patch import estaduais_clubes, historico, people_contracts, server_teams  # noqa: E402
 
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
@@ -55,12 +55,13 @@ def _sheet_rows() -> list[dict]:
     return [dict(zip(header, r)) for r in rows]
 
 
-def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nations: set) -> tuple[dict, dict]:
+def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nations: set,
+                       playing: set) -> tuple[dict, dict]:
     """Um doador de nacionalidade por nação, carregado no jogo: um jogador dessa nação
     que já joga num clube brasileiro, ou um que é levado para um clube brasileiro fora de
     2026 (as ligas da Ásia, África etc. não carregam, e o doador não estaria na memória).
     Devolve ({nação: UID}, {UID: índice do clube novo})."""
-    spare = sorted(i for i, uid in brazil.items() if uid not in ours)
+    spare = sorted(i for i, uid in brazil.items() if uid not in ours and uid in playing)
     by_code = people_contracts.nationalities(people)
     loose = people_contracts.contracts(people, multi=True)
     donors, moves = {}, {}
@@ -80,6 +81,11 @@ def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nati
         donors[name] = uid
         moves[uid] = spare[len(moves) % len(spare)]
     return donors, moves
+
+
+def comissao_tables(server: bytes):
+    from fm06patch.comissao import name_tables
+    return name_tables(server)
 
 
 def main() -> None:
@@ -112,6 +118,11 @@ def main() -> None:
     indexes = people_contracts.brazil_club_indexes(server)
     brazil = {index: uid for uid, index in indexes.items()}
     found = people_contracts.contracts(people)
+    # clubes que jogam um estadual: com certeza carregados (o par "00 BD 00 00 00" também pega
+    # alguns estrangeiros, que o jogo não carrega)
+    true = server_teams.true_uids(server)
+    repo_of = {v: k for k, v in true.items()}
+    playing = {true.get(t.club_uid) for t in estaduais_clubes.state_teams(server)}
     host_uids = {int(r["uid"]) for r in csv.DictReader(args.hospedeiros.open(encoding="utf-8"))}
 
     needs = []
@@ -134,7 +145,8 @@ def main() -> None:
     for club, people_of_club in sorted(by_club.items(), key=lambda kv: -len(kv[1])):
         donors += people_of_club[:PER_FOREIGN_CLUB]
     nation_donors, pins = nationality_donors(people, found, brazil, ours,
-                                             {r["nacionalidade"] for r in sheet if r["nacionalidade"] != "Brasil"})
+                                             {r["nacionalidade"] for r in sheet if r["nacionalidade"] != "Brasil"},
+                                             playing)
     donors = [d for d in donors if d.uid not in host_uids and d.uid not in pins
               and d.uid not in nation_donors.values()]
 
@@ -156,7 +168,7 @@ def main() -> None:
 
     # excedentes: jogadores de 2005 (do banco) além do elenco de 2026 ficariam no clube com o
     # nome de 2005; vão para clubes brasileiros fora de 2026
-    spare = [i for i, u in brazil.items() if u not in ours]
+    spare = [i for i, u in brazil.items() if u not in ours and u in playing]
     removed = 0
     for row in identities:
         uid, club = int(row["uid_jogo"]), row["clube_2026"]
@@ -171,7 +183,19 @@ def main() -> None:
     if not args.apply:
         print("\nSimulação. Para gravar, rode de novo com --apply.")
         return
-    people_path.write_bytes(people_contracts.move(people, moves, found))
+    # o campo "time" do registro tem de ir junto com o clube do contrato
+    destinations = set(moves.values())
+    teams = people_contracts.club_team_values(people, people_contracts.contracts(people, multi=True), destinations,
+                                              comissao_tables(server))
+    for club in destinations - set(teams):
+        try:
+            teams[club] = historico.team_index(server, repo_of[brazil[club]])
+        except (KeyError, ValueError):
+            pass
+    data, skipped = people_contracts.move(people, moves, found, server, teams)
+    if skipped:
+        print(f"[AVISO] {len(skipped)} jogadores não mudaram (registro ou time do clube não achado)")
+    people_path.write_bytes(data)
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     with REPORT.open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(report[0]) if report else ["jogador_uid"])
