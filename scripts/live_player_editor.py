@@ -33,6 +33,9 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from fm06patch.live_player import (  # noqa: E402
+    NATION_ORDINAL_REL,
+    nation_pointers,
+    NATION_SIGNATURE,
     NATIONALITY_REL,
     decode_date,
     encode_date,
@@ -148,6 +151,29 @@ def find_objects(handle, uids: list[int]) -> dict[int, dict[str, list[int]]]:
     return found
 
 
+def nations_by_code(handle, addresses: dict[int, dict[str, int]]) -> dict[int, int]:
+    """Código da nação (o do people_db) -> ponteiro de nacionalidade (live_player.nation_pointers);
+    {} se o ponteiro dos jogadores que vão ser editados não bater com os objetos Nation."""
+    starts = scan(handle, {"nation": struct.pack("<5I", *NATION_SIGNATURE)})["nation"]
+    objects = {}
+    for start in starts:
+        raw = read_memory(handle, start + NATION_ORDINAL_REL, 4)
+        if raw and len(raw) == 4:
+            objects[start] = struct.unpack("<I", raw)[0]
+    sample = []
+    for uid in list(addresses)[:400]:
+        raw = read_memory(handle, addresses[uid]["Player"] + NATIONALITY_REL, 4)
+        if raw and len(raw) == 4:
+            sample.append(struct.unpack("<I", raw)[0])
+    result, hits = nation_pointers(objects, sample)
+    if result:
+        print(f"{len(result)} nações na memória; nacionalidade pelo código ({hits} de {len(sample)} conferidos)")
+    else:
+        print(f"AVISO: o ponteiro de nacionalidade não bate com os objetos Nation ({hits} de {len(sample)}); "
+              "a nacionalidade vem só dos doadores")
+    return result
+
+
 def load_player(handle, uid: int, addresses: dict[str, int]) -> LivePlayer:
     blocks, uid_at = {}, {}
     for kind, (before, after) in OBJECT_SPAN.items():
@@ -194,11 +220,17 @@ def cmd_edit(spec_path: Path, apply: bool) -> None:
     players = spec["players"]
     handle = open_for_write(game_pid())
     uids = sorted({int(p["uid"]) for p in players})
-    donors = sorted({int(p["nationality_like"]) for p in players if "nationality_like" in p} - set(uids))
     addresses = resolve(handle, uids)
+    by_code = nations_by_code(handle, addresses) if any("nationality_code" in p for p in players) else {}
+    for entry in players:                               # nacionalidade pelo código da nação
+        code = entry.get("nationality_code")
+        if code is not None and int(code) in by_code:
+            entry["nationality_ptr"] = by_code[int(code)]
+    donors = sorted({int(p["nationality_like"]) for p in players
+                     if "nationality_like" in p and "nationality_ptr" not in p} - set(uids))
     donor_players = find_objects(handle, donors) if donors else {}
     for entry in players:
-        if "nationality_like" not in entry:
+        if "nationality_like" not in entry or "nationality_ptr" in entry:
             continue
         donor = int(entry["nationality_like"])
         if donor in addresses:

@@ -77,6 +77,33 @@ PLAYER_FIELDS = {
 BORN_REL = 52
 NATIONALITY_REL = 64  # ponteiro para o objeto Nation
 
+# Objeto Nation (reverse/fmm/nation_live_layout.json): assinatura no começo, UID em +20 e o
+# número da nação em +24, o mesmo código do people_db (0xBD Brasil, 0xC4 Venezuela).
+NATION_SIGNATURE = (0x010F1934, 0x010F1924, 0x010F18FC, 0x010F18F0, 0x010F18DC)
+NATION_ORDINAL_REL = 24
+NATION_SIZE = 700
+
+
+def nation_pointers(objects: dict[int, int], sample: list[int]) -> tuple[dict[int, int], int]:
+    """objects: início do objeto Nation -> código; sample: ponteiros de nacionalidade de
+    jogadores carregados. O ponteiro aponta para o objeto (no começo ou sempre no mesmo
+    deslocamento): com 90% da amostra conferindo, devolve ({código: ponteiro}, conferidos);
+    senão ({}, conferidos). Código repetido em dois objetos fica de fora."""
+    starts = sorted(objects)
+    deltas: dict[int, int] = {}
+    for pointer in sample:
+        below = [s for s in starts if s <= pointer < s + NATION_SIZE]
+        if below:
+            delta = pointer - below[-1]
+            deltas[delta] = deltas.get(delta, 0) + 1
+    delta, hits = max(deltas.items(), key=lambda kv: kv[1]) if deltas else (0, 0)
+    if not sample or hits < 0.9 * len(sample):
+        return {}, hits
+    count: dict[int, int] = {}
+    for code in objects.values():
+        count[code] = count.get(code, 0) + 1
+    return {code: start + delta for start, code in objects.items() if count[code] == 1}, hits
+
 PERSONALITY = (
     "Adaptability", "Ambition", "Loyalty", "Pressure",
     "Professional", "Sportsmanship", "Temperament", "Controversy",
@@ -357,8 +384,10 @@ class LivePlayer:
                 put(field.obj, field.rel, struct.pack(field.fmt, value), name)
 
         if "nationality_ptr" in spec:
+            source = (f"nação {spec['nationality_code']:#04x}" if spec.get("nationality_code") is not None
+                      else f"a do UID {spec.get('nationality_like')}")
             put("Player", NATIONALITY_REL, struct.pack("<I", int(spec["nationality_ptr"])),
-                f"nacionalidade = a do UID {spec.get('nationality_like')}")
+                f"nacionalidade = {source}")
 
         if "birth_date" in spec:
             date = shift_years(dt.date.fromisoformat(spec["birth_date"]), year_shift)

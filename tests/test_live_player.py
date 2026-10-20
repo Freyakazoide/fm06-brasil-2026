@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from fm06patch.live_player import (  # noqa: E402
     OBJECT_SPAN,
     LivePlayer,
+    nation_pointers,
     decode_date,
     encode_date,
     load_attributes,
@@ -166,6 +167,19 @@ class DateTest(unittest.TestCase):
 
     def test_shift_years_handles_leap_day(self) -> None:
         self.assertEqual(shift_years(dt.date(2004, 2, 29), -21), dt.date(1983, 2, 28))
+
+
+class NationTest(unittest.TestCase):
+    def test_pointer_to_object_start(self) -> None:
+        objects = {0x1000: 0xBD, 0x2000: 0xC4, 0x3000: 0x70}
+        result, hits = nation_pointers(objects, [0x1000] * 18 + [0x2000, 0x9999])
+        self.assertEqual(hits, 19)
+        self.assertEqual(result, {0xBD: 0x1000, 0xC4: 0x2000, 0x70: 0x3000})
+
+    def test_constant_offset_and_mismatch(self) -> None:
+        objects = {0x1000: 0xBD, 0x2000: 0xC4}
+        self.assertEqual(nation_pointers(objects, [0x1014] * 10)[0], {0xBD: 0x1014, 0xC4: 0x2014})
+        self.assertEqual(nation_pointers(objects, [0x5000] * 10), ({}, 0))
 
 
 if __name__ == "__main__":

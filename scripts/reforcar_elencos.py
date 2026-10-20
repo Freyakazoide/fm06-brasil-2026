@@ -62,20 +62,16 @@ def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nati
     clube de 2026 que tem um jogador dela). Clube brasileiro fora de 2026 não serve: fora
     dos estaduais e das séries de 2026, o jogo não carrega os jogadores dele (nem os da
     Ásia, África etc.), e o injetor não acha o doador na memória.
+    Só jogador com um contrato normal (found): o emprestado (dois blocos) ficava emprestado
+    pelo clube a ele mesmo e o sem contrato (fim 1900, salário 0) ficava fora das listas do
+    clube; com eles na proposta de troca, o jogo travava em junho (0x0078B854). Essas nações
+    ficam com a nacionalidade pelo código (nationality_code do injetor).
     Devolve ({nação: UID}, {UID: índice do clube novo})."""
     by_code = people_contracts.nationalities(people)
-    loose = people_contracts.contracts(people, multi=True)
     donors, moves = {}, {}
     for name in sorted(nations):
         code = people_contracts.NATION_CODES.get(name)
         candidates = [(uid, year) for uid, year in by_code.get(code, []) if uid in found] if code else []
-        if code and not candidates:                     # só com mais de um bloco (empréstimo)
-            candidates = [(uid, year) for uid, year in by_code.get(code, []) if uid in loose]
-            found.update({uid: loose[uid] for uid, _ in candidates})
-        if code and not candidates:                     # sem fim de contrato (Venezuela, Panamá)
-            free = people_contracts.free_contracts(people, [uid for uid, _ in by_code.get(code, [])])
-            candidates = [(uid, year) for uid, year in by_code.get(code, []) if uid in free]
-            found.update(free)
         if not candidates:
             continue
         in_ours = [uid for uid, _ in candidates if brazil.get(found[uid].club) in ours]

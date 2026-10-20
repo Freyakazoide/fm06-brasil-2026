@@ -94,6 +94,15 @@ de 2026: clube brasileiro fora das séries e dos estaduais de 2026 não carrega 
 jogadores no New Game, e o injetor avisa "doador … não está carregado". O
 `reforcar_elencos.py` leva cada doador para o primeiro clube de 2026 que tem um
 jogador daquela nação; ele fica no elenco com o nome de 2005 (o
-`montar_elencos.py` não o usa como hospedeiro). Os venezuelanos e o panamenho do
-banco não têm fim de contrato (ano 1900, salário 0) e o `contracts()` não os acha;
-`people_contracts.free_contracts` acha o bloco pelo índice da pessoa.
+`montar_elencos.py` não o usa como hospedeiro). Só serve doador com um contrato normal:
+o mexicano emprestado (dois blocos) ficava emprestado pelo Flamengo ao próprio Flamengo,
+e os venezuelanos e o panamenho do banco não têm contrato (fim 1900, salário 0); com
+eles o jogo travou em junho, numa proposta de troca de jogadores (0x0078B854).
+
+Nacionalidade pelo código: o `montar_elencos.py` grava `nationality_code` (o código do
+people_db, `people_contracts.NATION_CODES`) e o injetor acha o objeto Nation na memória
+pela assinatura (`live_player.NATION_SIGNATURE`, número da nação em +24). Antes de usar,
+confere com os jogadores que vai editar: o ponteiro de nacionalidade deles tem de cair
+num objeto Nation (`nation_pointers`); se não conferir, usa os doadores. Os códigos
+novos (Itália 0x96, Coreia do Sul 0x50, Arábia Saudita 0x4E...) foram conferidos pelos
+sobrenomes de cada nação na tabela de nomes do server_db.

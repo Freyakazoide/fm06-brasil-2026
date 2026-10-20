@@ -20,6 +20,8 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .people_contracts import NATION_CODES
+
 
 # Jogadores de 2005 usados para copiar a nacionalidade (nationality_like).
 NATIONALITY_DONORS = {
@@ -228,10 +230,13 @@ def build(targets: list[Target], hosts: list[dict], year_shift: int = -20):
         }
         if target.contract:
             entry["contract"] = target.contract
+        code = NATION_CODES.get(target.nationality)
+        if code is not None:
+            entry["nationality_code"] = code             # o injetor acha o objeto Nation pelo código
         donor = NATIONALITY_DONORS.get(target.nationality)
         if donor:
-            entry["nationality_like"] = donor
-        else:
+            entry["nationality_like"] = donor            # se o código não conferir na memória
+        elif code is None:
             warnings.append(f"{target.display_name}: sem doador para {target.nationality}; nacionalidade não alterada")
         players.append(entry)
         mapping.append({"numero": target.number, "jogador_2026": target.display_name,

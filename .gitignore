@@ -44,3 +44,6 @@ Desktop.ini
 # IDE
 .vscode/settings.json
 .idea/
+# relatórios gerados no PC de quem roda (mudam com o glossário)
+data/brasil/traducao_lang_db.csv
+data/brasil/traducao_telas.csv

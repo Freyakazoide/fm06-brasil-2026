@@ -62,24 +62,6 @@ def contracts(people: bytes, multi: bool = False) -> dict[int, Contract]:
     return found
 
 
-def free_contracts(people: bytes, uids) -> dict[int, Contract]:
-    """Contrato de quem não tem fim de contrato (ano 1900, salário 0: os venezuelanos e o
-    panamenho do banco), que contracts() não pega: 64, u32 índice da pessoa, 00, u32
-    clube, ..., 6C 07, 02 00 00 00. O índice tem de ser o do fim do registro."""
-    found: dict[int, Contract] = {}
-    for uid in uids:
-        tail = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)" + re.escape(struct.pack("<I", uid)), re.S)
-        match = tail.search(people, 0, PEOPLE_END)
-        if not match:
-            continue
-        index = match.group(1)
-        at = people.rfind(b"\x64" + index + b"\x00", max(0, match.start() - 0x400), match.start())
-        if at < 0 or people[at + 16:at + 22] != b"\x6c\x07\x02\x00\x00\x00":
-            continue
-        found[uid] = Contract(uid, at + 6, struct.unpack_from("<I", people, at + 6)[0], 1900)
-    return found
-
-
 def brazil_club_indexes(server: bytes) -> dict[int, int]:
     """UID verdadeiro -> índice, dos clubes brasileiros (server_teams.club_pairs).
 
@@ -150,6 +132,10 @@ NATION_CODES = {
     "Bulgária": 0x86, "Camarões": 0x06, "Nigéria": 0x21, "Gana": 0x10, "Senegal": 0x24,
     "Costa do Marfim": 0x13, "Marrocos": 0x1D, "Angola": 0x01, "Guiné": 0x11, "RD Congo": 0x30,
     "México": 0x6D, "Panamá": 0x70, "Estados Unidos": 0x78, "Moçambique": 0x1E, "Mali": 0x1A,
+    # conferidos pelos sobrenomes de cada nação na tabela de nomes do server_db (Rossi, Kim, Al-Harbi...)
+    "Itália": 0x96, "Cabo Verde": 0x07, "Serbia": 0xB0, "South Africa": 0x28, "Coreia do Sul": 0x50,
+    "Guatemala": 0x68, "Guiné-Bissau": 0x12, "Japão": 0x3D, "Arábia Saudita": 0x4E, "Palestine": 0xC5,
+    "Haiti": 0x6A, "Fiji": 0xB3, "Azerbaijão": 0x82, "Anguila": 0xCC,
 }
 _NAME = re.compile(rb"[\x03-\x28]\x00\x00\x00")
 

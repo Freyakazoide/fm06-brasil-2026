@@ -347,6 +347,18 @@ PATCHES = {
             ),
         ),
         Patch(
+            "shortlist_sem_pessoa",
+            "Lista de observados (SHORTLIST_MAN, 0x0078B840) aceita pessoa nula e devolve 0. Uma proposta "
+            "com troca de jogadores (0x007E4085) pede a lista para uma pessoa que não foi achada e o jogo "
+            "travava em junho (lendo [0+0x18]). Os 62 lugares que chamam já tratam o 0.",
+            (
+                # test edx,edx; mov eax,[esp+4]; mov eax,[eax+0x18]; jl fim
+                # -> mov eax,[esp+4]; test eax,eax; je fim; mov eax,[eax+0x18]
+                # (o jl só pegava contagem negativa, que o jge seguinte também recusa)
+                Swap(0x38B84E, bytes.fromhex("85d28b4424048b40187c20"), bytes.fromhex("8b44240485c074238b4018")),
+            ),
+        ),
+        Patch(
             "exp_regra_rebaixa_a",
             "EXPERIMENTAL, sem efeito visível: 2º argumento da regra de movimento Série A -> B.",
             (_push_count(0x7BA4F3, 2, 4, SERIE_B),),
