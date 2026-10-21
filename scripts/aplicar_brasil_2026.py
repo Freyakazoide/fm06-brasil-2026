@@ -21,7 +21,9 @@ Com --apply:
    data\\modelos\\traducao_ptbr.xlsx (cópia do original em
    workspace\\baseline\\lang_db.original.dat), e as telas
    (data\\languages\\portuguese.ltc, scripts\\traduzir_telas.py);
-8. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
+8. põe os nomes de data\\modelos\\nomes_regens.xlsx nas tabelas de nomes do banco
+   (os regens brasileiros, argentinos... nascem com nomes de hoje);
+9. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
    2026), lido pelo scripts\\gerar_graficos.py (escudos, uniformes e nomes).
 
 Depois é só abrir o fm_brasil.exe e começar um New Game.
@@ -46,7 +48,7 @@ from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, 
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico,  # noqa: E402
-                       identidade, nomes_fases, reputacao, traducao)
+                       identidade, nomes_fases, nomes_regens, reputacao, traducao)
 import traduzir_telas  # noqa: E402
 
 EXE_PATCHES = [
@@ -69,6 +71,7 @@ BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
 LANG_SHA256 = "313B5D388208389E1C97FCE8270B880BB9B95BA444FCC392AFF90474DD24EEF4"
 LANG_BACKUP = ROOT / "workspace" / "baseline" / "lang_db.original.dat"
 TRANSLATION = ROOT / "data" / "modelos" / "traducao_ptbr.xlsx"
+REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"
 TRANSLATION_REPORT = ROOT / "data" / "brasil" / "traducao_lang_db.csv"
 DATA_DIR = ROOT / "data" / "brasil"
 HISTORY_REPORT = DATA_DIR / "historico" / "sem_clube_no_jogo.txt"
@@ -113,6 +116,8 @@ def main() -> None:
     parser.add_argument("--restore", action="store_true")
     parser.add_argument("--sem-historico", action="store_true",
                         help="não reescreve o histórico de campeões (só os de 2025, como antes)")
+    parser.add_argument("--sem-nomes-regens", action="store_true",
+                        help="não põe os nomes de data/modelos/nomes_regens.xlsx no banco")
     parser.add_argument("--teste-copa", type=int, choices=(1, 2),
                         help="troca as datas da Série A pelo teste de pausa da Copa (exp_a_copa_1 ou _2)")
     args = parser.parse_args()
@@ -248,6 +253,13 @@ def main() -> None:
               f"{len(history.unmatched)} times sem clube no jogo ficam em branco "
               f"(lista em {HISTORY_REPORT.relative_to(ROOT)})")
         HISTORY_REPORT.write_text("\n".join(history.unmatched) + "\n", encoding="utf-8")
+    if REGEN_NAMES.exists() and not args.sem_nomes_regens:      # nomes dos regens (muda o tamanho)
+        starts = nomes_regens.locate(db, data)
+        changes = nomes_regens.plan(db, nomes_regens.load_sheet(REGEN_NAMES), starts)
+        db = nomes_regens.apply(db, changes, starts)
+        print(f"[OK] nomes de regens: {sum(len(a) for _, a in changes.values())} novos e "
+              f"{sum(len(u) for u, _ in changes.values())} que já existiam com peso maior "
+              f"({REGEN_NAMES.relative_to(ROOT)})")
     server.write_bytes(db)
     print(f"[OK] gravado {server}")
 

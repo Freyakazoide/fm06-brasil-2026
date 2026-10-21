@@ -62,10 +62,9 @@ def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nati
     clube de 2026 que tem um jogador dela). Clube brasileiro fora de 2026 não serve: fora
     dos estaduais e das séries de 2026, o jogo não carrega os jogadores dele (nem os da
     Ásia, África etc.), e o injetor não acha o doador na memória.
-    Só jogador com um contrato normal (found): o emprestado (dois blocos) ficava emprestado
-    pelo clube a ele mesmo e o sem contrato (fim 1900, salário 0) ficava fora das listas do
-    clube; com eles na proposta de troca, o jogo travava em junho (0x0078B854). Essas nações
-    ficam com a nacionalidade pelo código (nationality_code do injetor).
+    Só jogador com um bloco de contrato (found): o emprestado (dois blocos) ficaria
+    emprestado pelo clube a ele mesmo. A nacionalidade vai pelo código da nação
+    (nationality_code do injetor); o doador fica de reserva.
     Devolve ({nação: UID}, {UID: índice do clube novo})."""
     by_code = people_contracts.nationalities(people)
     donors, moves = {}, {}

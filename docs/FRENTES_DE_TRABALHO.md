@@ -78,7 +78,8 @@ identificadas como editoriais e campos sem fonte confiável permanecem vazios.
 | A3 | ✅ | `montar_elencos.py` + injetor (Player +72/+74) |
 | A4 | ⏳ depois: o `MATCH_BAN` cita o jogador pelo nome de 2005 e o comando de lesão não foi isolado | — |
 | A5 | ✅ 511 pessoas (a versão nova + os 127 da Wikipédia que tinham saído); auxiliares de clubes estrangeiros quando os brasileiros acabam | `aplicar_comissao.py` |
-| B1–B5, C0 | ⏳ dados guardados; precisam de engenharia (nomes de regens no `server_db`, campos de clube) | — |
+| B1 | ✅ a testar: 614 nomes novos no fim das tabelas de nomes e 971 que já existiam com peso maior; os de hoje ficam com ~70% do peso de cada nação | `nomes_regens.py`, `aplicar_brasil_2026.py` (`--sem-nomes-regens` desliga) |
+| B2–B5, C0 | ⏳ dados guardados; precisam de engenharia (campos de clube, árbitros) | — |
 
 Das 35 frases da aba Frases, só "Utilizado num sistema de rotatividade do plantel"
 existe igual no jogo; as outras não aparecem em nenhuma tela (o texto do jogo é outro)

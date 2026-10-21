@@ -26,7 +26,9 @@ PEOPLE_END = 0x043902BA                     # fim da tabela A (pessoas)
 MAX_CLUB_INDEX = 30000                      # o maior clube do banco tem índice 19164
 MAX_UID = 100_000_000
 _TAIL = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)(....)", re.S)
-_CONTRACT = re.compile(rb"\x00(....)(....)(..)([\xd5-\xde]\x07)\x02\x00\x00\x00", re.S)
+# fim do contrato: 2005..2014, ou 1900 = sem data de fim (2.353 jogadores brasileiros do banco,
+# quase todos das séries de baixo; no jogo aparecem com contrato normal)
+_CONTRACT = re.compile(rb"\x00(....)(....)(..)([\xd5-\xde]\x07|\x6c\x07)\x02\x00\x00\x00", re.S)
 
 
 @dataclass
