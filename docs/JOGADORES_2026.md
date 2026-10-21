@@ -75,6 +75,13 @@ clubes brasileiros fora de 2026, para não ficarem no elenco com o nome de 2005.
 novo. O jogo põe a pessoa no time do campo "time" do registro (o mesmo do staff,
 `docs/reversing/people-db.md`), que tem de bater com o clube do contrato: o reforço
 muda os dois (mudar só o contrato tirava o jogador do clube antigo sem pô-lo no novo).
+O campo "time" é achado procurando os nomes para trás a partir do contrato; a busca
+para no fim do registro anterior (`comissao._record_start`). Sem esse limite, em 18
+jogadores ela caía no registro da pessoa anterior e gravava o time nela: essa pessoa ia
+para um time de 2026 com o contrato do clube antigo, que não carrega, e o jogo travava
+com o clube do contrato nulo (no New Game, 0x00A2B2F3, calculando prêmios do contrato;
+em junho, 0x0078B854, numa proposta de troca). Quem não tem o registro achado não muda
+(o reforço avisa quantos).
 `src/fm06patch/people_contracts.py`: o contrato fica no fim do registro
 da pessoa (00, u32 índice do clube, u32, u16 dia e u16 ano do fim, 02 00 00
 00); o clube é citado pelo índice, e cada registro de clube do server_db

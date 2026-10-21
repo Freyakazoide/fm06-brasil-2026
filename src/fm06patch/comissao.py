@@ -113,9 +113,26 @@ def _uids(people: bytes, table) -> set[int]:
     return {struct.unpack_from("<I", people, at + 4)[0] for at in range(start, end, size)}
 
 
+# fim do registro de uma pessoa: u16 ano, 00 00 00, u32 índice, u32 UID
+_RECORD_END = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)(....)", re.S)
+
+
+def _record_start(people: bytes, pos: int, back: int) -> int:
+    """Onde começa o registro que contém ``pos``: logo depois do fim do registro anterior.
+    Sem esse limite, a busca dos nomes para trás pode cair no registro da pessoa anterior
+    (e o campo "time" gravado é o dela: ela vai para o time novo com o contrato antigo,
+    o clube do contrato fica nulo no jogo e ele trava)."""
+    floor = max(pos - back, 0)
+    for match in _RECORD_END.finditer(people, floor, pos):
+        index, uid = struct.unpack("<II", match.group(1) + match.group(2))
+        if index < 2_000_000 and 0 < uid < 100_000_000:
+            floor = match.end()
+    return floor
+
+
 def _names_before(people: bytes, pos: int, tables, back: int = 0x800) -> int | None:
     first, second, common = tables
-    for at in range(pos - 20, max(pos - back, 0), -1):
+    for at in range(pos - 20, _record_start(people, pos, back) - 1, -1):
         f, s, c, n = struct.unpack_from("<IIII", people, at)
         if n > 90 or f not in first or s not in second or (c != NONE and c not in common):
             continue

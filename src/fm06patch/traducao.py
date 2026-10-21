@@ -150,7 +150,8 @@ def _cased(source: str, target: str) -> str:
         return target.upper()
     words = source.split()
     if len(words) > 1 and all(w[:1].isupper() for w in words if w.casefold() not in _SMALL):   # "Carregar Jogo"
-        return " ".join(w if w.casefold() in _SMALL and i else w[:1].upper() + w[1:]
+        first_upper = words[0][:1].isupper()                     # "dos Adeptos" -> "da Torcida"
+        return " ".join(w if w.casefold() in _SMALL and (i or not first_upper) else w[:1].upper() + w[1:]
                         for i, w in enumerate(target.split()))
     if source[:1].isupper():
         return target[:1].upper() + target[1:]

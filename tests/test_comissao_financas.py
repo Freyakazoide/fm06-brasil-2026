@@ -37,6 +37,16 @@ class FinanceTest(unittest.TestCase):
         self.assertEqual(len(out), len(data))
 
 
+class RecordBoundaryTest(unittest.TestCase):
+    def test_names_search_stops_at_previous_record(self):
+        tables = ({1: "Ana"}, {2: "Silva"}, {})
+        names = struct.pack("<IIII", 1, 2, comissao.NONE, 0) + struct.pack("<HH", 10, 1980) + b"\0" * 30
+        tail = struct.pack("<H", 2008) + b"\0\0\0" + struct.pack("<II", 500, 1234)   # fim do registro anterior
+        data = b"\0" * 40 + names + tail + b"\x11" * 60          # o registro seguinte não tem nomes
+        self.assertEqual(comissao._names_before(data, 40 + len(names) - 5, tables), 40)
+        self.assertIsNone(comissao._names_before(data, len(data) - 4, tables))
+
+
 class StaffTest(unittest.TestCase):
     def test_split_name(self):
         self.assertEqual(comissao.split_name("Tite"), ("Tite", "Tite", ""))
