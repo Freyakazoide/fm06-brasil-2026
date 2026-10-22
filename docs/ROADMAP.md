@@ -46,6 +46,7 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Contrato (salário, início, fim) e número da camisa | ✅ | injetor |
 | Jogos e gols pela seleção | ✅ | injetor |
 | Histórico de carreira (100 jogadores) | ✅ | `aplicar_historico.py` |
+| Clubes e valores da carreira dos outros jogadores (~2.800, transferências do Sofascore) | 🧪 | `carreiras_2026.csv` + `aplicar_historico.py` |
 | Jogadores de 2005 que sobravam | ✅ | nome de hoje ou saída para clubes fora de 2026 |
 | Técnico da Seleção (Ancelotti) | ✅ | `selecoes_2026.csv` |
 | Árbitros de 2026 (18 do quadro FIFA) | 🧪 | `aplicar_arbitros.py` |
@@ -60,7 +61,8 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 ### Fase 1: fechar o que está em teste (agora)
 
-- Árbitros, rivais, nomes dos regens e elencos sem os doadores (TESTES_PENDENTES).
+- Árbitros, rivais, nomes dos regens, elencos sem os doadores e a carreira pelas
+  transferências (TESTES_PENDENTES).
 - Joias da base: você preenche 3 a 5 na `regens_futuros_2026.xlsx`, roda o
   `aplicar_tudo.py --rapido` e espera a chegada dos juniores.
 
@@ -100,7 +102,9 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 - Prêmios históricos (ficha C4 + `premios_historico.xlsx`).
 - Logos das competições e mídia (jornais) de 2026: campos ainda não procurados.
-- Mais histórico e mais perfis a cada rodada de dados.
+- Mais histórico e mais perfis a cada rodada de dados: jogos e gols por passagem para
+  quem só tem os clubes (a `historico_carreira.xlsx` tem prioridade sobre as
+  transferências).
 
 ## Jogo futuro
 

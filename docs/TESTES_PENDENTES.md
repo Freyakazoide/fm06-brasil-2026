@@ -34,6 +34,7 @@ Enter quando estiver pronto):
 | 5 | Nomes dos regens | chegada dos juniores (base) | nomes de hoje (Enzo, Davi, Endrick...) nos brasileiros, argentinos etc. | `aplicar_brasil_2026.py` |
 | 6 | Sem doadores de nacionalidade | elencos com estrangeiros (Palmeiras, Flamengo) | nenhum jogador de 2005 com nome antigo no elenco; estrangeiros de 2026 com a nação certa | `aplicar_tudo.py` |
 | 7 | Joias da base | chegada dos juniores, depois de preencher a `regens_futuros_2026.xlsx` | os garotos da planilha com nome, idade e clube certos | `aplicar_brasil_2026.py` (`brasil_2026_regens.edt`) |
+| 8 | Carreira de todos os jogadores (transferências) | aba Histórico de jogadores fora dos 100 da planilha | Felipe Anderson (Palmeiras): Santos 2010–2012, Lazio 2013–2017, West Ham 2018–2019, Porto (empréstimo) 2020, Lazio 2021–2023, com valor nas vendas; Yago Pikachu (Remo): Paysandu, Vasco, Fortaleza, Shimizu, Fortaleza; Steven Mendoza (Athletico-PR): Envigado, América de Cali e Cúcuta (empréstimos), Deportivo Cali, Corinthians, Bahia (empréstimo), Amiens, Ceará, Santos, Adana Demirspor, León. Jogos e gols sem dado (me diga como o jogo mostra: "-", 0 ou vazio) | `aplicar_historico.py` (`carreiras_2026.csv`) |
 
 Antes de rodar, `python scripts\validar_entregas.py` confere as planilhas.
 

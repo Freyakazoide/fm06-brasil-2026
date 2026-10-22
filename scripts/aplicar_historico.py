@@ -7,9 +7,13 @@
 Rodar depois do montar_elencos.py (e do aplicar_comissao.py) e antes do New Game em que
 os nomes entram: o jogo lê o histórico no New Game.
 - quem está em data/modelos/historico_carreira.xlsx ganha a carreira de verdade (jogos
-  e gols de cada passagem repartidos por igual entre as temporadas dela);
-- os outros jogadores de 2026 e a comissão de 2026 perdem a carreira do jogador de 2005
-  que ocupam (fica só a temporada atual);
+  e gols de cada passagem repartidos por igual entre as temporadas dela, e o valor das
+  transferências que a carreiras_2026.csv tiver);
+- os outros jogadores de 2026 ganham os clubes por onde passaram e o valor de cada
+  transferência (data/brasil/jogadores/carreiras_2026.csv, do montar_carreiras.py), sem
+  jogos e gols;
+- quem não está em nenhum dos dois e a comissão de 2026 perdem a carreira do jogador de
+  2005 que ocupam (fica só a temporada atual);
 - os jogadores de 2005 que sobram (nome de hoje) ficam com a carreira que tinham.
 Parte sempre do original (cópias em workspace/baseline/pl_hist_*.original.dat). Lista
 do que entrou em workspace/mods/historico_2026.csv.
@@ -19,11 +23,12 @@ from __future__ import annotations
 
 import argparse
 import csv
+import dataclasses
 import hashlib
 import json
 import shutil
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import openpyxl
@@ -40,10 +45,12 @@ SHA256 = {"index": "3FD46578A293D8B2AD99297F71BD19387A6B144AC95793F20309B9CC3503
 BASELINE = ROOT / "workspace" / "baseline"
 MODS = ROOT / "workspace" / "mods"
 SHEET = ROOT / "data" / "modelos" / "historico_carreira.xlsx"
+CAREERS = ROOT / "data" / "brasil" / "jogadores" / "carreiras_2026.csv"   # do montar_carreiras.py
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 PLAYERS = MODS / "brasil_2026_jogadores.json"           # do montar_elencos.py
 STAFF = MODS / "comissao_2026_hospedeiros.csv"          # do aplicar_comissao.py
 REPORT = MODS / "historico_2026.csv"
+MISSING = MODS / "historico_2026_clubes_faltando.csv"
 
 
 def game_dir() -> Path:
@@ -80,7 +87,7 @@ def originals(game: Path) -> list[bytes] | None:
     return out
 
 
-def club_names(game: Path, wanted: set[int]) -> dict[int, tuple[str, str]]:
+def club_names(game: Path, wanted: set[int] | None = None) -> dict[int, tuple[str, str]]:
     path = BASELINE / "lang_db.original.dat"
     lang = (path if path.exists() else game / "data" / "db" / "lang_db.dat").read_bytes()
     start, end = traducao.sections(lang)[hj.LANG_CLUBS]
@@ -103,6 +110,34 @@ def _sheet(path: Path) -> dict[tuple[str, str, str], list[hj.Passage]]:
     return out
 
 
+def _careers(path: Path) -> dict[tuple[str, str, str], list[hj.Passage]]:
+    out: dict[tuple[str, str, str], list[hj.Passage]] = defaultdict(list)
+    if not path.exists():
+        return out
+    for row in csv.DictReader(path.open(encoding="utf-8-sig")):
+        start, end = hj.period(row["temporada"])
+        fee = row.get("valor_eur", "")
+        out[(row["clube_2026"], row["nome_comum"], row["nascimento"][:10])].append(hj.Passage(
+            start, end, row["clube"], None, None, row["emprestimo"] == "sim", int(fee) if fee.isdigit() else None))
+    return out
+
+
+def _with_fees(passages: list[hj.Passage], transfers: list[hj.Passage], clubs: hj.Clubs,
+               transfer_clubs: hj.Clubs) -> list[hj.Passage]:
+    """Valor de cada chegada (carreiras_2026.csv) nas passagens da planilha: o mesmo clube
+    no jogo, começando no mesmo ano ou com um de diferença."""
+    fees = [(transfer_clubs.find(t.club)[0], t.start, t.fee) for t in transfers if t.fee and not t.loan]
+    out = []
+    for p in passages:
+        if p.fee is None and not p.loan:
+            uid = clubs.find(p.club)[0]
+            fee = next((f for club, start, f in fees if uid is not None and club == uid and abs(start - p.start) <= 1),
+                       None)
+            p = dataclasses.replace(p, fee=fee)
+        out.append(p)
+    return out
+
+
 def plan(game: Path, history: hj.History) -> tuple[dict[int, list[hj.Season]], list[dict], list[str]]:
     """(carreira nova por UID, linhas do relatório, avisos)."""
     spec = json.loads(PLAYERS.read_text(encoding="utf-8"))
@@ -114,45 +149,77 @@ def plan(game: Path, history: hj.History) -> tuple[dict[int, list[hj.Season]], l
             if row.get("uid", "").isdigit():
                 careers.setdefault(int(row["uid"]), [])
                 staff += 1
-    uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))}
-    refs = history.club_refs()
-    clubs = hj.Clubs(club_names(game, set(refs)), refs, uid_of)
+    identities = list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig")))
+    uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in identities}
+    stand_ins = {int(r["uid_jogo"]) for r in identities if r["tipo"] == "substituto"}
+    refs = history.club_refs()          # substituto só pelo nome de 2026: "Paraná" não vira o Novorizontino
+    names = {uid: pair for uid, pair in club_names(game).items() if uid not in stand_ins}
+    by_source = {"planilha": hj.Clubs(names, refs, uid_of),
+                 "transferências": hj.Clubs(names, refs, uid_of, strict=True)}   # já vem com o nome de 2026
     by_name = defaultdict(list)
     for player in spec["players"]:
         by_name[(player["club_uid"], player["name"])].append(player)
 
-    report, warnings, done = [], [], 0
-    missing, near = set(), set()
-    for (club, name, born), passages in _sheet(SHEET).items():
-        found = by_name.get((uid_of.get(club), name), [])
-        found = [p for p in found if p.get("birth_date") == born] or (found if len(found) == 1 else [])
-        if not found:
-            warnings.append(f"{name} ({club}, {born}): não está no elenco montado; sem histórico novo")
-            continue
-        player = found[0]
-        matches = hj.seasons(passages, clubs, player["club_uid"], shift)
-        careers[player["uid"]] = hj.merge([s for *_, seasons in matches for s in seasons])
-        done += 1
-        for passage, uid, how, seasons in matches:
-            if uid is None:
-                missing.add(hj.clean(passage.club))
-            elif how == "aproximado":
-                near.add(f"{hj.clean(passage.club)} -> {clubs.names[uid][0]}")
-            report.append({"jogador": name, "clube_2026": club, "uid": player["uid"], "temporada": passage.label,
-                           "clube": passage.club, "emprestimo": "sim" if passage.loan else "",
-                           "jogos": passage.apps, "gols": passage.goals,
-                           "clube_no_jogo": (hj.BRAZIL.get(hj.clean(passage.club), hj.clean(passage.club))
-                                             if how == "brasil" else clubs.names.get(uid, ("",))[0]),
-                           "uid_clube": uid or "", "casou_por": how,
-                           "temporadas_no_jogo": " ".join(f"{s.year - shift}:{s.apps}/{s.goals}" for s in seasons)})
-    print(f"[OK] histórico: {done} jogadores com a carreira da planilha; os outros "
-          f"{len(spec['players']) - done} jogadores de 2026 e {staff} da comissão ficam sem a carreira "
-          "do jogador de 2005 que ocupam")
+    found_by: dict[str, dict[int, tuple[dict, str, str, list[hj.Passage]]]] = {}
+    warnings, absent = [], 0
+    for source, rows in (("planilha", _sheet(SHEET)), ("transferências", _careers(CAREERS))):
+        found_by[source] = {}
+        for (club, name, born), passages in rows.items():
+            found = by_name.get((uid_of.get(club), name), [])
+            found = [p for p in found if p.get("birth_date") == born] or (found if len(found) == 1 else [])
+            if found:
+                found_by[source].setdefault(found[0]["uid"], (found[0], club, name, passages))
+            elif source == "planilha":
+                warnings.append(f"{name} ({club}, {born}): não está no elenco montado; sem histórico novo")
+            else:
+                absent += 1
+
+    report = []
+    missing, near = Counter(), set()
+    done = {"planilha": 0, "transferências": 0}
+    for source, players in found_by.items():
+        clubs = by_source[source]
+        for uid, (player, club, name, passages) in players.items():
+            if source == "transferências" and uid in found_by["planilha"]:
+                continue                            # a planilha vem antes das transferências
+            if source == "planilha" and uid in found_by["transferências"]:
+                passages = _with_fees(passages, found_by["transferências"][uid][3], clubs, by_source["transferências"])
+            matches = hj.seasons(passages, clubs, player["club_uid"], shift)
+            careers[uid] = hj.merge([s for *_, seasons in matches for s in seasons])
+            done[source] += 1
+            for passage, club_uid, how, seasons in matches:
+                if club_uid is None:
+                    missing[hj.clean(passage.club)] += 1
+                elif how == "aproximado":
+                    near.add(f"{hj.clean(passage.club)} -> {clubs.names[club_uid][0]}")
+                report.append({"jogador": name, "clube_2026": club, "uid": uid, "fonte": source,
+                               "temporada": passage.label, "clube": passage.club,
+                               "emprestimo": "sim" if passage.loan else "",
+                               "jogos": passage.apps, "gols": passage.goals, "valor_eur": passage.fee or "",
+                               "clube_no_jogo": (hj.BRAZIL.get(hj.clean(passage.club), hj.clean(passage.club))
+                                                 if how == "brasil" else clubs.names.get(club_uid, ("",))[0]),
+                               "uid_clube": club_uid or "", "casou_por": how,
+                               "temporadas_no_jogo": " ".join(f"{s.year - shift}:{s.apps}/{s.goals}" for s in seasons)})
+    rest = len(spec["players"]) - sum(done.values())
+    print(f"[OK] histórico: {done['planilha']} jogadores com a carreira da planilha, {done['transferências']} "
+          f"com os clubes das transferências; os outros {rest} jogadores de 2026 e {staff} da comissão ficam "
+          "sem a carreira do jogador de 2005 que ocupam")
+    if absent:
+        print(f"[INFO] {absent} jogadores da carreiras_2026.csv não estão no elenco montado (sem vaga)")
     if missing:
-        warnings.append(f"{len(missing)} clubes da planilha não existem no banco de 2005 (a passagem fica de fora): "
-                        + ", ".join(sorted(missing)))
+        passages_out = sum(missing.values())
+        top = ", ".join(f"{club} ({n})" for club, n in missing.most_common(12))
+        warnings.append(f"{len(missing)} clubes ({passages_out} passagens) não existem no banco de 2005 e ficam de "
+                        f"fora; os mais comuns: {top}. Lista em {MISSING.relative_to(ROOT)}")
     if near:
-        print("[CONFIRA] clubes achados por aproximação: " + "; ".join(sorted(near)))
+        print(f"[CONFIRA] {len(near)} clubes achados por aproximação (lista em {REPORT.relative_to(ROOT)}, "
+              "casou_por = aproximado)")
+    if missing:
+        MODS.mkdir(parents=True, exist_ok=True)
+        with MISSING.open("w", newline="", encoding="utf-8-sig") as handle:
+            writer = csv.writer(handle)
+            writer.writerow(["clube", "passagens"])
+            writer.writerows(missing.most_common())
     return careers, report, warnings
 
 

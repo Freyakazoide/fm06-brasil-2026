@@ -18,6 +18,8 @@ que o jogo começa). No ano de um empréstimo só aparece o clube do empréstimo
 from __future__ import annotations
 
 import bisect
+import dataclasses
+import datetime as dt
 import re
 import struct
 import unicodedata
@@ -31,6 +33,7 @@ _BODY = struct.Struct("<HBBBII")            # o registro sem o "próximo"
 LAST_YEAR = 2025                            # última temporada antes da de 2026 (a do jogo)
 SOURCE_YEAR = 2026                          # a planilha vai até 20/10/2026: "2019–" chega a 2026
 LANG_CLUBS = 0x20                           # seção do lang_db com a tabela de clubes
+EUR_PER_GBP = 1.17                          # o dinheiro do banco é em libras (financas.BRL_PER_GBP)
 
 # nome na planilha -> UID do clube no jogo; None: o clube não existe no banco de 2005
 ALIASES = {
@@ -41,6 +44,36 @@ ALIASES = {
     "PSV Eindhoven": 1028, "Jong Ajax": 856118, "River Plate Montevideo": 1925, "River Plate-PY": 5280414,
     "Liverpool Montevideo": 1920, "Deportes Antofagasta": 130790, "Universidad de San Martín": 8832487,
     "Tiradentes-CE": 310645,
+    # nomes do Sofascore (carreiras_2026.csv) que o nome do banco não acha
+    "Vitória SC": 1494, "Vitória de Setúbal": 1495, "CS Marítimo": 1476, "UD Oliveirense": 2416,
+    "SC Covilhã": 2395, "Louletano DC": 2446, "Académico Viseu FC": 2388, "UD Vilafranquense": 2480,
+    "UD Santarém": 2471, "AD Sanjoanense": 2428, "CF Estrela Amadora": 1473, "CF Estrela Sad": 1473,
+    "LA Galaxy": 1907, "Whitecaps FC": 4400014, "Kyoto Sanga FC": 1192, "Nagoya Grampus": 1191,
+    "JEF United Chiba": 1187, "Wolverhampton": 740, "Levante UD": 1717, "UD Las Palmas": 1772,
+    "Rayo Vallecano": 1729, "Stade de Reims": 2047, "Independiente Rivadavia": 3101453, "LDU": 5270338,
+    "LDU Quito": 5270338, "Neftçi PFK": 167, "Lommel SK": 269, "Botev Vratsa": 138442, "SSC Napoli": 1150,
+    "Makedonija Gjorce Petrov": 116192, "River Plate UY": 1925, "Flamengo de Arcoverde": 309771,
+    "SER Santo Ângelo": 301282, "Artsul-RJ": 2100850, "Mineiros-GO": 2111642, "Aparecida-GO": 301149,
+    "Patrocinense-MG": 310901, "ASSU-RN": 309633, "Tupan-MA": 313785, "Ipanema-AL": 314684,
+    "EC União Suzano": 2114007, "Porto Alegre-RS": 314778,
+    "Olympique Lyonnais": 865, "Olympique de Marseille": 866, "Club Atlético Peñarol": 1922,
+    "Barcelona SC Guayaquil": 109180, "Red Bull Salzburg": 158, "Dynamo Kyiv": 1885, "Olympiacos FC": 981,
+    "Junior Barranquilla": 419, "Club Atletico Colón": 102462, "Independiente Medellín": 425,
+    "Atlético Madrileño": 1666, "Barcelona Atlètic": 1668, "SL Benfica": 1487, "SL Benfica B": 7000095,
+    "Leicester City": 673, "Birmingham City": 609, "Zenit St. Petersburg": 1301108, "Club Atlético Belgrano": 81,
+    "Royal Antwerp FC": 262, "HNK Hajduk Split": 433, "FK Crvena zvezda": 1955,
+    "Club Atlético Unión de Santa Fe": 102467, "Pumas UNAM": 1260, "Tigres UANL": 104360,
+    "Club Atlético Platense": 92, "Quilmes Atlético Club": 102487, "Club Atlético Chacarita Juniors": 102493,
+    "Aris Thessaloniki": 969, "US Salernitana 1919": 1166, "Al-Qadsiah": 1104149, "Al-Ettifaq": 135427,
+    "Akhmat Grozny": 477632, "Zoria Luhansk": 1902, "Suwon Samsung Bluewings": 106813,
+    "Jeonbuk Hyundai Motors": 130776, "Ulsan HD": 106808, "Hokkaido Consadole Sapporo": 107285,
+    "Shandong Taishan": 116403, "Jeju SK": 106817, "Jeonnam Dragons": 106812, "Daejeon Hana Citizen": 130774,
+    "Liverpool UY": 1920, "Nacional": 1921, "Nacional Reserve": 1921, "Kasımpaşa": 130360,
+    "Hapoel Be'er Sheva": 1085, "Koninklijke Lierse Sportkring": 268, "K. Beerschot V.A.": 176,
+    "AOK Kerkyra": 676510, "ETO FC Győr": 1054, "JFK Ventspils": 483868, "KF Bylis": 1300042,
+    "MKS Odra Wodzisław Śląski": 1300877, "Al-Gharafa": 1026831, "Al-Jazira": 135450,
+    "Montevideo Wanderers": 1926, "Club Atlético Lanús": 90, "Godoy Cruz": 102491,
+    "FC Setúbal": None, "Capital FC": None, "Majd FC": None, "Tocantins": None, "Bandeirante FC": None,
     "Charlotte FC": None, "FC Cincinnati": None, "Krasnodar": None, "Sochi": None, "Neom": None,
     "Orlando City": None, "Orlando City B": None, "New York City FC": None, "Atlanta United": None,
     "Independiente del Valle": None, "Independiente Juniors": None, "Deportivo Sarmiento": None,
@@ -51,10 +84,17 @@ BRAZIL = {
     "Athletico Paranaense": "Athletico-PR", "Athlético Paranaense": "Athletico-PR",
     "Atlético Paranaense": "Athletico-PR", "Atlético Mineiro": "Atlético-MG", "América Mineiro": "América-MG",
     "Atlético Goianiense": "Atlético-GO", "Sport Recife": "Sport", "Cajazeiras": "Atlético de Cajazeiras",
+    "Atlético-PR": "Athletico-PR", "Bragantino": "Red Bull Bragantino",
 }
 _STOP = {"fc", "cf", "ac", "as", "sc", "cd", "ca", "c", "club", "de", "del", "la", "le", "futbol", "football",
          "calcio", "afc", "sv", "fk", "cfc", "the", "sad", "s", "a", "d"}
 _RESERVE = {"b", "ii", "2", "u19", "u21", "u23", "d", "reserves"}
+_UF = {"AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR",
+       "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"}
+# o que o nome do banco pode ter a mais numa aproximação: forma jurídica, artigo, número
+_GENERIC = _STOP | {"futebol", "clube", "sport", "balompie", "sa", "kp", "rks", "csd", "adc", "fk", "ofk", "ks", "sk",
+                    "k", "aa", "ec", "ge", "se", "ad", "da", "do", "dos", "das", "e", "and", "associacao", "real",
+                    "desportivo", "desportiva", "deportivo", "al", "1"}
 
 
 @dataclass(frozen=True)
@@ -138,14 +178,14 @@ def _string(data: bytes, at: int) -> tuple[str, int] | None:
     return (text, end + 2) if text.isprintable() else None
 
 
-def lang_clubs(lang: bytes, start: int, end: int, wanted: set[int]) -> dict[int, tuple[str, str]]:
+def lang_clubs(lang: bytes, start: int, end: int, wanted: set[int] | None = None) -> dict[int, tuple[str, str]]:
     """UID -> (nome longo, curto) da tabela de clubes do lang_db: u32 UID, nome longo,
-    u8, nome curto (strings u32 n + UTF-16LE + 00 00). Só os UIDs de ``wanted``."""
+    u8, nome curto (strings u32 n + UTF-16LE + 00 00). Só os UIDs de ``wanted`` (todos se None)."""
     found: dict[int, tuple[str, str]] = {}
     for match in re.finditer(rb"(?=[\x01-\x64]\x00\x00\x00)", lang[start:end]):
         at = start + match.start()
         uid = struct.unpack_from("<I", lang, at - 4)[0]
-        if uid not in wanted or uid in found:
+        if (wanted is not None and uid not in wanted) or uid in found:
             continue
         long_name = _string(lang, at)
         if not long_name or lang[long_name[1]] > 3:
@@ -172,40 +212,69 @@ def _key(name: str) -> frozenset[str]:
     return frozenset(t for t in tokens if t not in _STOP) or frozenset(tokens)
 
 
-class Clubs:
-    """Nome de clube da planilha -> UID do clube no jogo."""
+def _generic(extra: frozenset[str]) -> bool:
+    """Tokens que o nome do banco tem a mais e não mudam o clube ("SAD", "Futebol Clube",
+    "04"); time B nunca."""
+    return not extra & _RESERVE and all(t in _GENERIC or len(t) == 1 or any(c.isdigit() for c in t) for t in extra)
 
-    def __init__(self, names: dict[int, tuple[str, str]], refs: Counter, brazil: dict[str, int]):
+
+class Clubs:
+    """Nome de clube da planilha -> UID do clube no jogo.
+
+    Os clubes de 2026 (``brazil``) só casam pelo nome de 2026 (ou por BRAZIL): por
+    aproximação, "Paulista" acharia o "SC Corinthians Paulista". Com ``strict`` (nomes do
+    Sofascore, em que o clube de 2026 já vem com o nome de 2026) também não pelo nome do
+    banco: "Vitória SC" é o de Guimarães, não o Vitória. Pelo nome exato, qualquer clube
+    de ``names``; por aproximação (o nome do banco com "SAD", "Futebol Clube", número ou
+    país a mais: "Real Betis Balompié S.A.D.", "Al Hilal (KSA)"), só os que já aparecem no
+    histórico de 2005 (``refs``): entre os 21 mil do banco, um nome curto acharia um
+    homônimo de outro país."""
+
+    def __init__(self, names: dict[int, tuple[str, str]], refs: Counter, brazil: dict[str, int],
+                 strict: bool = False):
         self.names, self.refs, self.brazil = names, refs, brazil
+        own = set(brazil.values())
         self._by_key: dict[frozenset[str], set[int]] = {}
+        self._near: dict[frozenset[str], set[int]] = {}
+        self._found: dict[str, tuple[int | None, str]] = {}
         for uid, pair in names.items():
             for name in pair:
-                self._by_key.setdefault(_key(name), set()).add(uid)
+                if not (strict and uid in own):
+                    self._by_key.setdefault(_key(name), set()).add(uid)
+                if refs[uid] and uid not in own:      # sem o país entre parênteses: "Al Hilal (KSA)"
+                    self._near.setdefault(_key(re.sub(r"\(.*?\)", "", name)), set()).add(uid)
 
     def find(self, name: str) -> tuple[int | None, str]:
         """(UID ou None, como casou: apelido, brasil, nome, aproximado, sem clube)."""
+        if name not in self._found:
+            self._found[name] = self._find(name)
+        return self._found[name]
+
+    def _find(self, name: str) -> tuple[int | None, str]:
         name = clean(name)
         if name in ALIASES:
             return ALIASES[name], "apelido"
         if BRAZIL.get(name, name) in self.brazil:
             return self.brazil[BRAZIL.get(name, name)], "brasil"
-        uid, how = self._match(name)
-        if uid is None:                             # time B, sub-23: o clube principal
-            base = re.sub(r"^Jong\s+|\s+(B|II|2|U\d\d)$", "", name)
-            if base != name:
-                uid, how = self._match(base)
-        return uid, how
-
-    def _match(self, name: str) -> tuple[int | None, str]:
         key = _key(name)
         exact = self._by_key.get(key, set())
         if exact:
-            return max(exact, key=lambda u: (self.refs[u], -u)), "nome"
-        near = {u for other, uids in self._by_key.items() if key < other and not (other - key) & _RESERVE
-                for u in uids}
+            return self._best(exact), "nome"
+        state = re.fullmatch(r"(.+?)\s*[-(]\s*([A-Z]{2})\)?", name)
+        if state and state.group(2) in _UF:         # "Flamengo-PI": o "Flamengo (PI)" do banco
+            exact = self._by_key.get(_key(f"{state.group(1)} ({state.group(2)})"), set())
+            return (self._best(exact), "nome") if exact else (None, "sem clube")
+        base = re.sub(r"^Jong\s+|\s+(B|II|2|U\d\d|Sub-?\d\d|Reserves?)$", "", name)
+        if base != name:                            # time B, sub-20: o clube principal
+            return self.find(base)
+        near = {u for other, uids in self._near.items() if key <= other and _generic(other - key) for u in uids} \
+            if any(len(t) >= 3 for t in key) else set()       # "FC A&N" não aproxima
         if near:
-            return max(near, key=lambda u: (self.refs[u], -u)), "aproximado"
+            return self._best(near), "aproximado"
         return None, "sem clube"
+
+    def _best(self, uids: set[int]) -> int:
+        return max(uids, key=lambda u: (self.refs[u], -u))     # o mais citado no histórico de 2005
 
 
 # ---------------------------------------------------------------- carreira
@@ -218,6 +287,7 @@ class Passage:
     apps: int | None
     goals: int | None
     loan: bool
+    fee: int | None = None      # euros pagos para chegar (vai no último ano do clube anterior)
 
     @property
     def label(self) -> str:
@@ -297,6 +367,14 @@ def seasons(passages: list[Passage], clubs: Clubs, current_club: int, shift: int
         kept = [Season(y + shift, uid, a, g, passage.loan) for y, a, g in zip(span, apps, goals)
                 if y < LAST_YEAR or (y == LAST_YEAR and uid != current_club)]
         out.append((passage, uid, how, kept if uid is not None else []))
+    previous = None                                 # valor da venda no último ano do clube que vendeu
+    for passage, _, _, kept in out:
+        if passage.loan:
+            continue
+        if passage.fee and previous and previous[-1].year <= passage.start + shift:
+            previous[-1] = dataclasses.replace(previous[-1], fee=min(NONE - 1, round(passage.fee / EUR_PER_GBP)))
+        if kept:
+            previous = kept
     return out
 
 
@@ -310,6 +388,73 @@ def merge(seasons: list[Season]) -> list[Season]:
         key = (s.year, s.club, s.loan)
         if key in out:
             old = out[key]
-            s = Season(s.year, s.club, add(old.apps, s.apps), add(old.goals, s.goals), s.loan, old.fee)
+            s = Season(s.year, s.club, add(old.apps, s.apps), add(old.goals, s.goals), s.loan,
+                       old.fee if old.fee != NONE else s.fee)
         out[key] = s
     return sorted(out.values(), key=lambda s: s.year)
+
+
+# ---------------------------------------------------------------- transferências (Sofascore)
+
+NO_CLUB = {"No team", "Retired", "Without club", "Unknown"}
+_YOUTH = re.compile(r"\s(U\d\d|Sub-?\d\d|B|II|Youth|Juniors?)$", re.I)
+
+
+@dataclass(frozen=True)
+class Transfer:
+    date: dt.date
+    origin: str | None          # clube de onde saiu
+    to: str | None              # clube para onde foi
+    kind: int                   # Sofascore: 3 transferência, 1 empréstimo, 2 volta do empréstimo,
+                                # 7 chegou sem clube, 6 saiu para "sem clube", 4 aposentou
+    fee: int | None = None      # euros
+
+
+def passages_from_transfers(transfers: list[Transfer]) -> list[Passage]:
+    """Passagens (como as da historico_carreira.xlsx) a partir das transferências.
+
+    Cada transferência abre uma passagem no clube de destino no ano dela; a seguinte a
+    fecha. Empréstimo fica logo abaixo do clube dono (years() tira os anos dele do dono);
+    a volta do empréstimo só fecha o empréstimo, e uma nova transferência para o mesmo
+    clube continua a passagem. O clube de origem da primeira entra com um ano (o anterior,
+    se a saída foi no 1º semestre), menos quando é a base (sub-20)."""
+    transfers = sorted(transfers, key=lambda t: t.date)
+    out: list[dict] = []
+    parent = loan = None
+
+    def close(item, year):
+        if item is not None and item["end"] is None:
+            item["end"] = year
+
+    if transfers and transfers[0].origin and transfers[0].origin not in NO_CLUB \
+            and not _YOUTH.search(transfers[0].origin):
+        first = transfers[0].date
+        parent = {"club": transfers[0].origin, "start": first.year - (first.month <= 6), "end": None,
+                  "loan": False, "fee": None}
+        out.append(parent)
+    for t in transfers:
+        year = t.date.year
+        if not t.to or t.to in NO_CLUB:
+            close(loan, year)
+            close(parent, year)
+            parent = loan = None
+            continue
+        if t.kind == 1:                              # empréstimo
+            close(loan, year)
+            loan = {"club": t.to, "start": year, "end": None, "loan": True, "fee": None}
+            out.append(loan)
+            continue
+        if t.kind == 2 and parent is not None and t.to == parent["club"]:
+            close(loan, year)                        # voltou para o clube dono
+            loan = None
+            continue
+        close(loan, year)
+        close(parent, year)
+        loan = None
+        fee = t.fee if t.kind == 3 else None
+        if parent is not None and parent["club"] == t.to and parent["end"] == year:
+            parent["end"], parent["fee"] = None, parent["fee"] or fee   # renovou ou comprou: a mesma passagem
+            continue
+        parent = {"club": t.to, "start": year, "end": None, "loan": False, "fee": fee}
+        out.append(parent)
+    return [Passage(p["start"], p["end"], p["club"], None, None, p["loan"], p["fee"] or None) for p in out]
