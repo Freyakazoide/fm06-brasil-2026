@@ -25,7 +25,9 @@ Com --apply:
    (os regens brasileiros, argentinos... nascem com nomes de hoje);
 9. põe os clássicos da aba Rivais de data\\modelos\\clubes_estrutura_2026.xlsx na lista de
    rivais dos clubes (os substitutos perdem os rivais do clube de 2005);
-10. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
+10. grava data\\db\\brasil_2026_regens.edt com as joias da base de
+    data\\modelos\\regens_futuros_2026.xlsx (FUTURE_REGEN);
+11. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
    2026), lido pelo scripts\\gerar_graficos.py (escudos, uniformes e nomes).
 
 Depois é só abrir o fm_brasil.exe e começar um New Game.
@@ -50,7 +52,7 @@ from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, 
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico,  # noqa: E402
-                       identidade, nomes_fases, nomes_regens, reputacao, rivais, traducao)
+                       identidade, nomes_fases, nomes_regens, regens_futuros, reputacao, rivais, traducao)
 import aplicar_historico  # noqa: E402
 import traduzir_telas  # noqa: E402
 
@@ -76,6 +78,7 @@ LANG_BACKUP = ROOT / "workspace" / "baseline" / "lang_db.original.dat"
 TRANSLATION = ROOT / "data" / "modelos" / "traducao_ptbr.xlsx"
 REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"
 STRUCTURE = ROOT / "data" / "modelos" / "clubes_estrutura_2026.xlsx"   # aba Rivais
+FUTURE_REGENS = ROOT / "data" / "modelos" / "regens_futuros_2026.xlsx"   # joias da base
 TRANSLATION_REPORT = ROOT / "data" / "brasil" / "traducao_lang_db.csv"
 DATA_DIR = ROOT / "data" / "brasil"
 HISTORY_REPORT = DATA_DIR / "historico" / "sem_clube_no_jogo.txt"
@@ -133,6 +136,7 @@ def main() -> None:
     server = game / "data" / "db" / "server_db.dat"
     lnc = game / "data" / "db" / "lnc" / "all" / "brasil_2026.lnc"
     lang = game / "data" / "db" / "lang_db.dat"
+    regens_edt = game / "data" / "db" / "brasil_2026_regens.edt"
 
     if args.restore:
         if BACKUP.exists():
@@ -148,7 +152,8 @@ def main() -> None:
             shutil.copy2(people_backup, game / "data" / "db" / "people_db.dat")
             print("[OK] people_db original restaurado")
         for path in (lnc, lnc.with_name("brasil_2026_clubes.lnc"),      # o 2º vem do pacote de gráficos
-                     lnc.with_name("brasil_2026_comissao.lnc"), lnc.with_name("brasil_2026_arbitros.lnc")):
+                     lnc.with_name("brasil_2026_comissao.lnc"), lnc.with_name("brasil_2026_arbitros.lnc"),
+                     regens_edt):
             if path.exists():
                 path.unlink()
                 print(f"[OK] removido {path}")
@@ -303,6 +308,16 @@ def main() -> None:
     lnc.write_bytes((lnc_text() + "\r\n".join(estadios.lnc_lines(venues)) + "\r\n").encode("utf-16"))
     (DATA_DIR / "clubes" / "estadios_2026_relatorio.txt").write_text("\n".join(venues.report) + "\n", encoding="utf-8")
     print(f"[OK] gravado {lnc}")
+    prospects = regens_futuros.load_sheet(FUTURE_REGENS) if FUTURE_REGENS.exists() else []
+    if prospects:                                                # joias da base (FUTURE_REGEN)
+        text, warnings = regens_futuros.edt_text(prospects, {i.clube: i.uid for i in identities})
+        regens_edt.write_bytes(text.encode("cp1252", errors="replace"))     # .edt é texto ANSI
+        count = sum(line.startswith('"FUTURE_REGEN"') for line in text.splitlines())
+        print(f"[OK] joias da base: {count} regens em {regens_edt}")
+        for warning in warnings:
+            print("[AVISO] joias da base:", warning)
+    elif regens_edt.exists():
+        regens_edt.unlink()
 
     write_report(DATA_DIR / "mapa_2026.csv", placements)
     print(f"[OK] lista completa em {DATA_DIR / 'mapa_2026.csv'}")

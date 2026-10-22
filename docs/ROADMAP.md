@@ -1,101 +1,108 @@
-# Roadmap: caixa de ferramentas
+# Roadmap (22/10/2026)
 
-Primeiro conseguir alterar **tudo**. Só depois aplicar os dados de 2026.
+Onde o mod está e o que falta, na ordem em que eu atacaria. O que você pode fazer por
+fora está em [FRENTES_RODADA_2.md](FRENTES_RODADA_2.md); o que falta conferir no jogo, em
+[TESTES_PENDENTES.md](TESTES_PENDENTES.md). Tudo roda com `python scripts\aplicar_tudo.py`.
 
-Por onde cada alteração é feita:
+Legenda: ✅ feito e conferido no jogo · 🧪 feito, falta conferir no jogo · 🟡 mapeado,
+falta implementar · ⏳ precisa de captura ou dado · ❌ não mapeado.
 
-| Caminho | Quando é aplicado | Exemplos |
+## Onde estamos
+
+### Estrutura e competições
+
+| Item | Situação | Onde |
 |---|---|---|
-| **Texto** (`.lnc` / `.edt` / `.ddt`) | jogo aplica no New Game | nomes, trocas de divisão, transferências |
-| **Injetor** (memória) | logo após o New Game; depois salvar | ficha do jogador, contratos |
-| **Banco** (`.dat`) | jogo lê no New Game | histórico, competições, jogadores novos |
-| **Executável** (`fm.exe`) | sempre | ano de início, se estiver fixo no código |
+| Séries A, B, C (nova) e D com os clubes de 2026 | ✅ | `aplicar_brasil_2026.py`, patches do `fm.exe` |
+| Acesso, rebaixamento, playoffs da B, fases da C, 6 acessos da D | ✅ | patches `serie_*` |
+| Calendário 2026 (virada em 1º/1, pausa da Copa) | ✅ | `docs/CALENDARIO_2026.md` |
+| Estaduais 2026 (268 clubes) | ✅ | `estaduais_clubes.py` |
+| Copa do Brasil 2026 | ✅ | patch `copa_do_brasil_2026` |
+| Libertadores e Sul-Americana 2026 (vagas e datas) | ✅ | patches `libertadores_*`, `sul_americana_2026` |
+| Ano exibido 2026 (motor em 2006) | ✅ | patch `ano_exibido_mais_20` |
+| Classificação de 2025 e histórico de campeões | ✅ | `campeoes.py`, `docs/HISTORICO.md` |
+| Telas e textos em pt-BR | ✅ | `traducao.py`, `traduzir_telas.py` |
 
-## Jogador
+### Clubes
 
-| Item | Situação | Caminho | Observação |
-|---|---|---|---|
-| Nome | ✅ | texto | `CHANGE_PLAYER_NAME` |
-| Data de nascimento / idade | ✅ | injetor | `year_shift` −21 |
-| Altura, peso | ✅ | injetor | |
-| CA, PA | ✅ | injetor | |
-| Atributos visíveis | ✅ | injetor | validado com a ficha do jogo |
-| Atributos ocultos (consistência, propensão a lesão…) | ✅ | injetor | ainda não estão na planilha |
-| Posições, pé preferido | ✅ | injetor | |
-| Personalidade | ✅ | injetor | |
-| Preferred Moves | ✅ | injetor | |
-| Reputação | ✅ | injetor | |
-| Nacionalidade | ✅ | injetor | pelo código da nação (`nationality_code`), conferido no jogo |
-| Segunda nacionalidade | ❌ | ? | campo não localizado |
-| Jogos e gols pela seleção | 🟡 | injetor | offsets conhecidos, falta expor |
-| Contrato: salário, início, fim, situação, prêmios | 🟡 | injetor | layout conhecido, falta implementar |
-| Número da camisa | 🟡 | injetor | offset conhecido, codificação pendente |
-| Cláusula de rescisão | ❌ | injetor | não localizada |
-| Retirar do elenco os jogadores de 2005 que sobraram | 🟡 | injetor | encerrar o contrato no 1º dia |
-| Histórico de carreira | ✅ | banco | `aplicar_historico.py`: carreira real da `historico_carreira.xlsx`; os outros de 2026 sem a carreira do jogador de 2005 |
-| Lesões e suspensões iniciais | 🟡 | texto | comandos `INJURY` / `BAN` existem; sintaxe a confirmar |
-| Criar jogador novo (sem hospedeiro) | ❌ | banco | exige formato completo do `people_db` |
+| Item | Situação | Onde |
+|---|---|---|
+| Nome, escudo, uniforme e cores | ✅ | `.lnc`, `gerar_graficos.py`, `cores.py` |
+| Estádio, capacidade e cidade | ✅ | `estadios.py` |
+| Saldo, público e reputação de 2026 | ✅ | `financas.py`, `reputacao.py` |
+| Técnico e comissão de 2026 (499 pessoas) | ✅ | `aplicar_comissao.py` |
+| Rivais e clássicos | 🧪 | `rivais.py` (a tela de informações não mostra; falta a notícia de clássico) |
+| Instalações, base e orçamentos de 2026 | ⏳ | captura D2 + dados E1 |
+| Clubes de 2026 que não existem no FM06 (38 nas séries, 88 nos estaduais) | ⚠️ | ocupam um clube de 2005 ("substitutos"); criar clube novo exige o formato completo do registro |
 
-## Clube
+### Pessoas
 
-| Item | Situação | Caminho | Observação |
-|---|---|---|---|
-| Nome, nome curto e longo | ✅ | texto | `CLUB_NAME_CHANGE` etc. |
-| Divisão em que joga | ✅ | texto / banco | `SWAP_TEAMS` (troca 1 por 1); no banco, `scripts/server_db_teams.py --set` (a testar no jogo) |
-| Cores do uniforme | 🟡 | texto | `COLOUR_CHANGE` |
-| Estádio e capacidade | 🟡 | texto | `STADIUM_MOVE`, `STADIUM_CAPACITY_CHANGE`, `GROUND_SHARE` |
-| Dinheiro, reputação, público | 🟡 | banco | saldo e público no registro do clube (`financas.py`), a validar; `BOOST_TEAM` não grava caixa nos clubes brasileiros |
-| Técnico e comissão técnica | 🟡 | banco + texto | `comissao.py` + `CHANGE_PLAYER_NAME`, a validar (docs/COMISSAO_E_FINANCAS_2026.md) |
-| Orçamentos, instalações, base | ❌ | injetor | campos do clube não localizados |
+| Item | Situação | Onde |
+|---|---|---|
+| Elencos de 2026 (6.244 jogadores) | ✅ | `montar_elencos.py` + injetor |
+| Atributos, CA/PA, posições, pé, altura, peso | ✅ | injetor |
+| Personalidade, ocultos e jogadas preferidas (220 titulares) | ✅ | `jogadores_perfil.xlsx` |
+| Nacionalidade pelo código da nação | ✅ | injetor (sem doadores desde 22/10) |
+| Contrato (salário, início, fim) e número da camisa | ✅ | injetor |
+| Jogos e gols pela seleção | ✅ | injetor |
+| Histórico de carreira (100 jogadores) | ✅ | `aplicar_historico.py` |
+| Jogadores de 2005 que sobravam | ✅ | nome de hoje ou saída para clubes fora de 2026 |
+| Técnico da Seleção (Ancelotti) | ✅ | `selecoes_2026.csv` |
+| Árbitros de 2026 (18 do quadro FIFA) | 🧪 | `aplicar_arbitros.py` |
+| Nomes dos regens | 🧪 | `nomes_regens.xlsx` |
+| Joias da base (regens de verdade) | 🧪 | `regens_futuros_2026.xlsx` (`FUTURE_REGEN`), falta preencher |
+| Lesões e suspensões no começo | ⏳ | captura D3 |
+| Rigor dos árbitros | ⏳ | captura D4 |
+| Segunda nacionalidade, cláusula de rescisão | ❌ | campos não localizados |
+| Jogador novo sem hospedeiro | ❌ | exige o formato completo do `people_db` |
 
-## Competições
+## Próximas fases
 
-| Item | Situação | Caminho | Observação |
-|---|---|---|---|
-| Nome da competição | ✅ | texto | `COMP_NAME_CHANGE` no `brasil_2026.lnc` |
-| Quais clubes estão em cada série | ✅ | texto | `SWAP_TEAMS`, limitado à estrutura existente |
-| Número de clubes por divisão | 🟡 | executável | regras ficam no `fm.exe` (módulo Brasil em `0xBB2700`); ver `docs/reversing/competitions.md` |
-| Formato (pontos corridos, turno e returno) | 🟡 | executável | idem |
-| Acessos e rebaixamentos | ✅ | executável | `scripts/patch_exe.py` (campos `+0x11`/`+0x14` da fase); validado: Série A rebaixa 4, Série B sobe 4 |
-| Criar a Série D | ✅ | executável + banco | `scripts/aplicar_brasil_2026.py`: Séries A–D com nomes, datas e clubes de 2026. Falta: playoffs da B, fases da C, 6 acessos da D |
-| Vagas em Libertadores e Sul-Americana | ⚠️ | executável | Libertadores: Brasil 7, Argentina 6, sem México, calendário de 2026 com final única (validado). Sul-Americana: ainda 8 brasileiros + México/EUA (chaveamento fixo da 1ª fase) |
-| Classificação da temporada passada | ✅ | banco | `data/brasil/classificacao_2025.csv` (A, B, C 20 e D 64), gravada pelo `aplicar_brasil_2026.py` |
-| Histórico de campeões (Séries A–D, Copa do Brasil, CONMEBOL, estaduais) | 🟡 | banco | `campeoes.py`, a validar no jogo (docs/HISTORICO.md) |
-| Calendário | ✅ | executável | datas de A, B, C e D por patch; ver `docs/REGRAS_2026.md` |
+### Fase 1: fechar o que está em teste (agora)
 
-## Jogo
+- Árbitros, rivais, nomes dos regens e elencos sem os doadores (TESTES_PENDENTES).
+- Joias da base: você preenche 3 a 5 (E2), roda o `aplicar_tudo.py` e espera a chegada
+  dos juniores (D5).
 
-| Item | Situação | Caminho | Observação |
-|---|---|---|---|
-| Ano de início 2026 | ✅ | executável | motor em 2005/06 e ano exibido + 20 (`ano_exibido_mais_20`); idades pelo `year_shift` −20 do injetor. Ver `docs/reversing/ano_inicio.md` |
+### Fase 2: base e regens
 
-## Ordem sugerida
+- Campo de base e de instalações do clube (D2) e os valores de 2026 (E1).
+- Força da base de cada país: achar no banco o "Development"/"League Standard" da nação
+  (já conhecidos na memória).
+- Joias da base em quantidade (E2 completa).
 
-Meta do **primeiro teste de viabilidade**: um New Game com competições, clubes e
-jogadores de 2026, jogado por uma temporada inteira, com a virada para a
-seguinte funcionando.
+### Fase 3: dinheiro dos clubes
 
-1. ~~**Fechar as classificações.**~~ ✅ Acesso e rebaixamento entre as quatro
-   séries validados na virada 2006 → 2007 (Série C com 24).
-1b. **Calendário completo:** estaduais (e a vaga deles na Série D), Séries A–D,
-   Copa do Brasil, Libertadores e Sul-Americana sem conflito; virada da
-   temporada em 01/01; 10ª rodada dos grupos da D depois do mata-mata.
-2. ~~**Investigar o ano de início 2026.**~~ ✅ Motor em 2005/06, ano exibido + 20
-   (`ano_exibido_mais_20`), validado no jogo. Antes de criar jogadores em massa.
-   Os dados dos jogadores ficam com as datas reais de 2026; o injetor aplica
-   `year_shift` = ano do motor − 2026 (hoje −21, com 2026 de verdade vira 0).
-   Se não der, o jogo continua em 2005/06 com idades certas e só o ano
-   exibido fica errado.
-3. **Regras restantes:** grupos da Série C por posição e final; Copa do Brasil
-   com a nova C; vagas continentais; crescimento da C (24 e 28 clubes),
-   contado por temporada desde o início e não por ano fixo; reposição da
-   Série D.
-4. **Criar os clubes que hoje são substitutos.**
-5. **Jogadores de 2026:** fechar o injetor (nacionalidade por UID, contrato,
-   camisa, seleção, sobras de 2005, atributos ocultos) e montar os elencos.
-6. **Teste de viabilidade:** temporada 2026 completa e virada.
-7. Depois: regens (nomes, critérios, Preferred Moves), base e instalações,
-   entrevistas.
+- Orçamento de contratações e de salários de 2026 (D2 + E1).
+- Premiação e cotas de TV de 2026 (Brasileirão, Copa do Brasil): achar onde o `fm.exe`
+  guarda os valores de cada competição.
 
-Legenda: ✅ feito e testado no jogo · 🟡 mapeado ou com comando, falta
-implementar ou testar · ⚠️ funciona com limitação · ❌ não mapeado.
+### Fase 4: o resto do continente
+
+- Elencos de 2026 dos clubes estrangeiros da Libertadores e da Sul-Americana (E6): coletor
+  do Sofascore para eles e o mesmo caminho dos brasileiros.
+- Técnicos das seleções (E3) e, depois, dos clubes estrangeiros.
+
+### Fase 5: começo de jogo mais real
+
+- Lesões e suspensões do começo de 2026 (D3, com a planilha que já existe).
+- Rigor dos árbitros (D4).
+- Clubes que "gostam" de pessoas (lista de relações do clube, tipo 3): limpar as que
+  apontam para pessoas de 2005 que viraram outra pessoa de 2026.
+
+### Fase 6: clubes de verdade no lugar dos substitutos
+
+- Entender o registro completo do clube no `server_db` (já sabemos nomes, cores,
+  estádio, saldo, rivais, times) para criar clubes novos em vez de ocupar um de 2005.
+  É o maior trabalho que falta; os substitutos funcionam, então fica por último.
+
+### Fase 7: acabamento
+
+- Logos das competições (F1) e fotos (F2), se o jogo ler.
+- Mídia (jornais) e prêmios (Bola de Prata e afins) de 2026: campos ainda não procurados.
+- Mais histórico (E4) e mais perfis (E5) a cada rodada de dados.
+
+## Jogo futuro
+
+As especificações C1–C14 estão em [jogo_futuro](jogo_futuro/README.md). O mod continua
+sendo a base de dados inicial (clubes, elencos, estádios, finanças, histórico e regras).

@@ -33,6 +33,9 @@ Enter quando estiver pronto):
 | 4 | ~~Técnico da Seleção~~ ✅ conferido em 22/10 | tela da seleção brasileira (Brasil > Seleção) | Carlo Ancelotti, italiano, nascido em 10/6/1959 (66 anos no começo do jogo) | `aplicar_comissao.py` |
 | 5 | Nomes dos regens | chegada dos juniores (base) | nomes de hoje (Enzo, Davi, Endrick...) nos brasileiros, argentinos etc. | `aplicar_brasil_2026.py` |
 | 6 | Sem doadores de nacionalidade | elencos com estrangeiros (Palmeiras, Flamengo) | nenhum jogador de 2005 com nome antigo no elenco; estrangeiros de 2026 com a nação certa | `aplicar_tudo.py` |
+| 7 | Joias da base | chegada dos juniores, depois de preencher a `regens_futuros_2026.xlsx` | os garotos da planilha com nome, idade e clube certos | `aplicar_brasil_2026.py` (`brasil_2026_regens.edt`) |
+
+Antes de rodar, `python scripts\validar_entregas.py` confere as planilhas.
 
 Se algo der errado:
 
