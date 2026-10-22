@@ -182,6 +182,46 @@ def main() -> None:
             if bad:
                 report.add(name, line, "fora de 1-20: " + ", ".join(bad))
 
+    def number(value) -> bool:
+        return not text(value) or text(value).replace(".", "", 1).replace(",", "", 1).isdigit()
+
+    path = MODELS / "patrocinadores_2026.xlsx"
+    if path.exists():
+        name = path.name
+        report.file(name)
+        for line, row in enumerate(rows(path, "Patrocinios"), start=2):
+            if text(row.get("clube")) not in clubs:
+                report.add(name, line, f"clube '{text(row.get('clube'))}' não é clube de 2026")
+            if not text(row.get("empresa")):
+                report.add(name, line, "sem empresa")
+            if not number(row.get("valor_anual_brl")):
+                report.add(name, line, "valor_anual_brl tem de ser número (sem R$)")
+            if not (is_date(row.get("inicio")) and is_date(row.get("fim"))):
+                report.add(name, line, "inicio/fim fora do formato AAAA-MM-DD")
+
+    path = MODELS / "premiacao_2026.xlsx"
+    if path.exists():
+        for sheet, column in (("Premiacao", "valor"), ("Cotas_TV", "valor_anual")):
+            name = f"{path.name} ({sheet})"
+            report.file(name)
+            for line, row in enumerate(rows(path, sheet), start=2):
+                if not text(row.get(column)) or not number(row.get(column)):
+                    report.add(name, line, f"{column} obrigatório, número (sem R$ ou US$)")
+                if text(row.get("moeda")).upper() not in ("BRL", "USD"):
+                    report.add(name, line, "moeda tem de ser BRL ou USD")
+                if sheet == "Cotas_TV" and text(row.get("clube")) not in clubs:
+                    report.add(name, line, f"clube '{text(row.get('clube'))}' não é clube de 2026")
+
+    path = MODELS / "premios_historico.xlsx"
+    if path.exists():
+        name = path.name
+        report.file(name)
+        for line, row in enumerate(rows(path, "Premios"), start=2):
+            if not text(row.get("ano")).isdigit() or not 2006 <= int(text(row.get("ano"))) <= 2025:
+                report.add(name, line, "ano de 2006 a 2025")
+            if not text(row.get("premio")) or not text(row.get("vencedor")):
+                report.add(name, line, "premio e vencedor obrigatórios")
+
     path = MODELS / "lesoes_suspensoes_2026.xlsx"
     if path.exists():
         for sheet, dates in (("Lesoes", ("desde", "volta_prevista")), ("Suspensoes", ())):

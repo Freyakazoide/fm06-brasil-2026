@@ -1,6 +1,6 @@
 # Frentes de trabalho para fazer por fora
 
-> Rodada 2 (capturas, joias da base, estrutura dos clubes, elencos sul-americanos):
+> Rodada 2 (planilhas novas e fichas de análise de código):
 > [FRENTES_RODADA_2.md](FRENTES_RODADA_2.md).
 
 O que você pode produzir sozinho, sem esperar teste nem engenharia reversa. Está
