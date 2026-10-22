@@ -208,3 +208,16 @@ que já tem planilha pronta).
 Copie o [modelo de resposta](analise/MODELO_RESPOSTA.md) para `docs\analise\C2.md` (o
 número da ficha), preencha e faça commit e push, ou cole aqui. Pode mandar parcial: uma
 tabela com metade dos campos já adianta.
+
+## Respostas recebidas
+
+- [C1 — Patrocínio](analise/C1.md)
+- [C2 — Suspensões no começo do jogo](analise/C2.md)
+- [C3 — Lesões](analise/C3.md)
+- [C4 — Prêmios](analise/C4.md)
+- [C5 — Finanças do clube](analise/C5.md)
+- [C6 — Instalações e base do clube](analise/C6.md)
+- [C7 — Regens e chegada da base](analise/C7.md)
+- [C8 — Regras de transferência do Brasil](analise/C8.md)
+- [C9 — Premiação das competições](analise/C9.md)
+- [C10 — Força da base de cada país](analise/C10.md)
