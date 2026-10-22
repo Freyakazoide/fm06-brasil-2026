@@ -81,7 +81,8 @@ identificadas como editoriais e campos sem fonte confiável permanecem vazios.
 | B1 | ✅ a testar: 614 nomes novos no fim das tabelas de nomes e 971 que já existiam com peso maior; os de hoje ficam com ~70% do peso de cada nação | `nomes_regens.py`, `aplicar_brasil_2026.py` (`--sem-nomes-regens` desliga) |
 | B5 | ✅ a testar: carreira real dos 100 da planilha; os outros jogadores e a comissão de 2026 sem a carreira do jogador de 2005 | `historico_jogadores.py`, `aplicar_historico.py` (depois do `montar_elencos.py`) |
 | B3 | ✅ a testar: os 42 clássicos na lista de rivais do clube (peso 90/75/60 pela intensidade); os substitutos perdem os rivais do clube de 2005 | `rivais.py`, `aplicar_brasil_2026.py` |
-| B2, B4, C0 | ⏳ dados guardados; precisam de engenharia (campos de clube, árbitros) | — |
+| B4 | ✅ a testar: os 18 do quadro FIFA nos 18 melhores árbitros brasileiros do banco, capacidade e reputação pelo nível (o rigor não tem campo conhecido) | `arbitros.py`, `aplicar_arbitros.py` |
+| B2, C0 | ⏳ dados guardados; precisam de engenharia (campos de clube) | — |
 
 Das 35 frases da aba Frases, só "Utilizado num sistema de rotatividade do plantel"
 existe igual no jogo; as outras não aparecem em nenhuma tela (o texto do jogo é outro)
@@ -248,8 +249,13 @@ virou outro clube ("Paraná" virou o Novorizontino e fica de fora).
 
 **Entregar:** `data/modelos/arbitros_2026.xlsx`: nome, UF, quadro (FIFA ou
 CBF), nível e rigor. Fonte: a lista do quadro de árbitros FIFA e CBF de 2026.
-No FM06 os árbitros são pessoas do `people_db` como o staff, então dá para
-renomear do mesmo jeito (a confirmar).
+Entrou pelo `scripts/aplicar_arbitros.py --apply`: cada árbitro da planilha (maior
+nível primeiro) ocupa um dos 492 árbitros brasileiros do banco (maior capacidade
+primeiro; os 76 que também têm contrato com clube ficam de fora), com o nome pelo
+`.lnc` e capacidade/reputação = nível × 9,5 (19 = 180, o maior do banco). O rigor não
+entra: os 10 atributos de árbitro do FM06 estão zerados e não se sabe qual é qual.
+Para pôr o quadro CBF, acrescente linhas na planilha (o script pega os próximos da
+lista).
 
 ### B5. Histórico de carreira dos craques
 

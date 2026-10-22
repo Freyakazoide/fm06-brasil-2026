@@ -147,7 +147,8 @@ def main() -> None:
         if people_backup.exists():
             shutil.copy2(people_backup, game / "data" / "db" / "people_db.dat")
             print("[OK] people_db original restaurado")
-        for path in (lnc, lnc.with_name("brasil_2026_clubes.lnc")):   # o 2º vem do pacote de gráficos
+        for path in (lnc, lnc.with_name("brasil_2026_clubes.lnc"),      # o 2º vem do pacote de gráficos
+                     lnc.with_name("brasil_2026_comissao.lnc"), lnc.with_name("brasil_2026_arbitros.lnc")):
             if path.exists():
                 path.unlink()
                 print(f"[OK] removido {path}")

@@ -74,3 +74,15 @@ Aparecem também tipo 5 relação 23 e tipos 5/6 relação 99 (sentido a confirm
 Conferido nos 695 clubes brasileiros (693 com a lista de times logo antes).
 No leitor do CLUB (`0x00A31C70`) as duas quantidades são lidas como u16 (`0x00C59430`),
 mas no arquivo ocupam 1 byte; vale o que está no arquivo. `src/fm06patch/rivais.py`.
+
+## Árbitros (OFFICIAL) no people_db
+
+A parte comum do registro da pessoa fecha com u16 ano, 00 00 00, u32 índice, u32 UID
+(o do `CHANGE_PLAYER_NAME`). Depois vem o bloco do tipo: u32, u8 tipo (1 jogador, 2
+staff, 4 árbitro). No árbitro (leitor `0x00A6D540`): u32, u16 capacidade, u16 potencial,
+u16 reputação, 10 × u8 atributos, u32 e, na versão do banco ≥ 0xFD, mais um bloco
+(`0x00A6D470`). São 6.798 árbitros, 492 brasileiros (Wilson Luís Seneme 135/160/145);
+os atributos dos brasileiros estão zerados. 76 brasileiros também têm bloco de contrato
+com clube (Grêmio, Fluminense...). Árbitros famosos de 2005 como Carlos Eugênio Simon e
+Paulo César de Oliveira estão no banco com tipo 2/1 sem dados (não apitam).
+`src/fm06patch/arbitros.py`.
