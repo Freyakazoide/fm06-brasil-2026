@@ -31,7 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import comissao, historico, people_contracts  # noqa: E402
+from fm06patch import comissao, historico, nomes_regens, people_contracts  # noqa: E402
 
 STAFF_CSV = ROOT / "data" / "brasil" / "comissao" / "comissao_2026.csv"
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
@@ -39,6 +39,7 @@ PEOPLE_BACKUP = ROOT / "workspace" / "baseline" / "people_db.original.dat"
 SERVER_BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
 REPORT = ROOT / "workspace" / "mods" / "comissao_2026_hospedeiros.csv"
 LNC_NAME = "brasil_2026_comissao.lnc"
+REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"   # nomes de hoje para quem sobra
 
 
 def game_dir() -> Path:
@@ -97,11 +98,14 @@ def main() -> None:
     foreign = {person.club for person in staff} - set(indexes.values())
     result = comissao.plan(staff, [w for w in wanted if w.club_uid in team_index], club_index, team_index, spare,
                            foreign)
+    filler = nomes_regens.Filler(nomes_regens.load_sheet(REGEN_NAMES)) if REGEN_NAMES.exists() else None
+    if filler:                                      # staff de 2005 que sobra: nome brasileiro de hoje
+        comissao.fill_names(result, staff, set(club_index.values()), filler.name)
     for line in result.report:
         print("  ", line)
     managers = sum(1 for _, row in result.renames if row.cargo == "tecnico")
     print(f"[OK] {len(result.renames)} pessoas renomeadas ({managers} técnicos), "
-          f"{len(result.moves)} trazidas de clubes fora de 2026")
+          f"{len(result.moves)} trazidas de clubes fora de 2026; {len(result.fillers)} que sobram com nome de hoje")
     foreign = {row.nacionalidade for _, row in result.renames
                if row.nacionalidade and comissao.nation_code(row.nacionalidade) is None}
     if foreign:

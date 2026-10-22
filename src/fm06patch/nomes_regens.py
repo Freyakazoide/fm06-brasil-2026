@@ -143,3 +143,32 @@ def load_sheet(path) -> dict[tuple[str, int], dict[str, int]]:
         weight = int(weight) if str(weight or "").strip().isdigit() else 50
         wanted.setdefault((kind, nation), {})[text] = max(1, min(100, weight))
     return wanted
+
+
+class Filler:
+    """Nome brasileiro de hoje para quem sobra num clube de 2026 com o nome de 2005 (sorteado
+    pelos pesos da planilha; o mesmo UID tem sempre o mesmo nome)."""
+
+    NICKNAME_CHANCE = 0.2
+
+    def __init__(self, wanted: dict[tuple[str, int], dict[str, int]], nation: int = 0xBD):
+        self.first = wanted.get(("first", nation), {})
+        self.second = wanted.get(("second", nation), {})
+        self.common = wanted.get(("common", nation), {})
+
+    def __bool__(self) -> bool:
+        return bool(self.first and self.second)
+
+    def name(self, uid: int) -> tuple[str, str, str]:
+        """(primeiro, comum, sobrenome) para o CHANGE_PLAYER_NAME."""
+        import random
+
+        rng = random.Random(uid)
+
+        def pick(weights: dict[str, int]) -> str:
+            names = sorted(weights)
+            return rng.choices(names, weights=[weights[n] for n in names])[0]
+
+        first, second = pick(self.first), pick(self.second)
+        common = pick(self.common) if self.common and rng.random() < self.NICKNAME_CHANCE else ""
+        return first, common, second

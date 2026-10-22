@@ -42,3 +42,16 @@ pela posição na tabela (os nomes novos estão fora do bloco da nação). Os re
 (a cada temporada, e os jovens que o jogo cria quando um clube fica sem jogadores)
 mostram: se aparecerem Enzo, Kauã, Davi, funcionou. Se o New Game travar,
 rode o `aplicar_brasil_2026.py --apply --sem-nomes-regens` e mande o dump.
+
+## Quem sobra nos clubes de 2026
+
+Os mesmos nomes servem para quem fica num clube de 2026 sem nome de 2026:
+
+- jogadores de 2005 além do elenco da planilha (`montar_elencos.py`: o que não virou
+  hospedeiro ganha um `CHANGE_PLAYER_NAME` no mesmo .lnc; lista em
+  `workspace/mods/brasil_2026_jogadores_renomeados.csv`);
+- comissão de 2005 que sobra (`aplicar_comissao.py`, no `brasil_2026_comissao.lnc`).
+
+O nome é sorteado pelos pesos da planilha (prenome + sobrenome; 20% ganham também um
+apelido), sempre o mesmo para o mesmo UID (`nomes_regens.Filler`). Idade e atributos
+continuam os do jogador de 2005 (com o ano do motor, a idade bate com a de hoje).

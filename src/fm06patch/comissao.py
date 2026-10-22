@@ -199,6 +199,7 @@ class Plan:
     renames: list[tuple[Staff, Wanted]] = field(default_factory=list)
     moves: list[tuple[Staff, int, int]] = field(default_factory=list)      # (pessoa, clube, time)
     report: list[str] = field(default_factory=list)
+    fillers: list[tuple[Staff, tuple[str, str, str]]] = field(default_factory=list)   # quem sobra: nome de hoje
 
 
 def plan(staff: list[Staff], wanted: list[Wanted], club_index: dict[int, int], team_index: dict[int, int],
@@ -287,4 +288,16 @@ def lnc_text(result: Plan) -> str:
     for person, row in result.renames:
         first, common, second = split_name(row.nome)
         lines.append(f'"CHANGE_PLAYER_NAME"\t{person.uid}\t"{first}"\t"{common}"\t"{second}"')
+    for person, (first, common, second) in result.fillers:
+        lines.append(f'"CHANGE_PLAYER_NAME"\t{person.uid}\t"{first}"\t"{common}"\t"{second}"')
     return "\r\n".join(lines) + "\r\n"
+
+
+def fill_names(result: Plan, staff: list[Staff], clubs: set[int], name) -> None:
+    """Quem fica num clube de 2026 sem nome de 2026 (staff de 2005 que sobra) ganha um nome de
+    hoje: name(uid) -> (primeiro, comum, sobrenome)."""
+    named = {person.uid for person, _ in result.renames}
+    moved = {person.uid: club for person, club, _ in result.moves}
+    for person in staff:
+        if person.uid not in named and moved.get(person.uid, person.club) in clubs:
+            result.fillers.append((person, tuple(n.replace('"', "") for n in name(person.uid))))

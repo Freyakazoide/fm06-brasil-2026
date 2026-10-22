@@ -45,5 +45,18 @@ class NomesRegensTest(unittest.TestCase):
         self.assertEqual((first[3].uid, common[1].uid), (nr.NEW_UID, nr.NEW_UID + 1))   # UIDs novos, sem repetir
 
 
+    def test_filler_names_are_stable(self) -> None:
+        wanted = {("first", 0xBD): {"Enzo": 100, "Kauã": 50}, ("second", 0xBD): {"Souza": 100},
+                  ("common", 0xBD): {"Vini": 100}}
+        filler = nr.Filler(wanted)
+        self.assertTrue(filler)
+        self.assertEqual(filler.name(42), filler.name(42))
+        first, common, second = filler.name(7)
+        self.assertIn(first, ("Enzo", "Kauã"))
+        self.assertEqual(second, "Souza")
+        self.assertIn(common, ("", "Vini"))
+        self.assertFalse(nr.Filler({}))
+
+
 if __name__ == "__main__":
     unittest.main()
