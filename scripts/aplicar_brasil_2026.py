@@ -23,7 +23,9 @@ Com --apply:
    (data\\languages\\portuguese.ltc, scripts\\traduzir_telas.py);
 8. põe os nomes de data\\modelos\\nomes_regens.xlsx nas tabelas de nomes do banco
    (os regens brasileiros, argentinos... nascem com nomes de hoje);
-9. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
+9. põe os clássicos da aba Rivais de data\\modelos\\clubes_estrutura_2026.xlsx na lista de
+   rivais dos clubes (os substitutos perdem os rivais do clube de 2005);
+10. grava data\\brasil\\clubes\\identidade_fm06.csv (clube do jogo de cada clube de
    2026), lido pelo scripts\\gerar_graficos.py (escudos, uniformes e nomes).
 
 Depois é só abrir o fm_brasil.exe e começar um New Game.
@@ -48,7 +50,7 @@ from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, 
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico,  # noqa: E402
-                       identidade, nomes_fases, nomes_regens, reputacao, traducao)
+                       identidade, nomes_fases, nomes_regens, reputacao, rivais, traducao)
 import aplicar_historico  # noqa: E402
 import traduzir_telas  # noqa: E402
 
@@ -73,6 +75,7 @@ LANG_SHA256 = "313B5D388208389E1C97FCE8270B880BB9B95BA444FCC392AFF90474DD24EEF4"
 LANG_BACKUP = ROOT / "workspace" / "baseline" / "lang_db.original.dat"
 TRANSLATION = ROOT / "data" / "modelos" / "traducao_ptbr.xlsx"
 REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"
+STRUCTURE = ROOT / "data" / "modelos" / "clubes_estrutura_2026.xlsx"   # aba Rivais
 TRANSLATION_REPORT = ROOT / "data" / "brasil" / "traducao_lang_db.csv"
 DATA_DIR = ROOT / "data" / "brasil"
 HISTORY_REPORT = DATA_DIR / "historico" / "sem_clube_no_jogo.txt"
@@ -262,6 +265,17 @@ def main() -> None:
         print(f"[OK] nomes de regens: {sum(len(a) for _, a in changes.values())} novos e "
               f"{sum(len(u) for u, _ in changes.values())} que já existiam com peso maior "
               f"({REGEN_NAMES.relative_to(ROOT)})")
+    if STRUCTURE.exists():                                       # rivais e clássicos (muda o tamanho)
+        clubs = rivais.read(db)
+        uid_of = {i.clube: i.uid for i in identities}
+        fm06 = {c.name: uid for uid, c in clubs.items() if uid not in set(uid_of.values())}
+        pairs, missing = rivais.load_sheet(STRUCTURE, uid_of, fm06)
+        changes = rivais.plan(clubs, pairs, {i.uid for i in identities if i.tipo == "substituto"})
+        db = rivais.apply(db, clubs, changes)
+        print(f"[OK] rivais: {len(pairs)} clássicos da aba Rivais; {len(changes)} clubes com a lista de rivais "
+              "nova (os substitutos perdem os rivais do clube de 2005)")
+        if missing:
+            print("[AVISO] rivais: clubes da planilha que não estão no jogo:", ", ".join(missing))
     server.write_bytes(db)
     print(f"[OK] gravado {server}")
 

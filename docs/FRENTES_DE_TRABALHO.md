@@ -80,7 +80,8 @@ identificadas como editoriais e campos sem fonte confiável permanecem vazios.
 | A5 | ✅ 511 pessoas (a versão nova + os 127 da Wikipédia que tinham saído); auxiliares de clubes estrangeiros quando os brasileiros acabam | `aplicar_comissao.py` |
 | B1 | ✅ a testar: 614 nomes novos no fim das tabelas de nomes e 971 que já existiam com peso maior; os de hoje ficam com ~70% do peso de cada nação | `nomes_regens.py`, `aplicar_brasil_2026.py` (`--sem-nomes-regens` desliga) |
 | B5 | ✅ a testar: carreira real dos 100 da planilha; os outros jogadores e a comissão de 2026 sem a carreira do jogador de 2005 | `historico_jogadores.py`, `aplicar_historico.py` (depois do `montar_elencos.py`) |
-| B2–B4, C0 | ⏳ dados guardados; precisam de engenharia (campos de clube, árbitros) | — |
+| B3 | ✅ a testar: os 42 clássicos na lista de rivais do clube (peso 90/75/60 pela intensidade); os substitutos perdem os rivais do clube de 2005 | `rivais.py`, `aplicar_brasil_2026.py` |
+| B2, B4, C0 | ⏳ dados guardados; precisam de engenharia (campos de clube, árbitros) | — |
 
 Das 35 frases da aba Frases, só "Utilizado num sistema de rotatividade do plantel"
 existe igual no jogo; as outras não aparecem em nenhuma tela (o texto do jogo é outro)
@@ -235,8 +236,13 @@ a base da economia.
 ### B3. Rivais e clássicos
 
 Aba `Rivais` da mesma planilha: clube, rival, nome do clássico e intensidade
-(1–3). No FM06 deve ser uma das duas listas de clubes que o registro do clube
-tem (a confirmar). No jogo futuro: clima de clássico, pressão, notícias.
+(1–3). Entrou: o registro do clube no FM06 tem uma lista de relações (rivais e
+pessoas queridas); o `aplicar_brasil_2026.py` põe cada clássico nos dois sentidos,
+com peso 90 (intensidade 3; o Gre-Nal fica com o 101 da SI), 75 (2) ou 60 (1), e
+mantém os outros rivais que o FM06 já tinha (Palmeiras x Guarani). O nome do
+clássico não tem campo no FM06; fica para o jogo futuro (clima, pressão, notícias).
+Rival que não é clube de 2026 vale pelo nome curto do banco, se o registro dele não
+virou outro clube ("Paraná" virou o Novorizontino e fica de fora).
 
 ### B4. Árbitros 2026
 

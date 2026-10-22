@@ -62,3 +62,15 @@ Há 10.421 registros de 2005 (a temporada em que o jogo começa). No ano de um
 empréstimo só aparece o clube do empréstimo (Saviola 2004: Monaco, sem Barcelona).
 `src/fm06patch/historico_jogadores.py` lê e regrava os três (sem mudança, byte a byte
 igual); tirar um jogador renumera os blocos.
+
+## Rivais do clube (lista de relações)
+
+No fim do registro do clube, antes do par (índice, UID) que o fecha:
+u8 n, n × u32 times do clube (índice na lista de times); u8 m, m × relação de 8 bytes
+(u8 tipo, u8 relação, u16 peso, u32 referência); 18 bytes. Tipo 1 relação 5 = clube
+rival, referência = índice do clube, peso 15–101 (Flamengo: Vasco 90, Fluminense 80,
+Botafogo 70; Gre-Nal 101). Tipo 3 = pessoa (relação 1 querida, 2 não querida).
+Aparecem também tipo 5 relação 23 e tipos 5/6 relação 99 (sentido a confirmar).
+Conferido nos 695 clubes brasileiros (693 com a lista de times logo antes).
+No leitor do CLUB (`0x00A31C70`) as duas quantidades são lidas como u16 (`0x00C59430`),
+mas no arquivo ocupam 1 byte; vale o que está no arquivo. `src/fm06patch/rivais.py`.
