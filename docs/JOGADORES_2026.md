@@ -80,17 +80,49 @@ por falta de jogador de 2005 no clube.
   de um empréstimo só aparece o clube do empréstimo, como no banco da SI. Passagem em
   aberto ("2019–") vai até 2026; a temporada de 2025 no clube de 2026 e a de 2026 ficam
   de fora, porque o jogo começa nelas e põe a linha dele;
-- os outros jogadores de 2026 e a comissão de 2026 perdem a carreira do jogador de 2005
-  que ocupam: aparece só a temporada atual;
+- os outros jogadores de 2026 ganham os clubes por onde passaram, com empréstimos e o
+  valor de cada transferência, de `data\brasil\jogadores\carreiras_2026.csv` (sem jogos
+  e gols: o Sofascore não dá por passagem; ficam "sem dado", como em parte dos jogadores
+  do banco da SI). Na conta de 22/10, 2.796
+  dos 3.974 jogadores montados aqui (no seu jogo, com 6.244, devem ser mais); os 100 da
+  planilha também ganham o valor das transferências dela;
+- quem não está em nenhum dos dois (sem transferências no Sofascore) e a comissão de 2026
+  perdem a carreira do jogador de 2005 que ocupam: aparece só a temporada atual;
 - os jogadores de 2005 que sobram (nome de hoje) ficam com a carreira que tinham.
 
-Clubes: os brasileiros pela `identidade_fm06.csv` (o clube de 2026 no jogo), os outros pelo
-nome no `lang_db` (o mais citado no histórico quando há mais de um: "Barcelona" é o
-espanhol); os casos difíceis estão em `ALIASES` (`src/fm06patch/historico_jogadores.py`:
-"Porto" é o de Portugal, "Racing" o da Argentina). O script mostra os achados por
-aproximação (`[CONFIRA]`) e os clubes que não existem no banco de 2005 (a passagem fica
-de fora: Independiente del Valle, MLS de hoje, Patriotas...). A lista do que entrou, com
-as temporadas gravadas, fica em `workspace\mods\historico_2026.csv`.
+O valor vai no último ano do clube que vendeu (é onde o banco da SI guarda), em libras
+(euro / 1,17). Venda e compra no mesmo clube viram uma passagem só (renovação, compra
+depois do empréstimo); a volta do empréstimo só fecha o empréstimo; a base (sub-20) não
+vira passagem.
+
+`carreiras_2026.csv` sai de `python scripts\montar_carreiras.py [--cache pasta]`, que lê
+as transferências que o `coletar_sofascore.py` guardou (`/player/<id>/transfer-history`,
+o id vem da `fonte_url` da `jogadores_2026.xlsx`). Só precisa rodar de novo depois de uma
+coleta nova; o arquivo já está no repositório. Uma linha por passagem, no formato da aba
+Historico da planilha, com `valor_eur`, `fonte` e `atualizado`.
+
+Clubes: os brasileiros pela `identidade_fm06.csv` (o clube de 2026 no jogo). No CSV, o
+clube de 2026 já vem com o nome de 2026 (pelo id do Sofascore); os que só estão nos
+estaduais, pelo nome sem "FC", "EC"... ("Capital FC" é o Capital). Os outros pelo nome no
+`lang_db`, entre os 21 mil clubes do banco (o mais citado no histórico quando há mais de
+um: "Barcelona" é o espanhol); "Flamengo-PI" acha o "Flamengo (PI)"; os casos difíceis
+estão em `ALIASES` (`src/fm06patch/historico_jogadores.py`: "Porto" é o de Portugal,
+"Racing" o da Argentina, "Olympique Lyonnais" é o "Lyon" do banco). Regras de segurança:
+
+- clube de 2026 só casa pelo nome de 2026: "Paulista" não vira o "SC Corinthians
+  Paulista", e no CSV "Vitória SC" é o de Guimarães;
+- substituto (clube de 2005 que virou outro de 2026) não casa pelo nome antigo: quem
+  jogou no Paraná Clube não aparece com passagem pelo Novorizontino (a passagem fica de
+  fora);
+- aproximação só quando o nome do banco tem a mais forma jurídica, número ou país
+  ("Real Betis Balompié S.A.D.", "Bayer 04 Leverkusen", "Al Hilal (KSA)"), e só entre
+  os clubes que já aparecem no histórico de 2005.
+
+O script mostra quantos clubes casaram por aproximação (`[CONFIRA]`, coluna `casou_por`
+do relatório) e os que não existem no banco de 2005, com o número de passagens, em
+`workspace\mods\historico_2026_clubes_faltando.csv` (Paraná Clube, Santo André e Pelotas
+são substitutos; Osasco Sporting, Boa Esporte e Audax não existiam em 2005). A lista do
+que entrou, com as temporadas gravadas, fica em `workspace\mods\historico_2026.csv`.
 
 ### Reforço: clubes com poucos jogadores de 2005
 

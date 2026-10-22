@@ -32,7 +32,7 @@ nome do clube e do jogador igual ao da `jogadores_2026.xlsx`.
 | `clubes_estrutura_2026.xlsx`, aba Estrutura | CT e base (1-20), orçamento de contratações e folha dos 40 clubes das Séries A e B | depois das fichas | C5, C6 |
 | `lesoes_suspensoes_2026.xlsx` | já preenchida; falta corrigir as 2 suspensões do Remo | depois das fichas | C2, C3 |
 | `data\brasil\comissao\selecoes_2026.csv` | técnicos das 8 seleções sul-americanas em branco | já | — |
-| `historico_carreira.xlsx` | mais jogadores (titulares das Séries A e B fora dos 100) | já | — |
+| `historico_carreira.xlsx` | jogos e gols por passagem de mais jogadores (titulares das Séries A e B fora dos 100; os clubes eles já ganham pelas transferências) | já | — |
 | `jogadores_perfil.xlsx` | perfis dos titulares da Série B | já | — |
 
 Detalhes de cada coluna na aba `LEIA` de cada planilha.
