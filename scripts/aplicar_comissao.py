@@ -9,7 +9,9 @@ fisioterapeuta/médico, olheiro): o .lnc dá o nome (CHANGE_PLAYER_NAME, aplicad
 New Game) e o people_db recebe a nacionalidade e, do técnico, o nascimento (20
 anos antes, como os jogadores). Clube sem gente bastante naquele cargo recebe
 alguém do mesmo cargo de um clube brasileiro fora de 2026 (muda o clube do
-contrato). Quem sobra no clube continua com o nome de 2005.
+contrato). Quem sobra no clube continua com o nome de 2005. O técnico das seleções
+de data/brasil/comissao/selecoes_2026.csv (linha com nome) ocupa o técnico da seleção
+no banco (Parreira -> Ancelotti).
 
 Grava sobre o people_db atual do jogo (depois do reforcar_elencos.py; os dois mexem
 em pessoas diferentes) e lê as pessoas da cópia original
@@ -40,6 +42,7 @@ SERVER_BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
 REPORT = ROOT / "workspace" / "mods" / "comissao_2026_hospedeiros.csv"
 LNC_NAME = "brasil_2026_comissao.lnc"
 REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"   # nomes de hoje para quem sobra
+NATIONAL_CSV = ROOT / "data" / "brasil" / "comissao" / "selecoes_2026.csv"   # técnicos das seleções
 
 
 def game_dir() -> Path:
@@ -101,6 +104,19 @@ def main() -> None:
     filler = nomes_regens.Filler(nomes_regens.load_sheet(REGEN_NAMES)) if REGEN_NAMES.exists() else None
     if filler:                                      # staff de 2005 que sobra: nome brasileiro de hoje
         comissao.fill_names(result, staff, set(club_index.values()), filler.name)
+    if NATIONAL_CSV.exists():                       # técnico da seleção: o de 2005 vira o de 2026
+        managers = comissao.read_national_managers(original, server)
+        taken = {person.uid for person, _ in result.renames} | {person.uid for person, _ in result.fillers}
+        for row in csv.DictReader(NATIONAL_CSV.open(encoding="utf-8-sig")):
+            if not row["nome"].strip():
+                continue
+            hosts = [p for p in managers.get(comissao.nation_code(row["nacao"]), []) if p.uid not in taken]
+            if len(hosts) != 1:
+                print(f"[AVISO] seleção {row['nacao']}: {len(hosts)} técnicos no banco; fica como está")
+                continue
+            result.renames.append((hosts[0], comissao.Wanted(0, f"Seleção {row['nacao']}", "tecnico", row["nome"],
+                                                             row["nacionalidade"], row["nascimento"])))
+            print(f"[OK] seleção {row['nacao']}: {hosts[0].name} -> {row['nome']}")
     for line in result.report:
         print("  ", line)
     managers = sum(1 for _, row in result.renames if row.cargo == "tecnico")

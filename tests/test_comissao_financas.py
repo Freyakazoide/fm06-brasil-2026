@@ -66,3 +66,16 @@ class StaffTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+BASELINE = ROOT / "workspace" / "baseline"
+
+
+@unittest.skipUnless((BASELINE / "people_db.original.dat").exists() and (BASELINE / "server_db.original.dat").exists(),
+                     "precisa do people_db e do server_db originais em workspace/baseline")
+class NationalManagerTest(unittest.TestCase):
+    def test_brazil_and_argentina(self) -> None:
+        managers = comissao.read_national_managers((BASELINE / "people_db.original.dat").read_bytes(),
+                                                   (BASELINE / "server_db.original.dat").read_bytes())
+        self.assertEqual([(p.name, p.uid) for p in managers[0xBD]], [("Carlos Alberto Parreira", 1200738)])
+        self.assertEqual([p.name for p in managers[0xBB]], ["José Pekerman"])

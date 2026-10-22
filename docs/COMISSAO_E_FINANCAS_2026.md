@@ -14,6 +14,14 @@ nacionalidade, nascimento, fonte):
   com a página de equipe técnica do Transfermarkt de cada clube
   (`comissao_2026_cobertura.csv` conta, clube a clube, quantos de cada cargo há).
 
+Seleções: `data/brasil/comissao/selecoes_2026.csv` (nação, nome, nacionalidade,
+nascimento, fonte). A linha com nome troca o técnico da seleção no banco: o contrato
+com a seleção é o mesmo bloco do clube com 01 no lugar do 00 e o código da nação no
+lugar do clube (`comissao.read_national_managers`; Parreira no Brasil, Pekerman na
+Argentina, Fossati no Uruguai...). Em 22/10/2026 só o Brasil está preenchido (Carlo
+Ancelotti, confirmado nas convocações de outubro); as outras seleções sul-americanas
+trocaram de técnico depois da Copa e ficam em branco até alguém conferir.
+
 No jogo: `python scripts\aplicar_comissao.py --apply` (depois do
 `reforcar_elencos.py --apply`, porque grava sobre o people_db dele).
 

@@ -145,6 +145,31 @@ def _names_before(people: bytes, pos: int, tables, back: int = 0x800) -> int | N
     return None
 
 
+def _staff(people: bytes, tables, persons: set[int], players: set[int], pid: int, at: int, club: int
+           ) -> Staff | None:
+    """A pessoa do bloco de contrato em ``at`` (u32 pessoa e u32 UID logo depois do contrato)."""
+    needle = struct.pack("<I", pid)
+    uid, probe = None, people.find(needle, at + 10, at + 0x400)
+    while probe >= 0:
+        value = struct.unpack_from("<I", people, probe + 4)[0]
+        if value in persons and people[probe - 3:probe] == b"\0\0\0":
+            uid = value
+            break
+        probe = people.find(needle, probe + 1, at + 0x400)
+    if uid is None or uid in players:
+        return None
+    names_at = _names_before(people, at, tables)
+    if names_at is None:
+        return None
+    f, s, c, n = struct.unpack_from("<IIII", people, names_at)
+    born_at = names_at + 16 + 2 * n + (2 if n else 0)
+    team_at = born_at + 9 + 17
+    name = tables[2].get(c) if c != NONE else None
+    name = name or f"{tables[0].get(f, '')} {tables[1].get(s, '')}".strip()
+    return Staff(uid, pid, club, people[team_at + 4], name, struct.unpack_from("<HH", people, born_at),
+                 struct.unpack_from("<I", people, born_at + 5)[0], names_at, born_at, team_at, at)
+
+
 def read_staff(people: bytes, server: bytes) -> list[Staff]:
     """Quem tem contrato e não é jogador (um bloco de contrato só)."""
     tables = name_tables(server)
@@ -157,31 +182,28 @@ def read_staff(people: bytes, server: bytes) -> list[Staff]:
             blocks.setdefault(pid, []).append((match.start(), club))
     staff = []
     for pid, found in blocks.items():
-        if len(found) != 1:
-            continue
-        at, club = found[0]
-        needle = struct.pack("<I", pid)
-        uid, probe = None, people.find(needle, at + 10, at + 0x400)
-        while probe >= 0:
-            value = struct.unpack_from("<I", people, probe + 4)[0]
-            if value in persons and people[probe - 3:probe] == b"\0\0\0":
-                uid = value
-                break
-            probe = people.find(needle, probe + 1, at + 0x400)
-        if uid is None or uid in players:
-            continue
-        names_at = _names_before(people, at, tables)
-        if names_at is None:
-            continue
-        f, s, c, n = struct.unpack_from("<IIII", people, names_at)
-        born_at = names_at + 16 + 2 * n + (2 if n else 0)
-        team_at = born_at + 9 + 17
-        name = tables[2].get(c) if c != NONE else None
-        name = name or f"{tables[0].get(f, '')} {tables[1].get(s, '')}".strip()
-        staff.append(Staff(uid, pid, club, people[team_at + 4], name,
-                           struct.unpack_from("<HH", people, born_at), struct.unpack_from("<I", people, born_at + 5)[0],
-                           names_at, born_at, team_at, at))
+        if len(found) == 1:
+            person = _staff(people, tables, persons, players, pid, *found[0])
+            if person:
+                staff.append(person)
     return staff
+
+
+# contrato com a seleção: 64, u32 pessoa, 01 (em vez do 00 do clube), u32 código da nação
+_NATIONAL = re.compile(rb"\x64(....)\x01([\x00-\xff]\x00\x00\x00)", re.S)
+
+
+def read_national_managers(people: bytes, server: bytes) -> dict[int, list[Staff]]:
+    """Código da nação -> técnico(s) da seleção (Parreira no Brasil, Pekerman na Argentina)."""
+    tables = name_tables(server)
+    persons, players = _uids(people, T2), _uids(people, T3)
+    found: dict[int, list[Staff]] = {}
+    for match in _NATIONAL.finditer(people, 0, PEOPLE_END):
+        pid, nation = struct.unpack("<II", match.group(1) + match.group(2))
+        person = _staff(people, tables, persons, players, pid, match.start(), nation)
+        if person and person.job == MANAGER:
+            found.setdefault(nation, []).append(person)
+    return found
 
 
 @dataclass
