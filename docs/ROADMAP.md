@@ -25,7 +25,7 @@ Por onde cada alteração é feita:
 | Personalidade | ✅ | injetor | |
 | Preferred Moves | ✅ | injetor | |
 | Reputação | ✅ | injetor | |
-| Nacionalidade | ⚠️ | injetor | só copiando de um doador; falta escolher a nação pelo UID (Colômbia, Equador…) |
+| Nacionalidade | ✅ | injetor | pelo código da nação (`nationality_code`), conferido no jogo |
 | Segunda nacionalidade | ❌ | ? | campo não localizado |
 | Jogos e gols pela seleção | 🟡 | injetor | offsets conhecidos, falta expor |
 | Contrato: salário, início, fim, situação, prêmios | 🟡 | injetor | layout conhecido, falta implementar |

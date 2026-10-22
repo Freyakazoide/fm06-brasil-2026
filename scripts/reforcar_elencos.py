@@ -41,7 +41,7 @@ HOSTS_BASE = ROOT / "workspace" / "elencos_2005_sem_reforco.csv"   # contagem de
 BACKUP = ROOT / "workspace" / "baseline" / "people_db.original.dat"
 SERVER_BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
 REPORT = ROOT / "workspace" / "mods" / "reforcos.csv"
-DONORS = ROOT / "workspace" / "mods" / "doadores.json"
+DONORS = ROOT / "workspace" / "mods" / "doadores.json"   # versão antiga: doadores de nacionalidade
 PER_FOREIGN_CLUB = 2
 
 
@@ -53,36 +53,6 @@ def _sheet_rows() -> list[dict]:
     rows = openpyxl.load_workbook(PLAYERS, read_only=True)["Jogadores"].iter_rows(values_only=True)
     header = next(rows)
     return [dict(zip(header, r)) for r in rows]
-
-
-def nationality_donors(people: bytes, found: dict, brazil: dict, ours: set, nations: set,
-                       home: dict[str, int]) -> tuple[dict, dict]:
-    """Um doador de nacionalidade por nação, carregado no jogo: um jogador dessa nação
-    que já joga num clube de 2026, ou um que é levado para um (home: nação -> índice do
-    clube de 2026 que tem um jogador dela). Clube brasileiro fora de 2026 não serve: fora
-    dos estaduais e das séries de 2026, o jogo não carrega os jogadores dele (nem os da
-    Ásia, África etc.), e o injetor não acha o doador na memória.
-    Só jogador com um bloco de contrato (found): o emprestado (dois blocos) ficaria
-    emprestado pelo clube a ele mesmo. A nacionalidade vai pelo código da nação
-    (nationality_code do injetor); o doador fica de reserva.
-    Devolve ({nação: UID}, {UID: índice do clube novo})."""
-    by_code = people_contracts.nationalities(people)
-    donors, moves = {}, {}
-    for name in sorted(nations):
-        code = people_contracts.NATION_CODES.get(name)
-        candidates = [(uid, year) for uid, year in by_code.get(code, []) if uid in found] if code else []
-        if not candidates:
-            continue
-        in_ours = [uid for uid, _ in candidates if brazil.get(found[uid].club) in ours]
-        if in_ours:
-            donors[name] = in_ours[0]
-            continue
-        if name not in home:
-            continue
-        uid = sorted(candidates, key=lambda c: abs(c[1] - 1982))[0][0]
-        donors[name] = uid
-        moves[uid] = home[name]
-    return donors, moves
 
 
 def comissao_tables(server: bytes):
@@ -146,16 +116,7 @@ def main() -> None:
             by_club[c.club].append(c)
     for club, people_of_club in sorted(by_club.items(), key=lambda kv: -len(kv[1])):
         donors += people_of_club[:PER_FOREIGN_CLUB]
-    uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in identities}
-    home = {}
-    for r in sheet:
-        if r["nacionalidade"] != "Brasil" and uid_of.get(r["clube"]) in indexes:
-            home.setdefault(r["nacionalidade"], indexes[uid_of[r["clube"]]])
-    nation_donors, pins = nationality_donors(people, found, brazil, ours,
-                                             {r["nacionalidade"] for r in sheet if r["nacionalidade"] != "Brasil"},
-                                             home)
-    donors = [d for d in donors if d.uid not in host_uids and d.uid not in pins
-              and d.uid not in nation_donors.values()]
+    donors = [d for d in donors if d.uid not in host_uids]
 
     moves, report, pool = {}, [], iter(donors)
     for club, uid, missing in needs:
@@ -170,8 +131,6 @@ def main() -> None:
     for club, uid, missing in needs:
         print(f"{club:28} {hosts.get(uid, 0):3} hospedeiros + {taken[club]:3} (faltavam {missing})")
     print(f"[OK] {len(moves)} jogadores movidos para {len(needs)} clubes ({len(donors)} doadores disponíveis)")
-    print(f"[OK] doadores de nacionalidade: {len(nation_donors)} nações ({len(pins)} levados para um clube de 2026)")
-    moves.update(pins)
 
     # excedentes: jogadores de 2005 (do banco) além do elenco de 2026 ficariam no clube com o
     # nome de 2005; vão para clubes brasileiros fora de 2026
@@ -179,8 +138,7 @@ def main() -> None:
     removed = 0
     for row in identities:
         uid, club = int(row["uid_jogo"]), row["clube_2026"]
-        own = [c for c in found.values() if brazil.get(c.club) == uid and c.uid not in moves
-               and c.uid not in nation_donors.values()]
+        own = [c for c in found.values() if brazil.get(c.club) == uid and c.uid not in moves]
         extra = len(own) - sizes.get(club, 0)
         if sizes.get(club, 0) and extra > 0:
             for c in sorted(own, key=lambda c: c.until)[:extra]:   # quem tem contrato mais curto sai
@@ -209,8 +167,8 @@ def main() -> None:
         writer = csv.DictWriter(handle, fieldnames=list(report[0]) if report else ["jogador_uid"])
         writer.writeheader()
         writer.writerows(report)
-    DONORS.write_text(json.dumps(nation_donors, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"[OK] gravado {people_path}; lista em {REPORT}; doadores em {DONORS}")
+    DONORS.unlink(missing_ok=True)     # a nacionalidade vai pelo código da nação; não há mais doadores
+    print(f"[OK] gravado {people_path}; lista em {REPORT}")
     print("Agora: New Game, --squads-all de novo, montar_elencos.py, copiar o .lnc, outro New Game, injetor.")
 
 

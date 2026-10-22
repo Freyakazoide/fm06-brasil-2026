@@ -23,24 +23,6 @@ from pathlib import Path
 from .people_contracts import NATION_CODES
 
 
-# Jogadores de 2005 usados para copiar a nacionalidade (nationality_like).
-NATIONALITY_DONORS = {
-    "Brasil": 3300977,     # Rogério Ceni
-    "Argentina": 3100367,  # Javier Saviola
-    "Uruguai": 5512281,    # Diego Lugano
-    "Chile": 2001859,      # Marcelo Salas
-    "Espanha": 6700151,    # Iker Casillas
-    "França": 8076,        # Zinedine Zidane
-    # Achados no people_db (nome completo, ano, código da nação; UID no fim do registro):
-    "Colômbia": 309478, "Paraguai": 120938, "Portugal": 735216, "Equador": 856896,
-    "Venezuela": 121009, "Peru": 8826193, "Bolívia": 5240074, "Nigéria": 919581,
-    "Camarões": 105788, "Gana": 876900, "Angola": 913822, "Marrocos": 916312,
-    "Panamá": 5260831, "Croácia": 652368, "Holanda": 1590, "Inglaterra": 2003443,
-    "Dinamarca": 928418, "Suécia": 15951, "Bulgária": 5313413, "Estados Unidos": 976234,
-    "México": 120929, "Senegal": 403128, "Guiné": 8168095, "RD Congo": 144178,
-    "Costa do Marfim": 533344, "Moçambique": 4100618,
-}
-
 # Perfis para um jogador de CA 160, na escala exibida (1..20).
 _TECH = ("Cabeceamento", "Cantos", "Cruzamentos", "Desarme", "Finalização", "Finta",
          "Lançam. Longos", "Livres", "Marcação", "Marcação Penalties", "Passe",
@@ -233,11 +215,9 @@ def build(targets: list[Target], hosts: list[dict], year_shift: int = -20):
         code = NATION_CODES.get(target.nationality)
         if code is not None:
             entry["nationality_code"] = code             # o injetor acha o objeto Nation pelo código
-        donor = NATIONALITY_DONORS.get(target.nationality)
-        if donor:
-            entry["nationality_like"] = donor            # se o código não conferir na memória
-        elif code is None:
-            warnings.append(f"{target.display_name}: sem doador para {target.nationality}; nacionalidade não alterada")
+        else:
+            warnings.append(f"{target.display_name}: sem código de nação para {target.nationality}; "
+                            "nacionalidade não alterada")
         players.append(entry)
         mapping.append({"numero": target.number, "jogador_2026": target.display_name,
                         "uid_hospedeiro": host["uid"], "ca_hospedeiro": host["ca"],

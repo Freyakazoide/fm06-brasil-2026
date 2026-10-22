@@ -44,7 +44,6 @@ class SquadBuilderTest(unittest.TestCase):
     def test_every_generated_player_is_writable(self) -> None:
         _, spec, _, _ = build(self.targets, hosts(35, 4))
         for entry in spec["players"]:
-            entry = {k: v for k, v in entry.items() if k != "nationality_like"}
             player = saviola()
             player.plan(entry, year_shift=spec["year_shift"])
             for name, value in entry["attributes"].items():

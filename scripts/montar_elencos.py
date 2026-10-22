@@ -29,14 +29,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from fm06patch import nomes_regens  # noqa: E402
-from fm06patch.squad_builder import NATIONALITY_DONORS, ROLE_POSITIONS, Target, build  # noqa: E402
+from fm06patch.squad_builder import ROLE_POSITIONS, Target, build  # noqa: E402
 
 PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 HOSTS = ROOT / "workspace" / "elencos_2005.csv"
 OUT = ROOT / "workspace" / "mods"
 NAME = "brasil_2026_jogadores"
-DONORS = OUT / "doadores.json"          # do reforcar_elencos.py: doadores carregados no jogo
 PROFILES = ROOT / "data" / "modelos" / "jogadores_perfil.xlsx"
 REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"   # nomes de hoje para quem sobra
 # coluna da jogadores_perfil.xlsx -> nome no injetor (live_player.PERSONALITY e atributos ocultos)
@@ -130,7 +129,7 @@ def other_name_files() -> list[Path]:
     found = []
     for folder in (game / "data" / "db", game / "data" / "db" / "lnc", game / "data" / "db" / "lnc" / "all"):
         for path in folder.glob("*.lnc") if folder.exists() else []:
-            if path.name in (f"{NAME}.lnc", "brasil_2026_comissao.lnc"):    # a comissão usa outros UIDs
+            if path.name in (f"{NAME}.lnc", "brasil_2026_comissao.lnc", "brasil_2026_arbitros.lnc"):  # outros UIDs
                 continue
             try:
                 text = path.read_bytes().decode("utf-16", errors="ignore")
@@ -146,12 +145,8 @@ def main() -> None:
     parser.add_argument("--hospedeiros", type=Path, default=HOSTS)
     parser.add_argument("--year-shift", type=int, default=-20)   # motor 2006 = 2026 (ano exibido + 20)
     args = parser.parse_args()
-    if DONORS.exists():
-        NATIONALITY_DONORS.update(json.loads(DONORS.read_text(encoding="utf-8")))
     clubs = _targets(PLAYERS)
     hosts = _hosts(args.hospedeiros)
-    donors = set(NATIONALITY_DONORS.values())       # o doador fica como está: o injetor copia a nação dele
-    hosts = {club: [h for h in pool if h["uid"] not in donors] for club, pool in hosts.items()}
     uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))}
 
     filler = nomes_regens.Filler(nomes_regens.load_sheet(REGEN_NAMES)) if REGEN_NAMES.exists() else None
@@ -216,13 +211,13 @@ def main() -> None:
                 writer.writerows(rows)
     nations = defaultdict(int)
     for w in warnings:
-        if "sem doador" in w:
+        if "sem código de nação" in w:
             nations[w.rsplit("para ", 1)[-1].split(";")[0]] += 1
     for w in warnings:
-        if "sem doador" not in w:
+        if "sem código de nação" not in w:
             print("[AVISO]", w)
     if nations:
-        print("[AVISO] nacionalidade sem doador (fica a do hospedeiro):", dict(nations))
+        print("[AVISO] nacionalidade sem código de nação (fica a do hospedeiro):", dict(nations))
     if profiles:
         print(f"[OK] perfil (personalidade, ocultos, jogadas preferidas) em {used_profiles} de {len(profiles)} "
               f"jogadores da {PROFILES.name}")

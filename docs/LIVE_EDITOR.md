@@ -109,7 +109,7 @@ qualquer New Game.
 | nome_comum | Arrascaeta | nome mostrado; vazio usa nome + sobrenome |
 | primeiro_nome / sobrenome | Giorgian / de Arrascaeta | |
 | nascimento | 1994-06-01 | data real; o `year_shift` (padrão −21) ajusta a idade |
-| nacionalidade | Uruguai | precisa de doador em `NATIONALITY_DONORS` |
+| nacionalidade | Uruguai | precisa do código em `people_contracts.NATION_CODES` |
 | posicoes | AM LW | GK CB RB LB DM CM AM RW LW ST; a primeira é a principal |
 | pe | D / E / A | direito, esquerdo, ambos |
 | altura, peso | 174, 67 | cm, kg |
@@ -119,6 +119,6 @@ qualquer New Game.
 Os atributos que não estão em "destaques" são estimados por um perfil de
 função escalado pelo CA (`src/fm06patch/squad_builder.py`).
 
-Ainda falta: doadores de nacionalidade para Colômbia e Equador, número da
+Ainda falta: número da
 camisa e contrato (salário e duração). Os jogadores de 2005 que sobram
 continuam no elenco.

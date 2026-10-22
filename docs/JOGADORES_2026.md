@@ -119,19 +119,15 @@ Outro `.lnc` com `CHANGE_PLAYER_NAME` na pasta do jogo (como o teste antigo
 `flamengo_2026.lnc`) dá nome aos mesmos jogadores numa ordem diferente e
 embaralha os nomes; o `montar_elencos.py` avisa.
 
-Nacionalidade: `nationality_like` copia a de um jogador de 2005
-(`squad_builder.NATIONALITY_DONORS`). Os doadores novos vieram do `people_db`:
-depois do nome completo vêm o ano de nascimento e o código da nação (0xBB
-Argentina, 0xBC Bolívia, 0xBD Brasil, 0xBE Chile, 0xBF Colômbia, 0xC0 Equador,
-0xC1 Paraguai, 0xC2 Peru, 0xC3 Uruguai, 0xC4 Venezuela, 0xA2 Portugal, 0xAA
-Espanha…); o registro termina com (índice, UID). O doador tem de estar num clube
-de 2026: clube brasileiro fora das séries e dos estaduais de 2026 não carrega os
-jogadores no New Game, e o injetor avisa "doador … não está carregado". O
-`reforcar_elencos.py` leva cada doador para o primeiro clube de 2026 que tem um
-jogador daquela nação; ele fica no elenco com o nome de 2005 (o
-`montar_elencos.py` não o usa como hospedeiro). Só serve doador com um bloco de
-contrato: o mexicano emprestado (dois blocos) ficaria emprestado pelo Flamengo ao próprio
-Flamengo.
+Nacionalidade: vai pelo código da nação (abaixo). Até 22/10/2026 havia também os
+"doadores": um jogador de 2005 de cada nação, levado pelo `reforcar_elencos.py` para um
+clube de 2026 e mantido no elenco com o nome de 2005, para o injetor copiar a
+nacionalidade dele. Com o código conferido no jogo (400 de 400 no injetor; Jhon Arias
+colombiano), os doadores saíram: ninguém mais é levado para isso, e quem era doador num
+clube de 2026 vira hospedeiro comum. O código da nação vem do `people_db`: depois do nome
+completo vêm o ano de nascimento e o código (0xBB Argentina, 0xBC Bolívia, 0xBD Brasil,
+0xBE Chile, 0xBF Colômbia, 0xC0 Equador, 0xC1 Paraguai, 0xC2 Peru, 0xC3 Uruguai, 0xC4
+Venezuela, 0xA2 Portugal, 0xAA Espanha…).
 
 Contrato sem data de fim: 2.353 jogadores brasileiros do banco (quase todos das séries de
 baixo) têm o fim em 1900 e salário 0; no jogo aparecem com contrato normal. O
@@ -143,6 +139,6 @@ Nacionalidade pelo código: o `montar_elencos.py` grava `nationality_code` (o c�
 people_db, `people_contracts.NATION_CODES`) e o injetor acha o objeto Nation na memória
 pela assinatura (`live_player.NATION_SIGNATURE`, número da nação em +24). Antes de usar,
 confere com os jogadores que vai editar: o ponteiro de nacionalidade deles tem de cair
-num objeto Nation (`nation_pointers`); se não conferir, usa os doadores. Os códigos
+num objeto Nation (`nation_pointers`); se não conferir, a nacionalidade não muda. Os códigos
 novos (Itália 0x96, Coreia do Sul 0x50, Arábia Saudita 0x4E...) foram conferidos pelos
 sobrenomes de cada nação na tabela de nomes do server_db.
