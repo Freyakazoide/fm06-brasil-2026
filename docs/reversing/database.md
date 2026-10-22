@@ -44,3 +44,21 @@ Ferroviária). Até a correção, nove clubes de 2026 (Ferroviária, Independên
 Operário VG, PSTC/São Joseense, São Raimundo-RR, Parintins, Jequié, Capixaba,
 Naviraiense) apontavam para o clube errado: nome, escudo, elenco e comissão iam
 para o Paissandu e afins, que nem carregam no jogo.
+
+## Histórico de carreira (pl_hist_*.dat)
+
+Três arquivos em `data\db`, lidos no New Game (depois do `people_db.dat`):
+
+| Arquivo | Conteúdo |
+|---|---|
+| `pl_hist_index.dat` | `02 01 "tad." 27 01 00`, u32 n (181.294), n × (u32 UID da pessoa, u32 bloco), em ordem de UID |
+| `pl_hist_id.dat` | `02 01 "tad." 01 00 00`, por bloco: u32 primeiro, u32 último registro (posições no `pl_hist_dt` sem o cabeçalho) |
+| `pl_hist_dt.dat` | `02 01 "tad." 01 00 00`, registros de 17 bytes: u16 ano do motor, u8 empréstimo, u8 jogos, u8 gols (255 = sem dado), u32 valor da transferência (FFFFFFFF = sem), u32 UID do clube no jogo (o verdadeiro: São Paulo 337), u32 posição do próximo (FFFFFFFF = último) |
+
+Na 6.0.2 os blocos vêm em sequência no `pl_hist_dt` e os anos de um bloco crescem.
+Um jogador pode ter vários blocos (UID 29: 17 blocos de uma temporada) ou um só com a
+carreira inteira (Rogério Ceni: 15 registros de 1990 a 2004); o jogo junta todos.
+Há 10.421 registros de 2005 (a temporada em que o jogo começa). No ano de um
+empréstimo só aparece o clube do empréstimo (Saviola 2004: Monaco, sem Barcelona).
+`src/fm06patch/historico_jogadores.py` lê e regrava os três (sem mudança, byte a byte
+igual); tirar um jogador renumera os blocos.

@@ -55,7 +55,9 @@ jogadores de 2005 do clube.
 1. New Game com o `fm_brasil.exe`. Na tela principal:
    `python scripts\live_player_editor.py --squads-all data\brasil\clubes\identidade_fm06.csv`
    (grava `workspace\elencos_2005.csv`).
-2. `python scripts\montar_elencos.py` (grava em `workspace\mods\`).
+2. `python scripts\montar_elencos.py` (grava em `workspace\mods\`). Depois dele (e do
+   `aplicar_comissao.py`), com o jogo fechado: `python scripts\aplicar_historico.py --apply`
+   (histórico de carreira, ver abaixo).
 3. Copie `workspace\mods\brasil_2026_jogadores.lnc` para
    `data\db\lnc\all` do jogo e comece **outro** New Game (os nomes entram).
 4. `python scripts\live_player_editor.py workspace\mods\brasil_2026_jogadores.json`
@@ -63,6 +65,32 @@ jogadores de 2005 do clube.
 
 `workspace\mods\brasil_2026_jogadores_sem_vaga.csv` lista quem ficou de fora
 por falta de jogador de 2005 no clube.
+
+### Histórico de carreira (aba Histórico)
+
+`scripts\aplicar_historico.py --apply` grava `data\db\pl_hist_index.dat`,
+`pl_hist_id.dat` e `pl_hist_dt.dat` (o jogo lê no New Game), sempre a partir do original
+(cópia em `workspace\baseline\pl_hist_*.original.dat`; `--restore` volta):
+
+- os jogadores de `data\modelos\historico_carreira.xlsx` (hoje os 100 de maior CA) ganham
+  a carreira de verdade. A planilha traz o total de cada passagem; jogos e gols são
+  repartidos por igual entre as temporadas dela, então o total do clube fica certo e o
+  de cada temporada é aproximado. O ano em que começa a passagem seguinte é dela
+  (Paquetá: Flamengo 2016–2018, Milan 2019, Lyon 2020–2021, West Ham 2022–2025). No ano
+  de um empréstimo só aparece o clube do empréstimo, como no banco da SI. Passagem em
+  aberto ("2019–") vai até 2026; a temporada de 2025 no clube de 2026 e a de 2026 ficam
+  de fora, porque o jogo começa nelas e põe a linha dele;
+- os outros jogadores de 2026 e a comissão de 2026 perdem a carreira do jogador de 2005
+  que ocupam: aparece só a temporada atual;
+- os jogadores de 2005 que sobram (nome de hoje) ficam com a carreira que tinham.
+
+Clubes: os brasileiros pela `identidade_fm06.csv` (o clube de 2026 no jogo), os outros pelo
+nome no `lang_db` (o mais citado no histórico quando há mais de um: "Barcelona" é o
+espanhol); os casos difíceis estão em `ALIASES` (`src/fm06patch/historico_jogadores.py`:
+"Porto" é o de Portugal, "Racing" o da Argentina). O script mostra os achados por
+aproximação (`[CONFIRA]`) e os clubes que não existem no banco de 2005 (a passagem fica
+de fora: Independiente del Valle, MLS de hoje, Patriotas...). A lista do que entrou, com
+as temporadas gravadas, fica em `workspace\mods\historico_2026.csv`.
 
 ### Reforço: clubes com poucos jogadores de 2005
 

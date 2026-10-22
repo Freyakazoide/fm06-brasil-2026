@@ -79,7 +79,8 @@ identificadas como editoriais e campos sem fonte confiável permanecem vazios.
 | A4 | ⏳ depois: o `MATCH_BAN` cita o jogador pelo nome de 2005 e o comando de lesão não foi isolado | — |
 | A5 | ✅ 511 pessoas (a versão nova + os 127 da Wikipédia que tinham saído); auxiliares de clubes estrangeiros quando os brasileiros acabam | `aplicar_comissao.py` |
 | B1 | ✅ a testar: 614 nomes novos no fim das tabelas de nomes e 971 que já existiam com peso maior; os de hoje ficam com ~70% do peso de cada nação | `nomes_regens.py`, `aplicar_brasil_2026.py` (`--sem-nomes-regens` desliga) |
-| B2–B5, C0 | ⏳ dados guardados; precisam de engenharia (campos de clube, árbitros) | — |
+| B5 | ✅ a testar: carreira real dos 100 da planilha; os outros jogadores e a comissão de 2026 sem a carreira do jogador de 2005 | `historico_jogadores.py`, `aplicar_historico.py` (depois do `montar_elencos.py`) |
+| B2–B4, C0 | ⏳ dados guardados; precisam de engenharia (campos de clube, árbitros) | — |
 
 Das 35 frases da aba Frases, só "Utilizado num sistema de rotatividade do plantel"
 existe igual no jogo; as outras não aparecem em nenhuma tela (o texto do jogo é outro)
@@ -248,8 +249,10 @@ renomear do mesmo jeito (a confirmar).
 
 Para os ~100 principais jogadores: uma linha por **temporada e clube**, com
 jogador, temporada, clube, jogos, gols e se foi empréstimo. Fonte: Transfermarkt
-ou Sofascore. O repositório já tem o leitor desse arquivo (`player_history.py`);
-falta o escritor, que é comigo.
+ou Sofascore. Entrou com `data/modelos/historico_carreira.xlsx` (uma linha por
+passagem) pelo `scripts/aplicar_historico.py`; regras em `docs/JOGADORES_2026.md`.
+Para mais jogadores, basta acrescentar linhas na aba Historico (nome e nascimento
+iguais aos da `jogadores_2026.xlsx`).
 
 ---
 

@@ -2,7 +2,7 @@
 
     python scripts\\aplicar_brasil_2026.py            (simulação: mostra o que faria)
     python scripts\\aplicar_brasil_2026.py --apply    (grava tudo)
-    python scripts\\aplicar_brasil_2026.py --restore  (volta o banco original e tira o .lnc)
+    python scripts\\aplicar_brasil_2026.py --restore  (volta o banco original, o histórico de carreira e tira o .lnc)
 
 Com --apply:
 1. cria fm_brasil.exe na pasta do jogo (cópia do fm.exe com os patches das séries);
@@ -49,6 +49,7 @@ from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico,  # noqa: E402
                        identidade, nomes_fases, nomes_regens, reputacao, traducao)
+import aplicar_historico  # noqa: E402
 import traduzir_telas  # noqa: E402
 
 EXE_PATCHES = [
@@ -138,6 +139,7 @@ def main() -> None:
             shutil.copy2(LANG_BACKUP, lang)
             print(f"[OK] lang_db original restaurado em {lang}")
         traduzir_telas.restore(game)
+        aplicar_historico.restore(game)
         people_backup = BACKUP.with_name("people_db.original.dat")      # do reforcar_elencos.py
         if people_backup.exists():
             shutil.copy2(people_backup, game / "data" / "db" / "people_db.dat")

@@ -32,7 +32,7 @@ Por onde cada alteração é feita:
 | Número da camisa | 🟡 | injetor | offset conhecido, codificação pendente |
 | Cláusula de rescisão | ❌ | injetor | não localizada |
 | Retirar do elenco os jogadores de 2005 que sobraram | 🟡 | injetor | encerrar o contrato no 1º dia |
-| Histórico de carreira | 🟡 | banco | `pl_hist_*.dat` já tem leitor no repo; falta o escritor |
+| Histórico de carreira | ✅ | banco | `aplicar_historico.py`: carreira real da `historico_carreira.xlsx`; os outros de 2026 sem a carreira do jogador de 2005 |
 | Lesões e suspensões iniciais | 🟡 | texto | comandos `INJURY` / `BAN` existem; sintaxe a confirmar |
 | Criar jogador novo (sem hospedeiro) | ❌ | banco | exige formato completo do `people_db` |
 
