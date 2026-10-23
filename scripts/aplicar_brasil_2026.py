@@ -7,7 +7,8 @@
 Com --apply:
 1. cria fm_brasil.exe na pasta do jogo (cópia do fm.exe com os patches das séries);
 2. grava o server_db.dat do jogo com os clubes de cada série, partindo sempre
-   do original (cópia em workspace\\baseline\\server_db.original.dat);
+   do original (cópia em workspace\\baseline\\server_db.original.dat), com saldo,
+   público, reputação e o CT e a base da aba Estrutura da clubes_estrutura_2026.xlsx;
 3. grava data\\db\\lnc\\all\\brasil_2026.lnc com os nomes Série A, B, C e D;
 4. atualiza data\\brasil\\mapa_2026.csv (quem entrou no lugar de quem);
 5. grava os participantes dos estaduais de 2026 (data\\brasil\\estaduais) e o
@@ -51,7 +52,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico,  # noqa: E402
+from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico, instalacoes,  # noqa: E402
                        identidade, nomes_fases, nomes_regens, regens_futuros, reputacao, rivais, traducao)
 import aplicar_historico  # noqa: E402
 import traduzir_telas  # noqa: E402
@@ -77,7 +78,7 @@ LANG_SHA256 = "313B5D388208389E1C97FCE8270B880BB9B95BA444FCC392AFF90474DD24EEF4"
 LANG_BACKUP = ROOT / "workspace" / "baseline" / "lang_db.original.dat"
 TRANSLATION = ROOT / "data" / "modelos" / "traducao_ptbr.xlsx"
 REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"
-STRUCTURE = ROOT / "data" / "modelos" / "clubes_estrutura_2026.xlsx"   # aba Rivais
+STRUCTURE = ROOT / "data" / "modelos" / "clubes_estrutura_2026.xlsx"   # abas Rivais e Estrutura
 FUTURE_REGENS = ROOT / "data" / "modelos" / "regens_futuros_2026.xlsx"   # joias da base
 TRANSLATION_REPORT = ROOT / "data" / "brasil" / "traducao_lang_db.csv"
 DATA_DIR = ROOT / "data" / "brasil"
@@ -252,6 +253,21 @@ def main() -> None:
         db = financas.apply(data, money, into=db)
         print(f"[OK] saldo de 2026 em {len(money)} clubes, público médio em "
               f"{sum(1 for _, crowd in money.values() if crowd)}" + (f" ({len(skipped)} sem registro legível)" if skipped else ""))
+    if STRUCTURE.exists():                                       # CT e base (aba Estrutura)
+        by_name = {i.clube: i.repo_uid for i in identities}
+        wanted = {by_name[club]: values for club, values in instalacoes.load_sheet(STRUCTURE).items()
+                  if club in by_name and any(v is not None for v in values)}
+        capped = []
+        for repo_uid, (_, youth, recruitment) in wanted.items():
+            if repo_uid in teams_by_repo:           # o jogo limita a base a reputação / 250
+                limit = struct.unpack_from("<H", db, teams_by_repo[repo_uid] + 3)[0] // 250
+                if max(youth or 0, recruitment or 0) > limit:
+                    capped.append(f"{next(c for c, u in by_name.items() if u == repo_uid)} ({limit})")
+        db = instalacoes.apply(data, wanted, into=db)
+        print(f"[OK] CT, base e captação de 2026 em {len(wanted)} clubes")
+        if capped:
+            print("[CONFIRA] base acima de reputação/250, o jogo deve baixar para o número entre parênteses: "
+                  + ", ".join(capped))
     db, cleared = historico.clear_brazil_continental(db)
     if cleared:
         print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))

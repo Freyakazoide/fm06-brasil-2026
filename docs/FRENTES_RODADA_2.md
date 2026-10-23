@@ -29,16 +29,16 @@ nome do clube e do jogador igual ao da `jogadores_2026.xlsx`.
 | `patrocinadores_2026.xlsx` (nova) | patrocínio de cada clube (master, material esportivo...), com valor se divulgado | depois da ficha | C1 |
 | `premiacao_2026.xlsx` (nova) | premiação de 2026 por posição ou fase (Séries, Copa do Brasil, CONMEBOL) e cotas de TV | depois da ficha | C9 |
 | `premios_historico.xlsx` (nova) | vencedores de 2006 a 2025 (Bola de Ouro, Bola de Prata, Craque do Brasileirão, artilheiro) | depois da ficha | C4 |
-| `clubes_estrutura_2026.xlsx`, aba Estrutura | CT e base (1-20), orçamento de contratações e folha dos 40 clubes das Séries A e B | depois das fichas | C5, C6 |
-| `lesoes_suspensoes_2026.xlsx` | já preenchida; falta corrigir as 2 suspensões do Remo | depois das fichas | C2, C3 |
-| `data\brasil\comissao\selecoes_2026.csv` | técnicos das 8 seleções sul-americanas em branco | já | — |
+| `clubes_estrutura_2026.xlsx`, aba Estrutura | CT e base (1-20), orçamento de contratações e folha dos 40 clubes das Séries A e B | ✅ CT e base entraram (23/10); orçamentos depois da ficha | C5b |
+| `lesoes_suspensoes_2026.xlsx` | ✅ corrigida (suspensões do Remo retiradas) | lesões depois da ficha | C3b |
+| `data\brasil\comissao\selecoes_2026.csv` | ✅ as 9 seleções preenchidas (23/10) | já | — |
 | `historico_carreira.xlsx` | jogos e gols por passagem de mais jogadores (titulares das Séries A e B fora dos 100; os clubes eles já ganham pelas transferências) | já | — |
 | `jogadores_perfil.xlsx` | perfis dos titulares da Série B | já | — |
 
 Detalhes de cada coluna na aba `LEIA` de cada planilha.
 
-Correção que o validador achou: **Nico Ferreira e Diego Hernández** (suspensões do Remo)
-não estão no elenco do Remo na `jogadores_2026.xlsx`. Confira o nome lá (ou se saíram).
+Rodada 2 entregue em 22/10 (planilhas e as 10 fichas); o que cada ficha destravou e as
+fichas da rodada 3 estão em [ANALISE_DE_CODIGO.md](ANALISE_DE_CODIGO.md).
 
 **Joias da base:** comece com 3 a 5 garotos para testar. Só quem **não** está na
 `jogadores_2026.xlsx`, nascidos de 2008 a 2012 (convocações sub-17 e sub-15, Copinha,

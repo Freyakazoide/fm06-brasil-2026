@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import comissao, financas  # noqa: E402
+from fm06patch import comissao, financas, instalacoes  # noqa: E402
 
 
 def text(value: str) -> bytes:
@@ -35,6 +35,34 @@ class FinanceTest(unittest.TestCase):
         self.assertEqual(info.balance, 1_000_000)               # R$ 5,08 = £1
         self.assertEqual(info.attendance, (30000, 15000, 95000))
         self.assertEqual(len(out), len(data))
+
+
+class FacilitiesTest(unittest.TestCase):
+    def test_reads_and_writes_training_youth_and_recruitment(self):
+        data = b"\xaa" * 64 + club_record(322, 800000) + b"\xbb" * 64
+        info = instalacoes.read(data, financas.record_start(data, 322))
+        self.assertEqual((info.training, info.youth, info.recruitment), (15, 16, 16))   # +0xEB, +0xE1, +0xE0
+        out = instalacoes.apply(data, {322: (19, 20, None)})
+        info = instalacoes.read(out, financas.record_start(out, 322))
+        self.assertEqual((info.training, info.youth, info.recruitment), (19, 20, 16))
+        self.assertEqual(financas.read(out, financas.record_start(out, 322)).balance, 800000)
+        self.assertEqual(len(out), len(data))
+
+    def test_rating(self):
+        self.assertEqual((instalacoes.rating(18), instalacoes.rating("17,6"), instalacoes.rating(None)), (18, 18, None))
+        with self.assertRaises(ValueError):
+            instalacoes.rating(21)
+
+
+class NamesakeTest(unittest.TestCase):
+    def test_same_name_and_real_birth_date(self):
+        persons = [comissao.Person(20178, "Carlo Ancelotti", None, (160, 1959), 0x96),          # 10/6/1959
+                   comissao.Person(305715, "Adenor Leonardo Bachi", "Tite", (144, 1961), 0xBD),  # 25/5/1961
+                   comissao.Person(7, "Carlo Ancelotti", None, (160, 1960), 0x96),               # outro ano
+                   comissao.Person(8, "Tite", None, (144, 1961), 0xBD)]                          # já ocupado
+        wanted = [({"Carlo Ancelotti"}, "1959-06-10"), ({"Tite", "Adenor Leonardo Bachi"}, "1961-05-25")]
+        found = comissao.namesakes(persons, wanted, taken={8})
+        self.assertEqual(sorted(p.uid for p in found), [20178, 305715])
 
 
 class RecordBoundaryTest(unittest.TestCase):

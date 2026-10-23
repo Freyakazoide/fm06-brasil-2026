@@ -1,4 +1,4 @@
-# Roadmap (22/10/2026)
+# Roadmap (23/10/2026)
 
 Onde o mod está e o que falta, na ordem em que eu atacaria. O que você pode fazer por
 fora está em [FRENTES_RODADA_2.md](FRENTES_RODADA_2.md) (planilhas e fichas de código); o que falta conferir no jogo, em
@@ -32,7 +32,8 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Saldo, público e reputação de 2026 | ✅ | `financas.py`, `reputacao.py` |
 | Técnico e comissão de 2026 (499 pessoas) | ✅ | `aplicar_comissao.py` |
 | Rivais e clássicos | 🧪 | `rivais.py` (a tela de informações não mostra; falta a notícia de clássico) |
-| Instalações, base e orçamentos de 2026 | ⏳ | fichas C5 e C6 + aba Estrutura |
+| CT, base e captação de 2026 (40 clubes) | 🧪 | `instalacoes.py` + aba Estrutura |
+| Orçamentos de contratações e salários de 2026 | ⏳ | ficha C5b + aba Estrutura |
 | Clubes de 2026 que não existem no FM06 (38 nas séries, 88 nos estaduais) | ⚠️ | ocupam um clube de 2005 ("substitutos"); criar clube novo exige o formato completo do registro |
 
 ### Pessoas
@@ -49,10 +50,12 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Clubes e valores da carreira dos outros jogadores (~2.800, transferências do Sofascore) | 🧪 | `carreiras_2026.csv` + `aplicar_historico.py` |
 | Jogadores de 2005 que sobravam | ✅ | nome de hoje ou saída para clubes fora de 2026 |
 | Técnico da Seleção (Ancelotti) | ✅ | `selecoes_2026.csv` |
+| Técnicos das outras 8 seleções da CONMEBOL | 🧪 | `selecoes_2026.csv` |
+| Pessoa de 2005 que é alguém de 2026 (Ancelotti do Milan, Forlán jogador) | 🧪 | ganha nome de hoje (`aplicar_comissao.py`) |
 | Árbitros de 2026 (18 do quadro FIFA) | 🧪 | `aplicar_arbitros.py` |
 | Nomes dos regens | 🧪 | `nomes_regens.xlsx` |
-| Joias da base (regens de verdade) | 🧪 | `regens_futuros_2026.xlsx` (`FUTURE_REGEN`), falta preencher |
-| Lesões e suspensões no começo | ⏳ | fichas C2 e C3 (são registros do banco: `STARTING_BAN`, `INJURY`) |
+| Joias da base (regens de verdade) | 🧪 | 25 garotos na `regens_futuros_2026.xlsx` (`FUTURE_REGEN`) |
+| Lesões e suspensões no começo | ⏳ | ficha C3b (o `INJURY` é o catálogo de lesões; falta a lesão do jogador) |
 | Rigor dos árbitros | ⏳ | falta saber qual dos 10 atributos é qual |
 | Segunda nacionalidade, cláusula de rescisão | ❌ | campos não localizados |
 | Jogador novo sem hospedeiro | ❌ | exige o formato completo do `people_db` |
@@ -63,31 +66,31 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 - Árbitros, rivais, nomes dos regens, elencos sem os doadores e a carreira pelas
   transferências (TESTES_PENDENTES).
-- Joias da base: você preenche 3 a 5 na `regens_futuros_2026.xlsx`, roda o
-  `aplicar_tudo.py --rapido` e espera a chegada dos juniores.
+- Joias da base (25 garotos), CT e base, técnicos das seleções e as pessoas repetidas:
+  um `aplicar_tudo.py --rapido` e os itens 7 e 9 a 11 do TESTES_PENDENTES.
 
 ### Fase 2: base e regens
 
-- Campo de base e de instalações do clube (ficha C6) e os valores de 2026 (aba Estrutura).
-- Força da base de cada país (ficha C10).
+- ~~Campo de base e de instalações do clube (ficha C6)~~: entrou em 23/10.
+- Força da base de cada país (ficha C10 respondida: falta a planilha com os valores).
 - Como a chegada da base funciona (ficha C7) e as joias em quantidade.
 
 ### Fase 3: dinheiro dos clubes
 
-- Orçamento de contratações e de salários de 2026 (ficha C5 + aba Estrutura).
-- Patrocínio de 2026 (ficha C1 + `patrocinadores_2026.xlsx`).
-- Premiação e cotas de TV de 2026 (ficha C9 + `premiacao_2026.xlsx`).
+- Orçamento de contratações e de salários de 2026 (ficha C5b + aba Estrutura).
+- Patrocínio de 2026 (ficha C1b + `patrocinadores_2026.xlsx`, já preenchida).
+- Premiação e cotas de TV de 2026 (ficha C9b + `premiacao_2026.xlsx`, já preenchida).
 
 ### Fase 4: o resto do continente
 
 - Elencos de 2026 dos clubes estrangeiros da Libertadores e da Sul-Americana: coletor
   do Sofascore para eles e o mesmo caminho dos brasileiros.
 - Técnicos das seleções (`selecoes_2026.csv`) e, depois, dos clubes estrangeiros.
-- Regras de transferência de 2026 (ficha C8).
+- Regras de transferência de 2026 (ficha C8b).
 
 ### Fase 5: começo de jogo mais real
 
-- Lesões e suspensões do começo de 2026 (fichas C2 e C3, com a planilha que já existe).
+- Lesões do começo de 2026 (ficha C3b, com a planilha que já existe).
 - Rigor dos árbitros.
 - Clubes que "gostam" de pessoas (lista de relações do clube, tipo 3): limpar as que
   apontam para pessoas de 2005 que viraram outra pessoa de 2026.
@@ -100,7 +103,7 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 ### Fase 7: acabamento
 
-- Prêmios históricos (ficha C4 + `premios_historico.xlsx`).
+- Prêmios históricos (ficha C4b + `premios_historico.xlsx`, já preenchida).
 - Logos das competições e mídia (jornais) de 2026: campos ainda não procurados.
 - Mais histórico e mais perfis a cada rodada de dados: jogos e gols por passagem para
   quem só tem os clubes (a `historico_carreira.xlsx` tem prioridade sobre as

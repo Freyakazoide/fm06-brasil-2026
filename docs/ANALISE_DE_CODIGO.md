@@ -86,7 +86,7 @@ que já tem planilha pronta).
 | C3 | Lesões | `INJURY`, leitor `00a8d4e0` | as 4 lesões da mesma planilha |
 | C4 | Prêmios | `AWARD`, leitor `00a174a0` | `premios_historico.xlsx` |
 | C5 | Finanças do clube | `CLUB_FINANCE`, leitor `00a80fe0` | orçamentos da `clubes_estrutura_2026.xlsx` |
-| C6 | Instalações e base do clube | `CLUB_ler`, de `00a325af` até o fim | CT e base da `clubes_estrutura_2026.xlsx` |
+| C6 | Instalações e base do clube | `CLUB_ler`, de `00a325af` até o fim (✅ resolvida: estava no começo) | CT e base da `clubes_estrutura_2026.xlsx` |
 | C7 | Regens e chegada da base | `REGENERATION_MANAGER`, `FUTURE_REGEN_ARRAY` | `regens_futuros_2026.xlsx` e a qualidade dos regens |
 | C8 | Regras de transferência do Brasil | `BRA_TRANSFER_RULES` | janelas e limite de estrangeiros de 2026 |
 | C9 | Premiação das competições | `COMP_PRIZE_MONEY_NEWS` | `premiacao_2026.xlsx` |
@@ -209,15 +209,36 @@ Copie o [modelo de resposta](analise/MODELO_RESPOSTA.md) para `docs\analise\C2.m
 número da ficha), preencha e faça commit e push, ou cole aqui. Pode mandar parcial: uma
 tabela com metade dos campos já adianta.
 
-## Respostas recebidas
+## Respostas recebidas (rodada 2, 22/10)
 
-- [C1 — Patrocínio](analise/C1.md)
-- [C2 — Suspensões no começo do jogo](analise/C2.md)
-- [C3 — Lesões](analise/C3.md)
-- [C4 — Prêmios](analise/C4.md)
-- [C5 — Finanças do clube](analise/C5.md)
-- [C6 — Instalações e base do clube](analise/C6.md)
-- [C7 — Regens e chegada da base](analise/C7.md)
-- [C8 — Regras de transferência do Brasil](analise/C8.md)
-- [C9 — Premiação das competições](analise/C9.md)
-- [C10 — Força da base de cada país](analise/C10.md)
+| Ficha | Resposta | O que virou |
+|---|---|---|
+| [C1](analise/C1.md) Patrocínio | layout do `SPONSOR` (2 textos, 3 bytes, sem valor) | nada ainda: o registro não tem dinheiro; falta saber de quem é a lista (`pai+0x54`) |
+| [C2](analise/C2.md) Suspensões | 4 campos (u32, objeto, u8, u8 na versão ≥ 0x11c) | nada: a aba Suspensoes ficou vazia depois da correção do Remo |
+| [C3](analise/C3.md) Lesões | `INJURY` é o catálogo de tipos de lesão, não a lesão do jogador | nada ainda: falta achar onde fica a lesão ativa |
+| [C4](analise/C4.md) Prêmios | layout do `AWARD`; vencedores devem estar em `AWARD_DATA` | nada ainda |
+| [C5](analise/C5.md) Finanças | layout do `CLUB_FINANCE` (35 campos) | nada ainda: orçamentos não identificados |
+| [C6](analise/C6.md) Instalações | o trecho que eu indiquei não tinha os campos (erro meu na ficha) | ✅ achei no começo do `CLUB_ler`: CT `+0xEB`, base `+0xE1`, captação `+0xE0`; a aba Estrutura entra no mod |
+| [C7](analise/C7.md) Regens | `FUTURE_REGEN` cria registro de 0x2c na nação | confirma o que o mod já usa |
+| [C8](analise/C8.md) Regras de transferência | constantes de `BRA_TRANSFER_RULES` isoladas | nada ainda: falta nomear os argumentos |
+| [C9](analise/C9.md) Premiação | `COMP_PRIZE_MONEY_NEWS` é só a notícia | nada ainda: falta achar a origem do valor |
+| [C10](analise/C10.md) Base do país | offsets de Development, League Standard, Economic Factor e Reputation na nação | pronto para usar quando houver planilha de força da base por país |
+
+As respostas foram honestas sobre o que não fecharam, e isso ajudou: deu para saber onde
+não gastar tempo. A C6 eu resolvi seguindo outro caminho (a função que escreve "Good
+facilities" na tela e quem a chama); o caminho está em `docs/reversing/database.md`.
+
+## Fichas da rodada 3
+
+Continuam de onde a rodada 2 parou. Mesmo modelo de resposta (`docs\analise\C5b.md`...).
+
+| Ficha | Pergunta | Começar em | Destrava |
+|---|---|---|---|
+| C5b | Que campo do `CLUB_FINANCE` (`+0x1c`…`+0xa0`) a tela de orçamento de contratações mostra? E o de salários? | textos "Transfer Budget" / "Wage Budget" (`Search > For Strings`), e quem lê o objeto financeiro do clube (`CLUB+0x118`) perto deles | orçamentos da aba Estrutura |
+| C3b | Onde fica a lesão de um jogador (dias que faltam, tipo)? | quem usa o catálogo `INJURY` (vtable `010e1e84`) fora do leitor; textos "injured", "Injury" da tela do jogador | as 4 lesões da `lesoes_suspensoes_2026.xlsx` |
+| C4b | Onde ficam os vencedores de cada prêmio (ano, pessoa, clube)? | `AWARD_DATA` (vtable `00e322b4`) e seu leitor (método 10) | `premios_historico.xlsx` |
+| C1b | De quem é a lista de patrocínios (`pai+0x54`): clube, nação ou o banco? E onde o jogo calcula o dinheiro do patrocínio? | quem chama `00aa6ec0`; textos "Sponsorship" da tela de finanças | `patrocinadores_2026.xlsx` |
+| C9b | Quem cria a notícia `COMP_PRIZE_MONEY_NEWS` (construtor `00747d90`) e de onde vem o valor que vai em `+0x3c`? | referências ao construtor (`Ctrl+Shift+F`) | `premiacao_2026.xlsx` |
+| C8b | O que cada argumento de `00adedc0`, `00aded50` e `00adc540` significa? Compare a chamada do Brasil (`00bb32a0`) com a da Argentina e a da Inglaterra | as outras vtables `*_TRANSFER_RULES` | janelas e limite de estrangeiros de 2026 |
+
+Comece pela C5b e pela C3b.

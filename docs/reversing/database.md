@@ -75,6 +75,25 @@ Conferido nos 695 clubes brasileiros (693 com a lista de times logo antes).
 No leitor do CLUB (`0x00A31C70`) as duas quantidades são lidas como u16 (`0x00C59430`),
 mas no arquivo ocupam 1 byte; vale o que está no arquivo. `src/fm06patch/rivais.py`.
 
+## Instalações do clube (CT, base, captação)
+
+No começo do registro do clube (a ordem em `src/fm06patch/financas.py`): `u8 -> CLUB+0xE0`
+(captação) e `u8 -> CLUB+0xE1` (base) logo antes do u16 ano de fundação; `u8 -> CLUB+0xEB`
+(CT) logo depois dos três u32 de público. Notas 1–20; fora disso o leitor põe uma pelo
+público médio. Manchester United 20/20/20 (CT/base/captação), River Plate 17/20/15,
+Santos 17/19/18, Chesterfield 5/8/7.
+
+- `0x00A29940`: CT -> frase da tela (acima de 15 "Top facilities plus youth academy",
+  acima de 12 "Good", acima de 9 "Average"...), usada em `0x0086BCC4`;
+- `0x00A28980` grava as três; `0x00A289A0` soma no CT e passa o excesso de 20 para a
+  captação e depois para a base; `0x00A80D40` é a obra aprovada pela diretoria (CT abaixo
+  de 6: tudo 10 por 50 mil; abaixo de 10: 15 por 100 mil; abaixo de 15: 19 por 250 mil);
+- `0x0076D9DF`: reputação/500 + captação + nível da divisão; até 10, o clube não recebe
+  juniores; `0x0076EEA5`: base/2 + 10 entra no sorteio da qualidade do junior;
+- `0x009F75F0` (começo de jogo) limita captação e base a reputação do time (TEAM+0x6C) / 250.
+
+`src/fm06patch/instalacoes.py` grava a aba Estrutura da `clubes_estrutura_2026.xlsx`.
+
 ## Árbitros (OFFICIAL) no people_db
 
 A parte comum do registro da pessoa fecha com u16 ano, 00 00 00, u32 índice, u32 UID

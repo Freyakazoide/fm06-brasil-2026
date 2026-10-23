@@ -25,6 +25,7 @@ from __future__ import annotations
 import datetime as dt
 import re
 import struct
+import unicodedata
 from dataclasses import dataclass, field
 
 T2 = (0x043902BA, 0x0480F3D6, 17)        # (início, fim, tamanho): toda pessoa (índice, UID, 9 bytes)
@@ -80,9 +81,9 @@ class Staff:
     contract_at: int     # posição do 0x64 do contrato (clube em +6)
 
 
-def _walk_names(server: bytes, lo: int, hi: int) -> dict[int, str]:
-    """Tabela de nomes: u32 tamanho, UTF-16, 00 00, u16 uso, u32 nação, u32 índice, u32 UID, 00."""
-    out: dict[int, str] = {}
+def _name_entries(server: bytes, lo: int, hi: int):
+    """Tabela de nomes: u32 tamanho, UTF-16, 00 00, u16 uso, u32 nação, u32 índice, u32 UID, 00.
+    Gera (índice, nome, uso, nação)."""
     at = lo
     while at < hi:
         size = struct.unpack_from("<I", server, at)[0]
@@ -90,7 +91,7 @@ def _walk_names(server: bytes, lo: int, hi: int) -> dict[int, str]:
         if size > 90 or server[end:end + 2] != b"\0\0" or server[end + 16] != 0:
             at += 1
             continue
-        nation, index = struct.unpack_from("<II", server, end + 4)
+        usage, nation, index = struct.unpack_from("<HII", server, end + 2)
         if nation > 400:
             at += 1
             continue
@@ -99,8 +100,26 @@ def _walk_names(server: bytes, lo: int, hi: int) -> dict[int, str]:
         except UnicodeDecodeError:
             at += 1
             continue
-        out.setdefault(index, text)
+        yield index, text, usage, nation
         at = end + 17
+
+
+def _walk_names(server: bytes, lo: int, hi: int) -> dict[int, str]:
+    out: dict[int, str] = {}
+    for index, text, _, _ in _name_entries(server, lo, hi):
+        out.setdefault(index, text)
+    return out
+
+
+def names_by_nation(server: bytes) -> dict[tuple[str, int], dict[str, int]]:
+    """(tabela, nação) -> {nome: uso} dos primeiros nomes e sobrenomes do banco (no formato do
+    nomes_regens.load_sheet): nomes de cada país para quem não tem nome de hoje na planilha."""
+    out: dict[tuple[str, int], dict[str, int]] = {}
+    for kind, (lo, hi) in zip(("first", "second"), NAME_TABLES):
+        for _, text, usage, nation in _name_entries(server, lo, hi):
+            if text.strip() and '"' not in text:
+                names = out.setdefault((kind, nation), {})
+                names[text] = names.get(text, 0) + max(1, usage)
     return out
 
 
@@ -204,6 +223,64 @@ def read_national_managers(people: bytes, server: bytes) -> dict[int, list[Staff
         if person and person.job == MANAGER:
             found.setdefault(nation, []).append(person)
     return found
+
+
+@dataclass
+class Person:
+    uid: int
+    name: str            # primeiro nome + sobrenome
+    common: str | None   # nome comum ("Tite"), se houver
+    born: tuple[int, int]
+    nation: int
+
+
+# fim da parte comum do registro: u16 ano, 00 00 00, u32 índice, u32 UID, u32, u8 tipo
+_PERSON_END = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)(....)....[\x01\x02\x04]", re.S)
+
+
+def read_people(people: bytes, server: bytes) -> list[Person]:
+    """Todas as pessoas do people_db (jogadores, staff e árbitros) com nome e nascimento."""
+    tables = name_tables(server)
+    found = []
+    for match in _PERSON_END.finditer(people, 0, PEOPLE_END):
+        index, uid = struct.unpack("<II", match.group(1) + match.group(2))
+        if not (index < 2_000_000 and 0 < uid < 100_000_000):
+            continue
+        at = _names_before(people, match.start() + 5, tables, back=0x300)
+        if at is None:
+            continue
+        first, second, common, size = struct.unpack_from("<IIII", people, at)
+        born = at + 16 + 2 * size + (2 if size else 0)
+        found.append(Person(uid, f"{tables[0].get(first, '')} {tables[1].get(second, '')}".strip(),
+                            tables[2].get(common) if common != NONE else None,
+                            struct.unpack_from("<HH", people, born), struct.unpack_from("<I", people, born + 5)[0]))
+    return found
+
+
+def _plain(name: str) -> str:
+    return unicodedata.normalize("NFKD", name or "").encode("ascii", "ignore").decode().casefold().strip()
+
+
+def namesakes(persons: list[Person], wanted: list[tuple[set[str], str]], taken: set[int]) -> list[Person]:
+    """As pessoas de 2005 que são alguém de 2026 (mesmo nome e mesma data de nascimento de
+    verdade: o Ancelotti técnico do Milan, o Forlán jogador do Villarreal) e que ninguém
+    ocupou. ``wanted``: (nomes, nascimento AAAA-MM-DD) de quem está no jogo em 2026;
+    ``taken``: UIDs que já ganham outro nome. No banco de 2005 o nascimento é o real."""
+    by_key: dict[tuple[str, int, int], list[Person]] = {}
+    for person in persons:
+        for name in {_plain(person.name), _plain(person.common or "")} - {""}:
+            by_key.setdefault((name, *person.born), []).append(person)
+    found: dict[int, Person] = {}
+    for names, born in wanted:
+        try:
+            date = dt.date.fromisoformat(born[:10])
+        except ValueError:
+            continue
+        for name in {_plain(n) for n in names} - {""}:
+            for person in by_key.get((name, date.timetuple().tm_yday - 1, date.year), []):
+                if person.uid not in taken:
+                    found[person.uid] = person
+    return list(found.values())
 
 
 @dataclass
