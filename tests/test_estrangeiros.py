@@ -130,3 +130,34 @@ class RealDatabaseTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(BASELINE.exists(), "precisa do server_db original em workspace/baseline")
+class SpreadsheetTest(unittest.TestCase):
+    def test_model_to_mod_files(self):
+        import openpyxl
+        import estrangeiros_planilha as sheet
+        tmp = Path(tempfile.mkdtemp())
+        model = tmp / "modelo.xlsx"
+        sheet.write_model(model)
+        book = openpyxl.load_workbook(model)
+        clubs = {row[6].value: row for row in book["Clubes"].iter_rows(min_row=2)}
+        self.assertIn("River Plate (URU)", clubs)                   # o mesmo nome em dois países
+        clubs["River Plate (ARG)"][7].value = "Marcelo Gallardo"
+        book["Jogadores"].append(["River Plate (ARG)", 1, "Franco Armani", None, None, "1986-10-16", None, "GK"])
+        book["Jogadores"].append(["Peñarol", None, "Leo Fernández", None, None, "1998-11-08", None, "AM RW"])
+        book["Jogadores"].append(["River Plate", None, "Ambíguo", None, None, "2000-01-01", None, "CM"])
+        book["Carreiras"].append(["River Plate (ARG)", "Franco Armani", "1986-10-16", "2018-", "River Plate"])
+        book.save(model)
+        paths = {"DATA": tmp, "IDENTITIES": tmp / "i.csv", "PLAYERS": tmp / "j.xlsx", "COACHES": tmp / "t.csv",
+                 "CAREERS": tmp / "c.csv"}
+        with mock.patch.multiple(ex, **paths):
+            errors = sheet.build(model)
+            players = list(openpyxl.load_workbook(tmp / "j.xlsx").active.iter_rows(values_only=True))
+            rows = {r["clube_2026"]: r for r in ex.identity_rows()}
+        self.assertEqual(len(errors), 1)                            # "River Plate" sem o país
+        self.assertEqual([(p[0], p[2], p[6]) for p in players[1:]],
+                         [("River Plate (ARG)", "Franco Armani", "Argentina"), ("Peñarol (URU)", "Leo Fernández", "Uruguai")])
+        self.assertEqual(rows["River Plate (ARG)"]["uid_jogo"], "94")
+        self.assertIn("Marcelo Gallardo", (tmp / "t.csv").read_text(encoding="utf-8-sig"))
+        self.assertIn("2018–,River Plate", (tmp / "c.csv").read_text(encoding="utf-8-sig"))

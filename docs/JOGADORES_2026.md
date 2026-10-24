@@ -48,6 +48,14 @@ e +74 (u8).
 
 ## Clubes da CONMEBOL (Fase 4)
 
+**Pela planilha (sem o Sofascore):** `data/modelos/estrangeiros_2026.xlsx` tem todos os
+394 clubes do FM06 desses países (aba Clubes; os 120 que acho que estão na primeira
+divisão de 2026 vêm marcados), o elenco de 2026 (aba Jogadores) e as carreiras (aba
+Carreiras, opcional); as instruções estão na aba LEIA. `python
+scripts\estrangeiros_planilha.py` confere e grava em `data/estrangeiros/` os mesmos
+arquivos da coleta abaixo; CA e PA vazios saem do valor de mercado, da idade e da
+"série" do país. Desde 24/10 o Sofascore responde 403 também no PC.
+
 `scripts/coletar_estrangeiros.py` (no PC: o Sofascore não responde de onde o Claude
 roda) acha a primeira divisão de 2026 de Argentina, Uruguai, Colômbia, Paraguai,
 Equador, Chile, Peru, Bolívia e Venezuela pela categoria do país no Sofascore e baixa,
