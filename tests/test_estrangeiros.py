@@ -161,3 +161,28 @@ class SpreadsheetTest(unittest.TestCase):
         self.assertEqual(rows["River Plate (ARG)"]["uid_jogo"], "94")
         self.assertIn("Marcelo Gallardo", (tmp / "t.csv").read_text(encoding="utf-8-sig"))
         self.assertIn("2018–,River Plate", (tmp / "c.csv").read_text(encoding="utf-8-sig"))
+
+
+class CareerClubTest(unittest.TestCase):
+    def test_2026_name_of_the_club(self):
+        import estrangeiros_planilha as sheet
+
+        def club(full, country, long, short):
+            return full, country, ex._keys({"long": long, "short": short}) | {hj._key(full.split(" (")[0])}
+        known = [club("River Plate (ARG)", "AR", "River Plate", "River"),
+                 club("River Plate (URU)", "UY", "CA River Plate", "River Plate (URU)"),
+                 club("Nacional (URU)", "UY", "C Nacional F", "Nacional"),
+                 club("Nacional (PAR)", "PY", "C Nacional FC", "Nacional (PAR)"),
+                 club("Cerro (URU)", "UY", "CA Cerro", "Cerro"),
+                 club("Cerro Porteño (PAR)", "PY", "C Cerro Porteño", "Cerro Porteño"),
+                 club("Vélez Sarsfield (ARG)", "AR", "Vélez Sarsfield", "Vélez"),
+                 ("Internacional", "BR", {hj._key("Internacional")}),
+                 ("Inter de Limeira", "BR", {hj._key("Inter de Limeira"), hj._key("AA Internacional")})]
+        find = sheet.career_club
+        self.assertEqual(find("CA River Plate", "AR", known), "River Plate (ARG)")
+        self.assertEqual(find("Club Nacional", "PY", known), "Nacional (PAR)")      # o do país do jogador
+        self.assertEqual(find("Club Nacional Asunción", "PY", known), "Nacional (PAR)")
+        self.assertEqual(find("Club Cerro Porteño Asunción", "PY", known), "Cerro Porteño (PAR)")
+        self.assertEqual(find("CA Vélez Sarsfield II", "AR", known), "Vélez Sarsfield (ARG) II")
+        self.assertEqual(find("Sport Club Internacional", "AR", known), "Internacional")
+        self.assertEqual(find("Real Madrid", "AR", known), "Real Madrid")

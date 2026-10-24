@@ -32,7 +32,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from fm06patch import estrangeiros as ex, people_contracts  # noqa: E402
+from fm06patch import estrangeiros as ex, people_contracts, server_teams  # noqa: E402
+from fm06patch import historico_jogadores as hj  # noqa: E402
 from fm06patch.squad_builder import ROLE_POSITIONS  # noqa: E402
 from montar_carreiras import FIELDS as CAREER_FIELDS  # noqa: E402
 from montar_estrangeiros import COACH_FIELDS, server_bytes  # noqa: E402
@@ -233,6 +234,67 @@ def _int(value) -> int | None:
     return int(float(text)) if text.replace("-", "").isdigit() else None
 
 
+_NO_CLUB = {hj._key(n) for n in ("Without Club", "Sem clube", "Sin club", "Free agent", "Retired", "Unknown",
+                                   "Career break", "Vereinslos")}
+
+
+def _brazil_clubs(server: bytes) -> list[tuple[str, str, set]]:
+    """Os clubes brasileiros de 2026: o nome de 2026 e o do FM06 (o substituto só pelo de 2026)."""
+    names = server_teams.clubs_by_uid(server)
+    out = []
+    for row in csv.DictReader(ex.BR_IDENTITIES.open(encoding="utf-8-sig")):
+        keys = {hj._key(row["clube_2026"])}
+        pair = names.get(int(row["uid_jogo"]))
+        if pair and row.get("tipo") != "substituto":
+            keys |= ex._keys({"long": pair[0], "short": pair[1]})
+        out.append((row["clube_2026"], "BR", keys))
+    return out
+
+
+_LOOSE = hj._GENERIC | ex._PREFIXES | {"association", "atletico", "club"}
+_RESERVE = re.compile(r"\s+(B|II|2|U\d\d|Sub-?\d\d|Reserves?)$")
+
+
+def _loose(words: frozenset[str]) -> set[str]:
+    return {"u" if w == "universidad" else w for w in words - _LOOSE}         # "U Técnica de Cajamarca"
+
+
+def career_club(name: str, alpha2: str, known: list[tuple[str, str, set]], own: str = "") -> str:
+    """O nome de 2026 do clube da passagem, quando é um clube de 2026 ("CA River Plate" ->
+    "River Plate (ARG)"): o aplicar_historico.py só acha os clubes de 2026 pelo nome de 2026.
+    Com o mesmo nome em dois países (Nacional), vale o do país do jogador. Com a cidade ou a
+    forma jurídica a mais ("Barcelona SC Guayaquil", "Club Libertad Asunción"), só um clube
+    de 2026 do país do jogador (o de nome mais longo: Cerro Porteño, não Cerro). O time B
+    ("Vélez Sarsfield II") fica com o sufixo, que o aplicar_historico.py tira. Senão fica o nome."""
+    clean = hj.clean(name)
+    base = _RESERVE.sub("", clean)
+    suffix = clean[len(base):]
+    key = hj._key(base)
+    found = {(full, country) for full, country, keys in known if key in keys}
+    if not found and key - hj._GENERIC:     # "AA Argentinos Juniors": sem a forma jurídica dos dois lados
+        found = {(full, country) for full, country, keys in known
+                 if key - hj._GENERIC in {k - hj._GENERIC for k in keys}}
+    if len(found) > 1:      # "Sport Club Internacional": o Internacional, não o Inter de Limeira (SC Internacional no FM06)
+        named = {f for f in found
+                 if hj._key(re.sub(r"\s*\([A-Z]{3}\)$", "", f[0])) - hj._GENERIC == key - hj._GENERIC}
+        found = named or found
+    if len(found) > 1:
+        found = {f for f in found if f[1] == alpha2}
+    if len(found) == 1:
+        return next(iter(found))[0] + suffix
+    words = _loose(key)
+    near = [(len(_loose(k)), full) for full, country, keys in known if country == alpha2 or full == own
+            for k in keys if _loose(k) and _loose(k) <= words]
+    if near:
+        size = max(n for n, _ in near)
+        best = {full for n, full in near if n == size}
+        if len(best) == 1:
+            return best.pop() + suffix
+        if own in best:
+            return own + suffix
+    return name
+
+
 def build(model: Path) -> list[str]:
     """Monta data/estrangeiros; devolve os erros (linhas que ficaram de fora)."""
     book = openpyxl.load_workbook(model, read_only=True, data_only=True)
@@ -245,6 +307,7 @@ def build(model: Path) -> list[str]:
             repo.setdefault(club["uid"], club["repo"])
 
     clubs, coaches, names, bare = [], [], {}, {}
+    known = _brazil_clubs(server)       # (clube de 2026, país, nomes) para achar o clube de 2026 na carreira
     for line, row in enumerate(_rows(book, "Clubes"), start=2):
         if str(row.get("usar") or "").lower() not in ("sim", "s", "x"):
             continue
@@ -257,6 +320,8 @@ def build(model: Path) -> list[str]:
             errors.append(f"Clubes linha {line}: clube_2026 '{full}' repetido")
             continue
         names[full] = (full, alpha2)
+        known.append((full, alpha2, ex._keys({"long": row.get("clube_fm06") or "", "short": row.get("nome_curto_fm06") or ""})
+                      | {hj._key(re.sub(r"\s*\([A-Z]{3}\)$", "", full))}))
         bare.setdefault(re.sub(r"\s*\([A-Z]{3}\)$", "", full), []).append(full)
         clubs.append({"clube_2026": full, "pais": alpha2, "uid_jogo": uid, "uid_repo": repo.get(uid, ""),
                       "fm06_nome": row.get("nome_curto_fm06") or "", "tipo": "estrangeiro", "onde": "planilha",
@@ -334,8 +399,11 @@ def build(model: Path) -> list[str]:
         if not row.get("temporada") or not row.get("clube"):
             errors.append(f"Carreiras linha {line}: sem temporada ou clube")
             continue
+        if hj._key(str(row["clube"])) in _NO_CLUB:
+            continue
         careers.append({"clube_2026": key[0], "nome_comum": key[1], "nascimento": key[2],
-                        "temporada": str(row["temporada"]).replace("-", "–"), "clube": row["clube"],
+                        "temporada": str(row["temporada"]).replace("-", "–"),
+                        "clube": career_club(str(row["clube"]), club[1], known, club[0]),
                         "emprestimo": "sim" if str(row.get("emprestimo") or "").lower() in ("sim", "s", "x") else "não",
                         "jogos": "", "gols": "", "valor_eur": _int(row.get("valor_eur")) or "",
                         "fonte": row.get("fonte") or "planilha", "atualizado": dt.date.today().isoformat()})
