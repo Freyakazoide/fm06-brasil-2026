@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import comissao, financas, instalacoes  # noqa: E402
+from fm06patch import comissao, financas, instalacoes, people_contracts  # noqa: E402
 
 
 def text(value: str) -> bytes:
@@ -63,6 +63,34 @@ class NamesakeTest(unittest.TestCase):
         wanted = [({"Carlo Ancelotti"}, "1959-06-10"), ({"Tite", "Adenor Leonardo Bachi"}, "1961-05-25")]
         found = comissao.namesakes(persons, wanted, taken={8})
         self.assertEqual(sorted(p.uid for p in found), [20178, 305715])
+
+
+def person(team: int, club: int, caps: int = 0) -> bytes:
+    """Registro de jogador: nomes, nascimento, nação, seleção, jogos, ..., time em +26 do
+    nascimento, e o u32 do clube do contrato na posição 120."""
+    names = struct.pack("<IIII", 1, 2, comissao.NONE, 0)
+    born = struct.pack("<HH", 40, 1978) + b"\0" + struct.pack("<III", 0xBD, 0xBD if caps else 0, caps)
+    born += b"\0" * 4 + b"\0" + b"\0" * 4 + struct.pack("<I", team)
+    body = b"\0" * 40 + names + born
+    return body + b"\0" * (120 - len(body)) + struct.pack("<I", club) + b"\0" * 20
+
+
+class TeamFieldTest(unittest.TestCase):
+    TABLES = ({1: "Warley"}, {2: "Silva"}, {})
+    TEAMS = {205: 297, 4614: 4827}                  # Palmeiras e Amapá
+
+    def test_contract_in_one_club_and_team_in_another(self):
+        contract = people_contracts.Contract(3301164, 120, 205, 2005)
+        wrong = people_contracts.wrong_teams(person(297, 4614), {3301164: contract}, self.TEAMS, self.TABLES)
+        self.assertEqual(wrong, [(3301164, 82, 4827)])          # vai para o time do Amapá
+        self.assertEqual(people_contracts.wrong_teams(person(4827, 4614), {3301164: contract}, self.TEAMS,
+                                                      self.TABLES), [])
+        self.assertEqual(people_contracts.wrong_teams(person(297, 9999), {3301164: contract}, self.TEAMS,
+                                                      self.TABLES), [])     # clube que não é brasileiro
+
+    def test_caps(self):
+        self.assertEqual(people_contracts.caps(person(297, 205, caps=2), 120, self.TABLES), 2)
+        self.assertEqual(people_contracts.caps(person(297, 205), 120, self.TABLES), 0)
 
 
 class RecordBoundaryTest(unittest.TestCase):

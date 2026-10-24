@@ -19,8 +19,9 @@ Enter quando estiver pronto):
    `aplicar_historico.py` e a cópia do `.lnc` dos jogadores;
 4. jogo aberto (outro New Game, tela principal): o injetor. Salve o jogo.
 
-- `python scripts\aplicar_tudo.py --rapido`: pula o reforço e a contagem (etapa 2), para
-  quando os elencos não mudaram (só tradução, comissão, árbitros, histórico, rivais...).
+- `python scripts\aplicar_tudo.py --rapido`: pula a contagem (etapa 2), para quando os
+  elencos não mudaram (só tradução, comissão, árbitros, histórico, rivais...). Refaz o
+  reforço e para se o people_db não for o da última contagem completa.
 - `python scripts\aplicar_tudo.py --etapa 3`: recomeça da etapa 3 depois de um erro.
 
 ## O que conferir
@@ -38,6 +39,7 @@ Enter quando estiver pronto):
 | 9 | CT e base dos 40 clubes das Séries A e B | tela de informações do clube (frase das instalações) | Palmeiras, Flamengo e Cuiabá com a frase mais alta ("Top facilities plus youth academy", ou a tradução); São Bernardo "Good facilities"; Remo "Average facilities"; antes, o Cuiabá aparecia com instalações ruins | `aplicar_brasil_2026.py` (aba Estrutura) |
 | 10 | Técnicos das seleções sul-americanas | tela de cada seleção (Argentina, Uruguai, Venezuela...) | Scaloni (ARG), Óscar Villegas (BOL), Néstor Lorenzo (COL), Gallardo (ECU), Alfaro (PAR), Mano Menezes (PER), Forlán (URU), Vizcarrondo (VEN) | `aplicar_comissao.py` |
 | 11 | Sem gente repetida | procurar pelo nome (busca de pessoas): Carlo Ancelotti, Diego Forlán, Tite, Abel Ferreira | só uma pessoa com cada nome (a de 2026). O técnico do Milan de 2005 e o Forlán jogador do Villarreal ganham nomes de hoje do país deles | `aplicar_comissao.py` |
+| 12 | Elencos depois da correção de 24/10 (rodada completa, sem `--rapido`) | elenco do Cuiabá; o Palmeiras; a ficha de quem aparece na lista | Cuiabá com os jogadores de 2026 (Lorenzo Martins, Caio Souza...) e sem juniores inventados ("Alamosi"); nenhum jogador com o clube da ficha diferente do clube da lista (Warley não aparece no Palmeiras; Zé Eduardo no clube dele); na saída do reforço, a linha "N jogadores estavam com o contrato num clube e no time de outro" | `aplicar_tudo.py` |
 
 Antes de rodar, `python scripts\validar_entregas.py` confere as planilhas.
 

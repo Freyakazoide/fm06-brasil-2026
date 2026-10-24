@@ -128,13 +128,22 @@ que entrou, com as temporadas gravadas, fica em `workspace\mods\historico_2026.c
 
 `scripts\reforcar_elencos.py --apply` (depois do passo 1) muda no
 `people_db.dat` o clube do contrato de jogadores de clubes que não usamos
-(brasileiros fora de 2026, depois até 2 por clube estrangeiro), até cada clube
-ter vaga para o elenco de 2026 (até 45). Ao contrário, os jogadores de 2005 do
+(brasileiros fora de 2026, depois até 2 por clube estrangeiro; desde 24/10 nunca
+quem tem jogo pela seleção, porque ele continuava convocado: Yuri Alberto na
+Argentina), até cada clube ter vaga para o elenco de 2026 (até 45). Ao contrário, os jogadores de 2005 do
 banco que passam do tamanho do elenco de 2026 (Internacional: 93 para 65) saem para
 clubes brasileiros fora de 2026, para não ficarem no elenco com o nome de 2005. Depois: New Game e passos 1 a 4 de
 novo. O jogo põe a pessoa no time do campo "time" do registro (o mesmo do staff,
 `docs/reversing/people-db.md`), que tem de bater com o clube do contrato: o reforço
 muda os dois (mudar só o contrato tirava o jogador do clube antigo sem pô-lo no novo).
+No fim, quem tem contrato com um clube brasileiro e o campo "time" de outro vai para o
+time do clube do contrato (`people_contracts.wrong_teams`). No banco da SI são zero; com
+uma cópia "original" feita de um banco já mexido por uma versão antiga do reforço (que só
+trocava o contrato) apareciam os sintomas de 24/10: o Warley na lista do Palmeiras com o
+Amapá na ficha, o Zé Eduardo no Luziânia e o Cuiabá sem os hospedeiros (o jogo completou o
+elenco com juniores inventados). A contagem dos elencos é pelo contrato e a lista do clube
+é pelo time, por isso as duas têm de bater. O `aplicar_tudo.py --rapido` refaz o reforço e
+para se o people_db não for o mesmo da última contagem (SHA-256 guardado na etapa 2).
 O campo "time" é achado procurando os nomes para trás a partir do contrato; a busca
 para no fim do registro anterior (`comissao._record_start`). Sem esse limite, em 18
 jogadores ela caía no registro da pessoa anterior e gravava o time nela: essa pessoa ia

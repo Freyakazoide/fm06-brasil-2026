@@ -90,6 +90,48 @@ def team_field(people: bytes, contract_at: int, tables) -> int | None:
     return names_at + 16 + 2 * size + (2 if size else 0) + 26
 
 
+def caps(people: bytes, contract_at: int, tables) -> int | None:
+    """Jogos pela seleção (u32 depois de nação e seleção, 13 bytes depois do nascimento)."""
+    at = team_field(people, contract_at, tables)
+    return None if at is None else struct.unpack_from("<I", people, at - 26 + 13)[0]
+
+
+def club_teams(server: bytes) -> dict[int, int]:
+    """Índice do clube brasileiro -> valor do campo "time" do time dele (o registro do time
+    no server_db cita o clube pelo UID do repositório: historico.team_index)."""
+    indexes = set(brazil_club_indexes(server).values())
+    out: dict[int, int] = {}
+    for repo, index, _, _ in club_pairs(server):
+        if index not in indexes or index in out:
+            continue
+        needle = struct.pack("<I", repo) + b"\x0a\x00"
+        at = server.find(needle, 0xE00000, 0x1300000)
+        if at >= 0:
+            out[index] = struct.unpack_from("<I", server, at - 4)[0] + 1
+    return out
+
+
+def wrong_teams(people: bytes, found: dict[int, Contract], teams: dict[int, int], tables
+                ) -> list[tuple[int, int, int]]:
+    """(UID, posição do campo "time", time do clube do contrato) de quem tem contrato com um
+    clube brasileiro e está no time de outro (nem do clube nem do empréstimo). O jogo lista o
+    jogador no time do campo e mostra o clube do contrato: era o que uma versão antiga do
+    reforço deixava (só o contrato mudava). No banco da SI são 0."""
+    out = []
+    for uid, contract in found.items():
+        club = struct.unpack_from("<I", people, contract.at)[0]
+        if club not in teams:
+            continue
+        at = team_field(people, contract.at, tables)
+        if at is None:
+            continue
+        team = struct.unpack_from("<I", people, at)[0]
+        loans = {teams.get(struct.unpack_from("<I", people, other)[0]) for other in contract.others}
+        if team != teams[club] and team not in loans:
+            out.append((uid, at, teams[club]))
+    return out
+
+
 def club_team_values(people: bytes, found: dict[int, Contract], clubs: set[int], tables,
                      sample: int = 5) -> dict[int, int]:
     """Índice do clube -> valor do campo "time" que os jogadores dele têm."""

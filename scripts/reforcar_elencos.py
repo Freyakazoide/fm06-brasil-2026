@@ -7,9 +7,11 @@ Cada jogador de 2026 ocupa um jogador de 2005 do clube (hospedeiro). Vários
 clubes do FM06 têm poucos ou nenhum (Cuiabá 4, Red Bull Bragantino 14). Este
 script muda, no people_db.dat, o clube do contrato de jogadores de clubes que
 não usamos (primeiro os brasileiros fora de 2026, depois até 2 por clube
-estrangeiro) para esses clubes, até cada um ter vaga para o elenco de 2026
+estrangeiro; nunca quem tem jogos pela seleção, que continuaria convocado pela
+seleção dele) para esses clubes, até cada um ter vaga para o elenco de 2026
 (limite --limite por clube). O injetor depois troca nome, dados e
-nacionalidade de cada um.
+nacionalidade de cada um. Contrato e campo "time" mudam juntos, e quem chega com
+contrato num clube e time de outro vai para o time do clube do contrato.
 
 Entradas: workspace/elencos_2005.csv (live_player_editor --squads-all num New
 Game), jogadores_2026.xlsx, identidade_fm06.csv. Parte sempre do people_db
@@ -21,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import shutil
 import sys
@@ -43,6 +46,7 @@ SERVER_BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
 REPORT = ROOT / "workspace" / "mods" / "reforcos.csv"
 DONORS = ROOT / "workspace" / "mods" / "doadores.json"   # versão antiga: doadores de nacionalidade
 PER_FOREIGN_CLUB = 2
+PEOPLE_SHA256 = "B21DDF3417B2B2F715FA2DB008190334B888DC6436DC0DEDABB35FD96885DF4A"   # docs/reversing/people-db.md
 
 
 def game_dir() -> Path:
@@ -80,6 +84,9 @@ def main() -> None:
         shutil.copy2(people_path, BACKUP)
         print(f"[OK] cópia do people_db original em {BACKUP}")
     people = BACKUP.read_bytes()
+    if hashlib.sha256(people).hexdigest().upper() != PEOPLE_SHA256:
+        print(f"[AVISO] workspace/baseline/{BACKUP.name} não é o people_db de 12/10 (o do teste do Saviola): "
+              "se foi copiado de um jogo já mexido, o reforço corrige os times, mas confira os elencos")
     server = (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes()
 
     identities = list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig")))
@@ -117,6 +124,8 @@ def main() -> None:
     for club, people_of_club in sorted(by_club.items(), key=lambda kv: -len(kv[1])):
         donors += people_of_club[:PER_FOREIGN_CLUB]
     donors = [d for d in donors if d.uid not in host_uids]
+    tables = comissao_tables(server)                # sem quem joga por seleção: o argentino da
+    donors = [d for d in donors if not people_contracts.caps(people, d.at, tables)]   # seleção viraria brasileiro
 
     moves, report, pool = {}, [], iter(donors)
     for club, uid, missing in needs:
@@ -149,10 +158,12 @@ def main() -> None:
     if not args.apply:
         print("\nSimulação. Para gravar, rode de novo com --apply.")
         return
-    # o campo "time" do registro tem de ir junto com o clube do contrato
+    # o campo "time" do registro tem de ir junto com o clube do contrato: o time do clube no
+    # server_db; sem ele, o dos jogadores do clube (que numa cópia mexida pode ser de outro)
     destinations = set(moves.values())
-    teams = people_contracts.club_team_values(people, people_contracts.contracts(people, multi=True), destinations,
-                                              comissao_tables(server))
+    teams = {club: team for club, team in people_contracts.club_teams(server).items() if club in destinations}
+    teams.update({club: team for club, team in people_contracts.club_team_values(
+        people, people_contracts.contracts(people, multi=True), destinations - set(teams), tables).items()})
     for club in destinations - set(teams):
         try:
             teams[club] = historico.team_index(server, repo_of[brazil[club]])
@@ -161,6 +172,17 @@ def main() -> None:
     data, skipped = people_contracts.move(people, moves, found, server, teams)
     if skipped:
         print(f"[AVISO] {len(skipped)} jogadores não mudaram (registro ou time do clube não achado)")
+    # contrato num clube e time de outro (cópia "original" feita de um banco já mexido por uma
+    # versão antiga do reforço): o jogador vai para o time do clube do contrato
+    wrong = people_contracts.wrong_teams(data, people_contracts.contracts(data, multi=True),
+                                         people_contracts.club_teams(server), tables)
+    if wrong:
+        out = bytearray(data)
+        for _, at, team in wrong:
+            out[at:at + 4] = team.to_bytes(4, "little")
+        data = bytes(out)
+        print(f"[OK] {len(wrong)} jogadores estavam com o contrato num clube e no time de outro (a cópia "
+              "original do people_db já vinha mexida); agora ficam no clube do contrato")
     people_path.write_bytes(data)
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     with REPORT.open("w", newline="", encoding="utf-8-sig") as handle:
