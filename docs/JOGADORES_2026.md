@@ -136,14 +136,18 @@ clubes brasileiros fora de 2026, para não ficarem no elenco com o nome de 2005.
 novo. O jogo põe a pessoa no time do campo "time" do registro (o mesmo do staff,
 `docs/reversing/people-db.md`), que tem de bater com o clube do contrato: o reforço
 muda os dois (mudar só o contrato tirava o jogador do clube antigo sem pô-lo no novo).
-No fim, quem tem contrato com um clube brasileiro e o campo "time" de outro vai para o
-time do clube do contrato (`people_contracts.wrong_teams`). No banco da SI são zero; com
-uma cópia "original" feita de um banco já mexido por uma versão antiga do reforço (que só
-trocava o contrato) apareciam os sintomas de 24/10: o Warley na lista do Palmeiras com o
-Amapá na ficha, o Zé Eduardo no Luziânia e o Cuiabá sem os hospedeiros (o jogo completou o
-elenco com juniores inventados). A contagem dos elencos é pelo contrato e a lista do clube
-é pelo time, por isso as duas têm de bater. O `aplicar_tudo.py --rapido` refaz o reforço e
-para se o people_db não for o mesmo da última contagem (SHA-256 guardado na etapa 2).
+O elenco que o jogo mostra não vem da pessoa: vem da lista de jogadores do registro do
+time no `server_db.dat` (leitor TEAM `0x00A1FA30`; `src/fm06patch/elenco_times.py`). Até
+24/10 o reforço só mudava o contrato e o campo "time" do `people_db`, e o jogador
+continuava na lista do time antigo: o Warley aparecia no Palmeiras com o Amapá na ficha,
+o Zé Eduardo no Luziânia, e os jogadores levados para o Red Bull Bragantino, o Cuiabá
+e outros não entravam no elenco (o jogo completava com juniores inventados, os
+"Alamosi"). A contagem dos elencos (etapa 2) é pelo contrato, por isso não pegava o
+erro. Agora o reforço tira cada jogador da lista do time antigo e põe na do novo, sobre o
+`server_db.dat` que o `aplicar_brasil_2026.py` acabou de gravar; quem chega com contrato
+num clube e campo "time" de outro também vai para o time do clube do contrato. O
+`aplicar_tudo.py --rapido` refaz o reforço e para se o people_db não for o mesmo da
+última contagem (SHA-256 guardado na etapa 2).
 O campo "time" é achado procurando os nomes para trás a partir do contrato; a busca
 para no fim do registro anterior (`comissao._record_start`). Sem esse limite, em 18
 jogadores ela caía no registro da pessoa anterior e gravava o time nela: essa pessoa ia

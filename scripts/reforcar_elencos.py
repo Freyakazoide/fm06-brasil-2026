@@ -11,7 +11,10 @@ estrangeiro; nunca quem tem jogos pela seleção, que continuaria convocado pela
 seleção dele) para esses clubes, até cada um ter vaga para o elenco de 2026
 (limite --limite por clube). O injetor depois troca nome, dados e
 nacionalidade de cada um. Contrato e campo "time" mudam juntos, e quem chega com
-contrato num clube e time de outro vai para o time do clube do contrato.
+contrato num clube e time de outro vai para o time do clube do contrato. O elenco que o
+jogo mostra é a lista de jogadores do registro do time no server_db.dat
+(elenco_times.py): ela muda junto, sobre o server_db que o aplicar_brasil_2026.py gravou
+(rode este depois dele).
 
 Entradas: workspace/elencos_2005.csv (live_player_editor --squads-all num New
 Game), jogadores_2026.xlsx, identidade_fm06.csv. Parte sempre do people_db
@@ -26,6 +29,7 @@ import csv
 import hashlib
 import json
 import shutil
+import struct
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -35,7 +39,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import estaduais_clubes, historico, people_contracts, server_teams  # noqa: E402
+from fm06patch import elenco_times, estaduais_clubes, historico, people_contracts, server_teams  # noqa: E402
 
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
@@ -183,6 +187,21 @@ def main() -> None:
         data = bytes(out)
         print(f"[OK] {len(wrong)} jogadores estavam com o contrato num clube e no time de outro (a cópia "
               "original do people_db já vinha mexida); agora ficam no clube do contrato")
+    # o elenco do jogo é a lista de jogadores do registro do time no server_db (elenco_times)
+    club_uid = {index: uid for uid, index in indexes.items()}
+    stayed = set(skipped)
+    list_moves = [elenco_times.Move(found[uid].index, club_uid[club], teams[club], elenco_times.PLAYERS)
+                  for uid, club in moves.items() if uid not in stayed and club in club_uid]
+    after = people_contracts.contracts(data, multi=True)
+    for uid, _, team in wrong:
+        club = struct.unpack_from("<I", data, after[uid].at)[0]
+        if club in club_uid:
+            list_moves.append(elenco_times.Move(after[uid].index, club_uid[club], team, elenco_times.PLAYERS))
+    server_path = game / "data" / "db" / "server_db.dat"
+    lists, missing = elenco_times.apply(server_path.read_bytes(), list_moves)
+    server_path.write_bytes(lists)
+    print(f"[OK] {len(list_moves) - len(missing)} jogadores mudados de elenco no {server_path.name}"
+          + (f"; {len(missing)} sem o time do clube novo (ficam no elenco antigo)" if missing else ""))
     people_path.write_bytes(data)
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     with REPORT.open("w", newline="", encoding="utf-8-sig") as handle:

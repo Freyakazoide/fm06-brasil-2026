@@ -38,6 +38,7 @@ class Contract:
     club: int        # índice do clube
     until: int       # ano do fim do contrato
     others: tuple[int, ...] = ()   # outros blocos do mesmo registro (empréstimo), com multi=True
+    index: int = 0   # índice da pessoa (o do fim do registro; elenco_times)
 
 
 def player_uids(people: bytes) -> set[int]:
@@ -51,7 +52,7 @@ def contracts(people: bytes, multi: bool = False) -> dict[int, Contract]:
     found: dict[int, Contract] = {}
     previous = 0
     for match in _TAIL.finditer(people, 0, PEOPLE_END):
-        _, uid = struct.unpack("<II", match.group(1) + match.group(2))
+        index, uid = struct.unpack("<II", match.group(1) + match.group(2))
         if uid not in players:
             continue
         blocks = [b for b in _CONTRACT.finditer(people, previous, match.start())
@@ -59,7 +60,8 @@ def contracts(people: bytes, multi: bool = False) -> dict[int, Contract]:
         if blocks and (len(blocks) == 1 or multi) and uid not in found:
             block = blocks[0]
             found[uid] = Contract(uid, block.start() + 1, struct.unpack("<I", block.group(1))[0],
-                                  struct.unpack("<H", block.group(4))[0], tuple(b.start() + 1 for b in blocks[1:]))
+                                  struct.unpack("<H", block.group(4))[0], tuple(b.start() + 1 for b in blocks[1:]),
+                                  index)
         previous = match.end()
     return found
 

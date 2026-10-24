@@ -38,7 +38,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import comissao, historico, nomes_regens, people_contracts  # noqa: E402
+from fm06patch import comissao, elenco_times, historico, nomes_regens, people_contracts  # noqa: E402
 
 STAFF_CSV = ROOT / "data" / "brasil" / "comissao" / "comissao_2026.csv"
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
@@ -187,6 +187,20 @@ def main() -> None:
     if len(current) != len(original):
         sys.exit(f"[ERRO] {people_path} não tem o tamanho do original; restaure o people_db e rode de novo.")
     people_path.write_bytes(comissao.apply(current, result))
+    # quem vem de outro clube entra na comissão do time no server_db (elenco_times): a lista de
+    # auxiliares e treinadores, a de fisioterapeutas e médicos ou o técnico
+    club_uid = {index: uid for uid, index in indexes.items()}
+    moves = []
+    for person, club, team in result.moves:
+        index = comissao.person_index(original, person)
+        kind = elenco_times.LIST_OF_JOB.get(person.job)
+        if index is not None and kind and club in club_uid:
+            moves.append(elenco_times.Move(index, club_uid[club], team, kind))
+    server_path = game / "data" / "db" / "server_db.dat"
+    server_data, missing = elenco_times.apply(server_path.read_bytes(), moves)
+    server_path.write_bytes(server_data)
+    print(f"[OK] {len(moves) - len(missing)} da comissão mudados de clube no {server_path.name}"
+          + (f" ({len(missing)} sem o time do clube novo)" if missing else ""))
     lnc_text = comissao.lnc_text(result)
     lnc_path = game / "data" / "db" / "lnc" / "all" / LNC_NAME
     lnc_path.parent.mkdir(parents=True, exist_ok=True)

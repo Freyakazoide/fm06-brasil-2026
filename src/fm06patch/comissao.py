@@ -367,6 +367,16 @@ def engine_birth(date: str) -> tuple[int, int] | None:
     return shifted.timetuple().tm_yday - 1, shifted.year
 
 
+def person_index(people: bytes, person: Staff) -> int | None:
+    """Índice da pessoa (o do par que fecha o registro, depois do contrato): é o que as
+    listas do time no server_db guardam (elenco_times.py)."""
+    match = _RECORD_END.search(people, person.contract_at, person.contract_at + 0x400)
+    if not match:
+        return None
+    index, uid = struct.unpack("<II", match.group(1) + match.group(2))
+    return index if uid == person.uid else None
+
+
 def apply(people: bytes, result: Plan) -> bytes:
     out = bytearray(people)
     for person, club, team in result.moves:

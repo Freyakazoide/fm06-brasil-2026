@@ -37,7 +37,10 @@ No jogo: `python scripts\aplicar_comissao.py --apply` (depois do
   brasileiro fora de 2026 (muda o clube do contrato e o time no registro); quando
   eles acabam (os auxiliares acabam cedo), um de cada clube estrangeiro que tem mais
   de um no cargo. Até 1 técnico, 3 auxiliares, 5 treinadores, 5 médicos e 2
-  olheiros de fora por clube (`DONOR_LIMIT`).
+  olheiros de fora por clube (`DONOR_LIMIT`). Desde 24/10 quem vem de fora entra
+  também na comissão do time no `server_db.dat` (`elenco_times.py`): auxiliares e
+  treinadores numa lista, fisioterapeutas e médicos em outra, o técnico em TEAM+0x70
+  (antes só o contrato e o campo "time" mudavam, e eles não apareciam no clube novo).
 - Sem nacionalidade na planilha, a pessoa fica brasileira.
 - Quem sobra continua com o nome de 2005. Clubes só de estadual não mudam.
 - Lista: `workspace\mods\comissao_2026_hospedeiros.csv`.
