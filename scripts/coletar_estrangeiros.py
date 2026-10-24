@@ -5,8 +5,9 @@
 
 Precisa de internet (o Sofascore não responde de onde o Claude roda): rode no PC.
 1. Acha no Sofascore a primeira divisão de 2026 de Argentina, Uruguai, Colômbia,
-   Paraguai, Equador, Chile, Peru, Bolívia e Venezuela (pela categoria do país; se
-   escolher o torneio errado, passe --torneio PAIS=id) e os clubes da tabela.
+   Paraguai, Equador, Chile, Peru, Bolívia e Venezuela (pelo id conhecido do torneio,
+   conferido pelo país; senão pela categoria do país; se escolher o torneio errado,
+   passe --torneio PAIS=id) e os clubes da tabela.
 2. Baixa o elenco, o técnico, as transferências, a visão geral dos atributos e a
    seleção de cada jogador (o mesmo do coletar_sofascore.py; o cache vale para as
    próximas vezes).
@@ -34,6 +35,9 @@ from coletar_comissao import manager  # noqa: E402
 from coletar_sofascore import SMALL_SQUAD, YEAR, Sofascore, lineup_players  # noqa: E402
 from fm06patch.estrangeiros import NATIONS, display_name  # noqa: E402
 
+# id do torneio da primeira divisão no Sofascore (conferido pelo país do torneio; se não
+# conferir, procura na categoria do país pelo nome abaixo)
+KNOWN = {"AR": 155, "UY": 278, "CO": 11539, "PY": 11541, "EC": 240, "CL": 11653, "PE": 406, "BO": 16736, "VE": 231}
 # nome da primeira divisão na categoria do país (o de mais seguidores, se mais de um casar)
 FIRST_DIVISION = {
     "AR": r"liga profesional|primera divisi",
@@ -49,9 +53,33 @@ FIRST_DIVISION = {
 NOT_FIRST = re.compile(r"(?i)\b(ii|2|b|segunda|reserv|women|femen|u\d\d|sub|cup|youth|nacional b)\b")
 
 
+def known_tournament(api: Sofascore, alpha2: str, tid: int) -> tuple[int, int, str] | None:
+    """O torneio ``tid``, se é do país e tem temporada de 2026."""
+    try:
+        item = (api.get(f"/unique-tournament/{tid}") or {}).get("uniqueTournament", {})
+    except RuntimeError as error:
+        print("[ERRO]", error)
+        return None
+    if (item.get("category") or {}).get("alpha2") != alpha2:
+        return None
+    season = season_2026(api, tid)
+    return (tid, season, item.get("name", f"torneio {tid}")) if season else None
+
+
+def categories(api: Sofascore) -> dict[str, int]:
+    try:
+        found = (api.get("/sport/football/categories") or {}).get("categories", [])
+    except RuntimeError as error:
+        print("[ERRO]", error, "(a lista de países do Sofascore; sem ela só os torneios conhecidos)")
+        return {}
+    return {c.get("alpha2"): c["id"] for c in found if c.get("alpha2")}
+
+
 def tournament(api: Sofascore, alpha2: str, categories: dict[str, int]) -> tuple[int, int, str] | None:
     """(id do torneio, id da temporada de 2026, nome) da primeira divisão do país."""
     if alpha2 not in categories:
+        print(f"[AVISO] {NATIONS[alpha2][2]}: primeira divisão de {YEAR} não achada; passe --torneio {alpha2}=id "
+              f"(o número no endereço do torneio no sofascore.com)")
         return None
     groups = (api.get(f"/category/{categories[alpha2]}/unique-tournaments") or {}).get("groups", [])
     found = [t for g in groups for t in g.get("uniqueTournaments", [])
@@ -102,8 +130,7 @@ def main() -> None:
 def collect(args) -> None:
     api = Sofascore(args.cache)
     forced = dict(item.upper().split("=") for item in args.torneio)
-    categories = {c.get("alpha2"): c["id"] for c in (api.get("/sport/football/categories") or {}).get("categories", [])
-                  if c.get("alpha2")}
+    countries: dict[str, int] | None = None     # só se algum torneio conhecido não conferir
     teams = []
     for alpha2 in (a.upper() for a in args.pais):
         if alpha2 not in NATIONS:
@@ -113,7 +140,12 @@ def collect(args) -> None:
             tid = int(forced[alpha2])
             found = (tid, season_2026(api, tid), f"torneio {tid}")
         else:
-            found = tournament(api, alpha2, categories)
+            found = None
+            if alpha2 in KNOWN:
+                found = known_tournament(api, alpha2, KNOWN[alpha2])
+            if not found:
+                countries = categories(api) if countries is None else countries
+                found = tournament(api, alpha2, countries)
         if not found or not found[1]:
             continue
         tid, season, name = found

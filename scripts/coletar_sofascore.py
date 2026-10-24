@@ -29,6 +29,9 @@ from fm06patch.estaduais_clubes import _NOISE, normalize  # noqa: E402
 API = "https://api.sofascore.com/api/v1"
 TOURNAMENTS = {"A": 325, "B": 390, "C": 1281, "D": 10326}
 YEAR = "2026"
+# os do site (sem eles o Sofascore às vezes responde 403)
+HEADERS = ["-H", "Accept: application/json", "-H", "Referer: https://www.sofascore.com/",
+           "-H", "Origin: https://www.sofascore.com"]
 
 
 class Sofascore:
@@ -46,7 +49,7 @@ class Sofascore:
         code = ""
         for attempt in range(retries):
             run = subprocess.run(["curl", "-s", "-m", "25", "-A", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-                                  "-w", "\n%{http_code}", API + path], capture_output=True, text=True)
+                                  *HEADERS, "-w", "\n%{http_code}", API + path], capture_output=True, text=True)
             body, _, code = run.stdout.rpartition("\n")
             if code in ("200", "404"):
                 data = json.loads(body) if code == "200" else None
