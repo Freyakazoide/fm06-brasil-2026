@@ -46,6 +46,69 @@ jogadas preferidas: as da planilha entram e as outras 47 saem. Jogos e gols pela
 seleção (`jogos_selecao`, `gols_selecao` da planilha de jogadores) vão em Player +72
 e +74 (u8).
 
+## Clubes da CONMEBOL (Fase 4)
+
+`scripts/coletar_estrangeiros.py` (no PC: o Sofascore não responde de onde o Claude
+roda) acha a primeira divisão de 2026 de Argentina, Uruguai, Colômbia, Paraguai,
+Equador, Chile, Peru, Bolívia e Venezuela pela categoria do país no Sofascore e baixa,
+de cada clube da tabela, o elenco, o técnico e, de cada jogador, as transferências, a
+visão geral dos atributos e a seleção (o mesmo cache do `coletar_sofascore.py`). Se
+escolher o torneio errado de um país, `--torneio AR=155` força o id. No fim ele roda o
+`scripts/montar_estrangeiros.py`, que grava em `data/estrangeiros/`
+(`src/fm06patch/estrangeiros.py`):
+
+| Arquivo | O quê |
+|---|---|
+| `identidade_estrangeiros.csv` | clube de 2026 ("River Plate (ARG)": o país vai no nome, há Nacional no Uruguai e no Paraguai) -> clube do FM06 do mesmo país (UID do jogo, UID do repositório) |
+| `jogadores_estrangeiros_2026.xlsx` | os elencos, no formato da `jogadores_2026.xlsx` (CA pela "série" do país: Argentina A; Uruguai, Colômbia, Paraguai, Equador e Chile B; Peru, Bolívia e Venezuela C) |
+| `tecnicos_estrangeiros_2026.csv` | o técnico de cada clube |
+| `carreiras_estrangeiros_2026.csv` | as carreiras pelas transferências |
+
+O clube do FM06 é achado pelo nome do Sofascore entre os clubes do país no `server_db`
+(o registro do clube começa com 00 e o u32 da nação: 0xBB Argentina ... 0xC4
+Venezuela): o nome todo sem "Club", "CA", "FC", igual ao longo ou ao curto; senão um só
+clube com o nome do Sofascore e mais só forma jurídica ("Deportivo Recoleta" para
+"Recoleta") ou com o nome dentro do do Sofascore e só um prefixo a mais ("Tolima" para
+"Deportes Tolima"). Cidade a mais não casa: o "Central Córdoba" de 2026 (Santiago del
+Estero) não existe no FM06, que tem o de Rosario. Os nomes que mudaram desde 2005 estão
+em `estrangeiros.ALIASES` (Gimnasia y Esgrima -> o de La Plata, Independiente Rivadavia,
+Deportes Iquique -> Municipal Iquique, Alianza FC -> Alianza Petrolera, Nacional
+Asunción, Universidad Católica do Equador, Universidad Central da Venezuela...). Com os
+nomes da primeira divisão de 2026, ficam sem par só clubes que não existem no banco de
+2005 (Tigre, Sarmiento, Boston River, Independiente del Valle, Always Ready, Sport
+Huancayo, Cusco FC...). O `montar_estrangeiros.py` lista os casados por aproximação
+(`[CONFIRA]`) e os sem par: ponha o UID do jogo na coluna `uid_jogo` e `sim` em
+`manual`, e rode `python scripts\coletar_estrangeiros.py --so-montar` (as linhas
+manuais ficam).
+
+O par "00 + nação" também aparece por acaso em outros registros (clubes belgas e
+brasileiros, números quaisquer com 0xC0): em todos os clubes de verdade dos 10 países o
+UID do repositório é menor que o do jogo, o que tira os falsos. Ao contrário, quando o
+índice do clube é o próprio código de uma nação (Bolívar 188 = 0xBC, The Strongest 189 =
+0xBD), o par do fim do registro parece o começo de outro e o `server_teams.club_pairs`
+perde o clube; o `estrangeiros._closing_pairs` acha esses pelo par (índice, UID) seguido
+do começo do registro seguinte.
+
+No mod, os estrangeiros seguem o caminho dos brasileiros:
+
+- `reforcar_elencos.py`: clube com menos jogadores no banco que o elenco de 2026 recebe
+  doadores (os outros clubes desses países doam como antes, até 2 por clube; os clubes
+  de 2026 não doam). A contagem de hospedeiros de antes do reforço é a do banco
+  (contratos com o clube). O registro do time é achado pelo UID do clube
+  (`estrangeiros.team_values`, pela lista do `elenco_times`): pelo UID do repositório,
+  como nos brasileiros, às vezes casa antes com outro trecho do arquivo.
+- `montar_elencos.py`: cada jogador de 2026 ocupa um de 2005 do clube; os de 2005 que
+  sobram ficam no clube e ganham um nome de hoje do país do clube (os nomes do país na
+  tabela de nomes do `server_db`), em vez de sair para outro clube.
+- `aplicar_comissao.py`: o técnico de 2026 ocupa o técnico do clube no banco (o
+  Reinaldo Merlo do River vira o técnico de 2026); auxiliares e o resto da comissão de
+  2005 ficam como estão. Avisa quando a mesma pessoa de 2026 está em dois cargos
+  (técnico de clube e de seleção, ou de dois clubes), que no jogo seriam dois.
+- `aplicar_historico.py`: a carreira pelas transferências, como nos brasileiros.
+- `aplicar_tudo.py`: a contagem dos elencos no jogo (etapa 2) é dos clubes brasileiros
+  e dos estrangeiros (`workspace/identidades_todas.csv`), e o `--rapido` para quando a
+  lista de clubes mudou desde a última contagem.
+
 ## No jogo
 
 Cada jogador de 2026 ocupa um jogador de 2005 do mesmo clube (o jogo não cria

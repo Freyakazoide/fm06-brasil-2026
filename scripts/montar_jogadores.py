@@ -1,7 +1,9 @@
 """Monta data/brasil/jogadores/jogadores_2026.xlsx com os dados do Sofascore.
 
 Uso: python scripts/montar_jogadores.py [--cache workspace/sofascore]
-(depois de scripts/coletar_sofascore.py)
+(depois de scripts/coletar_sofascore.py). Os clubes estrangeiros: --times
+times_estrangeiros.json --saida data/estrangeiros/jogadores_estrangeiros_2026.xlsx (o
+coletar_estrangeiros.py já faz; a "série" de cada país está em fm06patch/estrangeiros.py).
 
 Dados reais: nome, número, posições, nascimento, altura, pé, nacionalidade, fim
 de contrato, valor de mercado, início do contrato e empréstimo (transferências),
@@ -295,9 +297,11 @@ def _squad_roles(rows: list[dict]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--cache", type=Path, default=ROOT / "workspace" / "sofascore")
+    parser.add_argument("--times", default="times.json", help="lista de clubes no cache (times_estrangeiros.json)")
+    parser.add_argument("--saida", type=Path, default=OUT)
     args = parser.parse_args()
     cache = Cache(args.cache)
-    clubs = json.loads((args.cache / "times.json").read_text(encoding="utf-8"))
+    clubs = json.loads((args.cache / args.times).read_text(encoding="utf-8"))
     rows: list[dict] = []
     listed = {x["player"]["id"] for c in clubs for tid in (c["sofascore_id"], c.get("sub20_id")) if tid
               for x in (cache.get(f"/team/{tid}/players") or {}).get("players", [])}
@@ -332,9 +336,10 @@ def main() -> None:
         sheet.append([row.get(h) for h in header])
     values = book["Valores"]
     values["D6"] = "Base (sub-20)"
-    book.save(OUT)
+    args.saida.parent.mkdir(parents=True, exist_ok=True)
+    book.save(args.saida)
     series = {s: sum(1 for r in rows if r["_serie"] == s) for s in "ABCD"}
-    print(f"[OK] {len(rows)} jogadores de {len(clubs)} clubes em {OUT} ({series})")
+    print(f"[OK] {len(rows)} jogadores de {len(clubs)} clubes em {args.saida} ({series})")
 
 
 if __name__ == "__main__":

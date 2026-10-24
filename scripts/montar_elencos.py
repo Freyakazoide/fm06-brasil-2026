@@ -4,7 +4,8 @@
     python scripts/montar_elencos.py
 
 Entradas: data/brasil/jogadores/jogadores_2026.xlsx, identidade_fm06.csv (clube ->
-UID do jogo) e workspace/elencos_2005.csv (jogadores de cada clube num New Game).
+UID do jogo) e workspace/elencos_2005.csv (jogadores de cada clube num New Game); dos
+clubes da CONMEBOL, os de data/estrangeiros (coletar_estrangeiros.py), quando houver.
 Cada jogador de 2026 ocupa um jogador de 2005 do mesmo clube: primeiro a equipe
 principal (CA maior primeiro), depois a base (PA maior primeiro), até acabarem os
 hospedeiros. Saída em workspace/mods/:
@@ -28,7 +29,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import nomes_regens  # noqa: E402
+from fm06patch import comissao, estrangeiros, nomes_regens  # noqa: E402
 from fm06patch.squad_builder import ROLE_POSITIONS, Target, build  # noqa: E402
 
 PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
@@ -38,6 +39,7 @@ OUT = ROOT / "workspace" / "mods"
 NAME = "brasil_2026_jogadores"
 PROFILES = ROOT / "data" / "modelos" / "jogadores_perfil.xlsx"
 REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"   # nomes de hoje para quem sobra
+SERVER_BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"   # nomes de cada país
 # coluna da jogadores_perfil.xlsx -> nome no injetor (live_player.PERSONALITY e atributos ocultos)
 PERSONALITY_COLUMNS = {"adaptabilidade": "Adaptability", "ambicao": "Ambition", "lealdade": "Loyalty",
                        "pressao": "Pressure", "profissionalismo": "Professional", "desportivismo": "Sportsmanship",
@@ -146,10 +148,18 @@ def main() -> None:
     parser.add_argument("--year-shift", type=int, default=-20)   # motor 2006 = 2026 (ano exibido + 20)
     args = parser.parse_args()
     clubs = _targets(PLAYERS)
+    if estrangeiros.PLAYERS.exists():                   # clubes da CONMEBOL (coletar_estrangeiros.py)
+        clubs.update(_targets(estrangeiros.PLAYERS))
     hosts = _hosts(args.hospedeiros)
-    uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))}
+    identities = list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))) + estrangeiros.identity_rows()
+    uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in identities}
+    nation_of = {r["clube_2026"]: estrangeiros.NATIONS[r["pais"]][0] for r in identities if r.get("pais") in estrangeiros.NATIONS}
 
-    filler = nomes_regens.Filler(nomes_regens.load_sheet(REGEN_NAMES)) if REGEN_NAMES.exists() else None
+    names = nomes_regens.load_sheet(REGEN_NAMES) if REGEN_NAMES.exists() else {}
+    filler = nomes_regens.Filler(names) if names else None
+    if nation_of and SERVER_BACKUP.exists():           # quem sobra num clube estrangeiro: nome do país
+        names = {**comissao.names_by_nation(SERVER_BACKUP.read_bytes()), **names}
+    fillers = {code: nomes_regens.Filler(names, code) for code in set(nation_of.values())}
     renamed = []
     profiles = _profiles(PROFILES)
     used_profiles, profiled = 0, set()
@@ -187,12 +197,13 @@ def main() -> None:
                         entry[key] = profile[key]
         players += spec["players"]
         mapping += [{"clube": club, **m} for m in club_map]
-        if filler:                                      # quem sobra: nome brasileiro de hoje
+        club_filler = fillers.get(nation_of.get(club)) or filler
+        if club_filler:                                 # quem sobra: nome de hoje (do país do clube)
             used = {m["uid_hospedeiro"] for m in club_map}
             for host in pool:
                 if host["uid"] in used:
                     continue
-                first, common, second = (n.replace('"', "") for n in filler.name(host["uid"]))
+                first, common, second = (n.replace('"', "") for n in club_filler.name(host["uid"]))
                 lnc.append(f'"CHANGE_PLAYER_NAME"\t{host["uid"]}\t"{first}"\t"{common}"\t"{second}"')
                 renamed.append({"clube": club, "uid": host["uid"], "nome": common or f"{first} {second}",
                                 "nascido": host["nascido"], "ca": host["ca"]})
@@ -223,7 +234,7 @@ def main() -> None:
               f"jogadores da {PROFILES.name}")
     print(f"[OK] {len(players)} jogadores em {OUT / NAME}.lnc/.json; {len(left_out)} sem vaga")
     if renamed:
-        print(f"[OK] {len(renamed)} jogadores de 2005 que sobram nos clubes de 2026 com nome brasileiro de hoje "
+        print(f"[OK] {len(renamed)} jogadores de 2005 que sobram nos clubes de 2026 com nome de hoje do país do clube "
               f"(lista em {NAME}_renomeados.csv)")
     for path in other_name_files():
         print(f"[ATENÇÃO] apague {path}: ele também muda nomes de jogadores e embaralha os nomes")

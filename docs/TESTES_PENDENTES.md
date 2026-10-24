@@ -21,7 +21,10 @@ Enter quando estiver pronto):
 
 - `python scripts\aplicar_tudo.py --rapido`: pula a contagem (etapa 2), para quando os
   elencos não mudaram (só tradução, comissão, árbitros, histórico, rivais...). Refaz o
-  reforço e para se o people_db não for o da última contagem completa.
+  reforço e para se o people_db ou a lista de clubes (com os da CONMEBOL) não for o da
+  última contagem completa.
+- clubes da CONMEBOL: antes, `python scripts\coletar_estrangeiros.py` (precisa de
+  internet; demora na primeira vez), depois o `aplicar_tudo.py` completo.
 - `python scripts\aplicar_tudo.py --etapa 3`: recomeça da etapa 3 depois de um erro.
 
 ## O que conferir
@@ -40,6 +43,7 @@ Enter quando estiver pronto):
 | 10 | Técnicos das seleções sul-americanas | tela de cada seleção (Argentina, Uruguai, Venezuela...) | Scaloni (ARG), Óscar Villegas (BOL), Néstor Lorenzo (COL), Gallardo (ECU), Alfaro (PAR), Mano Menezes (PER), Forlán (URU), Vizcarrondo (VEN) | `aplicar_comissao.py` |
 | 11 | Sem gente repetida | procurar pelo nome (busca de pessoas): Carlo Ancelotti, Diego Forlán, Tite, Abel Ferreira | só uma pessoa com cada nome (a de 2026). O técnico do Milan de 2005 e o Forlán jogador do Villarreal ganham nomes de hoje do país deles | `aplicar_comissao.py` |
 | 12 | Elencos com a lista do time no server_db (correção de 24/10; rodada completa, sem `--rapido`) | elencos do Red Bull Bragantino, Cuiabá, Athletico-PR, Trem; o Palmeiras; a comissão de quem recebeu gente de fora (Ceará, Fortaleza, Náutico) | Bragantino e Cuiabá com os jogadores de 2026 e sem juniores inventados ("Alamosi"); Warley fora do Palmeiras; Zé Eduardo no clube dele; o clube da ficha igual ao da lista; os auxiliares, preparadores e fisioterapeutas trazidos de fora aparecendo no staff do clube. Na saída: "N jogadores mudados de elenco no server_db.dat" e "N da comissão mudados de clube" | `aplicar_tudo.py` |
+| 13 | Clubes da CONMEBOL de 2026 (rodada completa, sem `--rapido`, depois do `coletar_estrangeiros.py`) | elencos e técnico do River Plate, Boca Juniors, Peñarol, Nacional, Colo-Colo, Olimpia, Atlético Nacional, LDU, Alianza Lima, Bolívar, Caracas; a ficha de um jogador de 2026 deles (nacionalidade, aba Histórico) | os jogadores de 2026 de cada clube, o técnico de 2026; os de 2005 que sobram com nomes do país (argentinos no River, chilenos no Colo-Colo); ninguém de 2005 com o nome antigo nos titulares. Na saída do `montar_estrangeiros.py`: "N de M clubes com clube do FM06" e o `[CONFIRA]` dos que não têm | `coletar_estrangeiros.py` e `aplicar_tudo.py` |
 
 Antes de rodar, `python scripts\validar_entregas.py` confere as planilhas.
 

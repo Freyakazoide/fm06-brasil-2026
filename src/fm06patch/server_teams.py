@@ -194,15 +194,17 @@ def find_brazil_teams(data: bytes) -> list[TeamRecord]:
     return list(teams.values())
 
 
-def club_pairs(data: bytes) -> list[tuple[int, int, int, int]]:
-    """(UID do repositório, índice, UID verdadeiro, posição das datas) de cada clube brasileiro.
+def club_pairs(data: bytes, nation: int = 0xBD) -> list[tuple[int, int, int, int]]:
+    """(UID do repositório, índice, UID verdadeiro, posição das datas) de cada clube da nação
+    (0xBD Brasil; o registro do clube começa com 00 e o u32 da nação).
 
     O par (índice, UID) do clube vem depois dos nomes e fecha o registro: é o início do
     registro seguinte. Alguns registros trazem depois outros clubes sem "00 BD 00 00 00"
     (Ferroviária (SP) leva Americano Paulista e Paissandu); o par do fim é então o do
     último deles, e o do clube é o primeiro (índice anterior + 1, UID) depois dos nomes.
     Pegar o par do fim põe o clube de 2026 no lugar do Paissandu."""
-    starts = [m.start() - 4 for m in re.finditer(re.escape(_CLUB_TAIL), data) if m.start() >= 8]
+    tail = b"\x00" + struct.pack("<I", nation)
+    starts = [m.start() - 4 for m in re.finditer(re.escape(tail), data) if m.start() >= 8]
     pairs = []
     for start, following in zip(starts, starts[1:] + [len(data)]):
         mark = data.find(_DATES, start, min(start + 0x600, following))
@@ -210,6 +212,8 @@ def club_pairs(data: bytes) -> list[tuple[int, int, int, int]]:
             continue
         repo = struct.unpack_from("<I", data, start)[0]
         own = struct.unpack_from("<I", data, start - 4)[0] + 1
+        if not 0 < own < 0xFFFFFFFF:
+            continue
         short = following - start <= 0x2000
         if short and struct.unpack_from("<I", data, following - 4)[0] == own:
             pairs.append((repo, own, struct.unpack_from("<I", data, following)[0], mark))

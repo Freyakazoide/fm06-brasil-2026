@@ -10,8 +10,9 @@ os nomes entram: o jogo lê o histórico no New Game.
   e gols de cada passagem repartidos por igual entre as temporadas dela, e o valor das
   transferências que a carreiras_2026.csv tiver);
 - os outros jogadores de 2026 ganham os clubes por onde passaram e o valor de cada
-  transferência (data/brasil/jogadores/carreiras_2026.csv, do montar_carreiras.py), sem
-  jogos e gols;
+  transferência (data/brasil/jogadores/carreiras_2026.csv, do montar_carreiras.py, e a
+  data/estrangeiros/carreiras_estrangeiros_2026.csv dos clubes da CONMEBOL), sem jogos
+  e gols;
 - quem não está em nenhum dos dois e a comissão de 2026 perdem a carreira do jogador de
   2005 que ocupam (fica só a temporada atual);
 - os jogadores de 2005 que sobram (nome de hoje) ficam com a carreira que tinham.
@@ -36,7 +37,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import historico_jogadores as hj, traducao  # noqa: E402
+from fm06patch import estrangeiros, historico_jogadores as hj, traducao  # noqa: E402
 
 FILES = ("index", "id", "dt")
 SHA256 = {"index": "3FD46578A293D8B2AD99297F71BD19387A6B144AC95793F20309B9CC3503FB53",   # 6.0.2
@@ -149,7 +150,7 @@ def plan(game: Path, history: hj.History) -> tuple[dict[int, list[hj.Season]], l
             if row.get("uid", "").isdigit():
                 careers.setdefault(int(row["uid"]), [])
                 staff += 1
-    identities = list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig")))
+    identities = list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))) + estrangeiros.identity_rows()
     uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in identities}
     stand_ins = {int(r["uid_jogo"]) for r in identities if r["tipo"] == "substituto"}
     refs = history.club_refs()          # substituto só pelo nome de 2026: "Paraná" não vira o Novorizontino
@@ -162,7 +163,8 @@ def plan(game: Path, history: hj.History) -> tuple[dict[int, list[hj.Season]], l
 
     found_by: dict[str, dict[int, tuple[dict, str, str, list[hj.Passage]]]] = {}
     warnings, absent = [], 0
-    for source, rows in (("planilha", _sheet(SHEET)), ("transferências", _careers(CAREERS))):
+    transfers = {**_careers(estrangeiros.CAREERS), **_careers(CAREERS)}   # clubes da CONMEBOL + Brasil
+    for source, rows in (("planilha", _sheet(SHEET)), ("transferências", transfers)):
         found_by[source] = {}
         for (club, name, born), passages in rows.items():
             found = by_name.get((uid_of.get(club), name), [])

@@ -14,10 +14,14 @@ Etapas (o script para e avisa quando o jogo tem de ser aberto ou fechado):
    aplicar_historico.py --apply e a cópia do .lnc dos jogadores para data\\db\\lnc\\all;
 4. jogo aberto (outro New Game, tela principal): live_player_editor.py ... --apply. Salve o jogo.
 
+A contagem dos elencos é dos clubes de identidade_fm06.csv e, com data\\estrangeiros
+(coletar_estrangeiros.py), dos clubes da CONMEBOL (workspace\\identidades_todas.csv).
+
 O --rapido pula a etapa 2: serve quando os elencos de 2005 não mudaram (mudou só
 tradução, comissão, árbitros, histórico, rivais...). Ele refaz o reforço e confere se o
-people_db ficou igual ao da última contagem (o SHA-256 guardado na etapa 2); se não
-ficou, a contagem está velha e ele para pedindo a rodada completa. Se um passo dá erro,
+people_db e a lista de clubes ficaram iguais aos da última contagem (os SHA-256
+guardados na etapa 2); se não ficaram, a contagem está velha e ele para pedindo a
+rodada completa. Se um passo dá erro,
 o script para ali; corrija e rode de novo com --etapa.
 """
 
@@ -33,7 +37,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
-IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
+sys.path.insert(0, str(ROOT / "src"))
+
+from fm06patch import estrangeiros  # noqa: E402
+
+IDENTITIES = ROOT / "workspace" / "identidades_todas.csv"    # Brasil + CONMEBOL, para a contagem
 PLAYERS_LNC = ROOT / "workspace" / "mods" / "brasil_2026_jogadores.lnc"
 PLAYERS_JSON = ROOT / "workspace" / "mods" / "brasil_2026_jogadores.json"
 HOSTS = ROOT / "workspace" / "elencos_2005.csv"
@@ -79,6 +87,12 @@ def people_sha(game: Path) -> str:
     return hashlib.sha256((game / "data" / "db" / "people_db.dat").read_bytes()).hexdigest().upper()
 
 
+def counted_key(game: Path) -> str:
+    """O que a contagem dos elencos depende: o people_db e a lista dos clubes contados."""
+    clubs = hashlib.sha256(estrangeiros.write_all_identities(IDENTITIES).read_bytes()).hexdigest().upper()
+    return f"{people_sha(game)}\n{clubs}"
+
+
 def run(stage: int, script: str, *args: str, retry: bool = False) -> None:
     print(f"\n=== etapa {stage}: {script} {' '.join(args)}".rstrip(), flush=True)
     while True:
@@ -106,18 +120,19 @@ def main() -> None:
             if not HOSTS_BASE.exists() and not HOSTS.exists():     # instalação nova: contar antes do reforço
                 print("\nPrimeira vez: o reforço precisa da contagem dos elencos de 2005 sem reforço.")
                 need_open()
+                estrangeiros.write_all_identities(IDENTITIES)
                 run(1, "live_player_editor.py", "--squads-all", str(IDENTITIES), retry=True)
                 need_closed()
         run(1, "reforcar_elencos.py", "--apply")
-        if args.rapido and (not COUNTED.exists() or COUNTED.read_text().strip() != people_sha(game)):
-            sys.exit("\n[ERRO] O people_db mudou desde a última contagem dos elencos (ou a contagem é de antes\n"
-                     "desta conferência): os jogadores de 2026 iriam para os hospedeiros errados. Rode sem\n"
-                     "--rapido: python scripts\\aplicar_tudo.py")
+        if args.rapido and (not COUNTED.exists() or COUNTED.read_text().strip() != counted_key(game)):
+            sys.exit("\n[ERRO] O people_db ou a lista de clubes (data\\estrangeiros) mudou desde a última contagem\n"
+                     "dos elencos (ou a contagem é de antes desta conferência): os jogadores de 2026 iriam para\n"
+                     "os hospedeiros errados. Rode sem --rapido: python scripts\\aplicar_tudo.py")
     if args.etapa <= 2 and not args.rapido:
         if lnc.exists():            # a contagem dos elencos é num jogo sem os nomes de 2026
             lnc.unlink()
             print(f"[OK] tirado {lnc} até a etapa 3")
-        counted = people_sha(game)              # o banco que o jogo carrega nesta contagem
+        counted = counted_key(game)             # o banco que o jogo carrega nesta contagem
         need_open()
         run(2, "live_player_editor.py", "--squads-all", str(IDENTITIES), retry=True)
         COUNTED.write_text(counted + "\n")

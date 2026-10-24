@@ -13,8 +13,10 @@ contrato). Quem sobra no clube ganha um nome de hoje. O técnico das seleções
 de data/brasil/comissao/selecoes_2026.csv (linha com nome) ocupa o técnico da seleção
 no banco (Parreira -> Ancelotti). A pessoa de 2005 que é alguém de 2026 (mesmo nome e
 nascimento: o Ancelotti do Milan, o Forlán jogador) também ganha nome de hoje, do país
-dela, para o jogo não ter dois. Rodar depois do montar_elencos.py (usa a lista dos
-jogadores montados).
+dela, para o jogo não ter dois. Dos clubes da CONMEBOL de data/estrangeiros
+(coletar_estrangeiros.py) entra só o técnico (tecnicos_estrangeiros_2026.csv); o resto
+da comissão de 2005 desses clubes fica como está. Rodar depois do montar_elencos.py (usa
+a lista dos jogadores montados).
 
 Grava sobre o people_db atual do jogo (depois do reforcar_elencos.py; os dois mexem
 em pessoas diferentes) e lê as pessoas da cópia original
@@ -38,7 +40,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import comissao, elenco_times, historico, nomes_regens, people_contracts  # noqa: E402
+from fm06patch import comissao, elenco_times, estrangeiros, historico, nomes_regens, people_contracts  # noqa: E402
 
 STAFF_CSV = ROOT / "data" / "brasil" / "comissao" / "comissao_2026.csv"
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
@@ -57,6 +59,10 @@ def game_dir() -> Path:
     return Path(json.loads((ROOT / "config" / "local.json").read_text(encoding="utf-8"))["game_dir"])
 
 
+def _identities() -> list[dict]:
+    return list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))) + estrangeiros.identity_rows()
+
+
 def wanted_2026(result: comissao.Plan) -> tuple[list[tuple[set[str], str]], set[int]]:
     """(nomes, nascimento) de quem está no jogo em 2026 e os UIDs que já ganham nome novo:
     a comissão (inclusive os técnicos das seleções), os jogadores montados (montar_elencos.py)
@@ -67,15 +73,16 @@ def wanted_2026(result: comissao.Plan) -> tuple[list[tuple[set[str], str]], set[
         spec = json.loads(PLAYERS.read_text(encoding="utf-8"))
         taken |= {p["uid"] for p in spec["players"]}
         placed = {(p["club_uid"], p["name"], p["birth_date"]) for p in spec["players"]}
-        uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in csv.DictReader(IDENTITIES.open(encoding="utf-8-sig"))}
-        rows = openpyxl.load_workbook(PLAYERS_SHEET, read_only=True)["Jogadores"].iter_rows(values_only=True)
-        header = next(rows)
-        for values in rows:
-            row = dict(zip(header, values))
-            full = f"{row.get('primeiro_nome') or ''} {row.get('sobrenome') or ''}".strip()
-            name, born = row.get("nome_comum") or full, str(row.get("nascimento") or "")[:10]
-            if (uid_of.get(row.get("clube")), name, born) in placed:
-                wanted.append(({name, full}, born))
+        uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in _identities()}
+        for sheet in estrangeiros.player_files():  # jogadores_2026.xlsx e o dos estrangeiros
+            rows = openpyxl.load_workbook(sheet, read_only=True)["Jogadores"].iter_rows(values_only=True)
+            header = next(rows)
+            for values in rows:
+                row = dict(zip(header, values))
+                full = f"{row.get('primeiro_nome') or ''} {row.get('sobrenome') or ''}".strip()
+                name, born = row.get("nome_comum") or full, str(row.get("nascimento") or "")[:10]
+                if (uid_of.get(row.get("clube")), name, born) in placed:
+                    wanted.append(({name, full}, born))
     if RENAMED.exists():
         taken |= {int(r["uid"]) for r in csv.DictReader(RENAMED.open(encoding="utf-8-sig")) if r["uid"].isdigit()}
     return wanted, taken
@@ -113,9 +120,9 @@ def main() -> None:
     original = PEOPLE_BACKUP.read_bytes()
     server = (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes()
 
-    identities = list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig")))
+    identities = _identities()
     uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in identities}
-    repo_of = {int(r["uid_jogo"]): int(r["uid_repo"]) for r in identities}
+    repo_of = {int(r["uid_jogo"]): int(r.get("uid_repo") or 0) for r in identities}
     wanted, unknown = [], set()
     for row in csv.DictReader(STAFF_CSV.open(encoding="utf-8-sig")):
         if row["clube"] not in uid_of:
@@ -123,14 +130,22 @@ def main() -> None:
             continue
         wanted.append(comissao.Wanted(uid_of[row["clube"]], row["clube"], row["cargo"], row["nome"],
                                       row["nacionalidade"] or "BRA", row["nascimento"]))   # sem dado: brasileiro
+    if estrangeiros.COACHES.exists():               # técnicos dos clubes da CONMEBOL
+        for row in csv.DictReader(estrangeiros.COACHES.open(encoding="utf-8-sig")):
+            if row["clube_2026"] in uid_of and row["nome"].strip():
+                nation = estrangeiros.NATIONS.get(row.get("pais", ""), (0, ""))[1]
+                wanted.append(comissao.Wanted(uid_of[row["clube_2026"]], row["clube_2026"], row["cargo"] or "tecnico",
+                                              row["nome"], row["nacionalidade"] or nation, row["nascimento"]))
     if unknown:
         print("[AVISO] clubes da planilha sem identidade no jogo:", ", ".join(sorted(unknown)))
 
     print("Lendo o staff do people_db...", flush=True)
     staff = comissao.read_staff(original, server)
     indexes = people_contracts.brazil_club_indexes(server)
+    abroad = estrangeiros.club_indexes(server) if estrangeiros.identity_rows() else {}
     ours = set(repo_of)
     club_index = {uid: indexes[uid] for uid in ours if uid in indexes}
+    club_index.update({uid: index for uid, index in abroad.items() if uid in ours})
     # campo "time" de quem vem de fora: o mesmo do staff que o clube já tem (é o índice do time,
     # historico.team_index; um a menos aponta para outro time e o New Game trava)
     current: dict[int, Counter] = {}
@@ -138,22 +153,28 @@ def main() -> None:
         value = struct.unpack_from("<I", original, person.team_at)[0]
         if value != comissao.NONE:
             current.setdefault(person.club, Counter())[value] += 1
+    # sem staff no clube estrangeiro: o registro do time pelo UID (elenco_times); o
+    # historico.team_index acha pelo UID do repositório, que neles às vezes casa com outro trecho
+    values = estrangeiros.team_values(server) if abroad else {}
     team_index = {}
     for uid in ours:
         if uid in club_index and club_index[uid] in current:
             team_index[uid] = current[club_index[uid]].most_common(1)[0][0]
-            continue
-        try:
-            team_index[uid] = historico.team_index(server, repo_of[uid])
-        except ValueError:
-            pass
+        elif uid in abroad:
+            if uid in values:
+                team_index[uid] = values[uid]
+        else:
+            try:
+                team_index[uid] = historico.team_index(server, repo_of[uid])
+            except ValueError:
+                pass
     spare = {index for uid, index in indexes.items() if uid not in ours}
-    foreign = {person.club for person in staff} - set(indexes.values())
+    foreign = {person.club for person in staff} - set(indexes.values()) - set(abroad.values())
     result = comissao.plan(staff, [w for w in wanted if w.club_uid in team_index], club_index, team_index, spare,
                            foreign)
     filler = nomes_regens.Filler(nomes_regens.load_sheet(REGEN_NAMES)) if REGEN_NAMES.exists() else None
     if filler:                                      # staff de 2005 que sobra: nome brasileiro de hoje
-        comissao.fill_names(result, staff, set(club_index.values()), filler.name)
+        comissao.fill_names(result, staff, {indexes[uid] for uid in ours if uid in indexes}, filler.name)
     if NATIONAL_CSV.exists():                       # técnico da seleção: o de 2005 vira o de 2026
         managers = comissao.read_national_managers(original, server)
         taken = {person.uid for person, _ in result.renames} | {person.uid for person, _ in result.fillers}
@@ -170,6 +191,13 @@ def main() -> None:
                                                              row["nacionalidade"], row["nascimento"])))
             print(f"[OK] seleção {row['nacao']}: {hosts[0].name} -> {row['nome']}")
     add_namesakes(result, original, server)
+    seen = Counter((comissao._plain(row.nome), row.nascimento) for _, row in result.renames if row.nascimento)
+    for (name, born), count in seen.items():         # técnico de clube e de seleção (Gallardo)
+        if count > 1:
+            clubs = ", ".join(row.clube for _, row in result.renames
+                              if (comissao._plain(row.nome), row.nascimento) == (name, born))
+            print(f"[AVISO] a mesma pessoa de 2026 em {count} cargos ({clubs}): o jogo terá {count} com esse nome; "
+                  "tire uma das linhas (selecoes_2026.csv, comissao_2026.csv ou tecnicos_estrangeiros_2026.csv)")
     for line in result.report:
         print("  ", line)
     managers = sum(1 for _, row in result.renames if row.cargo == "tecnico")
@@ -189,7 +217,7 @@ def main() -> None:
     people_path.write_bytes(comissao.apply(current, result))
     # quem vem de outro clube entra na comissão do time no server_db (elenco_times): a lista de
     # auxiliares e treinadores, a de fisioterapeutas e médicos ou o técnico
-    club_uid = {index: uid for uid, index in indexes.items()}
+    club_uid = {index: uid for uid, index in {**abroad, **indexes}.items()}
     moves = []
     for person, club, team in result.moves:
         index = comissao.person_index(original, person)

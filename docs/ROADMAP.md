@@ -83,9 +83,11 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 ### Fase 4: o resto do continente
 
-- Elencos de 2026 dos clubes estrangeiros da Libertadores e da Sul-Americana: coletor
-  do Sofascore para eles e o mesmo caminho dos brasileiros.
-- Técnicos das seleções (`selecoes_2026.csv`) e, depois, dos clubes estrangeiros.
+- ~~Elencos e técnicos de 2026 da primeira divisão dos outros 9 países da CONMEBOL~~:
+  entrou em 24/10 (`coletar_estrangeiros.py`, `docs/JOGADORES_2026.md`, item 13 do
+  TESTES_PENDENTES). Falta: a comissão além do técnico e os clubes de 2026 que não
+  existem no FM06 (ficam de fora).
+- ~~Técnicos das seleções (`selecoes_2026.csv`)~~: entrou em 22/10.
 - Regras de transferência de 2026 (ficha C8b).
 
 ### Fase 5: começo de jogo mais real

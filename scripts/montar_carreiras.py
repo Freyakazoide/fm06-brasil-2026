@@ -74,8 +74,15 @@ def transfers(history: dict, names_2026: dict[int, str], by_plain: dict[frozense
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--cache", type=Path, default=ROOT / "workspace" / "sofascore")
+    parser.add_argument("--times", default="times.json", help="lista de clubes no cache (times_estrangeiros.json)")
+    parser.add_argument("--jogadores", type=Path, default=PLAYERS)
+    parser.add_argument("--saida", type=Path, default=OUT)
     args = parser.parse_args()
-    times = json.loads((args.cache / "times.json").read_text(encoding="utf-8"))
+    times_path = args.cache / args.times
+    times = json.loads(times_path.read_text(encoding="utf-8"))
+    brazil = args.cache / "times.json"      # nos estrangeiros, os clubes brasileiros de 2026 também
+    if times_path.name != brazil.name and brazil.exists():
+        times += json.loads(brazil.read_text(encoding="utf-8"))
     names_2026 = {}
     for team in times:                      # o sub-20 com " U20": a origem na base não vira passagem
         for key, suffix in (("sofascore_id", ""), ("sub20_id", " U20")):
@@ -88,9 +95,9 @@ def main() -> None:
         if row["clube_2026"] not in known:
             plain.setdefault(_plain(row["clube_2026"]), set()).add(row["clube_2026"])
     by_plain = {key: next(iter(names)) for key, names in plain.items() if len(names) == 1}
-    updated = dt.date.fromtimestamp((args.cache / "times.json").stat().st_mtime).isoformat()
+    updated = dt.date.fromtimestamp(times_path.stat().st_mtime).isoformat()
 
-    rows = openpyxl.load_workbook(PLAYERS, read_only=True)["Jogadores"].iter_rows(values_only=True)
+    rows = openpyxl.load_workbook(args.jogadores, read_only=True)["Jogadores"].iter_rows(values_only=True)
     header = next(rows)
     out, players, missing = [], 0, 0
     for values in rows:
@@ -111,12 +118,12 @@ def main() -> None:
                         "temporada": p.label, "clube": p.club, "emprestimo": "sim" if p.loan else "não",
                         "jogos": "", "gols": "", "valor_eur": p.fee or "", "fonte": row["fonte_url"],
                         "atualizado": updated})
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    with OUT.open("w", newline="", encoding="utf-8-sig") as handle:
+    args.saida.parent.mkdir(parents=True, exist_ok=True)
+    with args.saida.open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.DictWriter(handle, fieldnames=FIELDS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(out)
-    print(f"[OK] {players} jogadores, {len(out)} passagens em {OUT.relative_to(ROOT)} "
+    print(f"[OK] {players} jogadores, {len(out)} passagens em {args.saida.relative_to(ROOT)} "
           f"({missing} sem transferências no cache)")
 
 

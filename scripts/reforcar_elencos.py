@@ -9,7 +9,10 @@ script muda, no people_db.dat, o clube do contrato de jogadores de clubes que
 não usamos (primeiro os brasileiros fora de 2026, depois até 2 por clube
 estrangeiro; nunca quem tem jogos pela seleção, que continuaria convocado pela
 seleção dele) para esses clubes, até cada um ter vaga para o elenco de 2026
-(limite --limite por clube). O injetor depois troca nome, dados e
+(limite --limite por clube). Os clubes da CONMEBOL de data/estrangeiros
+(coletar_estrangeiros.py) entram do mesmo jeito: os que têm menos jogadores no banco que
+o elenco de 2026 ganham doadores (os outros clubes desses países não doam ninguém, nem
+os nossos). O injetor depois troca nome, dados e
 nacionalidade de cada um. Contrato e campo "time" mudam juntos, e quem chega com
 contrato num clube e time de outro vai para o time do clube do contrato. O elenco que o
 jogo mostra é a lista de jogadores do registro do time no server_db.dat
@@ -39,7 +42,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import elenco_times, estaduais_clubes, historico, people_contracts, server_teams  # noqa: E402
+from fm06patch import elenco_times, estaduais_clubes, estrangeiros, historico, people_contracts, server_teams  # noqa: E402
 
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
@@ -57,8 +60,8 @@ def game_dir() -> Path:
     return Path(json.loads((ROOT / "config" / "local.json").read_text(encoding="utf-8"))["game_dir"])
 
 
-def _sheet_rows() -> list[dict]:
-    rows = openpyxl.load_workbook(PLAYERS, read_only=True)["Jogadores"].iter_rows(values_only=True)
+def _sheet_rows(path: Path = PLAYERS) -> list[dict]:
+    rows = openpyxl.load_workbook(path, read_only=True)["Jogadores"].iter_rows(values_only=True)
     header = next(rows)
     return [dict(zip(header, r)) for r in rows]
 
@@ -94,13 +97,23 @@ def main() -> None:
     server = (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes()
 
     identities = list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig")))
-    ours = {int(r["uid_jogo"]) for r in identities}
+    foreign = estrangeiros.identity_rows()          # clubes da CONMEBOL (vazio sem data/estrangeiros)
+    ours = {int(r["uid_jogo"]) for r in identities + foreign}
     hosts = Counter(int(r["clube_uid"]) for r in csv.DictReader(args.hospedeiros.open(encoding="utf-8")))
     sheet = _sheet_rows()
+    if foreign and estrangeiros.PLAYERS.exists():
+        sheet += _sheet_rows(estrangeiros.PLAYERS)
     sizes = Counter(r["clube"] for r in sheet)
     indexes = people_contracts.brazil_club_indexes(server)
     brazil = {index: uid for uid, index in indexes.items()}
+    abroad = estrangeiros.club_indexes(server, foreign) if foreign else {}   # UID do jogo -> índice
+    abroad_clubs = {index: uid for uid, index in abroad.items()}
     found = people_contracts.contracts(people)
+    # a contagem sem reforço (no jogo) é só dos clubes brasileiros de quando foi feita; dos
+    # estrangeiros vale a do banco (os contratos com o clube)
+    in_db = Counter(c.club for c in found.values() if c.club in abroad_clubs)
+    for uid, index in abroad.items():
+        hosts.setdefault(uid, in_db[index])
     # clubes que jogam um estadual: com certeza carregados (o par "00 BD 00 00 00" também pega
     # alguns estrangeiros, que o jogo não carrega)
     true = server_teams.true_uids(server)
@@ -109,21 +122,23 @@ def main() -> None:
     host_uids = {int(r["uid"]) for r in csv.DictReader(args.hospedeiros.open(encoding="utf-8"))}
 
     needs = []
-    for row in identities:
+    club_index = {**abroad, **indexes}
+    for row in identities + foreign:
         uid, club = int(row["uid_jogo"]), row["clube_2026"]
         missing = min(sizes.get(club, 0), args.limite) - hosts.get(uid, 0)
         if missing > 0:
-            if uid not in indexes:
+            if uid not in club_index:
                 print(f"[AVISO] {club}: índice do clube {uid} não achado no server_db")
                 continue
             needs.append((club, uid, missing))
 
-    # doadores: brasileiros de clubes fora de 2026, depois até 2 por clube estrangeiro
+    # doadores: brasileiros de clubes fora de 2026, depois até 2 por clube estrangeiro (fora
+    # os clubes da CONMEBOL de 2026)
     donors = [c for c in found.values() if c.club in brazil and brazil[c.club] not in ours]
     taken: Counter = Counter()
     by_club: dict[int, list] = defaultdict(list)
     for c in found.values():
-        if c.club not in brazil:
+        if c.club not in brazil and c.club not in abroad_clubs:
             by_club[c.club].append(c)
     for club, people_of_club in sorted(by_club.items(), key=lambda kv: -len(kv[1])):
         donors += people_of_club[:PER_FOREIGN_CLUB]
@@ -137,16 +152,17 @@ def main() -> None:
             donor = next(pool, None)
             if donor is None:
                 break
-            moves[donor.uid] = indexes[uid]
+            moves[donor.uid] = club_index[uid]
             taken[club] += 1
             report.append({"jogador_uid": donor.uid, "clube_antigo_indice": donor.club,
                            "clube_2026": club, "clube_uid": uid})
     for club, uid, missing in needs:
-        print(f"{club:28} {hosts.get(uid, 0):3} hospedeiros + {taken[club]:3} (faltavam {missing})")
+        print(f"{club:32} {hosts.get(uid, 0):3} hospedeiros + {taken[club]:3} (faltavam {missing})")
     print(f"[OK] {len(moves)} jogadores movidos para {len(needs)} clubes ({len(donors)} doadores disponíveis)")
 
     # excedentes: jogadores de 2005 (do banco) além do elenco de 2026 ficariam no clube com o
-    # nome de 2005; vão para clubes brasileiros fora de 2026
+    # nome de 2005; vão para clubes brasileiros fora de 2026 (nos estrangeiros ficam e ganham
+    # um nome de hoje do país no montar_elencos.py)
     spare = [i for i, u in brazil.items() if u not in ours and u in playing]
     removed = 0
     for row in identities:
@@ -166,11 +182,14 @@ def main() -> None:
     # server_db; sem ele, o dos jogadores do clube (que numa cópia mexida pode ser de outro)
     destinations = set(moves.values())
     teams = {club: team for club, team in people_contracts.club_teams(server).items() if club in destinations}
+    if abroad:
+        values = estrangeiros.team_values(server)
+        teams.update({index: values[uid] for uid, index in abroad.items() if index in destinations and uid in values})
     teams.update({club: team for club, team in people_contracts.club_team_values(
         people, people_contracts.contracts(people, multi=True), destinations - set(teams), tables).items()})
     for club in destinations - set(teams):
         try:
-            teams[club] = historico.team_index(server, repo_of[brazil[club]])
+            teams[club] = historico.team_index(server, repo_of[brazil[club]])   # estrangeiro: KeyError
         except (KeyError, ValueError):
             pass
     data, skipped = people_contracts.move(people, moves, found, server, teams)
@@ -188,7 +207,7 @@ def main() -> None:
         print(f"[OK] {len(wrong)} jogadores estavam com o contrato num clube e no time de outro (a cópia "
               "original do people_db já vinha mexida); agora ficam no clube do contrato")
     # o elenco do jogo é a lista de jogadores do registro do time no server_db (elenco_times)
-    club_uid = {index: uid for uid, index in indexes.items()}
+    club_uid = {**abroad_clubs, **brazil}
     stayed = set(skipped)
     list_moves = [elenco_times.Move(found[uid].index, club_uid[club], teams[club], elenco_times.PLAYERS)
                   for uid, club in moves.items() if uid not in stayed and club in club_uid]
