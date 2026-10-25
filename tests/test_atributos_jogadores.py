@@ -86,29 +86,41 @@ def test_t3_values_maps_names():
         aj.t3_values({"name": "x", "attributes": {"Passe": 21}}, bytes(79))
 
 
-def _fake_people(players):
-    """people_db mínimo: cabeçalho, tabela A com um registro de jogador por UID, T2 e T3."""
+def _end(index, uid, following):
+    """Fim da parte comum: u16 ano, 00 00 00, u32 índice, u32 UID e o u32 do índice seguinte."""
+    return struct.pack("<H", 1985) + b"\0\0\0" + struct.pack("<III", index, uid, following)
+
+
+def _fake_people(players, fake_end_in=None):
+    """people_db mínimo no formato do banco: cabeçalho (o 5º u32 é o índice do 1º registro),
+    tabela A encadeada fora de ordem, T2 e T3. ``fake_end_in``: UID cujo registro traz no
+    meio um falso fim de registro."""
+    order = list(range(len(players)))[::-1]               # índices em ordem decrescente no arquivo
     a = bytearray()
-    for index, uid in enumerate(players):
-        a += struct.pack("<I", index) + bytes([2]) + struct.pack("<5H", 100, 100, 50, 120, 150) + bytes(40)
-        a += struct.pack("<H", 1985) + b"\0\0\0" + struct.pack("<II", index, uid)
-    a += struct.pack("<I", 0)
+    for pos, index in enumerate(order):
+        body = bytes([2]) + struct.pack("<5H", 100, 100, 50, 120, 150) + bytes(40)
+        if players[index] == fake_end_in:
+            body += _end(77, 999, 78)[:-4] + bytes([2]) + bytes(20)
+        following = order[pos + 1] if pos + 1 < len(order) else 0xFFFFFFFF
+        a += body + _end(index, players[index], following)
     t2 = b"".join(bytes([0]) + bytes(range(1, 9)) + struct.pack("<II", i, uid) for i, uid in enumerate(players))
     t3 = b"".join(bytes([0]) + bytes([10] * 79) + b"\0" + struct.pack("<II", i, uid) for i, uid in enumerate(players))
     n = len(players)
-    head = b"\x02\x01tad.\x27\x01\x00" + struct.pack("<5I", n, n, n, 0, 0)
-    return head + bytes(a) + struct.pack("<I", n) + t2 + struct.pack("<I", n) + t3 + struct.pack("<I", 0)
+    head = b"\x02\x01tad.\x27\x01\x00" + struct.pack("<5I", n, n, n, 0, order[0])
+    return head + bytes(a[:-4]) + struct.pack("<I", n) + t2 + struct.pack("<I", n) + t3 + struct.pack("<I", 0)
 
 
 def test_tables_and_records():
     uids = [111, 222, 333, 444]
-    people = _fake_people(uids)
+    people = _fake_people(uids, fake_end_in=333)
     tab = aj.tables(people)
     t2 = aj.index_fixed(people, tab.t2, tab.n2, aj.T2_SIZE)
     t3 = aj.index_fixed(people, tab.t3, tab.n3, aj.T3_SIZE)
     assert list(t2) == uids and list(t3) == uids
     assert people[t2[333] + 1:t2[333] + 9] == bytes(range(1, 9))
     records = aj.person_records(people, tab.a_end)
-    start, end = records[222]
-    assert people[start] == aj.PLAYER and struct.unpack_from("<HH", people, start + aj.CA_AT) == (120, 150)
-    assert struct.unpack_from("<I", people, end - 4)[0] == 222
+    assert sorted(records) == uids                     # o falso fim (UID 999) não vira registro
+    for uid in uids:
+        start, end = records[uid]
+        assert people[start] == aj.PLAYER and struct.unpack_from("<HH", people, start + aj.CA_AT) == (120, 150)
+        assert struct.unpack_from("<I", people, end - 4)[0] == uid

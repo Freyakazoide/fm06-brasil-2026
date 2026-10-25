@@ -291,3 +291,18 @@ recalcula são os atributos, para baterem com o CA.
   - **A etapa 4 (injetor) continua no `aplicar_tudo.py`** e, se rodar, grava na memória o CA
     da planilha e os atributos por cima do que o gravador fez. Decidir se sai (passo 6).
   - Falta conferir no jogo: o dia do nascimento com o patch e algumas fichas com todos.
+- 25/10 **New Game com todos — travou** (dump `FM 2006 v6.0.2.72973 (2026.10.25 13.30.56).dmp`):
+  `0xC0000005` em `0x009F02C5` (`FUN_009EFCB0`), lendo [0]: a lista de pessoas
+  (`param_1+0x34`) tinha o elemento 0 nulo, ou seja, a carga do people_db falhou. Causa: o
+  separador de registros (u16 ano, 00 00 00, índice, UID) casa por acaso dentro de registros
+  (~5.700 no banco); em 10 jogadores do mod o "início" do registro saiu errado e, em 3 deles
+  (Renzo Garcés, Felipe 2114704, Neymar 3301206), o byte ali era 2: o gravador escreveu
+  reputação/CA/PA/peso/altura no meio de outro registro e a leitura dessincronizou. O teste
+  com 8 não pegou nenhum desses.
+  - Correção em `person_records`: um fim com índice X só vale se outro fim anunciar X como o
+    seguinte (o 1º vem de 0x19) e o u32 antes do início for X; pares sobrepostos saem os
+    dois. Resultado: 275.043 registros, 0 com encadeamento quebrado, 0 sobrepostos; 9
+    jogadores do mod sem registro confiável ficam de fora (aviso). O `apply` agora confere que
+    tabelas e limites dos registros não mudaram, e o bloco de nomes não pode estar antes de
+    +48. Teste novo com um falso fim de registro no meio de outro. Arquivo novo difere do que
+    travou só nesses jogadores; `people_db.dat` do mod tinha sido restaurado logo após o crash.

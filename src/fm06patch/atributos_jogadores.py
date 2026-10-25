@@ -92,16 +92,32 @@ def index_fixed(people: bytes, start: int, count: int, size: int) -> dict[int, i
 
 
 def person_records(people: bytes, a_end: int) -> dict[int, tuple[int, int]]:
-    """UID -> (byte de tipo, fim do registro = depois do UID) na tabela A."""
+    """UID -> (byte de tipo, fim do registro = depois do UID) na tabela A.
+
+    Os registros são encadeados: o u32 em 0x19 é o índice do primeiro e cada registro termina
+    com o índice do seguinte. O padrão do fim também aparece por acaso dentro de registros (uns
+    5.700 no banco 6.0.2), e um início errado fazia gravar CA/PA no meio de outro registro (o
+    New Game travava em 0x009F02C5). Por isso um fim com índice X só vale se outro fim anunciar
+    X como o seguinte (o registro começa logo depois desse anúncio); o 1º vem do cabeçalho.
+    Registro que não termina no padrão (raro) fica de fora, sem levar o seguinte junto."""
+    found = []
+    for match in _END.finditer(people, 0x1D, a_end + 5):     # o último é seguido do total da T2
+        index, uid, following = struct.unpack("<III", match.group(1) + match.group(2) + match.group(3))
+        if index < 2_000_000 and 0 < uid < 100_000_000:
+            found.append((index, uid, following, match.start() + 13))
+    announced = {struct.unpack_from("<I", people, 0x19)[0]: 0x1D}     # índice -> início do registro
+    for _, _, following, end in found:
+        announced.setdefault(following, end + 4)
     out = {}
-    start = 0x1D
-    for match in _END.finditer(people, 0x1D, a_end):
-        index, uid = struct.unpack("<II", match.group(1) + match.group(2))
-        if not (index < 2_000_000 and 0 < uid < 100_000_000):
-            continue
-        end = match.start() + 13
-        out[uid] = (start, end)
-        start = end + 4             # pula o u32 do próximo índice
+    for index, uid, _, end in found:
+        start = announced.get(index)
+        if start is not None and start < end and (start == 0x1D or struct.unpack_from("<I", people, start - 4)[0] == index):
+            out.setdefault(uid, (start, end))
+    spans = sorted((span, uid) for uid, span in out.items())           # sobrepostos: um dos dois é falso
+    for ((_, end), uid), ((start, _), other) in zip(spans, spans[1:]):
+        if start < end:
+            out.pop(uid, None)
+            out.pop(other, None)
     return out
 
 
@@ -306,6 +322,8 @@ def plan(people: bytes, server: bytes, players: list[dict], year_shift: int = 0,
             change.writes.append((t2[uid] + 1, bytes(int(spec["personality"][k]) for k in PERSONALITY),
                                   "personalidade"))
         names = _names_block(people, start, end, name_tables)
+        if names is not None and names - start < HEIGHT_AT + 8:      # dentro dos campos fixos do jogador
+            names = None
         if names is None:
             change.warnings.append("bloco de nomes não achado: nascimento e nação ficam como estão")
             continue
@@ -320,8 +338,13 @@ def plan(people: bytes, server: bytes, players: list[dict], year_shift: int = 0,
 
 
 def apply(people: bytes, changes: list[Change]) -> bytes:
+    """Grava e confere que as tabelas e os limites dos registros ficaram iguais."""
     out = bytearray(people)
     for change in changes:
         for at, data, _ in change.writes:
             out[at:at + len(data)] = data
-    return bytes(out)
+    out = bytes(out)
+    before, after = tables(people), tables(out)
+    if before != after or person_records(people, before.a_end) != person_records(out, after.a_end):
+        raise ValueError("a gravação mudou a estrutura do people_db; nada gravado")
+    return out
