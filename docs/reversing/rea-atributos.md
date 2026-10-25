@@ -368,3 +368,13 @@ recalcula são os atributos, para baterem com o CA.
   - número: 26 conflitos de camisa no clube resolvidos pelo jogo (255 = sem número).
   O injetor dava esses valores exatos porque gravava depois dessas regras; agora vale o
   comportamento normal do jogo.
+- 25/10 **Contratos no `people_contracts.py` (caso Ribeiro).** O Ribeiro (137569) estava na lista do
+  Bragantino com contrato no Central (e o reforço do Central com contrato no Bragantino): o
+  `contracts()` dava a cada registro os blocos entre dois "fins de registro", e 2.682 contratos de
+  um bloco eram de outra pessoa (o reforço mudava o clube do jogador errado; 19 casos do mod).
+  Agora o bloco é da pessoa do índice gravado nele (`64, u32 pessoa, 00`); 0 contratos com dono
+  diferente. Rodada completa do `aplicar_tudo.py` (etapa 2 rodada direto, o Enter da aba não
+  chegava ao script): listas × contratos com 0 casos do mod (110 do FM06 original).
+- 25/10 **Trava do `apply`:** na rodada completa (7.706 jogadores) um valor gravado deixou o
+  início do registro do Marquinhos (2103081) ambíguo; o `apply` agora desfaz só as gravações
+  desse jogador na tabela A (ficam T2/T3), avisa no relatório e confere de novo.

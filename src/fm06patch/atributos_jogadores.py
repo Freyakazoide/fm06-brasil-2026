@@ -449,14 +449,31 @@ def plan(people: bytes, server: bytes, players: list[dict], year_shift: int = 0,
 
 
 def apply(people: bytes, changes: list[Change]) -> bytes:
-    """Grava e confere que as tabelas e os limites dos registros ficaram iguais."""
-    out = bytearray(people)
-    for change in changes:
-        for at, data, _ in change.writes:
-            out[at:at + len(data)] = data
-    out = bytes(out)
-    before, after = tables(people), tables(out)
+    """Grava e confere que as tabelas e os limites dos registros ficaram iguais.
+
+    Um valor gravado pode formar por acaso o padrão de fim de registro seguido do índice de
+    alguém e deixar o início do registro ambíguo para person_records (25/10: o Marquinhos,
+    2103081, num total de 7.706). Aí as gravações daquele jogador na tabela A são desfeitas,
+    com aviso, e a conferência roda de novo; se ainda não fechar, nada é gravado."""
+    tab = tables(people)
     uids = {change.uid for change in changes if change.writes}
-    if before != after or person_records(people, before.a_end, uids) != person_records(out, after.a_end, uids):
-        raise ValueError("a gravação mudou a estrutura do people_db; nada gravado")
-    return out
+    expected = person_records(people, tab.a_end, uids)
+    for _ in range(5):
+        out = bytearray(people)
+        for change in changes:
+            for at, data, _ in change.writes:
+                out[at:at + len(data)] = data
+        out = bytes(out)
+        after = tables(out)
+        if after != tab:
+            raise ValueError("a gravação mudou as tabelas do people_db; nada gravado")
+        now = person_records(out, after.a_end, uids)
+        moved = {uid for uid in expected.keys() | now.keys() if expected.get(uid) != now.get(uid)}
+        if not moved:
+            return out
+        for change in changes:
+            if change.uid in moved:
+                change.writes = [w for w in change.writes if w[0] >= tab.t2]   # fica T2 e T3
+                change.warnings.append("o que gravaria no registro A deixaria o início do registro ambíguo; "
+                                       "ficam só atributos, posições e personalidade")
+    raise ValueError("a gravação mudou a estrutura do people_db; nada gravado")

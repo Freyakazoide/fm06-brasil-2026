@@ -62,6 +62,7 @@ def main() -> None:
         print("[AVISO] sem wage_factor em config/local.json: o salário fica como está")
     changes = atributos_jogadores.plan(people, server_path.read_bytes(), players, spec.get("year_shift", 0),
                                        wage_factor=float(factor) if factor else None)
+    data = atributos_jogadores.apply(people, changes) if args.apply else None   # pode desfazer gravações (aviso)
 
     warned = [c for c in changes if c.warnings]
     for change in warned[:30]:
@@ -84,7 +85,7 @@ def main() -> None:
         print("\nSimulação. Para gravar, rode de novo com --apply.")
         return
     out = args.out or people_path
-    out.write_bytes(atributos_jogadores.apply(people, changes))
+    out.write_bytes(data)
     print(f"[OK] gravado {out}. Agora: New Game.")
 
 
