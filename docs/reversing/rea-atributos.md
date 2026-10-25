@@ -48,6 +48,35 @@ Da memória (`src/fm06patch/live_player.py`, `reverse/fmm/*.json`):
   sinal; exibido = (memória + base) / 5, base 86 com CA 160 e 97 com CA 185) e
   posições direto em 1–20 (`reverse/fmm/playing_attributes_layout.json`).
 
+## Resultado (conferido no jogo em 25/10; detalhes no Diário)
+
+**Mapa arquivo → memória → ficha.** Todo registro termina em `[u32 índice][u32 UID]`; os
+dados vêm antes.
+
+| Arquivo | Campo | Memória | Na ficha |
+|---|---|---|---|
+| T2 `[u8 0][8 bytes][índice][UID]`, desde `0x043902B1` | personalidade (Adaptabilidade … Controvérsia) | PData +0x1C..+0x23 (UID+8..+15) | oculto; Desportivismo e Temperamento recebem −sorteio no New Game (`0x00A998B0`) |
+| T3 `[u8 0][79 bytes][u8][índice][UID]`, desde `0x0480F3D1` | 0–24 posições, 25–78 atributos (ordem `storage_index` do `playing_attributes_layout.json`), 1–20; 0 = sorteado | Playing +0x1C..+0x6A (UID+8..) | posições específicas iguais; genéricas recalculadas |
+| A, jogador tipo 2: `[u32 índice][u8 2][u16 rep. casa][u16 rep. atual][u16 rep. mundo][u16 CA][u16 PA]…` | CA, PA, reputações (×50), peso, altura… | Player+0x14 (CA, UID−204), +0x16 (PA, UID−202) | — |
+
+Conversão no New Game (`0x00A41C40` → `0x008E69C0` → `0x008CDE50`):
+- relativos (25–48 menos 33; 77; 78): `cru = trunc((10·f − CA)/2)`; absolutos (33, 49–76):
+  `cru = 5·f`;
+- ajuste: delta igual em todos os atributos com peso até a média ponderada ficar no alvo
+  `0,05·CA + 6` (pesos por posição em `0x014EABA0`, salvos em `workspace/rea/pesos_fm06.json`);
+- toda vez que o ajuste roda de novo (ex.: ao abrir a ficha), o jogo **tira o efeito do
+  treino do clube, ajusta e põe o treino de volta** (`TRAINING_MANAGER`, `0x00A659B0` /
+  `0x00A657A0`). Na primeira vez, o saldo é o próprio bônus do treino (+1 a +3 internos);
+- ficha: relativo `v = trunc(5·max(1, (2·cru + CA)/10 + 0,5))` (máx. 100), absoluto `v = cru`;
+  exibido `trunc((v + 2)/5)`.
+
+Consequência: com CA coerente e par, a ficha mostra o arquivo **mais o bônus do treino**;
+os relativos ficam no topo da faixa, então o bônus vira +1 neles; os absolutos só sobem com
++3. Isso vale igualmente para o injetor (ele grava antes desse ajuste).
+
+**CA e PA (passo 4):** lidos do registro A, não recalculados (8 de 8 no jogo). O que o jogo
+recalcula são os atributos, para baterem com o CA.
+
 ## Passos
 
 1. **Ferramentas.** No PC: Ghidra (precisa do JDK 21) e, se quiser o fluxo do REA, o
@@ -183,3 +212,33 @@ Da memória (`src/fm06patch/live_player.py`, `reverse/fmm/*.json`):
   Arrascaeta 160, Pedro 164 (planilha 154), Lino 152 (153), Danilo 138 (152), Léo Ortiz 152
   (151), Jorginho 136 (150), Rossi 142 (148); PA ≥ CA. Simulação: ficha = JSON em todos os
   atributos dos 8. Validar na ficha **no dia do New Game, sem clicar em Continuar**.
+- 25/10 **Teste 2 — não bateu (resultado útil).** Fichas no dia do New Game (Paquetá,
+  Danilo, Rossi): **absolutos e físicos iguais ao arquivo; relativos +1** em quase todos.
+  CA/PA 8 de 8 iguais. Memória: o modelo (conversão + ajuste) está certo, mas **depois do
+  ajuste algum passo soma +1 a +3 (sorteado por jogador) em todos os atributos com peso**,
+  relativos e absolutos (Paquetá Pênaltis 75 → 77; k: Paquetá 2, Arrascaeta 1, Pedro 1,
+  Lino 3, Danilo 2, Ortiz 2, Jorginho 3, Rossi 2). No teste 1 a 1ª leitura foi feita antes
+  desse passo; a 2ª já o tinha (não era "evolução com os dias"). Como a conversão põe os
+  relativos no topo da faixa (v = 5f + 2), qualquer k ≥ 1 vira f + 1 na ficha; os absolutos
+  (v = 5f) só sobem com k = 3 (Lino, Jorginho).
+  - Descartados: segundo ajuste (o alvo é `vtable[0]` = CA, `0x00A46A30`, e a média passou
+    do alvo), `0x00A9CC40` (grava 1 byte em outro objeto), `0x00775B90` (gera regens).
+  - Próximo: `workspace/rea/tools/vigia_escrita.py` (depurador só com registradores de
+    depuração: para em `0x00A42D50`, depois do ajuste, e vigia a escrita no byte de Pênaltis
+    dos jogadores do teste) para pegar o endereço de quem soma o k.
+- 25/10 **Vigia (teste 2, novo New Game) — achado.** Parou no Arrascaeta (Playing
+  `0x11185F50`, Pênaltis = 70 = modelo) depois de 5.120 jogadores. Na tela principal, sem
+  abrir fichas, os bytes continuaram iguais ao modelo (Arrascaeta 70, Paquetá 75). Ao
+  **abrir a ficha** do Arrascaeta, 3 escritas no byte:
+  1. 70 → 68, EIP `0x00A648D9`, pilha `0x00A652DA ← 0x00A65BA0 ← 0x008CDEF1`
+     (`0x00A659B0`, chamado no começo do ajuste: tira o efeito do treino);
+  2. 68 → 69, EIP `0x008CE2F6` (o ajuste: delta +1);
+  3. 69 → 71, EIP `0x00A648D9`, pilha `0x00A652DA ← 0x00A6598D ← 0x008CE34A`
+     (`0x00A657A0`, no fim do ajuste: põe o treino de volta).
+  As funções são do `TRAINING_MANAGER::get_modified_player_data()` /
+  `PLAYER_TRAINING_INFO::apply_ability_changes()` (mensagens no código): 9 categorias de
+  treino (`0x00A8B040`) distribuídas nos atributos (`0x00A651C0`), aplicadas por
+  `0x00A65220` (relativos limitados a −14..115 em `0x00A648B0`). O +k é o bônus do treino
+  do clube, somado na primeira vez que o ajuste roda depois do New Game. **Mapa e CA
+  conferidos**; o +1 da ficha nos relativos é mecânica do jogo (vale para o injetor também).
+  `people_db.dat` do mod restaurado do backup.
