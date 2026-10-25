@@ -339,4 +339,22 @@ recalcula são os atributos, para baterem com o CA.
     bloco de nomes fica 12 (nomes em +112) ou 28 bytes depois (+128). O gravador só grava
     os moves com essa estrutura (4 datas plausíveis e nomes a +12/+28); os 219 jogadores do
     mod com moves passaram. Os bits seguem `reverse/fmm/preferred_moves_layout.json`.
-  - v4 (instalado) difere do v3 só nesses bytes (733). Falta conferir no jogo.
+  - v4 (instalado) difere do v3 só nesses bytes (733).
+- 25/10 **v4 conferido no jogo:** memória lida (só leitura) depois do New Game: preferred
+  moves iguais ao JSON em 219 de 220 (falta o Newton, ambíguo); jogos/gols em 95 de 97 (José
+  López e Joaquín Piquerez com +1 jogo na memória, como o Zidane da âncora: o jogo parece somar
+  algo no início — hipótese). O usuário viu os 4 moves do Paquetá na ficha (nomes do
+  português de Portugal do jogo: "Tenta Desmarcações Muitas Vezes" = Tries Killer Balls Often).
+- 25/10 **Contrato no gravador** (o injetor também gravava salário, início, fim e número). Bloco
+  no arquivo (`people_contracts`), a partir do u32 do clube: +4 u32 salário (bruto, igual ao da
+  memória, valor·10+2; 0 = o jogo sorteia), +8 fim (u16 dia, u16 ano), +12 `02 00` + 8 bytes,
+  +22 início, +26 `00 19`, +28 número da camisa. Load da base do contrato `0x00A32A40`
+  (vtable da classe `0x00EB3954`); conferido com 6 contratos do jogo aberto (salário, fim e
+  número iguais; o início o jogo corta no 1º dia). Jogador com vários blocos: os extras são
+  clubes anteriores (fim 0/1900); vale o único com data. 6.508 contratos gravados, 31
+  ambíguos ficam. Regras de datas iguais às do injetor. v5 instalado (difere do v4 só nos
+  contratos, 36.491 bytes).
+- 25/10 **Etapa 4 (injetor) tirada do `aplicar_tudo.py`** (pedido do usuário depois de levar
+  moves e jogos pela seleção para o gravador). O `live_player_editor.py` fica para a
+  contagem dos elencos (etapa 2) e para conferência (`--show`). Falta conferir os contratos
+  no jogo.

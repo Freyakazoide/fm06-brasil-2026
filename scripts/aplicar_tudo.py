@@ -12,9 +12,12 @@ Etapas (o script para e avisa quando o jogo tem de ser aberto ou fechado):
    os jogadores de 2005 de cada clube; depois feche o jogo;
 3. jogo fechado: montar_elencos.py, aplicar_comissao.py --apply, aplicar_arbitros.py --apply,
    aplicar_historico.py --apply, gravar_atributos.py --apply (atributos, CA/PA, personalidade,
-   físico, nascimento e nação dos jogadores direto no people_db) e a cópia do .lnc dos
-   jogadores para data\\db\\lnc\\all;
-4. jogo aberto (outro New Game, tela principal): live_player_editor.py ... --apply. Salve o jogo.
+   físico, nascimento, nação, preferred moves e jogos pela seleção dos jogadores direto no
+   people_db) e a cópia do .lnc dos jogadores para data\\db\\lnc\\all. Depois: New Game.
+
+O injetor (live_player_editor.py ... --apply, a antiga etapa 4) não é mais usado: tudo o que
+ele gravava na memória vai agora no arquivo (docs\\reversing\\rea-atributos.md). Continua para
+conferência (--show) e para a contagem dos elencos da etapa 2.
 
 A contagem dos elencos é dos clubes de identidade_fm06.csv e, com data\\estrangeiros
 (coletar_estrangeiros.py), dos clubes da CONMEBOL (workspace\\identidades_todas.csv).
@@ -45,7 +48,6 @@ from fm06patch import estrangeiros  # noqa: E402
 
 IDENTITIES = ROOT / "workspace" / "identidades_todas.csv"    # Brasil + CONMEBOL, para a contagem
 PLAYERS_LNC = ROOT / "workspace" / "mods" / "brasil_2026_jogadores.lnc"
-PLAYERS_JSON = ROOT / "workspace" / "mods" / "brasil_2026_jogadores.json"
 HOSTS = ROOT / "workspace" / "elencos_2005.csv"
 HOSTS_BASE = ROOT / "workspace" / "elencos_2005_sem_reforco.csv"     # contagem antes do reforço
 COUNTED = ROOT / "workspace" / "elencos_2005_people_db.sha256"        # people_db da última contagem
@@ -110,7 +112,7 @@ def run(stage: int, script: str, *args: str, retry: bool = False) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--rapido", action="store_true", help="sem o reforço e sem a contagem dos elencos no jogo")
-    parser.add_argument("--etapa", type=int, default=1, choices=(1, 2, 3, 4), help="recomeça desta etapa")
+    parser.add_argument("--etapa", type=int, default=1, choices=(1, 2, 3), help="recomeça desta etapa")
     args = parser.parse_args()
     if args.rapido and not HOSTS.exists():
         sys.exit(f"[ERRO] --rapido precisa do {HOSTS.relative_to(ROOT)}; rode sem --rapido.")
@@ -150,9 +152,8 @@ def main() -> None:
         lnc.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(PLAYERS_LNC, lnc)
         print(f"[OK] copiado {PLAYERS_LNC.name} para {lnc.parent}")
-    need_open()
-    run(4, "live_player_editor.py", str(PLAYERS_JSON), "--apply", retry=True)
-    print("\n[OK] Pronto. Salve o jogo; os testes que faltam estão em docs\\TESTES_PENDENTES.md.")
+    print("\n[OK] Pronto. Abra o fm_brasil.exe e comece um New Game; os testes que faltam estão em "
+          "docs\\TESTES_PENDENTES.md.")
 
 
 if __name__ == "__main__":

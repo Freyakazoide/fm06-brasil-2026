@@ -145,3 +145,24 @@ def test_moves_layout_check():
     assert not aj._moves_layout_ok(people, 0, aj.MOVES_AT + 8 + 20)
     record[aj.MOVES_DATES_AT + 2] = 0                      # ano 0: parte variável com outro tamanho
     assert not aj._moves_layout_ok(bytes(record), 0, aj.MOVES_AT + 8 + 12)
+
+
+def test_contract_writes_follow_injector_rules():
+    spec = {"inicio": "2024-07-01", "fim": "2025-06-30", "numero": 21, "salario_mensal_brl": 100000}
+    writes = {label.split()[0]: (at, data) for at, data, label in aj.contract_writes(bytes(64), 10, spec, -20, 0.005)}
+    assert writes["salário"] == (10 + aj.CONTRACT_WAGE, struct.pack("<I", 500 * 10 + 2))
+    assert writes["fim"] == (10 + aj.CONTRACT_END, struct.pack("<HH", 364, 2006))       # antes de 1/1/2006: 31/12
+    assert writes["início"] == (10 + aj.CONTRACT_START, struct.pack("<HH", 182, 2004))  # 1/7/2004 (bissexto; +20 = 2024)
+    assert writes["número"] == (10 + aj.CONTRACT_NUMBER, bytes([21]))
+
+
+def test_main_contract_picks_block_with_end_date():
+    from types import SimpleNamespace
+    people = bytearray(200)
+    struct.pack_into("<HH", people, 40 + aj.CONTRACT_END, 0, 1900)     # clube anterior
+    struct.pack_into("<HH", people, 100 + aj.CONTRACT_END, 180, 2007)  # contrato atual
+    contract = SimpleNamespace(at=40, others=(100,))
+    assert aj.main_contract(bytes(people), contract, 0, 190) == 100
+    assert aj.main_contract(bytes(people), SimpleNamespace(at=40, others=()), 0, 190) == 40
+    struct.pack_into("<HH", people, 40 + aj.CONTRACT_END, 180, 2006)   # dois com data: ambíguo
+    assert aj.main_contract(bytes(people), contract, 0, 190) is None

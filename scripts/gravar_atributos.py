@@ -7,10 +7,12 @@
 Lê workspace/mods/brasil_2026_jogadores.json (montar_elencos.py; o mesmo do injetor) e grava
 por cima do people_db.dat atual do jogo (depois do aplicar_comissao.py): os 79 bytes da T3,
 a personalidade da T2 e, no registro do jogador, reputações, CA, PA, peso, altura,
-nascimento (com o year_shift do JSON) e nação. O CA gravado é o "coerente" com os atributos
-(fm06patch.atributos_jogadores.choose_ca); a coluna ca_planilha do relatório guarda o
-original. Ainda não grava: preferred moves e jogos/gols pela seleção (continuam no injetor).
-Depois: New Game. Relatório em workspace/mods/atributos_2026.csv.
+nascimento (com o year_shift do JSON), nação, jogos/gols pela seleção, preferred moves e o
+contrato atual (salário com o wage_factor de config/local.json, início, fim e número da
+camisa). O CA gravado é o "coerente" com os atributos (fm06patch.atributos_jogadores.choose_ca);
+a coluna ca_planilha do relatório guarda o original. Substitui o injetor
+(live_player_editor.py ... --apply). Depois: New Game. Relatório em
+workspace/mods/atributos_2026.csv.
 """
 
 from __future__ import annotations
@@ -55,7 +57,11 @@ def main() -> None:
             sys.exit(f"[ERRO] UIDs fora do {PLAYERS.name}: {sorted(missing)}")
     people = people_path.read_bytes()
     print(f"Planejando {len(players)} jogador(es) em {people_path}...", flush=True)
-    changes = atributos_jogadores.plan(people, server_path.read_bytes(), players, spec.get("year_shift", 0))
+    factor = json.loads((ROOT / "config" / "local.json").read_text(encoding="utf-8")).get("wage_factor")
+    if not factor:
+        print("[AVISO] sem wage_factor em config/local.json: o salário fica como está")
+    changes = atributos_jogadores.plan(people, server_path.read_bytes(), players, spec.get("year_shift", 0),
+                                       wage_factor=float(factor) if factor else None)
 
     warned = [c for c in changes if c.warnings]
     for change in warned[:30]:

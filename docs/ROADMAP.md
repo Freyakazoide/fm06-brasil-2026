@@ -40,12 +40,12 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 | Item | Situação | Onde |
 |---|---|---|
-| Elencos de 2026 (6.244 jogadores) | ✅ | `montar_elencos.py` + injetor |
-| Atributos, CA/PA, posições, pé, altura, peso | ✅ | injetor |
+| Elencos de 2026 (6.244 jogadores) | ✅ | `montar_elencos.py` + `gravar_atributos.py` |
+| Atributos, CA/PA, posições, pé, altura, peso | ✅ | `gravar_atributos.py` (direto no people_db) |
 | Personalidade, ocultos e jogadas preferidas (220 titulares) | ✅ | `jogadores_perfil.xlsx` |
-| Nacionalidade pelo código da nação | ✅ | injetor (sem doadores desde 22/10) |
-| Contrato (salário, início, fim) e número da camisa | ✅ | injetor |
-| Jogos e gols pela seleção | ✅ | injetor |
+| Nacionalidade e nascimento | ✅ | `gravar_atributos.py` + patch `nascimento_lnc_fixo` |
+| Contrato (salário, início, fim) e número da camisa | ✅ | `gravar_atributos.py` |
+| Jogos e gols pela seleção | ✅ | `gravar_atributos.py` |
 | Histórico de carreira (100 jogadores) | ✅ | `aplicar_historico.py` |
 | Clubes e valores da carreira dos outros jogadores (~2.800, transferências do Sofascore) | 🧪 | `carreiras_2026.csv` + `aplicar_historico.py` |
 | Jogadores de 2005 que sobravam | ✅ | nome de hoje ou saída para clubes fora de 2026 |
@@ -90,11 +90,13 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 - ~~Técnicos das seleções (`selecoes_2026.csv`)~~: entrou em 22/10.
 - Regras de transferência de 2026 (ficha C8b).
 
-### Atributos direto no people_db (em andamento)
+### ~~Atributos direto no people_db~~ (feito em 25/10)
 
-- Engenharia reversa do leitor de jogadores no `fm.exe`, para gravar atributos, CA, PA
-  e posições no arquivo e tirar o injetor de memória do caminho
-  (`docs/reversing/rea-atributos.md`).
+- Engenharia reversa do leitor de jogadores no `fm.exe` (`docs/reversing/rea-atributos.md`):
+  `gravar_atributos.py` grava tudo o que o injetor gravava e a etapa 4 saiu do
+  `aplicar_tudo.py`. Ficam de fora 3 jogadores com registro ambíguo (Edson Duarte, Santiago
+  Solari, Newton) e ~31 contratos ambíguos; Desportivismo e Temperamento recebem o sorteio do
+  jogo no New Game.
 
 ### Fase 5: começo de jogo mais real
 

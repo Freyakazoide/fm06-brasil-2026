@@ -16,14 +16,16 @@ Enter quando estiver pronto):
 2. jogo aberto (New Game, tela principal): conta os jogadores de 2005 de cada clube; depois
    feche o jogo;
 3. jogo fechado: `montar_elencos.py`, `aplicar_comissao.py`, `aplicar_arbitros.py`,
-   `aplicar_historico.py` e a cópia do `.lnc` dos jogadores;
-4. jogo aberto (outro New Game, tela principal): o injetor. Salve o jogo.
+   `aplicar_historico.py`, `gravar_atributos.py` (atributos, CA/PA, contrato, nascimento etc.
+   direto no people_db) e a cópia do `.lnc` dos jogadores. Depois: New Game.
+
+O injetor (antiga etapa 4) não é mais usado.
 
 Nos dois New Games (e no jogo que você vai salvar): **Países Escolhidos** só o Brasil,
 **Base Dados** a maior e **Carregar Todos Jogadores de** os países da América do Sul. Sem
 essa última, o jogo só carrega os jogadores famosos dos outros países (River e Boca
-entravam; Colo-Colo, Peñarol e Alianza Lima ficavam vazios), e o injetor não acha os
-jogadores de 2026 desses clubes. Conferido em 25/10: com a opção, os clubes carregaram.
+entravam; Colo-Colo, Peñarol e Alianza Lima ficavam vazios), e os jogadores de 2026 desses
+clubes não entram. Conferido em 25/10: com a opção, os clubes carregaram.
 
 - `python scripts\aplicar_tudo.py --rapido`: pula a contagem (etapa 2), para quando os
   elencos não mudaram (só tradução, comissão, árbitros, histórico, rivais...). Refaz o

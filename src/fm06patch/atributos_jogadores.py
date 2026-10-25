@@ -32,7 +32,7 @@ import struct
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from fm06patch import comissao
+from fm06patch import comissao, people_contracts
 from fm06patch.live_player import (PERSONALITY, _norm, encode_date, load_attributes, load_moves, move_index,
                                    shift_years)
 
@@ -46,6 +46,10 @@ CA_AT, PA_AT, REP_AT = 7, 9, 1      # a partir do byte de tipo
 WEIGHT_AT, HEIGHT_AT = 38, 40
 MOVES_DATES_AT, MOVES_AT = 71, 92   # 4 datas da parte variável e os 8 bytes dos preferred moves
 CAPS_AT = 13                        # u8 jogos e u8 gols pela seleção, depois do nascimento
+# bloco do contrato a partir do u32 do clube (64, u32 pessoa, 00 antes dele): load 0x00A32A40,
+# conferido com 6 contratos na memória (salário, fim e número iguais; o início o jogo corta)
+CONTRACT_WAGE, CONTRACT_END, CONTRACT_START, CONTRACT_NUMBER = 4, 8, 22, 28
+NO_YEAR = 1900
 REP_SCALE = 50                      # reputação no arquivo = memória / 50 (0x00A41C40)
 POSITIONS = set(range(25))
 RELATIVE = (set(range(25, 49)) - {33}) | {77, 78}
@@ -337,12 +341,50 @@ def _names_block(people: bytes, start: int, end: int, name_tables) -> int | None
     return comissao._names_before(people, end - 14, name_tables, back=end - start)
 
 
+def main_contract(people: bytes, contract, start: int, end: int) -> int | None:
+    """Posição do u32 do clube no bloco do contrato atual do jogador (people_contracts, com
+    multi=True): o único bloco dentro do registro com ano de fim diferente de 1900 (os outros
+    são clubes anteriores, fim 0/1900), ou o único bloco."""
+    if contract is None:
+        return None
+    blocks = [at for at in (contract.at, *contract.others) if start < at < end]
+    if len(blocks) == 1:
+        return blocks[0]
+    current = [at for at in blocks if struct.unpack_from("<H", people, at + CONTRACT_END + 2)[0] != NO_YEAR]
+    return current[0] if len(current) == 1 else None
+
+
+def contract_writes(people: bytes, at: int, spec: dict, year_shift: int,
+                    wage_factor: float | None) -> list[tuple[int, bytes, str]]:
+    """Salário, fim, início e número da camisa no bloco do contrato (u32 do clube em ``at``), com
+    as regras do injetor: o jogo começa em 1/1 de 2026 + year_shift; início não depois disso
+    (o jogo corta de qualquer jeito), fim antes disso vai para 31/12 daquele ano."""
+    first_day = dt.date(2026 + year_shift, 1, 1)
+    writes = []
+    if wage_factor and spec.get("salario_mensal_brl"):
+        value = max(1, round(float(spec["salario_mensal_brl"]) * wage_factor))
+        writes.append((at + CONTRACT_WAGE, struct.pack("<I", value * 10 + 2), f"salário {value}"))
+    if spec.get("fim"):
+        until = shift_years(dt.date.fromisoformat(spec["fim"]), year_shift)
+        if until <= first_day:
+            until = dt.date(first_day.year, 12, 31)
+        writes.append((at + CONTRACT_END, encode_date(until), f"fim do contrato {until}"))
+    if spec.get("inicio"):
+        since = min(shift_years(dt.date.fromisoformat(spec["inicio"]), year_shift), first_day)
+        writes.append((at + CONTRACT_START, encode_date(since), f"início do contrato {since}"))
+    number = int(spec.get("numero") or 0)
+    if 1 <= number <= 99:
+        writes.append((at + CONTRACT_NUMBER, bytes([number]), f"número {number}"))
+    return writes
+
+
 def plan(people: bytes, server: bytes, players: list[dict], year_shift: int = 0,
-         weights: Weights | None = None) -> list[Change]:
+         weights: Weights | None = None, wage_factor: float | None = None) -> list[Change]:
     weights = weights or Weights.load()
     tab = tables(people)
     t2, t3 = index_fixed(people, tab.t2, tab.n2, T2_SIZE), index_fixed(people, tab.t3, tab.n3, T3_SIZE)
     records = person_records(people, tab.a_end, {p["uid"] for p in players})
+    contracts = people_contracts.contracts(people, multi=True)
     name_tables = comissao.name_tables(server)
     changes = []
     for spec in players:
@@ -373,6 +415,12 @@ def plan(people: bytes, server: bytes, players: list[dict], year_shift: int = 0,
         if "personality" in spec:
             change.writes.append((t2[uid] + 1, bytes(int(spec["personality"][k]) for k in PERSONALITY),
                                   "personalidade"))
+        if spec.get("contract"):
+            at = main_contract(people, contracts.get(uid), start, end)
+            if at is None:
+                change.warnings.append("contrato: nenhum ou mais de um bloco com data de fim; fica como está")
+            else:
+                change.writes += contract_writes(people, at, spec["contract"], year_shift, wage_factor)
         names = _names_block(people, start, end, name_tables)
         if names is not None and names - start < HEIGHT_AT + 8:      # dentro dos campos fixos do jogador
             names = None
