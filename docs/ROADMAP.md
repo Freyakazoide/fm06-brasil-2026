@@ -90,6 +90,12 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 - ~~Técnicos das seleções (`selecoes_2026.csv`)~~: entrou em 22/10.
 - Regras de transferência de 2026 (ficha C8b).
 
+### Atributos direto no people_db (em andamento)
+
+- Engenharia reversa do leitor de jogadores no `fm.exe`, para gravar atributos, CA, PA
+  e posições no arquivo e tirar o injetor de memória do caminho
+  (`docs/reversing/rea-atributos.md`).
+
 ### Fase 5: começo de jogo mais real
 
 - Lesões do começo de 2026 (ficha C3b, com a planilha que já existe).

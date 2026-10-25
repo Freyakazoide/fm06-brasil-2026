@@ -19,6 +19,12 @@ Enter quando estiver pronto):
    `aplicar_historico.py` e a cópia do `.lnc` dos jogadores;
 4. jogo aberto (outro New Game, tela principal): o injetor. Salve o jogo.
 
+Nos dois New Games (e no jogo que você vai salvar): **Países Escolhidos** só o Brasil,
+**Base Dados** a maior e **Carregar Todos Jogadores de** os países da América do Sul. Sem
+essa última, o jogo só carrega os jogadores famosos dos outros países (River e Boca
+entravam; Colo-Colo, Peñarol e Alianza Lima ficavam vazios), e o injetor não acha os
+jogadores de 2026 desses clubes. Conferido em 25/10: com a opção, os clubes carregaram.
+
 - `python scripts\aplicar_tudo.py --rapido`: pula a contagem (etapa 2), para quando os
   elencos não mudaram (só tradução, comissão, árbitros, histórico, rivais...). Refaz o
   reforço e para se o people_db ou a lista de clubes (com os da CONMEBOL) não for o da
