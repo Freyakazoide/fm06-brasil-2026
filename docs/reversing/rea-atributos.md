@@ -263,3 +263,19 @@ recalcula são os atributos, para baterem com o CA.
     (Paquetá 168→158, Arrascaeta 160→150, Pedro 154, Danilo 152→126, Léo Ortiz 151→140,
     Rossi 148→130, Joaquín Freitas 116→104, Kaio Júnior 90→62); 647 bytes, nada fora do
     previsto. Ficha prevista = JSON em todos os atributos.
+- 25/10 **Teste 3 — deu certo (com 2 ressalvas).** Fichas do usuário (Joaquín Freitas,
+  Kaio Júnior, Léo Ortiz), New Game sem injetor: **Freitas e Ortiz: os 36 atributos iguais
+  ao JSON**; altura, peso e nacionalidade certos nos três (Freitas argentino); o usuário
+  diz que os outros 5 também bateram ("quase perfeito, alguns com 1 de diferença").
+  - **Kaio Júnior (Sub-20): absolutos com peso −1** (Cantos, Livres, Pênaltis, Bravura,
+    Influência, físicos); relativos certos. Hipótese: o treino dele deu saldo 0 (o gravador
+    supõe +2); com saldo 0 o −3 do ajuste deixa os absolutos em 5f − 3. Não conferido na
+    memória. Trocar o alvo para −2 erraria o caso oposto (saldo +3, 3 de 16 casos medidos).
+  - **Nascimento: ano certo, dia/mês sorteados.** Não é o gravador: o executor do
+    `CHANGE_PLAYER_NAME` (`0x00AAA4B0`) troca o nome e **sorteia um dia diferente do original
+    no mesmo ano** (laço `aleatório(365)` em `0x00AAA600`, grava com `call [edx+0x1A0]` em
+    `0x00AAA645`) — proteção do FM06 para nomes fictícios. Conferido na memória do jogo
+    aberto: jogadores fora do mod 98/100 com a data do arquivo; do mod (renomeados pelo
+    `.lnc`) 4/342. O injetor só acerta porque grava depois. Opção: patch de 6 bytes no
+    `fm_brasil.exe` em `0x00AAA645` (`FF 92 A0 01 00 00` → `83 C4 04 90 90 90`, descarta o
+    argumento e não chama) — não feito nem testado.
