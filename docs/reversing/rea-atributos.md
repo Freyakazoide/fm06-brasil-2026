@@ -242,3 +242,24 @@ recalcula são os atributos, para baterem com o CA.
   do clube, somado na primeira vez que o ajuste roda depois do New Game. **Mapa e CA
   conferidos**; o +1 da ficha nos relativos é mecânica do jogo (vale para o injetor também).
   `people_db.dat` do mod restaurado do backup.
+- 25/10 **Gravador offline (passo 5, aprovado pelo usuário com "CA coerente"):**
+  `src/fm06patch/atributos_jogadores.py` + `scripts/gravar_atributos.py` (simulação; `--apply`;
+  `--uids`; `--people`/`--out`) + `tests/test_atributos_jogadores.py` (o modelo bate com a
+  memória do Arrascaeta e do Danilo no teste 1; a ficha com as das screenshots). Pesos em
+  `reverse/fmm/pesos_posicoes.json`. Grava T3 (atributos e posições), T2 (personalidade) e,
+  no registro do jogador, reputações (/50), CA, PA (≥ CA), peso (+38), altura (+40),
+  nascimento (com `year_shift`) e nação (conferidos nas âncoras: peso/altura 4 de 4;
+  Zidane 23/06/1972, França 0x8F). Ainda não grava preferred moves nem jogos/gols pela
+  seleção. Registros A de tipo 0/1 (7 dos 6.542) ficam de fora.
+  - **CA "coerente":** o CA par mais perto da planilha com o qual o ajuste do New Game desce
+    os atributos 3 pontos internos (`ALVO_AJUSTE`); o treino (+1 a +3) os devolve para o meio
+    da faixa e a ficha mostra a planilha com folga de ±1 ponto interno.
+  - **Atenção (decisão pendente antes de usar em todos):** simulação com os 6.542 — o CA
+    cai mediana −30 (CA 60–99 da planilha: −30 a −32; 140–159: −17). ~12 pontos são a
+    compensação do treino; o resto é porque os atributos do JSON ficam abaixo do que o FM06
+    espera para o CA da planilha (alvo 0,05·CA + 6). Com o injetor de hoje acontece o
+    inverso: ao refazer o ajuste, o jogo sobe os atributos até o CA da planilha.
+  - **Teste 3 (instalado):** `people_db_teste3_gravador.dat` = mod + gravador em 8 jogadores
+    (Paquetá 168→158, Arrascaeta 160→150, Pedro 154, Danilo 152→126, Léo Ortiz 151→140,
+    Rossi 148→130, Joaquín Freitas 116→104, Kaio Júnior 90→62); 647 bytes, nada fora do
+    previsto. Ficha prevista = JSON em todos os atributos.
