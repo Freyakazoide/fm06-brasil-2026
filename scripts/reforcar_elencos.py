@@ -12,7 +12,7 @@ seleção dele) para esses clubes, até cada um ter vaga para o elenco de 2026
 (limite --limite por clube). Os clubes da CONMEBOL de data/estrangeiros
 (coletar_estrangeiros.py) entram do mesmo jeito: os que têm menos jogadores no banco que
 o elenco de 2026 ganham doadores (os outros clubes desses países não doam ninguém, nem
-os nossos). O injetor depois troca nome, dados e
+os nossos). O .lnc e o gravar_atributos.py depois trocam nome, dados e
 nacionalidade de cada um. Contrato e campo "time" mudam juntos, e quem chega com
 contrato num clube e time de outro vai para o time do clube do contrato. O elenco que o
 jogo mostra é a lista de jogadores do registro do time no server_db.dat
@@ -229,7 +229,7 @@ def main() -> None:
         writer.writerows(report)
     DONORS.unlink(missing_ok=True)     # a nacionalidade vai pelo código da nação; não há mais doadores
     print(f"[OK] gravado {people_path}; lista em {REPORT}")
-    print("Agora: New Game, --squads-all de novo, montar_elencos.py, copiar o .lnc, outro New Game, injetor.")
+    print("Agora: New Game, --squads-all de novo, montar_elencos.py, gravar_atributos.py, copiar o .lnc e outro New Game.")
 
 
 if __name__ == "__main__":
