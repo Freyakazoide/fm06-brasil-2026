@@ -124,3 +124,24 @@ def test_tables_and_records():
         start, end = records[uid]
         assert people[start] == aj.PLAYER and struct.unpack_from("<HH", people, start + aj.CA_AT) == (120, 150)
         assert struct.unpack_from("<I", people, end - 4)[0] == uid
+
+
+def test_apply_moves_sets_and_clears_bits():
+    moves = aj.load_moves()
+    name = next(iter(moves))
+    index = moves[name]
+    added = aj.apply_moves(bytes(8), {"add": [name]})
+    assert added[index // 8] == 1 << index % 8 and sum(added) == 1 << index % 8
+    assert aj.apply_moves(added, {"remove": [index]}) == bytes(8)
+
+
+def test_moves_layout_check():
+    record = bytearray(200)
+    for k in range(4):                                     # 4 datas "dia 0, 1900" em +71
+        struct.pack_into("<HH", record, aj.MOVES_DATES_AT + 4 * k, 0, 1900)
+    people = bytes(record)
+    assert aj._moves_layout_ok(people, 0, aj.MOVES_AT + 8 + 12)
+    assert aj._moves_layout_ok(people, 0, aj.MOVES_AT + 8 + 28)
+    assert not aj._moves_layout_ok(people, 0, aj.MOVES_AT + 8 + 20)
+    record[aj.MOVES_DATES_AT + 2] = 0                      # ano 0: parte variável com outro tamanho
+    assert not aj._moves_layout_ok(bytes(record), 0, aj.MOVES_AT + 8 + 12)

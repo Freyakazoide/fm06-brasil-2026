@@ -33,7 +33,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from fm06patch import comissao
-from fm06patch.live_player import PERSONALITY, _norm, encode_date, load_attributes, shift_years
+from fm06patch.live_player import (PERSONALITY, _norm, encode_date, load_attributes, load_moves, move_index,
+                                   shift_years)
 
 ROOT = Path(__file__).resolve().parents[2]
 LAYOUT = ROOT / "reverse" / "fmm" / "playing_attributes_layout.json"
@@ -43,6 +44,8 @@ T2_SIZE, T3_SIZE = 17, 89
 PLAYER = 2                          # tipo do registro A de jogador
 CA_AT, PA_AT, REP_AT = 7, 9, 1      # a partir do byte de tipo
 WEIGHT_AT, HEIGHT_AT = 38, 40
+MOVES_DATES_AT, MOVES_AT = 71, 92   # 4 datas da parte variável e os 8 bytes dos preferred moves
+CAPS_AT = 13                        # u8 jogos e u8 gols pela seleção, depois do nascimento
 REP_SCALE = 50                      # reputação no arquivo = memória / 50 (0x00A41C40)
 POSITIONS = set(range(25))
 RELATIVE = (set(range(25, 49)) - {33}) | {77, 78}
@@ -306,6 +309,29 @@ class Change:
     warnings: list[str] = field(default_factory=list)
 
 
+def _moves_layout_ok(people: bytes, start: int, names: int) -> bool:
+    """A parte variável antes dos preferred moves (0x00A65DA0) tem o tamanho de sempre: 4 datas
+    (u16 dia, u16 ano) em +71 e o bloco de nomes 12 ou 28 bytes depois dos 8 bytes dos moves
+    (sem ou com o objeto opcional seguinte)."""
+    for k in range(4):
+        day, year = struct.unpack_from("<HH", people, start + MOVES_DATES_AT + 4 * k)
+        if day > 366 or not 1900 <= year <= 2100:
+            return False
+    return names - (start + MOVES_AT + 8) in (12, 28)
+
+
+def apply_moves(old: bytes, moves: dict) -> bytes:
+    """Os 8 bytes dos preferred moves (bit = índice de reverse/fmm/preferred_moves_layout.json;
+    o jogo copia os 8 bytes crus para Player UID-48, 0x00C595C0) com add/remove do spec."""
+    table = load_moves()
+    out = bytearray(old)
+    for action, flag in (("add", True), ("remove", False)):
+        for move in moves.get(action, []):
+            index = move_index(move, table)
+            out[index // 8] = out[index // 8] | (1 << index % 8) if flag else out[index // 8] & ~(1 << index % 8)
+    return bytes(out)
+
+
 def _names_block(people: bytes, start: int, end: int, name_tables) -> int | None:
     """Posição do bloco de nomes (u32 x3, u32 tamanho + nome) do registro; o nascimento vem depois."""
     return comissao._names_before(people, end - 14, name_tables, back=end - start)
@@ -360,6 +386,17 @@ def plan(people: bytes, server: bytes, players: list[dict], year_shift: int = 0,
             change.writes.append((born, encode_date(date), f"nascimento {date.isoformat()}"))
         if spec.get("nationality_code") is not None:
             change.writes.append((born + 5, struct.pack("<I", int(spec["nationality_code"])), "nação"))
+        if "international_caps" in spec or "international_goals" in spec:
+            caps = int(spec.get("international_caps", people[born + CAPS_AT]))
+            goals = int(spec.get("international_goals", people[born + CAPS_AT + 1]))
+            change.writes.append((born + CAPS_AT, bytes([min(255, caps), min(255, goals)]), "jogos e gols pela seleção"))
+        moves = spec.get("preferred_moves") or {}
+        if moves.get("add") or moves.get("remove"):
+            if _moves_layout_ok(people, start, names):
+                at = start + MOVES_AT
+                change.writes.append((at, apply_moves(people[at:at + 8], moves), "preferred moves"))
+            else:
+                change.warnings.append("preferred moves: registro com parte variável diferente; ficam como estão")
     return changes
 
 

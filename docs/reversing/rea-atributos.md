@@ -324,3 +324,19 @@ recalcula são os atributos, para baterem com o CA.
     Solari 14434, Newton 317100). 6.539 de 6.542 gravados; o arquivo novo difere do que rodou
     só dentro dos registros desses 12 (972 bytes). Instalado; o que rodou está em
     `workspace/backups/people_db.gravador_v2_rodou.dat`.
+- 25/10 **v3 conferido no jogo pelo usuário: Neymar 05/02/1992 e atributos do JSON.**
+- 25/10 **Preferred moves e jogos/gols pela seleção no gravador** (pedido do usuário, antes de
+  tirar o injetor):
+  - **Jogos/gols pela seleção:** u8 jogos e u8 gols em nascimento+13/+14 (depois de u32
+    nação e de um u32). Zidane `5D 1A` = 93/26 (âncora 95/26), 321081 1/0, 3300977 14/0;
+    numa amostra do jogo aberto, 268 de 277 jogadores fora do mod iguais à memória
+    (Player UID+72 / +74).
+  - **Preferred moves:** o load do Player lê 8 bytes crus (`0x00C595C0`, só inverte em
+    arquivo big-endian) para Player UID−48, depois do sub-objeto variável `0x00A65DA0` (no
+    banco: 22 bytes, 4 datas `u16 dia, u16 ano` em +71, u8, u32), um u8 e um u32: **+92 do
+    byte de tipo**. Conferido: os 10 jogadores com moves de uma amostra carregada no jogo
+    tinham os 8 bytes da memória em +92. Depois dos moves vêm flags e objetos opcionais: o
+    bloco de nomes fica 12 (nomes em +112) ou 28 bytes depois (+128). O gravador só grava
+    os moves com essa estrutura (4 datas plausíveis e nomes a +12/+28); os 219 jogadores do
+    mod com moves passaram. Os bits seguem `reverse/fmm/preferred_moves_layout.json`.
+  - v4 (instalado) difere do v3 só nesses bytes (733). Falta conferir no jogo.
