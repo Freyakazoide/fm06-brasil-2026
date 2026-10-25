@@ -95,18 +95,18 @@ def _fake_people(players, fake_end_in=None):
     """people_db mínimo no formato do banco: cabeçalho (o 5º u32 é o índice do 1º registro),
     tabela A encadeada fora de ordem, T2 e T3. ``fake_end_in``: UID cujo registro traz no
     meio um falso fim de registro."""
-    order = list(range(len(players)))[::-1]               # índices em ordem decrescente no arquivo
+    order = list(range(len(players)))[::-1]               # em ordem decrescente no arquivo
     a = bytearray()
-    for pos, index in enumerate(order):
+    for pos, i in enumerate(order):
         body = bytes([2]) + struct.pack("<5H", 100, 100, 50, 120, 150) + bytes(40)
-        if players[index] == fake_end_in:
-            body += _end(77, 999, 78)[:-4] + bytes([2]) + bytes(20)
-        following = order[pos + 1] if pos + 1 < len(order) else 0xFFFFFFFF
-        a += body + _end(index, players[index], following)
+        if players[i] == fake_end_in:
+            body += _end(5077, 999, 5078)[:-4] + bytes([2]) + bytes([0x55] * 20)
+        following = 5000 + order[pos + 1] if pos + 1 < len(order) else 0xFFFFFFFF
+        a += body + _end(5000 + i, players[i], following)   # índices da tabela A na casa dos milhares
     t2 = b"".join(bytes([0]) + bytes(range(1, 9)) + struct.pack("<II", i, uid) for i, uid in enumerate(players))
     t3 = b"".join(bytes([0]) + bytes([10] * 79) + b"\0" + struct.pack("<II", i, uid) for i, uid in enumerate(players))
     n = len(players)
-    head = b"\x02\x01tad.\x27\x01\x00" + struct.pack("<5I", n, n, n, 0, order[0])
+    head = b"\x02\x01tad.\x27\x01\x00" + struct.pack("<5I", n, n, n, 0, 5000 + order[0])
     return head + bytes(a[:-4]) + struct.pack("<I", n) + t2 + struct.pack("<I", n) + t3 + struct.pack("<I", 0)
 
 

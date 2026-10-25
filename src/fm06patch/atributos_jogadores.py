@@ -50,8 +50,11 @@ ALVO_AJUSTE = -3                    # pontos internos que o ajuste do New Game d
 TREINO_ESPERADO = 2                 # saldo típico do treino (1 a 3 nos testes de 25/10)
 CA_FAIXA = 40                       # procura o CA até 40 pontos da planilha
 
-# fim da parte comum do registro A: u16 ano, 00 00 00, u32 índice, u32 UID, u32 próximo índice, u8 tipo
-_END = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)(....)(....)([\x00-\x0f])", re.S)
+# fim da parte comum do registro A: u16 ano, 3 bytes (quase sempre 00 00 00; o registro antes
+# do Neymar tem 00 08 00), u32 índice, u32 UID. Busca com sobreposição (lookahead): um falso
+# fim logo antes não pode esconder o verdadeiro. O encadeamento (person_records) é que separa
+# os fins verdadeiros dos que aparecem por acaso.
+_END = re.compile(rb"(?=[\x6c-\xe0]\x07...(....)(....))", re.S)
 
 
 # ------------------------------------------------------------------
@@ -91,33 +94,56 @@ def index_fixed(people: bytes, start: int, count: int, size: int) -> dict[int, i
     return {struct.unpack_from("<I", people, start + size * i + size - 4)[0]: start + size * i for i in range(count)}
 
 
-def person_records(people: bytes, a_end: int) -> dict[int, tuple[int, int]]:
-    """UID -> (byte de tipo, fim do registro = depois do UID) na tabela A.
+_MAX_RECORD = 8000                  # o maior registro de pessoa do banco 6.0.2 tem uns 2 KB
 
-    Os registros são encadeados: o u32 em 0x19 é o índice do primeiro e cada registro termina
-    com o índice do seguinte. O padrão do fim também aparece por acaso dentro de registros (uns
-    5.700 no banco 6.0.2), e um início errado fazia gravar CA/PA no meio de outro registro (o
-    New Game travava em 0x009F02C5). Por isso um fim com índice X só vale se outro fim anunciar
-    X como o seguinte (o registro começa logo depois desse anúncio); o 1º vem do cabeçalho.
-    Registro que não termina no padrão (raro) fica de fora, sem levar o seguinte junto."""
-    found = []
-    for match in _END.finditer(people, 0x1D, a_end + 5):     # o último é seguido do total da T2
-        index, uid, following = struct.unpack("<III", match.group(1) + match.group(2) + match.group(3))
-        if index < 2_000_000 and 0 < uid < 100_000_000:
-            found.append((index, uid, following, match.start() + 13))
-    announced = {struct.unpack_from("<I", people, 0x19)[0]: 0x1D}     # índice -> início do registro
-    for _, _, following, end in found:
-        announced.setdefault(following, end + 4)
+
+def _real_end(people: bytes, at: int) -> bool:
+    """Em ``at`` termina (depois do UID) um fim de registro plausível."""
+    if at < 0x1D + 13 or not (0x6C <= people[at - 13] <= 0xE0 and people[at - 12] == 0x07):
+        return False
+    index, uid = struct.unpack_from("<II", people, at - 8)
+    return index < 2_000_000 and 0 < uid < 100_000_000
+
+
+def _record_start(people: bytes, end: int, index: int, first: int) -> int | None:
+    """Início (byte de tipo) do registro que termina em ``end`` com índice ``index``.
+
+    O registro anterior termina com o índice deste (u32 logo antes do byte de tipo; no tipo
+    3, jogador e técnico, há 2 bytes entre o UID e esse u32: aceita de 0 a 4). Vale o u32 com
+    o índice que tem um fim de registro de verdade antes e um tipo de 0 a 15 depois; mais de um
+    candidato (ou nenhum) = None. O 1º registro do arquivo (0x1D) vem do índice em 0x19."""
+    needle = struct.pack("<I", index)
+    low = max(0x1D, end - _MAX_RECORD)
+    found = [0x1D] if index == first else []
+    at = people.rfind(needle, low, end - 8)
+    while at >= low:
+        start = at + 4
+        if people[start] <= 0x0F and any(_real_end(people, at - gap) for gap in range(5)):
+            found.append(start)
+        at = people.rfind(needle, low, at + 3)
+    return found[0] if len(found) == 1 else None
+
+
+def person_records(people: bytes, a_end: int, uids: set[int] | None = None) -> dict[int, tuple[int, int]]:
+    """UID -> (byte de tipo, fim do registro = depois do UID) na tabela A (só ``uids``, se dado).
+
+    O fim de cada registro é u16 ano, 3 bytes, u32 índice, u32 UID; esse padrão também aparece
+    por acaso dentro dos registros (uns 5.700 no banco 6.0.2) e o "próximo índice" depois do
+    UID nem sempre é o registro seguinte no arquivo. Um início errado fazia gravar CA/PA no meio
+    de outro registro e o New Game travava (0x009F02C5). Por isso o início é achado para trás,
+    pelo anúncio do próprio índice (_record_start), e UID com mais de um fim fica de fora."""
+    ends: dict[int, list[tuple[int, int]]] = {}
+    for match in _END.finditer(people, 0x1D, a_end):
+        index, uid = struct.unpack("<II", match.group(1) + match.group(2))
+        if index < 2_000_000 and 0 < uid < 100_000_000 and (uids is None or uid in uids):
+            ends.setdefault(uid, []).append((match.start() + 13, index))
+    first = struct.unpack_from("<I", people, 0x19)[0]
     out = {}
-    for index, uid, _, end in found:
-        start = announced.get(index)
-        if start is not None and start < end and (start == 0x1D or struct.unpack_from("<I", people, start - 4)[0] == index):
-            out.setdefault(uid, (start, end))
-    spans = sorted((span, uid) for uid, span in out.items())           # sobrepostos: um dos dois é falso
-    for ((_, end), uid), ((start, _), other) in zip(spans, spans[1:]):
-        if start < end:
-            out.pop(uid, None)
-            out.pop(other, None)
+    for uid, found in ends.items():
+        spans = [(start, end) for end, index in found
+                 if (start := _record_start(people, end, index, first)) is not None and start < end]
+        if len(spans) == 1:
+            out[uid] = spans[0]
     return out
 
 
@@ -290,7 +316,7 @@ def plan(people: bytes, server: bytes, players: list[dict], year_shift: int = 0,
     weights = weights or Weights.load()
     tab = tables(people)
     t2, t3 = index_fixed(people, tab.t2, tab.n2, T2_SIZE), index_fixed(people, tab.t3, tab.n3, T3_SIZE)
-    records = person_records(people, tab.a_end)
+    records = person_records(people, tab.a_end, {p["uid"] for p in players})
     name_tables = comissao.name_tables(server)
     changes = []
     for spec in players:
@@ -345,6 +371,7 @@ def apply(people: bytes, changes: list[Change]) -> bytes:
             out[at:at + len(data)] = data
     out = bytes(out)
     before, after = tables(people), tables(out)
-    if before != after or person_records(people, before.a_end) != person_records(out, after.a_end):
+    uids = {change.uid for change in changes if change.writes}
+    if before != after or person_records(people, before.a_end, uids) != person_records(out, after.a_end, uids):
         raise ValueError("a gravação mudou a estrutura do people_db; nada gravado")
     return out

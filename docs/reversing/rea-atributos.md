@@ -306,3 +306,21 @@ recalcula são os atributos, para baterem com o CA.
     tabelas e limites dos registros não mudaram, e o bloco de nomes não pode estar antes de
     +48. Teste novo com um falso fim de registro no meio de outro. Arquivo novo difere do que
     travou só nesses jogadores; `people_db.dat` do mod tinha sido restaurado logo após o crash.
+- 25/10 **New Game com todos — rodou.** O usuário confirmou as datas de nascimento exatas
+  (patch `nascimento_lnc_fixo`) e as fichas do Flamengo. O Neymar ainda saía com os dados do
+  hospedeiro: era um dos 9 deixados de fora.
+  - Por que ficavam de fora: (1) o registro antes do Neymar termina com `6C 07 00 08 00`
+    (os 3 bytes depois do ano nem sempre são zero); (2) o `finditer` não pega casamentos
+    sobrepostos, e um falso fim logo antes escondia o verdadeiro; (3) no tipo 3 (jogador e
+    técnico) há 2 bytes (`00 02`) entre o UID e o índice do seguinte; (4) o "próximo índice"
+    nem sempre é o registro seguinte no arquivo, então percorrer a cadeia pulava registros.
+  - Leitor novo (`person_records`/`_record_start`): fim = ano + 3 bytes quaisquer + índice +
+    UID, com busca sobreposta; o início é achado **para trás** pelo u32 com o próprio índice,
+    que tem de ter um fim de registro de verdade antes (0 a 4 bytes de intervalo) e um tipo
+    0–15 depois; ambíguo = fora. Nos jogadores do mod: 6.530 de 6.530 iguais ao leitor que
+    rodou no jogo, os 9 achados (Neymar, Renzo Garcés, Felipe, Igor Goularte, Matheus
+    Guarujá, Joaquín Ferreira, Matheus Coruja, Vágner, Maxi Gómez; tipo 2, campos
+    plausíveis, sem sobreposição) e 3 agora ambíguos e pulados (Edson Duarte 104330, Santiago
+    Solari 14434, Newton 317100). 6.539 de 6.542 gravados; o arquivo novo difere do que rodou
+    só dentro dos registros desses 12 (972 bytes). Instalado; o que rodou está em
+    `workspace/backups/people_db.gravador_v2_rodou.dat`.
