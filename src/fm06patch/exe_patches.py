@@ -359,6 +359,18 @@ PATCHES = {
             ),
         ),
         Patch(
+            "nascimento_lnc_fixo",
+            "CHANGE_PLAYER_NAME (.lnc, executor 0x00AAA4B0) não sorteia mais o dia do nascimento: o jogo "
+            "trocava o nome e gravava um dia diferente no mesmo ano (proteção para nomes fictícios), e "
+            "os jogadores e a comissão de 2026 saíam com dia e mês errados. Fica a data do people_db "
+            "(fm06patch.atributos_jogadores, aplicar_comissao.py). docs/reversing/rea-atributos.md.",
+            (
+                # call [edx+0x1A0] (grava a data; thiscall, desempilha o argumento)
+                # -> add esp, 4 (descarta o argumento empilhado) + nop
+                Swap(0x6AA645, bytes.fromhex("ff92a0010000"), bytes.fromhex("83c404909090")),
+            ),
+        ),
+        Patch(
             "exp_regra_rebaixa_a",
             "EXPERIMENTAL, sem efeito visível: 2º argumento da regra de movimento Série A -> B.",
             (_push_count(0x7BA4F3, 2, 4, SERIE_B),),

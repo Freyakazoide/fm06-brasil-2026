@@ -11,7 +11,9 @@ Etapas (o script para e avisa quando o jogo tem de ser aberto ou fechado):
 2. jogo aberto (New Game, tela principal): live_player_editor.py --squads-all, que conta
    os jogadores de 2005 de cada clube; depois feche o jogo;
 3. jogo fechado: montar_elencos.py, aplicar_comissao.py --apply, aplicar_arbitros.py --apply,
-   aplicar_historico.py --apply e a cópia do .lnc dos jogadores para data\\db\\lnc\\all;
+   aplicar_historico.py --apply, gravar_atributos.py --apply (atributos, CA/PA, personalidade,
+   físico, nascimento e nação dos jogadores direto no people_db) e a cópia do .lnc dos
+   jogadores para data\\db\\lnc\\all;
 4. jogo aberto (outro New Game, tela principal): live_player_editor.py ... --apply. Salve o jogo.
 
 A contagem dos elencos é dos clubes de identidade_fm06.csv e, com data\\estrangeiros
@@ -144,6 +146,7 @@ def main() -> None:
         run(3, "aplicar_comissao.py", "--apply")
         run(3, "aplicar_arbitros.py", "--apply")
         run(3, "aplicar_historico.py", "--apply")
+        run(3, "gravar_atributos.py", "--apply")
         lnc.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(PLAYERS_LNC, lnc)
         print(f"[OK] copiado {PLAYERS_LNC.name} para {lnc.parent}")

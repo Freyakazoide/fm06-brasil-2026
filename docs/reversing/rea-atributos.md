@@ -279,3 +279,15 @@ recalcula são os atributos, para baterem com o CA.
     `.lnc`) 4/342. O injetor só acerta porque grava depois. Opção: patch de 6 bytes no
     `fm_brasil.exe` em `0x00AAA645` (`FF 92 A0 01 00 00` → `83 C4 04 90 90 90`, descarta o
     argumento e não chama) — não feito nem testado.
+- 25/10 **Aprovado pelo usuário: gravar em todos com o CA coerente + patch do nascimento.**
+  - Patch `nascimento_lnc_fixo` em `src/fm06patch/exe_patches.py` (0x6AA645 no arquivo) e na
+    lista `EXE_PATCHES` do `aplicar_brasil_2026.py`. O `fm_brasil.exe` gerado difere do
+    anterior só nesses 6 bytes (o anterior era idêntico ao da lista sem o patch). Backup do
+    exe anterior em `workspace/backups/fm_brasil.antes_nascimento.exe`. A função chamada
+    desempilha o argumento (nenhum `add esp` depois do `call`), por isso `add esp, 4`.
+  - `gravar_atributos.py --apply` na etapa 3 do `aplicar_tudo.py` (por último). Com todos
+    os 6.542: 6.535 gravados, 526.606 bytes mudados, nenhum fora do previsto, tabelas
+    íntegras (`workspace/experiments/people_db_gravador_todos.dat`).
+  - **A etapa 4 (injetor) continua no `aplicar_tudo.py`** e, se rodar, grava na memória o CA
+    da planilha e os atributos por cima do que o gravador fez. Decidir se sai (passo 6).
+  - Falta conferir no jogo: o dia do nascimento com o patch e algumas fichas com todos.
