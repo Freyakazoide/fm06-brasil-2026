@@ -130,3 +130,56 @@ Da memória (`src/fm06patch/live_player.py`, `reverse/fmm/*.json`):
     do arquivo (A, logo depois do CA). Falta conferir no jogo (teste 1).
   - A tabela de pesos não está em nenhum arquivo de texto do jogo nem nos `.dat` (só em
     memória: 15 linhas de 79 bytes no heap); será lida da memória no teste 1.
+- 25/10 **Teste 1 — deu certo (memória conferida).** Cópia do `people_db.dat` do jogo com
+  8 jogadores do Flamengo regravados a partir de `workspace/mods/brasil_2026_jogadores.json`
+  (Paquetá 3300989, Arrascaeta 316261, Pedro 316734, Samuel Lino 2103165, Danilo 3301241,
+  Léo Ortiz 3301174, Jorginho 311145, Rossi 315094): os 79 bytes da T3, a personalidade da
+  T2 e CA/PA do registro A (591 bytes; nada fora disso). New Game no `fm_brasil.exe` **sem
+  o injetor**; memória lida (só leitura) por `workspace/rea/tools/conferir_teste.py`.
+  - **CA e PA: 8 de 8 iguais ao arquivo** (ex.: Paquetá 136/168 → 168/168).
+  - **Atributos: o modelo (conversão + ajuste com os pesos lidos de `0x014EABA0`) prevê a
+    memória byte a byte** em todos os 54 atributos de todos os 8, fora os sorteios
+    previstos (f = 20/1 nos relativos, f = 0). O ajuste deslocou igualmente os atributos
+    com peso: Pedro −1, Danilo +1, Jorginho +1, os outros 5 com 0 (ficha = arquivo).
+  - Posições: as específicas (Lateral D., Zagueiro C., Meia C. …) ficam como gravadas; as
+    genéricas (Líbero, Volante, Meio-campo, Meia ofensivo) o `0x00A9A740` recalcula a
+    partir das específicas (Paquetá Volante 12 → 1, Meio-campo 16 → 20).
+  - Rossi: os ocultos que o JSON não traz e estavam 0 no arquivo (Desonestidade, Jogos
+    Importantes, Versatilidade) foram sorteados — esperado.
+  - **Personalidade:** campos 1–5 e 8 iguais ao arquivo nos 8; **Desportivismo e
+    Temperamento caem entre 0 e 11** em todos. Causa achada: PData::completar
+    `0x00A998B0` sorteia os campos fora de 1..20 e depois, conforme um código do objeto
+    passado (método virtual +0x10; hipótese: região da nacionalidade), faz casos 4/0xC:
+    −sorteio(12) nos dois; 6/8: −sorteio(10) no Desportivismo; 0xB: +sorteio(8) nos dois;
+    0xD: −sorteio(5) nos dois. Não dá para fixar pelo arquivo (o injetor fixa).
+  - **Fichas (screenshots do usuário, Paquetá, Arrascaeta, Pedro, Danilo) — tiradas depois
+    de alguns jogos.** Duas correções:
+    1. **Fórmula da ficha corrigida.** A de cima dava −1. O que bate com os 48 valores das 3
+       fichas comparadas (com a memória relida na mesma hora): relativo
+       `v = trunc(5 · max(1, (2·cru + CA)/10 + 0,5))` (máx. 100, o caminho "escala 1–100" do
+       `0x00A3D720`) e **ficha = trunc((v + 2)/5)** para todos (a regra dos absolutos,
+       `0x00A3CB50`). Com ajuste 0 e **CA par**, ficha = arquivo. Com **CA ímpar**, todo
+       relativo com 10·f < CA aparece **f + 1** (o `trunc((10f − CA)/2)` de número negativo
+       arredonda para cima) — explica Léo Ortiz (151) e Samuel Lino (153). O gravador tem
+       de compensar (escolher o f que dá a ficha desejada).
+    2. **A memória mudou com os dias de jogo:** na 2ª leitura todos os atributos com peso
+       subiram de 1 a 3 (média ponderada 0,2–0,6 acima do alvo, CA parado). Logo depois do
+       New Game o ajuste tinha deixado a média a ≤ 0,08 do alvo `0,05·CA + 6` nos 8. A
+       subida é evolução do jogo com o tempo (não é leitura do arquivo); a validação tem de
+       ser feita na ficha **antes de avançar** o calendário.
+  - **Idade, nacionalidade, posição "errada" (Arrascaeta 22 anos, Pulgar PL brasileiro de
+    18):** não vieram do teste (Pulgar nem foi gravado; o diff só tinha os 591 bytes). Para
+    **jogadores**, o `people_db.dat` do mod ainda tem nome, nascimento, nação, altura e peso
+    do jogador original do FM06 no UID (Arrascaeta 316261 = "Obina", 1983 → 2003 com o +20;
+    Pulgar 2100693 = "Fabiano Oliveira", BRA, 1987). Quem troca isso hoje é o **injetor**
+    (`LivePlayer.plan`: nascimento, nacionalidade, altura, peso, reputações). O gravador
+    offline terá de gravar também esses campos no registro A (layout acima e em
+    `comissao.py`), senão o mod sem injetor fica com as idades/nações erradas.
+  - Tabela de pesos lida do jogo salva em `workspace/rea/pesos_fm06.json` (15 posições ×
+    79, mapa de posições `[0, 1, 12, 13, …, 24]` de `0x012E3F80`).
+- 25/10 **Teste 2 (preparado):** mesmos 8, a partir do backup do mod
+  (`workspace/backups/people_db.antes_teste1.dat`), com **CA coerente** com os atributos
+  (o CA par mais perto do da planilha para o qual o ajuste não mexe): Paquetá 168,
+  Arrascaeta 160, Pedro 164 (planilha 154), Lino 152 (153), Danilo 138 (152), Léo Ortiz 152
+  (151), Jorginho 136 (150), Rossi 142 (148); PA ≥ CA. Simulação: ficha = JSON em todos os
+  atributos dos 8. Validar na ficha **no dia do New Game, sem clicar em Continuar**.
