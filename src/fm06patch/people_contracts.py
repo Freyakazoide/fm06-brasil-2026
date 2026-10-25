@@ -14,6 +14,7 @@ próprio (índice, UID verdadeiro), que é o começo do registro seguinte.
 
 from __future__ import annotations
 
+import bisect
 import re
 import struct
 from collections import Counter
@@ -25,10 +26,14 @@ T3_START, T3_END, T3_SIZE = 0x0480F422, 0x05AFA48A, 89
 PEOPLE_END = 0x043902BA                     # fim da tabela A (pessoas)
 MAX_CLUB_INDEX = 30000                      # o maior clube do banco tem índice 19164
 MAX_UID = 100_000_000
-_TAIL = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)(....)", re.S)
+# fim do registro: u16 ano, 3 bytes, u32 índice, u32 UID (busca sobreposta: um falso fim logo
+# antes não esconde o verdadeiro)
+_TAIL = re.compile(rb"(?=[\x6c-\xe0]\x07...(....)(....))", re.S)
+_TAIL_STRICT = re.compile(rb"[\x6c-\xe0]\x07\x00\x00\x00(....)(....)", re.S)    # nationalities()
 # fim do contrato: 2005..2014, ou 1900 = sem data de fim (2.353 jogadores brasileiros do banco,
 # quase todos das séries de baixo; no jogo aparecem com contrato normal)
-_CONTRACT = re.compile(rb"\x00(....)(....)(..)([\xd5-\xde]\x07|\x6c\x07)\x02\x00\x00\x00", re.S)
+_CONTRACT = re.compile(rb"(?=\x00(....)(....)(..)([\xd5-\xde]\x07|\x6c\x07)\x02\x00\x00\x00)", re.S)
+_MAX_RECORD = 8000
 
 
 @dataclass
@@ -47,22 +52,37 @@ def player_uids(people: bytes) -> set[int]:
 
 def contracts(people: bytes, multi: bool = False) -> dict[int, Contract]:
     """UID -> contrato, só de quem tem exatamente um bloco de contrato no registro
-    (multi=True: também quem tem vários; o primeiro vale, os outros vão em others)."""
+    (multi=True: também quem tem vários; o primeiro vale, os outros vão em others).
+
+    O bloco começa com 64, u32 índice da pessoa, 00 (antes do u32 do clube): ele é da pessoa
+    desse índice, cujo registro termina no 1º fim (índice, UID) com esse índice depois do
+    bloco. Até 25/10 o bloco ia para o registro entre dois "fins de registro", mas o padrão do
+    fim aparece por acaso dentro dos registros (docs/reversing/rea-atributos.md): 2.682
+    contratos de um bloco eram de outra pessoa, e o reforço trocava o clube de jogadores
+    (Ribeiro na lista do Bragantino com contrato no Central e vice-versa)."""
     players = player_uids(people)
-    found: dict[int, Contract] = {}
-    previous = 0
+    ends: dict[int, list[tuple[int, int]]] = {}
     for match in _TAIL.finditer(people, 0, PEOPLE_END):
         index, uid = struct.unpack("<II", match.group(1) + match.group(2))
-        if uid not in players:
+        if uid in players:
+            ends.setdefault(index, []).append((match.start() + 13, uid))
+    blocks: dict[int, list[tuple[int, re.Match]]] = {}
+    for block in _CONTRACT.finditer(people, 0, PEOPLE_END):
+        at = block.start() + 1
+        if struct.unpack("<H", block.group(3))[0] > 365 or people[at - 6] != 0x64:
             continue
-        blocks = [b for b in _CONTRACT.finditer(people, previous, match.start())
-                  if struct.unpack("<H", b.group(3))[0] <= 365]
-        if blocks and (len(blocks) == 1 or multi) and uid not in found:
-            block = blocks[0]
+        owner = struct.unpack_from("<I", people, at - 5)[0]
+        candidates = ends.get(owner, [])
+        i = bisect.bisect_left(candidates, (at,))
+        if i < len(candidates) and candidates[i][0] - at < _MAX_RECORD:
+            blocks.setdefault(candidates[i][1], []).append((owner, block))
+    found: dict[int, Contract] = {}
+    for uid, mine in blocks.items():
+        if len(mine) == 1 or multi:
+            index, block = mine[0]
             found[uid] = Contract(uid, block.start() + 1, struct.unpack("<I", block.group(1))[0],
-                                  struct.unpack("<H", block.group(4))[0], tuple(b.start() + 1 for b in blocks[1:]),
-                                  index)
-        previous = match.end()
+                                  struct.unpack("<H", block.group(4))[0],
+                                  tuple(b.start() + 1 for _, b in mine[1:]), index)
     return found
 
 
@@ -206,7 +226,7 @@ def nationalities(people: bytes) -> dict[int, list[tuple[int, int]]]:
         nation = struct.unpack_from("<I", people, end + 5)[0]
         if not (1940 <= year <= 1995 and nation < 400):
             continue
-        for tail in _TAIL.finditer(people, end, end + 0x400):
+        for tail in _TAIL_STRICT.finditer(people, end, end + 0x400):
             index, uid = struct.unpack("<II", tail.group(1) + tail.group(2))
             if people.find(struct.pack("<I", index), end, tail.start()) >= 0:
                 found.setdefault(nation, []).append((uid, year))
