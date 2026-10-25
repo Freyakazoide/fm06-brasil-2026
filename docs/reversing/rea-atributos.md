@@ -356,5 +356,15 @@ recalcula são os atributos, para baterem com o CA.
   contratos, 36.491 bytes).
 - 25/10 **Etapa 4 (injetor) tirada do `aplicar_tudo.py`** (pedido do usuário depois de levar
   moves e jogos pela seleção para o gravador). O `live_player_editor.py` fica para a
-  contagem dos elencos (etapa 2) e para conferência (`--show`). Falta conferir os contratos
-  no jogo.
+  contagem dos elencos (etapa 2) e para conferência (`--show`).
+- 25/10 **v5 conferido no jogo (contratos, memória lida depois do New Game):** 6.441 jogadores
+  do mod carregados; fim do contrato certo em 6.282, número em 4.591 de 4.617 com número,
+  salário em 4.760. As diferenças são do jogo, não da gravação (o arquivo tem o valor certo):
+  - fim: 96 jovens gravados certos ficam "sem data" (1900) na memória; 26 com empréstimo
+    terminam 1 ano antes (o jogo ajusta junto com o empréstimo); 19 são contratos ambíguos
+    não gravados; o resto, casos isolados;
+  - salário: 1.618 salários muito baixos (valor < 100, R$ < ~20 mil/mês) sobem para um piso
+    ao carregar (ex.: 12 → 30); 63 ficam abaixo do esperado (não investigado);
+  - número: 26 conflitos de camisa no clube resolvidos pelo jogo (255 = sem número).
+  O injetor dava esses valores exatos porque gravava depois dessas regras; agora vale o
+  comportamento normal do jogo.
