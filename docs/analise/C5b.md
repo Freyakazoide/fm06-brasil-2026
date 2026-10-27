@@ -1,4 +1,4 @@
-# Ficha C5b — Orçamento de contratações e de salários (em andamento)
+# Ficha C5b — Orçamento de contratações e de salários
 
 - Quem analisou / data: Claude, 2026-10-27 (Ghidra 12.1.4 headless + capstone + memória do jogo aberto)
 
@@ -92,4 +92,9 @@ R$ 174 mi).
   `0x006D45A4`/`0x006D45A1` (setup do FINANCE_MANAGER) gravou £50.000. Depois, salarial
   495.456 → 409.680 em `0x006F4F4C`.
 - 27/10, teste 1 do orçamento (`orcamentos.py`): 40 clubes da aba Estrutura, 35 no próprio
-  registro e 5 em registros que sobraram. Em andamento.
+  registro e 5 em registros que sobraram. Instalado com `aplicar_tudo --rapido`; no
+  `server_db` do jogo a tabela está em 0x13DEB4E (o histórico muda o tamanho antes dela),
+  63 registros diferentes do original: Flamengo £8.287.402 (R$ 42,1 mi) no registro do
+  empréstimo, Corinthians £5.905.512 (R$ 30 mi), Chapecoense £1.279.528 (R$ 6,5 mi),
+  Chelsea igual. New Game: **deu certo**. Tela de finanças: Flamengo R$ 42.100.001
+  (época e restante, 75%), Chapecoense R$ 6.500.002 (90%), os dois iguais à aba Estrutura.

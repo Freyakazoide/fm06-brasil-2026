@@ -33,7 +33,7 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Técnico e comissão de 2026 (499 pessoas) | ✅ | `aplicar_comissao.py` |
 | Rivais e clássicos | 🧪 | `rivais.py` (a tela de informações não mostra; falta a notícia de clássico) |
 | CT, base e captação de 2026 (40 clubes) | 🧪 | `instalacoes.py` + aba Estrutura |
-| Orçamentos de contratações e salários de 2026 | ⏳ | ficha C5b + aba Estrutura |
+| Orçamento de transferências de 2026 (40 clubes) | ✅ | `orcamentos.py` + aba Estrutura (ficha C5b); o salarial segue a fórmula do jogo |
 | Clubes de 2026 que não existem no FM06 (38 nas séries, 88 nos estaduais) | ⚠️ | ocupam um clube de 2005 ("substitutos"); criar clube novo exige o formato completo do registro |
 
 ### Pessoas
@@ -77,7 +77,9 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 ### Fase 3: dinheiro dos clubes
 
-- Orçamento de contratações e de salários de 2026 (ficha C5b + aba Estrutura).
+- ~~Orçamento de contratações de 2026 (ficha C5b)~~: entrou em 27/10 (tabela do
+  FINANCE_MANAGER no server_db). Falta: o orçamento salarial (fórmula do jogo + diretoria)
+  e os empréstimos de 2005 que continuam na tabela (Flamengo R$ 115 mi).
 - Patrocínio de 2026 (ficha C1b + `patrocinadores_2026.xlsx`, já preenchida).
 - Premiação e cotas de TV de 2026 (ficha C9b + `premiacao_2026.xlsx`, já preenchida).
 
