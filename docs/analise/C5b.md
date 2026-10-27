@@ -4,7 +4,7 @@
 
 ## Conferido
 
-### No banco não há orçamento
+### Nas finanças do clube não há orçamento
 
 - Os clubes têm finanças do tipo **básico** no `server_db` (`financas.py`). Contei todos os
   clubes do banco original (todas as nações): 8.653 básicos e **nenhum completo** (os 5
@@ -47,23 +47,49 @@
 - +0x90 conferido com a tela: 520.578 × 4 × 5,08 = R$ 10,58 mi/mês (folha do Flamengo).
 - +0x88 é hipótese (orçamento salarial semanal): 413.803 × 4 × 5,08 = R$ 8,4 mi/mês, perto
   dos R$ 8,5 mi da tela.
-- Flamengo não bate com o piso de 10% do saldo (£21,7 mi → pelo menos £2,17 mi). Hipótese:
-  alguém regrava o orçamento depois do init (por exemplo, a diretoria ao contratar o
-  treinador humano). Não conferido.
+- Flamengo não bate com o piso de 10% do saldo: quem regrava é o FINANCE_MANAGER (abaixo).
+
+### A tabela do FINANCE_MANAGER (conferido com o vigia 2)
+
+- Logo depois da troca das finanças, `FINANCE_MANAGER::setup()` (`0x006D4400`) percorre uma
+  tabela do `server_db` e, por registro: troca as finanças do clube, cria o empréstimo
+  (`0x006CF960`, valor e prazo do registro) e grava o **orçamento de transferências fixo**
+  por cima do calculado (`0x006D45A1`, `mov [ecx+0x1C], edi`). Só se o clube não tiver
+  dono rico (+0xC).
+- No banco original: `u32` quantidade em 0x13D8555 (3.536) e registros de 24 bytes
+  `u8, u32 time, u32 empréstimo £, u16 meses, u32 orçamento £, u8 tipo, u32 índice, u32 −1`.
+- "time" = índice do registro do time do clube (o u32 antes de `UID do clube, 0A 00` + 1),
+  resolvido para o clube por `0x00A18CD0` (time+0x38). Corinthians 287 (£4,7 mi),
+  Flamengo 290 (£50 mil, e outro registro com o empréstimo de £22,5 mi em 103 meses, os
+  R$ 115 mi do jogo), Chelsea 544 (£100 mi), Arsenal £153,3 mi de empréstimo (o estádio).
+- O orçamento salarial não está na tabela: sai da fórmula (`0x008AB710`) e muda de novo
+  quando o técnico assume (`0x006F4F4C`, Flamengo 495.456 → 409.680/sem).
 
 ## Consequência
 
-Não existe campo de orçamento para gravar no banco, nem como passar o valor do arquivo para
-o objeto: os orçamentos são sempre calculados no New Game e de novo a cada temporada. O que o
-mod controla hoje (saldo, público, reputação, dono rico) só mexe nas entradas da fórmula.
+O orçamento de transferências de 2026 vai direto no banco, na tabela do FINANCE_MANAGER
+(`fm06patch/orcamentos.py`, chamado pelo `aplicar_brasil_2026.py` com a aba Estrutura): não
+precisa de patch no exe. Clube que tem registro recebe o valor nele (o do empréstimo, se
+houver); os 5 clubes da planilha sem registro ficam com o que sobra quando os dois registros
+de outro clube da planilha viram um. Mesmo tamanho de arquivo, nenhum clube fora da
+planilha muda. Vale para o New Game; nas temporadas seguintes o jogo recalcula pela fórmula.
 
-Caminhos:
+Fica para depois: o orçamento salarial (fórmula + diretoria) e os empréstimos de 2005 que
+continuam na tabela (Flamengo £22,5 mi; a planilha só tem a dívida do Flamengo,
+R$ 174 mi).
 
-1. **Patch no `fm_brasil.exe`**: depois do init (`0x00A87170`), procurar o clube numa tabela
-   gravada no exe (UID → orçamento de transferências e salarial da aba Estrutura) e
-   sobrescrever +0x1C, +0x20 e +0x88. Vale só para a 1ª temporada; da 2ª em diante volta a
-   fórmula do jogo.
-2. **Só as entradas**: deixar a fórmula e ajustar saldo/reputação. Barato, mas o orçamento fica
-   longe da planilha (e mexer no saldo para isso estraga o saldo de 2026).
+## Diário
 
-Antes do caminho 1, falta conferir quem regrava o orçamento do Flamengo depois do init.
+- 27/10, vigia 1 (`workspace/rea/tools/vigia_orcamento.py`, parada em `0x00A8727B` com filtro
+  de saldo): **sem efeito**, não parou nenhuma vez durante o New Game com o Flamengo.
+  Leitura da memória depois (157 objetos de finanças completas): clube+0x14 = UID do jogo
+  (Flamengo 322). Flamengo de novo com transferências £50.000 (saldo £26,18 mi, salarial
+  423.607/sem); Corinthians de novo £4.700.000 (saldo £17,96 mi); Fluminense-PI £13.981.
+  Os valores redondos se repetem entre New Games, embora o saldo seja sorteado.
+- 27/10, vigia 2: conta as passagens em `0x00A29300`, `0x00A8727B`, `0x00A87040` e
+  `0x00A84780`, e anota as escritas em +0x1C/+0x88 do Flamengo. **Deu certo**: 157 inits;
+  no Flamengo o init deu £5.590.221 (20% do saldo de £27,95 mi, fora da faixa do vigia 1) e
+  `0x006D45A4`/`0x006D45A1` (setup do FINANCE_MANAGER) gravou £50.000. Depois, salarial
+  495.456 → 409.680 em `0x006F4F4C`.
+- 27/10, teste 1 do orçamento (`orcamentos.py`): 40 clubes da aba Estrutura, 35 no próprio
+  registro e 5 em registros que sobraram. Em andamento.

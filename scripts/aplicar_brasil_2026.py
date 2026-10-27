@@ -8,7 +8,8 @@ Com --apply:
 1. cria fm_brasil.exe na pasta do jogo (cópia do fm.exe com os patches das séries);
 2. grava o server_db.dat do jogo com os clubes de cada série, partindo sempre
    do original (cópia em workspace\\baseline\\server_db.original.dat), com saldo,
-   público, reputação e o CT e a base da aba Estrutura da clubes_estrutura_2026.xlsx;
+   público, reputação e o CT, a base e o orçamento de transferências da aba Estrutura
+   da clubes_estrutura_2026.xlsx;
 3. grava data\\db\\lnc\\all\\brasil_2026.lnc com os nomes Série A, B, C e D;
 4. atualiza data\\brasil\\mapa_2026.csv (quem entrou no lugar de quem);
 5. grava os participantes dos estaduais de 2026 (data\\brasil\\estaduais) e o
@@ -53,7 +54,8 @@ from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, 
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico, instalacoes,  # noqa: E402
-                       identidade, nomes_fases, nomes_regens, regens_futuros, reputacao, rivais, traducao)
+                       identidade, nomes_fases, nomes_regens, orcamentos, regens_futuros, reputacao, rivais,
+                       traducao)
 import aplicar_historico  # noqa: E402
 import traduzir_telas  # noqa: E402
 
@@ -269,6 +271,15 @@ def main() -> None:
         if capped:
             print("[CONFIRA] base acima de reputação/250, o jogo deve baixar para o número entre parênteses: "
                   + ", ".join(capped))
+        budgets = {by_name[club]: brl for club, brl in orcamentos.load_sheet(STRUCTURE).items() if club in by_name}
+        budget_plan = orcamentos.plan(data, budgets)
+        db = orcamentos.apply(data, budget_plan.changes, into=db)
+        print(f"[OK] orçamento de transferências de 2026 em {len(budgets) - len(budget_plan.missing)} clubes "
+              f"(tabela do FINANCE_MANAGER, {len(budget_plan.changes)} registros)")
+        if budget_plan.missing:
+            name_of = {u: c for c, u in by_name.items()}
+            print("[AVISO] sem orçamento (sem time no banco ou sem registro livre): "
+                  + ", ".join(name_of.get(u, str(u)) for u in budget_plan.missing))
     db, cleared = historico.clear_brazil_continental(db)
     if cleared:
         print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))
