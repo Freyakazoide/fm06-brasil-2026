@@ -9,7 +9,7 @@ Com --apply:
 2. grava o server_db.dat do jogo com os clubes de cada série, partindo sempre
    do original (cópia em workspace\\baseline\\server_db.original.dat), com saldo,
    público, reputação e o CT, a base e o orçamento de transferências da aba Estrutura
-   da clubes_estrutura_2026.xlsx;
+   da clubes_estrutura_2026.xlsx, e os contratos de patrocínio da patrocinio_jogo_2026.xlsx;
 3. grava data\\db\\lnc\\all\\brasil_2026.lnc com os nomes Série A, B, C e D;
 4. atualiza data\\brasil\\mapa_2026.csv (quem entrou no lugar de quem);
 5. grava os participantes dos estaduais de 2026 (data\\brasil\\estaduais) e o
@@ -54,8 +54,8 @@ from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, 
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
 from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico, instalacoes,  # noqa: E402
-                       identidade, nomes_fases, nomes_regens, orcamentos, regens_futuros, reputacao, rivais,
-                       traducao)
+                       identidade, nomes_fases, nomes_regens, orcamentos, patrocinio, regens_futuros, reputacao,
+                       rivais, traducao)
 import aplicar_historico  # noqa: E402
 import traduzir_telas  # noqa: E402
 
@@ -83,6 +83,7 @@ TRANSLATION = ROOT / "data" / "modelos" / "traducao_ptbr.xlsx"
 REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"
 STRUCTURE = ROOT / "data" / "modelos" / "clubes_estrutura_2026.xlsx"   # abas Rivais e Estrutura
 FUTURE_REGENS = ROOT / "data" / "modelos" / "regens_futuros_2026.xlsx"   # joias da base
+SPONSORS = ROOT / "data" / "modelos" / "patrocinio_jogo_2026.xlsx"     # contratos de patrocínio
 TRANSLATION_REPORT = ROOT / "data" / "brasil" / "traducao_lang_db.csv"
 DATA_DIR = ROOT / "data" / "brasil"
 HISTORY_REPORT = DATA_DIR / "historico" / "sem_clube_no_jogo.txt"
@@ -310,6 +311,15 @@ def main() -> None:
               "nova (os substitutos perdem os rivais do clube de 2005)")
         if missing:
             print("[AVISO] rivais: clubes da planilha que não estão no jogo:", ", ".join(missing))
+    if SPONSORS.exists():                                        # patrocínio (por último: muda o tamanho)
+        repo_of = {i.clube: i.repo_uid for i in identities}
+        contracts = patrocinio.load_sheet(SPONSORS)
+        outside = sorted(c for c in contracts if c not in repo_of)
+        db, kept = patrocinio.apply(db, {repo_of[c]: k for c, k in contracts.items() if c in repo_of})
+        print(f"[OK] patrocínio de 2026 em {len(contracts) - len(outside) - len(kept)} clubes "
+              f"({SPONSORS.relative_to(ROOT)}); os outros ficam com o contrato que o jogo gera")
+        if outside or kept:
+            print("[AVISO] patrocínio não gravado: " + ", ".join(outside + [str(u) for u in kept]))
     server.write_bytes(db)
     print(f"[OK] gravado {server}")
 
