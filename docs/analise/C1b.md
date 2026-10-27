@@ -31,6 +31,11 @@
   CLUB+0x11C é 0. O gerador (`0x00AAEDF0`) calcula o valor pela reputação do clube e da
   nação (com casos por nação), sorteia os anos (2 a 5, +1 acima de £5 mi) e põe o fim na
   data atual + anos; o +0 fica 0.
+- Renovação: `0x00A7E410` (chamado de `0x008AA580`) compara o ano do fim (+0xE) com o ano
+  atual (`0x014EAB3A`); quando acabou, chama o mesmo gerador `0x00AAEDF0` e paga o valor
+  novo (método 0xA0 das finanças). Então o contrato novo já segue a reputação do clube na
+  hora da renovação: quem sobe ganha proposta melhor, quem cai e perde reputação recebe
+  menos. Durante o contrato o valor não muda (não há cláusula de rebaixamento).
 
 ## Consequência
 
@@ -39,10 +44,15 @@ finanças por 1 e inserir os 13 bytes do contrato (valor em libras, fim com o an
 anos). O arquivo cresce 13 bytes por clube, então entra no fim do `aplicar_brasil_2026.py`,
 depois das etapas que mudam o tamanho, lendo as posições no banco já alterado.
 
-## Falta decidir
+## Decidido (27/10)
 
-- A planilha `patrocinadores_2026.xlsx` só tem valor em 11 dos 40 clubes (todos "master") e
-  nenhuma data de início ou fim.
+- A `patrocinadores_2026.xlsx` só tem valor em 10 dos 40 clubes e nenhuma data. O usuário
+  vai preencher os contratos reais em `data/modelos/patrocinio_jogo_2026.xlsx` (aba
+  Contrato_jogo: 156 clubes das séries, com o que o jogo inventa hoje em cinza para
+  comparar a escala). Linha sem valor ou sem fim fica com o contrato do jogo.
+- Padrão de crescimento/queda: o jogo já renova pela reputação (acima). Calibrar a escala
+  da fórmula para o Brasil de 2026 seria um patch nas constantes de `0x00AAEDF0`: fica
+  para depois de ver os primeiros contratos no jogo.
 
 ## Diário
 
