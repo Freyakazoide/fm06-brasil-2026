@@ -33,3 +33,11 @@ def test_insert_after_finances():
     assert out[at + 17:at + 21] == data[patrocinio.flag_at(data, 321) + 4:patrocinio.flag_at(data, 321) + 8]
     _, kept = patrocinio.apply(out, {321: contract})
     assert kept == [321]                                     # não grava duas vezes
+
+
+def test_pay_stub_jumps_land_on_ret():
+    """Os dois saltos do desvio caem no ret (um byte antes travaria o New Game)."""
+    code = patrocinio._pay_stub()
+    ret = code.index(b"\xC3", len(code) - 1)
+    je, jne = code.index(bytes.fromhex("85C074")) + 2, code.index(bytes.fromhex("837E7C0075")) + 4
+    assert je + 2 + code[je + 1] == ret and jne + 2 + code[jne + 1] == ret

@@ -75,6 +75,12 @@ def _libertadores_datas_swaps(data: bytes):
     return build_dates(data)
 
 
+def _patrocinio_swaps(data: bytes):
+    from .patrocinio import exe_swaps
+
+    return exe_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -369,6 +375,15 @@ PATCHES = {
                 # -> add esp, 4 (descarta o argumento empilhado) + nop
                 Swap(0x6AA645, bytes.fromhex("ff92a0010000"), bytes.fromhex("83c404909090")),
             ),
+        ),
+        Patch(
+            "patrocinio_inicio",
+            "Paga o patrocínio da 1ª temporada no New Game: o jogo só paga no fechamento do ano "
+            "(método 0xF0 das finanças, 0x008AA580), já para a temporada seguinte. No init das "
+            "finanças (0x00A87170) o teste do gerador do contrato (0x00A872E9) vai para um desvio que "
+            "gera o contrato se faltar e paga o valor uma vez pelo método 0xA0 (0x00A7C8D0). Ver "
+            "src/fm06patch/patrocinio.py e docs/analise/C1b.md.",
+            build=_patrocinio_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

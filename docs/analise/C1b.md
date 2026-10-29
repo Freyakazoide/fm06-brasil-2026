@@ -86,3 +86,9 @@ depois das etapas que mudam o tamanho, lendo as posições no banco já alterado
   temporada). Então o patrocínio é pago uma vez por ano, no fim da temporada, já com o
   valor da temporada seguinte (ou o do contrato renovado). A 1ª temporada do save não recebe
   patrocínio: é assim também no jogo original, com o contrato gerado.
+- 29/10, decidido: pagar a 1ª temporada no New Game, para todos os clubes. Patch
+  `patrocinio_inicio` (`patrocinio.exe_swaps`): `0x00A872E9` `75 05 E8 40 1E FA FF` (jne +
+  call do gerador) -> `call 0x015BA000` + 2 nop; o desvio na `.fm26` (+0x6000) gera o
+  contrato se faltar e, com FINANCE+0x7C ainda 0, paga `[contrato+4]` por `0x00A7C8D0`
+  (+4 saldo, +0x7C, +0x110 e +0x1D8 receitas). Nada no init mexe em +0x7C antes do desvio.
+  Falta instalar e o New Game.

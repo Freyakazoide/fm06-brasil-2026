@@ -11,6 +11,15 @@ só quando CLUB+0x11C está vazio). Na renovação o jogo gera outro pela reputa
 
 Gravar o contrato troca o u32 por 1 e insere 13 bytes: o arquivo cresce. Por isso as
 posições são lidas no banco já alterado e a inserção vai do fim para o começo.
+
+O jogo só paga o patrocínio no fechamento do ano (método 0xF0 das finanças, 0x008AA580,
+chamado por 0x006D0870 no evento 9 do calendário da nação), já para a temporada seguinte:
+a 1ª temporada do save ficava sem. O patch `patrocinio_inicio` (exe_swaps) paga uma vez no
+init das finanças do New Game (0x00A87170): o jne + call do gerador (0x00A872E9) vira uma
+chamada a um desvio que faz o mesmo teste, cria o contrato se faltar e paga o valor pelo
+método 0xA0 (0x00A7C8D0, o mesmo do fechamento: saldo e linha "Patrocínio"). O init roda
+duas vezes no mesmo clube no New Game (vigia_orcamento, 27/10); o desvio só paga com
+FINANCE+0x7C ainda 0 (zerado no construtor e somado pelo próprio 0xA0).
 """
 
 from __future__ import annotations
@@ -20,6 +29,7 @@ import struct
 from dataclasses import dataclass
 
 from . import financas
+from .exe_cave import SECTION_VA, Asm, off, sec_off, section_swaps
 
 YEAR_SHIFT = -20
 _CONTRACT = struct.Struct("<IIHHB")
@@ -102,3 +112,36 @@ def load_sheet(path) -> dict[str, Contract]:
             raise ValueError(f"{club}: fim {end} antes do início {start}")
         out[club] = Contract(float(value), end, max(1, round((end - start).days / 365.25)))
     return out
+
+
+INIT_SPONSOR_CHECK = 0x00A872E9       # jne +5 ; call 0x00A29130 (gera o contrato se faltar)
+GENERATE = 0x00A29130
+PAY = 0x00A7C8D0                      # FINANCE método 0xA0 (thiscall, valor)
+PAY_STUB = SECTION_VA + 0x6000
+
+
+def _pay_stub() -> bytes:
+    a = Asm(PAY_STUB)                                # ecx = clube, esi = finanças
+    a.raw(bytes.fromhex("83B91C01000000"))           # cmp dword [ecx+0x11C], 0
+    a.raw(bytes.fromhex("7505"))                     # jne tem
+    a.call(GENERATE)
+    a.raw(bytes.fromhex("8B4608"))                   # tem: mov eax, [esi+8]
+    a.raw(bytes.fromhex("8B801C010000"))             # mov eax, [eax+0x11C]
+    a.raw(bytes.fromhex("85C07410"))                 # test eax, eax ; je fim
+    a.raw(bytes.fromhex("837E7C00"))                 # cmp dword [esi+0x7C], 0
+    a.raw(bytes.fromhex("750A"))                     # jne fim (já pago)
+    a.raw(bytes.fromhex("FF7004"))                   # push dword [eax+4] (valor)
+    a.raw(bytes.fromhex("8BCE"))                     # mov ecx, esi
+    a.call(PAY)
+    a.raw(bytes.fromhex("C3"))                       # fim: ret
+    return bytes(a.code)
+
+
+def exe_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    code = _pay_stub()
+    call = bytes.fromhex("E8") + struct.pack("<i", PAY_STUB - (INIT_SPONSOR_CHECK + 5)) + bytes.fromhex("9090")
+    return (*section_swaps(data),
+            Swap(sec_off(PAY_STUB), bytes(len(code)), code),
+            Swap(off(INIT_SPONSOR_CHECK), bytes.fromhex("7505e8401efaff"), call))
