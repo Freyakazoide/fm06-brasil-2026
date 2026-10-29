@@ -94,3 +94,11 @@ prêmio das ligas e as cotas de TV.
   R$ 4 mi, semifinal R$ 9 mi, vice R$ 34 mi, campeão R$ 78 mi. Testes ok. Instalado (`aplicar_tudo --rapido`):
   no `fm_brasil.exe` os 8 `push` estão com os valores novos (5ª fase £393.701 = R$ 2 mi,
   campeão £15.354.331 = R$ 78 mi). Falta ver no jogo.
+- 29/10, New Game com o Flamengo: **deu certo**. Notícia de 31/05/2026 "Flamengo recebe
+  R$2.000.000 ... por disputar a Copa do Brasil", depois de "Flamengo vence na Copa do
+  Brasil - 2ª Elim." (a 5ª fase do mod usa o código de rodada 7). Receitas: "Prêmios em
+  Dinheiro" Este Mês R$ 2M; Esta Época R$ 10,9M (já no começo, origem ainda não achada)
+  -> R$ 15,31M. Conferido: o +0x48 é pago **uma vez por confronto** (ida e volta não paga
+  duas vezes) e cai em "Prêmios em Dinheiro". Falta ver a final (+0x40/+0x44).
+- Visto na mesma tela: "Receitas Televisivas" R$ 872 mil na temporada até maio (Flamengo),
+  muito abaixo das cotas reais (aba Cotas_TV).
