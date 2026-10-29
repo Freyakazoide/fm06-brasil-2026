@@ -61,4 +61,12 @@ depois das etapas que mudam o tamanho, lendo as posições no banco já alterado
   Instalado com `aplicar_tudo --rapido`; no `server_db` do jogo os 156 clubes têm a marca 1 e
   o contrato (Flamengo £52.854.331 = R$ 268,5 mi, fim dia 365 de 2008 = 31/12/2028, 3
   anos; Corinthians R$ 150 mi até 2029). A tabela de orçamentos continua legível (3.536).
-  Falta o New Game.
+  New Game (29/10): **deu certo** na tela. Flamengo "Contrato de 3 anos no valor de R$268M por
+  época. Termina a 2028"; Goiás "3 anos, R$17,99M, termina 2028" (planilha R$ 18 mi).
+  Orçamento de transferências igual (R$ 42.100.001).
+- Em aberto: receitas do 1º mês do Flamengo caíram de R$ 10,9 mi (contrato do jogo) para
+  R$ 4,7 mi. O patrocínio não entra aí: o init não paga o contrato (nem o gerado; a
+  Chapecoense tinha R$ 0 de receita com o contrato do jogo). Quem paga é `0x00A7E410`,
+  chamado por `0x008AA580` (virada da temporada, hipótese), que soma o valor inteiro no
+  saldo e nas receitas (`0x00A7C8D0`: +4, +0x7C, +0x110, +0x1D8). Falta ver a tela de
+  receitas e o pagamento depois do início da temporada.
