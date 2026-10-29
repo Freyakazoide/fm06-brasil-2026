@@ -57,3 +57,8 @@ depois das etapas que mudam o tamanho, lendo as posições no banco já alterado
 ## Diário
 
 - 27/10: leitura da memória do New Game (Flamengo) e do código; nenhum teste no jogo ainda.
+- 29/10, teste 1 (`patrocinio.py`): planilha com os 156 clubes preenchidos pelo usuário.
+  Instalado com `aplicar_tudo --rapido`; no `server_db` do jogo os 156 clubes têm a marca 1 e
+  o contrato (Flamengo £52.854.331 = R$ 268,5 mi, fim dia 365 de 2008 = 31/12/2028, 3
+  anos; Corinthians R$ 150 mi até 2029). A tabela de orçamentos continua legível (3.536).
+  Falta o New Game.
