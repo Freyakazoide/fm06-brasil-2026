@@ -131,3 +131,27 @@ prêmio das ligas e as cotas de TV.
   virada de temporada da própria competição (Série A: construtor grava +0x85 = 3, abril).
   Os R$ 10,9 mi do Flamengo no New Game vêm de outro lugar (Goiás, sem Libertadores, teve
   R$ 0).
+- 29/10, mesmo save do Goiás em 02/05/2026: **sem efeito** para a cota da Série B (ela já
+  começou em 21/3). "Prêmios em Dinheiro" Esta Época R$ 3,21M = só a Copa: notícia de
+  22/03 "Goiás recebe R$1.500.000 ... por disputar a Copa do Brasil" (depois da "1ª Elim.",
+  a 3ª fase: R$ 1,53 mi, a notícia arredonda) e Último Mês (abril) R$ 1,68M (4ª fase). As
+  cotas da 3ª e da 4ª fase da Copa (Grupo II) estão **conferidas no jogo**.
+- Quando a cota roda (conferido no código): `0x00ACDAD0` é o slot **0x248** das vtables de
+  competição (Série B `0x0113B7FC`, Série A `0x0113B544`), a montagem da temporada nova.
+  - Na criação do jogo (`0x00AE2AFB` -> `0x00AD4590`), para cada competição da nação: com
+    +0xB4 = -1 (sem data marcada, padrão do construtor base em `0x00ACF4F5`; a Série B usa
+    o base) chama o slot 0x248 na hora (`0x00AD46CA`); com data no futuro, só agenda
+    (método 0x118).
+  - Antes disso, `0x00AD00C0` grava o ano da temporada da nação: 2006 se o início do mundo
+    for **depois** da virada da nação (`setg` em `0x00AD016E`), senão 2005. Com a virada
+    do Brasil em 1/1 (`virada_1_janeiro`) e o jogo começando em 1/1, o ano fica 2005 e
+    `0x00AC5260` pula (hipótese forte: explica o R$ 0 do Goiás). É o mesmo do jogo
+    original: a 1ª temporada do save não recebe cota.
+  - Mesmo que pagasse ali, cairia nas finanças **básicas**: a criação (`0x00463613`) vem
+    antes do FINANCE_MANAGER (`0x004636D4`) e da troca para as completas. O método 0x98 das
+    básicas (`0x00A287A0`) só soma no saldo, sem linha de receita, e o init das completas
+    sorteia o saldo de novo.
+  - Hipótese: a próxima cota cai na montagem da temporada de 2027 (virada de janeiro).
+- Consequência: para a cota de 2026 aparecer, ela tem que ser paga no init das finanças do
+  New Game, como o `patrocinio_inicio` (desvio em `.fm26`+0x6000): pelo método 0x98
+  ("Prêmios em Dinheiro") aos clubes da Série B, por uma tabela de UIDs (clube+0x14).
