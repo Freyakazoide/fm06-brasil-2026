@@ -98,3 +98,8 @@ R$ 174 mi).
   empréstimo, Corinthians £5.905.512 (R$ 30 mi), Chapecoense £1.279.528 (R$ 6,5 mi),
   Chelsea igual. New Game: **deu certo**. Tela de finanças: Flamengo R$ 42.100.001
   (época e restante, 75%), Chapecoense R$ 6.500.002 (90%), os dois iguais à aba Estrutura.
+- 29/10, orçamento v2: com o patrocínio de 2026 pago no New Game (ficha C1b), a regra da aba
+  Estrutura passou a ser o maior entre a v1 e 20% de (saldo 2026 + patrocínio 2026),
+  arredondado a R$ 100 mil (26 clubes mudam; Flamengo R$ 42,1 mi -> R$ 75,8 mi,
+  Corinthians R$ 30 mi -> R$ 45,4 mi). Instalado; no `server_db` do jogo Flamengo
+  R$ 75.800.001. Falta o New Game.
