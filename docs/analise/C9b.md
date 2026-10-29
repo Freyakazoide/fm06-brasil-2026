@@ -84,3 +84,12 @@ prêmio das ligas e as cotas de TV.
 ## Diário
 
 - 29/10: leitura do código (acima); nenhum teste no jogo ainda.
+- 29/10: a tela da Copa do Brasil no jogo não mostra prêmio em dinheiro. "Prêmios" são os
+  individuais (artilheiro) e no começo do save a Copa ainda não tem calendário. A
+  conferência fica pelas finanças ("Prêmios em Dinheiro").
+- 29/10, patch `premiacao_copa_2026` (`premiacao.py`): os `push imm32` das cópias da
+  montagem feitas pelo `copa_do_brasil_2026` (fase 1 em `.fm26`+0x3000, fase 2 em +0x3400)
+  com os valores da CBF de 2026 em libras (÷ 5,08):
+  3ª fase R$ 1,53 mi e 4ª R$ 1,68 mi (Grupo II), 5ª R$ 2 mi, oitavas R$ 3 mi, quartas
+  R$ 4 mi, semifinal R$ 9 mi, vice R$ 34 mi, campeão R$ 78 mi. Testes ok; falta instalar e
+  ver no jogo.

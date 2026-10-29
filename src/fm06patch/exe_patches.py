@@ -81,6 +81,12 @@ def _patrocinio_swaps(data: bytes):
     return exe_swaps(data)
 
 
+def _premiacao_copa_swaps(data: bytes):
+    from .premiacao import copa_swaps
+
+    return copa_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -384,6 +390,14 @@ PATCHES = {
             "gera o contrato se faltar e paga o valor uma vez pelo método 0xA0 (0x00A7C8D0). Ver "
             "src/fm06patch/patrocinio.py e docs/analise/C1b.md.",
             build=_patrocinio_swaps,
+        ),
+        Patch(
+            "premiacao_copa_2026",
+            "Premiação da Copa do Brasil de 2026 (CBF): os push imm32 do setter 0x00B3BA80 nas "
+            "cópias da montagem (0x00BBAD30) feitas pelo copa_do_brasil_2026. Cota por fase aos dois "
+            "clubes (+0x48) da 3ª fase à semifinal; campeão e vice (+0x40/+0x44) na final. Depois do "
+            "copa_do_brasil_2026. Ver src/fm06patch/premiacao.py e docs/analise/C9b.md.",
+            build=_premiacao_copa_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",
