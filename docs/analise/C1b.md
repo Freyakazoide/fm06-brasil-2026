@@ -70,3 +70,12 @@ depois das etapas que mudam o tamanho, lendo as posições no banco já alterado
   chamado por `0x008AA580` (virada da temporada, hipótese), que soma o valor inteiro no
   saldo e nas receitas (`0x00A7C8D0`: +4, +0x7C, +0x110, +0x1D8). Falta ver a tela de
   receitas e o pagamento depois do início da temporada.
+- 29/10, tela de receitas: os R$ 4,7 mi do 1º mês são "Prêmios em Dinheiro" (não é
+  patrocínio). Em 31/01/2026, "Patrocínio" ainda R$ 0 (saldo R$ 101 mi; salários
+  R$ 13,2 mi/mês).
+- Quem paga: `0x008AA580` é o método 0xF0 (60) das finanças completas (vtable
+  `0x010EFE14`). Faz o balanço do ano (`0x006D1600`), chama `0x00A7E410` (paga o contrato
+  e renova se acabou; notícia com `0x00579700` tipo 6) e outras rotinas do fim do ano. Não
+  é chamado no New Game. Na memória em 31/01 (Flamengo e Corinthians): +0x270 (data do
+  último balanço?) = 1900 e +0x268 = dia 54 de 2006 (24/02/2026, hipótese: próxima data
+  das finanças). Falta ver no jogo quando o patrocínio cai.
