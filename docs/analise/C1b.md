@@ -79,3 +79,10 @@ depois das etapas que mudam o tamanho, lendo as posições no banco já alterado
   é chamado no New Game. Na memória em 31/01 (Flamengo e Corinthians): +0x270 (data do
   último balanço?) = 1900 e +0x268 = dia 54 de 2006 (24/02/2026, hipótese: próxima data
   das finanças). Falta ver no jogo quando o patrocínio cai.
+- 29/10, começo de março: "Patrocínio" ainda R$ 0 (saldo R$ 94,65 mi). A data 24/02 não era.
+- Quem chama o método 0xF0: `0x006D0870(nação)` percorre os clubes da nação (CLUB+0xDC) e
+  chama 0xF0 nas finanças de cada um; é chamado só por `0x00AD3D4B` (`0x00AD39B0`), quando o
+  evento do calendário da nação é o tipo 9 (`cmp byte [esi+0x2D], 9`, hipótese: fim da
+  temporada). Então o patrocínio é pago uma vez por ano, no fim da temporada, já com o
+  valor da temporada seguinte (ou o do contrato renovado). A 1ª temporada do save não recebe
+  patrocínio: é assim também no jogo original, com o contrato gerado.
