@@ -1,4 +1,4 @@
-# Ficha C1b — Patrocínio dos clubes (em andamento)
+# Ficha C1b — Patrocínio dos clubes
 
 - Quem analisou / data: Claude, 2026-10-27 (Ghidra 12.1.4 headless + capstone + memória do New Game)
 - Pergunta (docs/ANALISE_DE_CODIGO.md): de quem é a lista de patrocínios e onde o jogo calcula
@@ -91,4 +91,8 @@ depois das etapas que mudam o tamanho, lendo as posições no banco já alterado
   call do gerador) -> `call 0x015BA000` + 2 nop; o desvio na `.fm26` (+0x6000) gera o
   contrato se faltar e, com FINANCE+0x7C ainda 0, paga `[contrato+4]` por `0x00A7C8D0`
   (+4 saldo, +0x7C, +0x110 e +0x1D8 receitas). Nada no init mexe em +0x7C antes do desvio.
-  Falta instalar e o New Game.
+  Instalado (`aplicar_tudo --rapido`; a 1ª tentativa falhou com o exe ainda preso logo
+  depois de fechar o jogo). New Game (29/10): **deu certo**. Flamengo: Receitas "Patrocínio"
+  R$ 268M em Este Mês e Esta Época (uma vez só), Prêmios em Dinheiro R$ 6,27 mi, saldo
+  R$ 361 mi; contrato "3 anos, R$268M, termina 2028". O orçamento de transferências fica
+  R$ 42.100.001 (o da aba Estrutura, gravado pelo FINANCE_MANAGER depois do init).
