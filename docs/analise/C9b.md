@@ -124,3 +124,10 @@ prêmio das ligas e as cotas de TV.
   slot = `0x015BA100` no `fm_brasil.exe`). Falta ver no jogo.
 - A Série A fica como está até ter os valores de 2026 por clube (a aba Cotas_TV só tem a
   Série B).
+- 29/10, New Game com o Goiás (Série B): "Prêmios em Dinheiro" R$ 0 no New Game e em
+  03/01/2026. A cota **não** é paga no começo do save: a hipótese do momento estava errada.
+  `0x00ACDAD0` é um método comum a todas as competições (está em ~300 vtables) e chama
+  `0x00AC5260` no meio da montagem da temporada da competição. Nova hipótese: a cota cai na
+  virada de temporada da própria competição (Série A: construtor grava +0x85 = 3, abril).
+  Os R$ 10,9 mi do Flamengo no New Game vêm de outro lugar (Goiás, sem Libertadores, teve
+  R$ 0).
