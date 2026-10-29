@@ -102,4 +102,6 @@ R$ 174 mi).
   Estrutura passou a ser o maior entre a v1 e 20% de (saldo 2026 + patrocínio 2026),
   arredondado a R$ 100 mil (26 clubes mudam; Flamengo R$ 42,1 mi -> R$ 75,8 mi,
   Corinthians R$ 30 mi -> R$ 45,4 mi). Instalado; no `server_db` do jogo Flamengo
-  R$ 75.800.001. Falta o New Game.
+  R$ 75.800.001. New Game (29/10): **deu certo**. Na tela de finanças, Flamengo, Corinthians,
+  Palmeiras e Goiás batem com a aba Estrutura (Flamengo R$ 75,8 mi, Corinthians R$ 45,4 mi,
+  Palmeiras R$ 44,2 mi, Goiás R$ 5,5 mi), e o patrocínio de 2026 continua pago no início.
