@@ -91,5 +91,6 @@ prêmio das ligas e as cotas de TV.
   montagem feitas pelo `copa_do_brasil_2026` (fase 1 em `.fm26`+0x3000, fase 2 em +0x3400)
   com os valores da CBF de 2026 em libras (÷ 5,08):
   3ª fase R$ 1,53 mi e 4ª R$ 1,68 mi (Grupo II), 5ª R$ 2 mi, oitavas R$ 3 mi, quartas
-  R$ 4 mi, semifinal R$ 9 mi, vice R$ 34 mi, campeão R$ 78 mi. Testes ok; falta instalar e
-  ver no jogo.
+  R$ 4 mi, semifinal R$ 9 mi, vice R$ 34 mi, campeão R$ 78 mi. Testes ok. Instalado (`aplicar_tudo --rapido`):
+  no `fm_brasil.exe` os 8 `push` estão com os valores novos (5ª fase £393.701 = R$ 2 mi,
+  campeão £15.354.331 = R$ 78 mi). Falta ver no jogo.
