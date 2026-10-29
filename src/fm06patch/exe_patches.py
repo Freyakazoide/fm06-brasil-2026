@@ -87,6 +87,12 @@ def _premiacao_copa_swaps(data: bytes):
     return copa_swaps(data)
 
 
+def _cota_serie_b_swaps(data: bytes):
+    from .premiacao import serie_b_swaps
+
+    return serie_b_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -398,6 +404,14 @@ PATCHES = {
             "clubes (+0x48) da 3ª fase à semifinal; campeão e vice (+0x40/+0x44) na final. Depois do "
             "copa_do_brasil_2026. Ver src/fm06patch/premiacao.py e docs/analise/C9b.md.",
             build=_premiacao_copa_swaps,
+        ),
+        Patch(
+            "cota_serie_b_2026",
+            "Cota da temporada da Série B de 2026 (R$ 14,9 mi por clube, aba Cotas_TV): o slot 74 "
+            "(método 0x128) da vtable 0x0113B5B4, pago a cada clube no começo da temporada por "
+            "0x00AC5260 em \"Prêmios em Dinheiro\", passa da função compartilhada 0x00B845A0 "
+            "(£250.000) para uma cópia na .fm26. Ver src/fm06patch/premiacao.py.",
+            build=_cota_serie_b_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

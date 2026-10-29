@@ -15,7 +15,7 @@ from __future__ import annotations
 import struct
 
 from .copa_do_brasil import S0, S1
-from .exe_cave import sec_off
+from .exe_cave import SECTION_VA, off, sec_off, section_swaps
 from .financas import BRL_PER_GBP
 
 # Posição do `push imm32` dentro da montagem copiada (a partir de 0x00BBAD30)
@@ -49,3 +49,26 @@ def copa_swaps(data: bytes):
 
     return tuple(Swap(sec_off(copy + at), _push(old), _push(round(brl / BRL_PER_GBP)))
                  for copy, at, old, brl, _ in COPA_2026)
+
+
+# Cota da temporada (ficha C9b): no começo de cada temporada 0x00AC5260 paga a cada clube da
+# tabela da competição o valor do método 0x128 (slot 74) da vtable principal, se for > 100,
+# pelo método 0x98 das finanças ("Prêmios em Dinheiro"). Série A: 0x00BB2D90 (£1 mi, £2 mi
+# ou £4 mi pela reputação do clube). Série B: 0x00B845A0, `mov eax, 250000 ; ret 4`, função
+# usada também por outras duas vtables (0x0112AF2C, 0x011518F4): o slot da Série B passa
+# para uma cópia na .fm26 com o valor de 2026.
+SERIE_B_VTABLE = 0x0113B5B4
+SERIE_B_QUOTA_OLD = 0x00B845A0
+SERIE_B_QUOTA = SECTION_VA + 0x6100
+SERIE_B_2026_BRL = 14_900_000      # aba Cotas_TV: cota igualitária da Série B
+
+
+def serie_b_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    assert data[off(SERIE_B_QUOTA_OLD):off(SERIE_B_QUOTA_OLD) + 8] == bytes.fromhex("b890d00300c20400")
+    code = bytes.fromhex("B8") + struct.pack("<I", round(SERIE_B_2026_BRL / BRL_PER_GBP)) + bytes.fromhex("C20400")
+    slot = SERIE_B_VTABLE + 0x128
+    return (*section_swaps(data),
+            Swap(sec_off(SERIE_B_QUOTA), bytes(len(code)), code),
+            Swap(off(slot), struct.pack("<I", SERIE_B_QUOTA_OLD), struct.pack("<I", SERIE_B_QUOTA)))

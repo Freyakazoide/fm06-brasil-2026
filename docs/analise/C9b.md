@@ -102,3 +102,25 @@ prêmio das ligas e as cotas de TV.
   duas vezes) e cai em "Prêmios em Dinheiro". Falta ver a final (+0x40/+0x44).
 - Visto na mesma tela: "Receitas Televisivas" R$ 872 mil na temporada até maio (Flamengo),
   muito abaixo das cotas reais (aba Cotas_TV).
+
+## Cota da temporada das ligas (conferido no código, 29/10)
+
+- `0x00AC5260` (chamado só por `0x00ACDAD0`, que é chamado por `0x00C4BD21`): para cada
+  clube da tabela da competição (+0xA4; lista +0x2C, quantidade +0x34), pede o valor ao
+  método **0x128** (slot 74) da competição e, se for > 100 (`0x00AC52F3`), paga pelo
+  método **0x98** das finanças (+0x70, +0x104, +0x1CC) e manda a notícia
+  `COMP_PRIZE_MONEY_NEWS`. Não paga quando o ano da competição (+0x9C) é 2005
+  (`0x00AC52AF`).
+- Slot 74 das classes do Brasil:
+  - Série A (vtable `0x0113B2FC`, slot em `0x0113B424`): `0x00BB2D90`, pela reputação do
+    clube (`0x00A2A570`): > 6500 £4.000.000, > 5500 £2.000.000, senão £1.000.000.
+  - Série B (`0x0113B5B4`, slot `0x0113B6DC`): `0x00B845A0` = `mov eax, 250000 ; ret 4`
+    (£250 mil = R$ 1,27 mi), função também das vtables `0x0112AF2C` e `0x011518F4`.
+  - Série C, Copa e estaduais: `0x00AC2310` (base: 0 quando +0xB8 não é 0).
+- Hipótese: é o dinheiro de "Prêmios em Dinheiro" que aparece logo no começo do save
+  (Flamengo R$ 10,9 mi; £2 mi = R$ 10,16 mi da Série A + outro valor ainda não achado).
+- Patch `cota_serie_b_2026`: slot `0x0113B6DC` -> `.fm26`+0x6100 `B8 4FC12C00 C20400`
+  (£2.933.071 = R$ 14,9 mi, aba Cotas_TV). Testes ok; instalado (`aplicar_tudo --rapido`,
+  slot = `0x015BA100` no `fm_brasil.exe`). Falta ver no jogo.
+- A Série A fica como está até ter os valores de 2026 por clube (a aba Cotas_TV só tem a
+  Série B).

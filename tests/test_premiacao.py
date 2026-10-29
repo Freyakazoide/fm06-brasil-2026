@@ -51,3 +51,15 @@ def test_values_match_sheet():
     assert header[:4] == ("competicao", "temporada", "fase_ou_posicao", "valor")
     for _, _, _, brl, label in premiacao.COPA_2026:
         assert sheet[("Copa do Brasil", label)] == brl, label
+
+
+@pytest.mark.skipif(not EXE.exists(), reason="sem o fm.exe original em workspace/rea")
+def test_serie_b_quota_slot():
+    data = EXE.read_bytes()
+    slot = off(premiacao.SERIE_B_VTABLE + 0x128)
+    assert struct.unpack_from("<I", data, slot)[0] == premiacao.SERIE_B_QUOTA_OLD
+    out = exe_patches.apply(data, ["cota_serie_b_2026"])
+    assert struct.unpack_from("<I", out, slot)[0] == premiacao.SERIE_B_QUOTA
+    stub = sec_off(premiacao.SERIE_B_QUOTA)
+    assert out[stub:stub + 8] == b"\xB8" + struct.pack("<I", round(14_900_000 / 5.08)) + b"\xC2\x04\x00"
+    assert out[off(premiacao.SERIE_B_QUOTA_OLD):off(premiacao.SERIE_B_QUOTA_OLD) + 5] == bytes.fromhex("b890d00300")
