@@ -123,6 +123,7 @@ def test_conmebol_applies_with_all_patches():
     aplicar = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(aplicar)
     assert "premiacao_conmebol_2026" in aplicar.EXE_PATCHES
+    assert "premio_vitoria_libertadores" in aplicar.EXE_PATCHES
     out = exe_patches.apply(EXE.read_bytes(), aplicar.EXE_PATCHES)
     champion = off(0x00C080E7)
     assert out[champion:champion + 5] == b"\x68" + struct.pack("<I", round(25_000_000 * 5.40 / 5.08))
@@ -137,7 +138,6 @@ def test_conmebol_values_match_sheet():
     lib, sud = "CONMEBOL Libertadores", "CONMEBOL Sudamericana"
     expected = {
         "Libertadores: fase de grupos — participação": sheet[(lib, "Fase de grupos — participação")],
-        "Libertadores: fase de grupos — por vitória (+0x44)": sheet[(lib, "Fase de grupos — por vitória")],
         "Libertadores: oitavas de final": sheet[(lib, "Oitavas de final")],
         "Libertadores: quartas de final": sheet[(lib, "Quartas de final")],
         "Libertadores: semifinal": sheet[(lib, "Semifinal")],
@@ -154,4 +154,29 @@ def test_conmebol_values_match_sheet():
     got = {label: usd for _, _, usd, label in premiacao.CONMEBOL_2026}
     for label, usd in expected.items():
         assert got[label] == usd, label
-    assert got["Libertadores: fase de grupos — por empate (+0x40)"] == 0
+    assert premiacao.LIBERTADORES_GROUP_WIN_USD == sheet[(lib, "Fase de grupos — por vitória")]
+
+
+@pytest.mark.skipif(not EXE.exists(), reason="sem o fm.exe original em workspace/rea")
+def test_group_win_stub():
+    """A leitura do +0x30 vira call para o stub; o stub repete a leitura e só troca o valor
+    para a competição com a vtable da Libertadores, que é gravada num lugar só."""
+    sys.path.insert(0, str(ROOT / "workspace" / "pydeps"))
+    capstone = pytest.importorskip("capstone")
+    data = EXE.read_bytes()
+    assert data.count(struct.pack("<I", premiacao.LIBERTADORES_VTABLE)) == 1
+    out = exe_patches.apply(data, ["premio_vitoria_libertadores"])
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    site = next(md.disasm(out[off(premiacao.GROUP_WIN_AT):off(premiacao.GROUP_WIN_AT) + 5], premiacao.GROUP_WIN_AT))
+    assert site.mnemonic == "call" and int(site.op_str, 16) == premiacao.GROUP_WIN_STUB
+    at = sec_off(premiacao.GROUP_WIN_STUB)
+    ins = list(md.disasm(out[at:at + 0x30], premiacao.GROUP_WIN_STUB))
+    text = [f"{i.mnemonic} {i.op_str}" for i in ins[:11]]
+    win = round(340_000 * 5.40 / 5.08)
+    assert text[:4] == ["mov eax, dword ptr [ebp + 0x24]", "mov ecx, dword ptr [eax + 0x30]",
+                        "push edx", "mov edx, dword ptr [ebp + 0x18]"]
+    assert text[6] == f"cmp dword ptr [edx], {hex(premiacao.LIBERTADORES_VTABLE)}"
+    assert text[8] == f"mov ecx, {hex(win)}"
+    assert text[9:] == ["pop edx", "ret "]
+    end = ins[9].address
+    assert int(ins[5].op_str, 16) == end and int(ins[7].op_str, 16) == end

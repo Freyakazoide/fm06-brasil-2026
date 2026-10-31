@@ -138,14 +138,13 @@ def first_quota_swaps(data: bytes):
 # e a entrada nos grupos da Libertadores é paga por 0x00C05430 -> 0x00AC5490 (£300 mil a cada
 # clube). Os patches do mod não mexem nesses push: troca no lugar. A preliminar da
 # Libertadores (`push ebx` ×3) e os grupos da Sul-Americana (não existem no mod) ficam fora.
-# Nos grupos da Libertadores, +0x40/+0x44 = prêmio por empate/por vitória é hipótese.
+# O +0x40/+0x44 da rodada dos grupos (£60 mil/£120 mil) fica como está: no jogo uma vitória
+# nos grupos não pagou nada (prêmio por jogo é outro campo, abaixo).
 BRL_PER_USD = 5.40
 
 # (endereço do push, £ original, US$ de 2026, linha da planilha)
 CONMEBOL_2026 = (
     (0x00C05705, 300_000, 1_000_000, "Libertadores: fase de grupos — participação"),
-    (0x00C07AEE, 120_000, 340_000, "Libertadores: fase de grupos — por vitória (+0x44)"),
-    (0x00C07AF3, 60_000, 0, "Libertadores: fase de grupos — por empate (+0x40)"),
     (0x00C07F1A, 375_000, 1_250_000, "Libertadores: oitavas de final"),
     (0x00C07FCA, 425_000, 1_700_000, "Libertadores: quartas de final"),
     (0x00C08071, 675_000, 2_300_000, "Libertadores: semifinal"),
@@ -170,3 +169,40 @@ def conmebol_swaps(data: bytes):
 
     return tuple(Swap(off(va), _push(old), _push(usd_to_gbp(usd)))
                  for va, old, usd, _ in CONMEBOL_2026)
+
+
+# Prêmio por vitória na fase de liga (ficha C9b): depois de cada jogo, 0x00B0DE70 paga pelas
+# regras da fase ([fase+0x24], construtor 0x00B194A0): +0x30 ao vencedor, +0x34 aos dois no
+# empate, +0x38 no outro caso (`0x00B0B400`, "Prêmios em Dinheiro"). Os três começam em 0, a
+# montagem da Libertadores não os grava e a leitura do save (0x00B10D10) zera de novo. Então
+# o desvio é na leitura do +0x30 (0x00B0E160): se a competição da fase ([fase+0x18]) tem a
+# vtable da Libertadores (0x01154CF4, gravada só no construtor 0x00C06322), vale o de 2026.
+GROUP_WIN_AT = 0x00B0E160
+GROUP_WIN_STUB = SECTION_VA + 0x6200
+LIBERTADORES_VTABLE = 0x01154CF4
+LIBERTADORES_GROUP_WIN_USD = 340_000     # "Fase de grupos — por vitória"
+
+
+def _group_win_stub(value: int) -> bytes:
+    a = Asm(GROUP_WIN_STUB)                          # ebp = fase
+    a.raw(bytes.fromhex("8B4524"))                   # mov eax, [ebp+0x24] (regras)
+    a.raw(bytes.fromhex("8B4830"))                   # mov ecx, [eax+0x30] (por vitória)
+    a.raw(bytes.fromhex("52"))                       # push edx
+    a.raw(bytes.fromhex("8B5518"))                   # mov edx, [ebp+0x18] (competição)
+    a.raw(bytes.fromhex("85D2740D"))                 # test edx, edx ; je fim
+    a.raw(bytes.fromhex("813A") + struct.pack("<I", LIBERTADORES_VTABLE))   # cmp [edx], vtable
+    a.raw(bytes.fromhex("7505"))                     # jne fim
+    a.raw(bytes.fromhex("B9") + struct.pack("<I", value))   # mov ecx, valor
+    a.raw(bytes.fromhex("5A"))                       # fim: pop edx
+    a.raw(bytes.fromhex("C3"))                       # ret
+    return bytes(a.code)
+
+
+def group_win_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    code = _group_win_stub(usd_to_gbp(LIBERTADORES_GROUP_WIN_USD))
+    site = bytes(Asm(GROUP_WIN_AT).call(GROUP_WIN_STUB).code) + bytes.fromhex("90")
+    return (*section_swaps(data),
+            Swap(off(GROUP_WIN_AT), bytes.fromhex("8B45248B4830"), site),
+            Swap(sec_off(GROUP_WIN_STUB), bytes(len(code)), code))

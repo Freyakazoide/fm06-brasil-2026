@@ -105,6 +105,12 @@ def _premiacao_conmebol_swaps(data: bytes):
     return conmebol_swaps(data)
 
 
+def _premio_vitoria_libertadores_swaps(data: bytes):
+    from .premiacao import group_win_swaps
+
+    return group_win_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -442,6 +448,15 @@ PATCHES = {
             "no lugar; a preliminar da Libertadores fica sem prêmio. Ver src/fm06patch/premiacao.py "
             "e docs/analise/C9b.md.",
             build=_premiacao_conmebol_swaps,
+        ),
+        Patch(
+            "premio_vitoria_libertadores",
+            "Prêmio por vitória na fase de grupos da Libertadores de 2026 (US$ 340 mil a R$ 5,40). "
+            "A fase de liga paga por jogo o +0x30 das regras (0x00B0DE70 -> 0x00B0B400), que no "
+            "jogo é sempre 0; a leitura em 0x00B0E160 vira call para um stub na .fm26 que devolve "
+            "o valor quando a competição da fase tem a vtable da Libertadores (0x01154CF4). Ver "
+            "src/fm06patch/premiacao.py e docs/analise/C9b.md.",
+            build=_premio_vitoria_libertadores_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

@@ -70,15 +70,29 @@ Libertadores (montagem `0x00C07980`; grupos em `0x00C05430`):
 | Rodada | Setter | +0x40 | +0x44 | +0x48 | Imediatos |
 |---|---|---|---|---|---|
 | Preliminar (sorteio 15/1) | `0x00C07AC2` | 0 | 0 | 0 | `push ebx` ×3 (sem espaço para imm32) |
-| Grupos | `0x00C07AFF` | £60.000 | £120.000 | 0 | `0x00C07AF3`, `0x00C07AEE` |
+| Grupos | `0x00C07AFF` | £60.000 | £120.000 | 0 | `0x00C07AF3`, `0x00C07AEE` (não pagam por jogo; ficam como estão) |
 | Grupos: entrada | `0x00C0570D` -> `0x00AC5490` | — | — | — | £300.000 a cada clube, tipo 3 ("Prêmios"), `0x00C05705` |
 | Oitavas | `0x00C07F40` | 0 | 0 | £375.000 | `0x00C07F1A` |
 | Quartas | `0x00C07FD5` | 0 | 0 | £425.000 | `0x00C07FCA` |
 | Semifinal | `0x00C0807C` | 0 | 0 | £675.000 | `0x00C08071` |
 | Final | `0x00C080F0` | £1.700.000 | £1.100.000 | 0 | `0x00C080E7`, `0x00C080E2` |
 
-Hipótese: nos grupos (depois das chamadas `0x00B3BAD0`) o +0x40 e o +0x44 são o prêmio por
-empate e por vitória (os títulos "per draw"/"per win" do painel). Falta ver no jogo.
+Hipótese descartada no jogo (31/10): o +0x40/+0x44 da rodada dos grupos **não** é prêmio
+por empate/vitória (uma vitória por 3 a 0 não pagou nada). Para que serve, não se sabe.
+
+Prêmio por jogo na fase de liga (conferido no código, 31/10): depois de cada jogo,
+`0x00B0DE70` (método das vtables de fase de liga `0x01117F88`, `0x01125540`, `0x01125CF0`)
+paga por `0x00B0B400` (finanças `[clube→0x00A18CD0]+0x118`, método 0x8C = "Prêmios em
+Dinheiro", e notícia `0x0057ECF0`) os campos das regras da fase (`[fase+0x24]`, objeto de
+0xA8 bytes, construtor `0x00B194A0`):
+- `+0x30` ao vencedor (`0x00B0E160`);
+- `+0x34` aos dois no empate (`0x00B0E1C4`);
+- `+0x38` no outro ramo (`0x00B0E20F`), provavelmente derrota.
+Os três começam em 0 no construtor (`0x00B1959E`…`0x00B195A4`), a montagem da Libertadores
+(`0x00C07C25`…`0x00C07CE3`) não os grava, nenhum setter foi achado, e a leitura do save
+(`0x00B10D10`) zera os três de novo (`0x00B10DFF`). A competição da fase está em
+`[fase+0x18]` (é o que vai para a notícia em `0x00B0B499`). A vtable da Libertadores
+`0x01154CF4` é gravada só no construtor (`0x00C06322`); a da Sul-Americana é `0x01154A3C`.
 Procurado no código sem achar quem paga os grupos: `0x00B3EE40` (pagamento por rodada) só
 é chamado pelo mata-mata (`0x00B485D0`), e as 12 chamadas de `0x00AC5490` são entradas
 fixas de outras competições. O painel de regras (`0x00B6C910`, colunas 10 = "Per Win", 11
@@ -246,3 +260,21 @@ prêmio das ligas e as cotas de TV.
   (`aplicar_tudo --rapido`): no `fm_brasil.exe` os 15 `push` têm os valores novos (ex.:
   `0x00C080E7` = `68 D37F9501`, £26.574.803). Falta ver no jogo; hipótese a conferir:
   vitória = +0x44 nos grupos.
+- 31/10, New Game com o Flamengo, resultado do `premiacao_conmebol_2026`:
+  - Entrada nos grupos: **deu certo**. Notícia de 01/03/2026 "Flamengo recebe
+    R$5.500.000 ... por disputar a Copa Libertadores da América do Sul - Fase de Grupos" (o
+    valor pago é £1.062.992 = R$ 5,4 mi; a notícia arredonda, como na Copa).
+  - Vitória nos grupos: **sem efeito**. Flamengo 3 x 0 UA Maracaibo em 05/04/2026 (Grupo
+    C) e nenhum prêmio: "Prêmios em Dinheiro" de abril (Este Mês) R$ 0. Março (Último Mês)
+    R$ 6,28M, temporada R$ 12,56M.
+  - Leitura: o +0x40/+0x44 da rodada dos grupos não paga por jogo. O prêmio por jogo da
+    fase de liga é outro campo (seção CONMEBOL acima), sempre 0 no jogo.
+- 31/10, correção: o `premiacao_conmebol_2026` deixa o +0x40/+0x44 dos grupos como no
+  original, e o novo patch `premio_vitoria_libertadores` troca a leitura do +0x30 em
+  `0x00B0E160` (`8B4524 8B4830`) por `call` a um stub na .fm26+0x6200. O stub repete a
+  leitura e, se a vtable da competição `[fase+0x18]` é `0x01154CF4`, devolve £361.417
+  (US$ 340 mil a R$ 5,40). Como o valor está no código e não no objeto, vale também depois
+  de carregar um save. Empate continua 0 (a planilha não tem prêmio por empate). Teste
+  com desmontagem do stub ok. Instalado: no `fm_brasil.exe` `0x00B0E160` = `call
+  0x015BA200 ; nop`, stub com `mov ecx, 0x583C9`, e os dois `push` dos grupos voltaram ao
+  original. Falta ver no jogo.
