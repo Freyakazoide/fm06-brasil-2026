@@ -108,7 +108,8 @@ prêmio das ligas e as cotas de TV.
 - `0x00AC5260` (chamado só por `0x00ACDAD0`, que é chamado por `0x00C4BD21`): para cada
   clube da tabela da competição (+0xA4; lista +0x2C, quantidade +0x34), pede o valor ao
   método **0x128** (slot 74) da competição e, se for > 100 (`0x00AC52F3`), paga pelo
-  método **0x98** das finanças (+0x70, +0x104, +0x1CC) e manda a notícia
+  método **0x98** das finanças (+0x70, +0x104, +0x1CC; linha "Receitas Televisivas",
+  conferido no jogo em 31/10) e manda a notícia
   `COMP_PRIZE_MONEY_NEWS`. Não paga quando o ano da competição (+0x9C) é 2005
   (`0x00AC52AF`).
 - Slot 74 das classes do Brasil:
@@ -154,7 +155,7 @@ prêmio das ligas e as cotas de TV.
   - Hipótese: a próxima cota cai na montagem da temporada de 2027 (virada de janeiro).
 - Consequência: para a cota de 2026 aparecer, ela tem que ser paga no init das finanças do
   New Game, como o `patrocinio_inicio` (desvio em `.fm26`+0x6000): pelo método 0x98
-  ("Prêmios em Dinheiro") aos clubes da Série B, por uma tabela de UIDs (clube+0x14).
+  (que cai em "Receitas Televisivas", ver 31/10) aos clubes da Série B, por uma tabela de UIDs (clube+0x14).
 - 31/10, decidido: pagar a cota de 2026 da Série B no New Game. Patch `cota_serie_b_inicio`
   (`premiacao.first_quota_swaps`): o `ret` final do desvio do `patrocinio_inicio` vira
   `jmp .fm26+0x6110`; ali, com FINANCE+0x70 ainda 0, procura o UID do jogo do clube
@@ -163,3 +164,12 @@ prêmio das ligas e as cotas de TV.
   das finanças. Teste com desmontagem ok (o teste pegou os saltos com 1 byte a menos).
   Instalado (`aplicar_tudo --rapido`): no `fm_brasil.exe` o `ret` virou `E9 E0000000` e a
   tabela tem os 20 UIDs (Goiás 102555). Falta ver no jogo.
+- 31/10, New Game com o Goiás: **deu certo**. Finanças > Receitas no começo do save:
+  "Receitas Televisivas" R$ 14,9M (Este Mês e Esta Época), "Patrocínio" R$ 17,99M,
+  "Prêmios em Dinheiro" R$ 0, total R$ 32,89M. Conferido: o método **0x98** das finanças é a
+  linha **"Receitas Televisivas"** (+0x70), não "Prêmios" (esse é o 0x8C, +0x60). Então a
+  cota da temporada das ligas (`0x00AC5260`) é a receita de TV do jogo, e a cota da Série B
+  ficou na linha certa. O "Receitas Televisivas" baixo do Flamengo (R$ 872 mil até maio) é
+  porque a 1ª temporada não recebe a cota da Série A.
+  Falta: ver em janeiro de 2027 se a cota cai de novo pelo caminho do jogo (uma vez só) e
+  quanto a Série A recebe.

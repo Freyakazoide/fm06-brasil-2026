@@ -55,7 +55,7 @@ def copa_swaps(data: bytes):
 
 # Cota da temporada (ficha C9b): no começo de cada temporada 0x00AC5260 paga a cada clube da
 # tabela da competição o valor do método 0x128 (slot 74) da vtable principal, se for > 100,
-# pelo método 0x98 das finanças ("Prêmios em Dinheiro"). Série A: 0x00BB2D90 (£1 mi, £2 mi
+# pelo método 0x98 das finanças ("Receitas Televisivas", conferido no jogo). Série A: 0x00BB2D90 (£1 mi, £2 mi
 # ou £4 mi pela reputação do clube). Série B: 0x00B845A0, `mov eax, 250000 ; ret 4`, função
 # usada também por outras duas vtables (0x0112AF2C, 0x011518F4): o slot da Série B passa
 # para uma cópia na .fm26 com o valor de 2026.
@@ -80,8 +80,8 @@ def serie_b_swaps(data: bytes):
 # da nação ainda 2005 e 0x00AC5260 pula; mesmo que pagasse, cairia nas finanças básicas (o
 # FINANCE_MANAGER e a troca para as completas vêm depois). Este patch paga no init das
 # finanças do New Game, no fim do desvio do patrocinio_inicio (o `ret` vira jmp): clube da
-# Série B (UID do jogo em CLUB+0x14, tabela abaixo) recebe a cota pelo método 0x98 ("Prêmios
-# em Dinheiro"). O init roda duas vezes por clube: só paga com FINANCE+0x70 (mês do 0x98)
+# Série B (UID do jogo em CLUB+0x14, tabela abaixo) recebe a cota pelo método 0x98 ("Receitas
+# Televisivas"). O init roda duas vezes por clube: só paga com FINANCE+0x70 (mês do 0x98)
 # ainda 0.
 IDENTITIES = Path(__file__).resolve().parents[2] / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 FIRST_QUOTA = SECTION_VA + 0x6110

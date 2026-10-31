@@ -415,7 +415,7 @@ PATCHES = {
             "cota_serie_b_2026",
             "Cota da temporada da Série B de 2026 (R$ 14,9 mi por clube, aba Cotas_TV): o slot 74 "
             "(método 0x128) da vtable 0x0113B5B4, pago a cada clube no começo da temporada por "
-            "0x00AC5260 em \"Prêmios em Dinheiro\", passa da função compartilhada 0x00B845A0 "
+            "0x00AC5260 em \"Receitas Televisivas\", passa da função compartilhada 0x00B845A0 "
             "(£250.000) para uma cópia na .fm26. Ver src/fm06patch/premiacao.py.",
             build=_cota_serie_b_swaps,
         ),
@@ -424,7 +424,7 @@ PATCHES = {
             "Cota da Série B de 2026 paga no New Game (a 1ª temporada do save não recebe: na "
             "criação o ano da nação é 2005 e as finanças ainda são as básicas). No fim do desvio "
             "do patrocinio_inicio, os 20 clubes da Série B (UID do jogo, identidade_fm06.csv) "
-            "recebem R$ 14,9 mi pelo método 0x98 (\"Prêmios em Dinheiro\"). Ver "
+            "recebem R$ 14,9 mi pelo método 0x98 (\"Receitas Televisivas\"). Ver "
             "src/fm06patch/premiacao.py.",
             build=_cota_serie_b_inicio_swaps,
         ),
