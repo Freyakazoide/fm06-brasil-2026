@@ -173,3 +173,21 @@ prêmio das ligas e as cotas de TV.
   porque a 1ª temporada não recebe a cota da Série A.
   Falta: ver em janeiro de 2027 se a cota cai de novo pelo caminho do jogo (uma vez só) e
   quanto a Série A recebe.
+- 31/10, mesmo save do Goiás em 08/01/2027 (continua na Série B): **deu certo**, sem
+  pagamento em dobro na temporada. Receitas:
+  - "Última Época" (2026): "Receitas Televisivas" R$ 30,27M = R$ 14,9M do New Game (patch)
+    + R$ 15,15M em dezembro de 2026 ("Último Mês": cota de R$ 14,9M + TV dos jogos). O
+    total R$ 63,24M só fecha com a TV em milhões.
+  - "Esta Época" (2027): TV R$ 12,69 mil, sem cota nova em janeiro.
+  - Leitura: o jogo paga a cota quando a Série B monta a temporada **seguinte**, em
+    dezembro (como o patrocínio, ficha C1b). A de 2027 caiu em dez/2026; a de 2026 o jogo
+    nunca pagaria, e quem paga é o `cota_serie_b_inicio`. Uma cota por temporada.
+    Hipótese: que o pagamento de dezembro venha de `0x00AC5260` (falta a notícia
+    "Goiás recebe R$14.900.000" de dezembro). O valor bate.
+  - Visto na mesma tela: "Patrocínio" R$ 17,99M em dezembro (Último Mês), mas "Última
+    Época" R$ 17,99M e "Esta Época" R$ 0. O pagamento de dezembro não aparece em nenhuma
+    das duas temporadas, só no saldo (Balance de ~R$ 50M para R$ 80,41M). Só aparência,
+    não investigado.
+  - Também na tela: orçamento de transferências recalculado na virada (R$ 21.426.611, 100%;
+    ficha C5b) e empréstimo "R$13M - Banco (R$220m/mês até 30.7.2030)" do Goiás
+    (empréstimos de 2005 do FINANCE_MANAGER, pendente).
