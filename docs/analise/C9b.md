@@ -286,3 +286,8 @@ prêmio das ligas e as cotas de TV.
   fase da Copa do Brasil, que paga R$ 2 mi); temporada R$ 23,58M. Bate com 5 vitórias em 5
   jogos (a conferir em Calend. & Result.). Sem prêmio em empate ou derrota visto até
   aqui (não houve). Falta: save e carregar, e ganhar de novo.
+- 31/10, mesmo save, 6º jogo: **deu certo**. Notícia de 24/05/2026 "Flamengo recebe
+  R$1.800.000 ... pela vitória sobre o Bolívar na Copa Libertadores". "Prêmios em Dinheiro"
+  de maio R$ 5,67M -> R$ 7,5M e da temporada R$ 23,58M -> R$ 25,42M (+R$ 1,84M nos dois).
+  Se o save foi carregado antes desse jogo, não foi informado: o teste de save/carregar
+  continua em aberto.

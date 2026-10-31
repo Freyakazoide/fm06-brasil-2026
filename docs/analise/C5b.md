@@ -105,3 +105,30 @@ R$ 174 mi).
   R$ 75.800.001. New Game (29/10): **deu certo**. Na tela de finanças, Flamengo, Corinthians,
   Palmeiras e Goiás batem com a aba Estrutura (Flamengo R$ 75,8 mi, Corinthians R$ 45,4 mi,
   Palmeiras R$ 44,2 mi, Goiás R$ 5,5 mi), e o patrocínio de 2026 continua pago no início.
+
+## Empréstimos de 2005 dos clubes brasileiros (levantado em 31/10)
+
+Na tabela do FINANCE_MANAGER do `server_db` original, 67 dos 278 clubes de
+`identidade_fm06.csv` têm registro com empréstimo (420 na tabela inteira). Viram a linha
+"Empréstimos em Dívida" de Finanças > Sumário no New Game (Flamengo: "R$115M - Banco
+(R$1,2M/mês até 28.7.2037)", conferido no jogo em 25/05/2026). Os maiores, em libras e no
+câmbio do mod (R$ 5,08):
+
+| Clube | Empréstimo | Meses | R$ |
+|---|---|---|---|
+| Flamengo | £22.500.000 | 103 | 114,3 mi |
+| Botafogo | £16.500.000 | 152 | 83,8 mi |
+| Fluminense | £11.250.000 | 91 | 57,1 mi |
+| Grêmio | £8.125.000 | 91 | 41,3 mi |
+| São Paulo | £7.500.000 | 115 | 38,1 mi |
+| Palmeiras | £6.750.000 | 79 | 34,3 mi |
+| Cruzeiro | £5.500.000 | 103 | 27,9 mi |
+| Atlético-MG | £5.350.000 | 91 | 27,2 mi |
+| Novorizontino | £5.250.000 | 91 | 26,7 mi |
+| Guarani | £1.100.000 + £3.375.000 | 54 e 91 | 22,7 mi |
+
+O resto vai de R$ 0,5 mi (North) a R$ 22,9 mi (Vasco, Internacional), espalhado pelas
+Séries A a D e estaduais. A aba Estrutura de `clubes_estrutura_2026.xlsx` só tem dívida
+para o Flamengo (R$ 174 mi, coluna `divida_brl`). Mexer é só trocar `loan`/`months` nos
+registros (mesmo tamanho, como o orçamento); falta decidir o que pôr.
+
