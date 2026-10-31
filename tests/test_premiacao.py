@@ -63,3 +63,40 @@ def test_serie_b_quota_slot():
     stub = sec_off(premiacao.SERIE_B_QUOTA)
     assert out[stub:stub + 8] == b"\xB8" + struct.pack("<I", round(14_900_000 / 5.08)) + b"\xC2\x04\x00"
     assert out[off(premiacao.SERIE_B_QUOTA_OLD):off(premiacao.SERIE_B_QUOTA_OLD) + 5] == bytes.fromhex("b890d00300")
+
+
+def test_serie_b_uids():
+    uids = premiacao.serie_b_uids()
+    assert len(uids) == 20 and len(set(uids)) == 20
+    assert 102555 in uids                                   # Goiás
+
+
+@pytest.mark.skipif(not EXE.exists(), reason="sem o fm.exe original em workspace/rea")
+def test_first_quota_after_sponsor():
+    sys.path.insert(0, str(ROOT / "workspace" / "pydeps"))
+    capstone = pytest.importorskip("capstone")
+
+    from fm06patch.patrocinio import PAY_STUB, _pay_stub
+
+    data = EXE.read_bytes()
+    out = exe_patches.apply(data, ["patrocinio_inicio", "cota_serie_b_2026", "cota_serie_b_inicio"])
+    ret_at = PAY_STUB + len(_pay_stub()) - 1
+    at = sec_off(ret_at)
+    assert out[at] == 0xE9
+    assert ret_at + 5 + struct.unpack_from("<i", out, at + 1)[0] == premiacao.FIRST_QUOTA
+    stub = sec_off(premiacao.FIRST_QUOTA)
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    ins = list(md.disasm(out[stub:stub + 0x50], premiacao.FIRST_QUOTA))
+    fim = next(i.address for i in ins if i.mnemonic == "ret")
+    for i in ins:
+        if i.mnemonic in ("je", "jne"):
+            target = int(i.op_str, 16)
+            assert target == fim or any(j.address == target for j in ins), i
+        if i.address == fim:
+            break
+    text = " | ".join(f"{i.mnemonic} {i.op_str}" for i in ins if i.address <= fim)
+    assert f"push 0x{round(14_900_000 / 5.08):x}" in text
+    assert "call dword ptr [eax + 0x98]" in text
+    table = sec_off(premiacao.FIRST_QUOTA_TABLE)
+    uids = struct.unpack_from("<21I", out, table)
+    assert list(uids[:20]) == premiacao.serie_b_uids() and uids[20] == 0

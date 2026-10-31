@@ -12,10 +12,12 @@ Valores de data/modelos/premiacao_2026.xlsx (CBF). O jogo tem um valor por rodad
 
 from __future__ import annotations
 
+import csv
 import struct
+from pathlib import Path
 
 from .copa_do_brasil import S0, S1
-from .exe_cave import SECTION_VA, off, sec_off, section_swaps
+from .exe_cave import SECTION_VA, Asm, off, sec_off, section_swaps
 from .financas import BRL_PER_GBP
 
 # Posição do `push imm32` dentro da montagem copiada (a partir de 0x00BBAD30)
@@ -72,3 +74,60 @@ def serie_b_swaps(data: bytes):
     return (*section_swaps(data),
             Swap(sec_off(SERIE_B_QUOTA), bytes(len(code)), code),
             Swap(off(slot), struct.pack("<I", SERIE_B_QUOTA_OLD), struct.pack("<I", SERIE_B_QUOTA)))
+
+
+# Cota da 1ª temporada (ficha C9b): na criação do jogo a Série B monta a temporada com o ano
+# da nação ainda 2005 e 0x00AC5260 pula; mesmo que pagasse, cairia nas finanças básicas (o
+# FINANCE_MANAGER e a troca para as completas vêm depois). Este patch paga no init das
+# finanças do New Game, no fim do desvio do patrocinio_inicio (o `ret` vira jmp): clube da
+# Série B (UID do jogo em CLUB+0x14, tabela abaixo) recebe a cota pelo método 0x98 ("Prêmios
+# em Dinheiro"). O init roda duas vezes por clube: só paga com FINANCE+0x70 (mês do 0x98)
+# ainda 0.
+IDENTITIES = Path(__file__).resolve().parents[2] / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
+FIRST_QUOTA = SECTION_VA + 0x6110
+FIRST_QUOTA_TABLE = SECTION_VA + 0x6160
+
+
+def serie_b_uids(path: Path = IDENTITIES) -> list[int]:
+    with path.open(encoding="utf-8-sig") as handle:
+        return [int(row["uid_jogo"]) for row in csv.DictReader(handle)
+                if row["onde"].split(",")[0].strip() == "Série B"]
+
+
+def _first_quota_stub(value: int) -> bytes:
+    a = Asm(FIRST_QUOTA)                             # esi = finanças
+    a.raw(bytes.fromhex("8B4608"))                   # mov eax, [esi+8] (clube)
+    a.raw(bytes.fromhex("85C0742C"))                 # test eax, eax ; je fim
+    a.raw(bytes.fromhex("837E7000"))                 # cmp dword [esi+0x70], 0
+    a.raw(bytes.fromhex("7526"))                     # jne fim (já pago)
+    a.raw(bytes.fromhex("8B4014"))                   # mov eax, [eax+0x14] (UID)
+    a.raw(bytes.fromhex("BA") + struct.pack("<I", FIRST_QUOTA_TABLE))   # mov edx, tabela
+    a.raw(bytes.fromhex("8B0A"))                     # laço: mov ecx, [edx]
+    a.raw(bytes.fromhex("85C97418"))                 # test ecx, ecx ; je fim
+    a.raw(bytes.fromhex("39C17405"))                 # cmp ecx, eax ; je paga
+    a.raw(bytes.fromhex("83C204"))                   # add edx, 4
+    a.raw(bytes.fromhex("EBF1"))                     # jmp laço
+    a.push(value)                                    # paga: push valor
+    a.mov_ecx_esi()
+    a.raw(bytes.fromhex("8B06"))                     # mov eax, [esi]
+    a.raw(bytes.fromhex("FF9098000000"))             # call [eax+0x98]
+    a.raw(bytes.fromhex("C3"))                       # fim: ret
+    return bytes(a.code)
+
+
+def first_quota_swaps(data: bytes):
+    from .exe_patches import Swap
+    from .patrocinio import PAY_STUB, _pay_stub
+
+    uids = serie_b_uids()
+    assert len(uids) == 20, uids
+    sponsor = _pay_stub()
+    ret_at = PAY_STUB + len(sponsor) - 1
+    assert sponsor[-1] == 0xC3
+    jmp = Asm(ret_at).jmp(FIRST_QUOTA).code
+    code = _first_quota_stub(round(SERIE_B_2026_BRL / BRL_PER_GBP))
+    assert FIRST_QUOTA + len(code) <= FIRST_QUOTA_TABLE
+    table = b"".join(struct.pack("<I", u) for u in uids) + bytes(4)
+    return (Swap(sec_off(ret_at), b"\xC3" + bytes(4), bytes(jmp)),
+            Swap(sec_off(FIRST_QUOTA), bytes(len(code)), code),
+            Swap(sec_off(FIRST_QUOTA_TABLE), bytes(len(table)), table))

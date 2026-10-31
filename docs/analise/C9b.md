@@ -155,3 +155,11 @@ prêmio das ligas e as cotas de TV.
 - Consequência: para a cota de 2026 aparecer, ela tem que ser paga no init das finanças do
   New Game, como o `patrocinio_inicio` (desvio em `.fm26`+0x6000): pelo método 0x98
   ("Prêmios em Dinheiro") aos clubes da Série B, por uma tabela de UIDs (clube+0x14).
+- 31/10, decidido: pagar a cota de 2026 da Série B no New Game. Patch `cota_serie_b_inicio`
+  (`premiacao.first_quota_swaps`): o `ret` final do desvio do `patrocinio_inicio` vira
+  `jmp .fm26+0x6110`; ali, com FINANCE+0x70 ainda 0, procura o UID do jogo do clube
+  (`[esi+8]`+0x14) na tabela em +0x6160 (os 20 clubes "Série B" do
+  `identidade_fm06.csv`, terminada em 0) e paga £2.933.071 (R$ 14,9 mi) pelo método 0x98
+  das finanças. Teste com desmontagem ok (o teste pegou os saltos com 1 byte a menos).
+  Instalado (`aplicar_tudo --rapido`): no `fm_brasil.exe` o `ret` virou `E9 E0000000` e a
+  tabela tem os 20 UIDs (Goiás 102555). Falta ver no jogo.

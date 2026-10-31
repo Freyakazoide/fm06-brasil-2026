@@ -93,6 +93,12 @@ def _cota_serie_b_swaps(data: bytes):
     return serie_b_swaps(data)
 
 
+def _cota_serie_b_inicio_swaps(data: bytes):
+    from .premiacao import first_quota_swaps
+
+    return first_quota_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -412,6 +418,15 @@ PATCHES = {
             "0x00AC5260 em \"Prêmios em Dinheiro\", passa da função compartilhada 0x00B845A0 "
             "(£250.000) para uma cópia na .fm26. Ver src/fm06patch/premiacao.py.",
             build=_cota_serie_b_swaps,
+        ),
+        Patch(
+            "cota_serie_b_inicio",
+            "Cota da Série B de 2026 paga no New Game (a 1ª temporada do save não recebe: na "
+            "criação o ano da nação é 2005 e as finanças ainda são as básicas). No fim do desvio "
+            "do patrocinio_inicio, os 20 clubes da Série B (UID do jogo, identidade_fm06.csv) "
+            "recebem R$ 14,9 mi pelo método 0x98 (\"Prêmios em Dinheiro\"). Ver "
+            "src/fm06patch/premiacao.py.",
+            build=_cota_serie_b_inicio_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",
