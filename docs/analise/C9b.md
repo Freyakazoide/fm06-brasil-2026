@@ -58,8 +58,47 @@
 
   Em reais (× 5,08): 1ª fase R$ 40,6 mil, final R$ 1,016 mi ao campeão. A cota real de
   2026 (`premiacao_2026.xlsx`) vai de R$ 400 mil (1ª fase) a R$ 78 mi (campeão).
-- Libertadores/Sul-Americana: 14 chamadas do setter no código `sam_` (`0x00C04562`…
-  `0x00C07FD5`) e a rotina própria `0x00C05430`; falta a tabela.
+- Libertadores/Sul-Americana: tabela abaixo ("CONMEBOL").
+
+### CONMEBOL (conferido no código, 31/10)
+
+Os `push` abaixo são iguais no original e no exe com todos os patches do mod (conferido
+aplicando `EXE_PATCHES` à cópia original): dá para trocar no lugar, com o mesmo tamanho.
+
+Libertadores (montagem `0x00C07980`; grupos em `0x00C05430`):
+
+| Rodada | Setter | +0x40 | +0x44 | +0x48 | Imediatos |
+|---|---|---|---|---|---|
+| Preliminar (sorteio 15/1) | `0x00C07AC2` | 0 | 0 | 0 | `push ebx` ×3 (sem espaço para imm32) |
+| Grupos | `0x00C07AFF` | £60.000 | £120.000 | 0 | `0x00C07AF3`, `0x00C07AEE` |
+| Grupos: entrada | `0x00C0570D` -> `0x00AC5490` | — | — | — | £300.000 a cada clube, tipo 3 ("Prêmios"), `0x00C05706` |
+| Oitavas | `0x00C07F40` | 0 | 0 | £375.000 | `0x00C07F1A` |
+| Quartas | `0x00C07FD5` | 0 | 0 | £425.000 | `0x00C07FCA` |
+| Semifinal | `0x00C0807C` | 0 | 0 | £675.000 | `0x00C08071` |
+| Final | `0x00C080F0` | £1.700.000 | £1.100.000 | 0 | `0x00C080E7`, `0x00C080E2` |
+
+Hipótese: nos grupos (depois das chamadas `0x00B3BAD0`) o +0x40 e o +0x44 são o prêmio por
+empate e por vitória (os títulos "per draw"/"per win" do painel). Falta ver no jogo.
+
+Sul-Americana (montagem `0x00C07380`, com as rodadas do `sul_americana_2026`):
+
+| Rodada (mod) | Setter | +0x40 | +0x44 | +0x48 | Imediatos |
+|---|---|---|---|---|---|
+| 1ª fase | `0x00C074A6` | 0 | £31.000 | 0 | `0x00C0747D` (só o perdedor) |
+| 2ª fase | `0x00C0768A` | 0 | 0 | £31.000 | `0x00C0766E` |
+| Oitavas | `0x00C076FA` | 0 | 0 | £50.000 | `0x00C076CE` |
+| Quartas | `0x00C07825` | 0 | 0 | £100.000 | `0x00C07806` |
+| Semifinal | `0x00C078C4` | 0 | 0 | £200.000 | `0x00C0789F` |
+| Final | `0x00C07920` | £460.000 | £300.000 | 0 | `0x00C0790D`, `0x00C07908` |
+
+Proposta de correspondência com a planilha (aba Premiacao, em dólar):
+- Libertadores: entrada nos grupos = "Fase de grupos — participação" (US$ 1 mi); vitória
+  nos grupos = US$ 340 mil e empate 0 (se a hipótese acima se confirmar); oitavas US$ 1,25
+  mi, quartas US$ 1,7 mi, semifinal US$ 2,3 mi, vice US$ 7 mi, campeão US$ 25 mi. A
+  preliminar (Fases 1–3) fica sem prêmio: não tem imediato para trocar no lugar.
+- Sul-Americana: 1ª fase (perdedor) US$ 250 mil; 2ª fase = "Playoff" US$ 500 mil; oitavas
+  US$ 600 mil, quartas US$ 700 mil, semifinal US$ 800 mil, vice US$ 2,5 mi, campeão US$ 10
+  mi. A fase de grupos real não existe no mod.
 
 ## Hipótese / não conferido
 
