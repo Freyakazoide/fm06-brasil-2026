@@ -242,5 +242,7 @@ prêmio das ligas e as cotas de TV.
   US$ 250 mil, playoff US$ 500 mil, oitavas US$ 600 mil, quartas US$ 700 mil, semifinal
   US$ 800 mil, vice US$ 2,5 mi, campeão US$ 10 mi. Testes: cada endereço é `push imm32`
   com o valor de 2005 antes da chamada ao setter (ou a `0x00AC5490`), os valores batem
-  com a planilha e o patch aplica junto com todos os outros. Não instalado ainda: o jogo
-  estava aberto. Hipótese a ver no jogo: vitória = +0x44 nos grupos.
+  com a planilha e o patch aplica junto com todos os outros. Instalado
+  (`aplicar_tudo --rapido`): no `fm_brasil.exe` os 15 `push` têm os valores novos (ex.:
+  `0x00C080E7` = `68 D37F9501`, £26.574.803). Falta ver no jogo; hipótese a conferir:
+  vitória = +0x44 nos grupos.
