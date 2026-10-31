@@ -71,7 +71,7 @@ Libertadores (montagem `0x00C07980`; grupos em `0x00C05430`):
 |---|---|---|---|---|---|
 | Preliminar (sorteio 15/1) | `0x00C07AC2` | 0 | 0 | 0 | `push ebx` ×3 (sem espaço para imm32) |
 | Grupos | `0x00C07AFF` | £60.000 | £120.000 | 0 | `0x00C07AF3`, `0x00C07AEE` |
-| Grupos: entrada | `0x00C0570D` -> `0x00AC5490` | — | — | — | £300.000 a cada clube, tipo 3 ("Prêmios"), `0x00C05706` |
+| Grupos: entrada | `0x00C0570D` -> `0x00AC5490` | — | — | — | £300.000 a cada clube, tipo 3 ("Prêmios"), `0x00C05705` |
 | Oitavas | `0x00C07F40` | 0 | 0 | £375.000 | `0x00C07F1A` |
 | Quartas | `0x00C07FD5` | 0 | 0 | £425.000 | `0x00C07FCA` |
 | Semifinal | `0x00C0807C` | 0 | 0 | £675.000 | `0x00C08071` |
@@ -79,6 +79,10 @@ Libertadores (montagem `0x00C07980`; grupos em `0x00C05430`):
 
 Hipótese: nos grupos (depois das chamadas `0x00B3BAD0`) o +0x40 e o +0x44 são o prêmio por
 empate e por vitória (os títulos "per draw"/"per win" do painel). Falta ver no jogo.
+Procurado no código sem achar quem paga os grupos: `0x00B3EE40` (pagamento por rodada) só
+é chamado pelo mata-mata (`0x00B485D0`), e as 12 chamadas de `0x00AC5490` são entradas
+fixas de outras competições. O painel de regras (`0x00B6C910`, colunas 10 = "Per Win", 11
+= "Per Draw", 22 = "Winner", 23 = "Loser") lê outra estrutura, não o +0x40/+0x44 da rodada.
 
 Sul-Americana (montagem `0x00C07380`, com as rodadas do `sul_americana_2026`):
 
@@ -230,3 +234,13 @@ prêmio das ligas e as cotas de TV.
   - Também na tela: orçamento de transferências recalculado na virada (R$ 21.426.611, 100%;
     ficha C5b) e empréstimo "R$13M - Banco (R$220m/mês até 30.7.2030)" do Goiás
     (empréstimos de 2005 do FINANCE_MANAGER, pendente).
+- 31/10, patch `premiacao_conmebol_2026` (dólar a R$ 5,40, escolha do usuário): troca no
+  lugar os 15 `push` da tabela CONMEBOL acima por US$ × 5,40 ÷ 5,08 em libras. Libertadores:
+  entrada nos grupos US$ 1 mi (£1.062.992), vitória nos grupos US$ 340 mil no +0x44
+  (£361.417), empate 0 no +0x40, oitavas US$ 1,25 mi, quartas US$ 1,7 mi, semifinal US$ 2,3
+  mi, vice US$ 7 mi, campeão US$ 25 mi (£26.574.803). Sul-Americana: 1ª fase (perdedor)
+  US$ 250 mil, playoff US$ 500 mil, oitavas US$ 600 mil, quartas US$ 700 mil, semifinal
+  US$ 800 mil, vice US$ 2,5 mi, campeão US$ 10 mi. Testes: cada endereço é `push imm32`
+  com o valor de 2005 antes da chamada ao setter (ou a `0x00AC5490`), os valores batem
+  com a planilha e o patch aplica junto com todos os outros. Não instalado ainda: o jogo
+  estava aberto. Hipótese a ver no jogo: vitória = +0x44 nos grupos.

@@ -99,6 +99,12 @@ def _cota_serie_b_inicio_swaps(data: bytes):
     return first_quota_swaps(data)
 
 
+def _premiacao_conmebol_swaps(data: bytes):
+    from .premiacao import conmebol_swaps
+
+    return conmebol_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -427,6 +433,15 @@ PATCHES = {
             "recebem R$ 14,9 mi pelo método 0x98 (\"Receitas Televisivas\"). Ver "
             "src/fm06patch/premiacao.py.",
             build=_cota_serie_b_inicio_swaps,
+        ),
+        Patch(
+            "premiacao_conmebol_2026",
+            "Premiação da Libertadores e da Sul-Americana de 2026 (CONMEBOL, em dólar a R$ 5,40): "
+            "os push imm32 do setter 0x00B3BA80 nas montagens 0x00C07980 (Libertadores) e "
+            "0x00C07380 (Sul-Americana) e a entrada nos grupos da Libertadores (0x00C05705). Troca "
+            "no lugar; a preliminar da Libertadores fica sem prêmio. Ver src/fm06patch/premiacao.py "
+            "e docs/analise/C9b.md.",
+            build=_premiacao_conmebol_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

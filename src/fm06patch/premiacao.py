@@ -131,3 +131,42 @@ def first_quota_swaps(data: bytes):
     return (Swap(sec_off(ret_at), b"\xC3" + bytes(4), bytes(jmp)),
             Swap(sec_off(FIRST_QUOTA), bytes(len(code)), code),
             Swap(sec_off(FIRST_QUOTA_TABLE), bytes(len(table)), table))
+
+
+# Libertadores e Sul-Americana (ficha C9b): as montagens 0x00C07980 (Libertadores) e
+# 0x00C07380 (Sul-Americana) gravam o prêmio de cada rodada com 0x00B3BA80, por `push imm32`,
+# e a entrada nos grupos da Libertadores é paga por 0x00C05430 -> 0x00AC5490 (£300 mil a cada
+# clube). Os patches do mod não mexem nesses push: troca no lugar. A preliminar da
+# Libertadores (`push ebx` ×3) e os grupos da Sul-Americana (não existem no mod) ficam fora.
+# Nos grupos da Libertadores, +0x40/+0x44 = prêmio por empate/por vitória é hipótese.
+BRL_PER_USD = 5.40
+
+# (endereço do push, £ original, US$ de 2026, linha da planilha)
+CONMEBOL_2026 = (
+    (0x00C05705, 300_000, 1_000_000, "Libertadores: fase de grupos — participação"),
+    (0x00C07AEE, 120_000, 340_000, "Libertadores: fase de grupos — por vitória (+0x44)"),
+    (0x00C07AF3, 60_000, 0, "Libertadores: fase de grupos — por empate (+0x40)"),
+    (0x00C07F1A, 375_000, 1_250_000, "Libertadores: oitavas de final"),
+    (0x00C07FCA, 425_000, 1_700_000, "Libertadores: quartas de final"),
+    (0x00C08071, 675_000, 2_300_000, "Libertadores: semifinal"),
+    (0x00C080E2, 1_100_000, 7_000_000, "Libertadores: vice-campeão"),
+    (0x00C080E7, 1_700_000, 25_000_000, "Libertadores: campeão"),
+    (0x00C0747D, 31_000, 250_000, "Sul-Americana: 1ª fase (perdedor)"),
+    (0x00C0766E, 31_000, 500_000, "Sul-Americana: playoff (2ª fase)"),
+    (0x00C076CE, 50_000, 600_000, "Sul-Americana: oitavas de final"),
+    (0x00C07806, 100_000, 700_000, "Sul-Americana: quartas de final"),
+    (0x00C0789F, 200_000, 800_000, "Sul-Americana: semifinal"),
+    (0x00C07908, 300_000, 2_500_000, "Sul-Americana: vice-campeão"),
+    (0x00C0790D, 460_000, 10_000_000, "Sul-Americana: campeão"),
+)
+
+
+def usd_to_gbp(usd: int) -> int:
+    return round(usd * BRL_PER_USD / BRL_PER_GBP)
+
+
+def conmebol_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    return tuple(Swap(off(va), _push(old), _push(usd_to_gbp(usd)))
+                 for va, old, usd, _ in CONMEBOL_2026)

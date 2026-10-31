@@ -100,3 +100,58 @@ def test_first_quota_after_sponsor():
     table = sec_off(premiacao.FIRST_QUOTA_TABLE)
     uids = struct.unpack_from("<21I", out, table)
     assert list(uids[:20]) == premiacao.serie_b_uids() and uids[20] == 0
+
+
+@pytest.mark.skipif(not EXE.exists(), reason="sem o fm.exe original em workspace/rea")
+def test_conmebol_pushes_in_original():
+    """Cada endereço é um push imm32 com o valor de 2005; os da montagem vêm antes de uma
+    chamada ao setter, o da entrada nos grupos antes da chamada a 0x00AC5490."""
+    data = EXE.read_bytes()
+    for va, old, _, label in premiacao.CONMEBOL_2026:
+        assert data[off(va):off(va) + 5] == b"\x68" + struct.pack("<I", old), label
+        call = data.find(b"\xE8", off(va) + 5)
+        assert call - off(va) < 0x30, label
+        target = call + 5 + struct.unpack_from("<i", data, call + 1)[0]
+        assert target in (off(SETTER), off(0x00AC5490)), label
+
+
+@pytest.mark.skipif(not EXE.exists(), reason="sem o fm.exe original em workspace/rea")
+def test_conmebol_applies_with_all_patches():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("aplicar", ROOT / "scripts" / "aplicar_brasil_2026.py")
+    aplicar = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(aplicar)
+    assert "premiacao_conmebol_2026" in aplicar.EXE_PATCHES
+    out = exe_patches.apply(EXE.read_bytes(), aplicar.EXE_PATCHES)
+    champion = off(0x00C080E7)
+    assert out[champion:champion + 5] == b"\x68" + struct.pack("<I", round(25_000_000 * 5.40 / 5.08))
+
+
+@pytest.mark.skipif(not SHEET.exists(), reason="sem a planilha de premiação")
+def test_conmebol_values_match_sheet():
+    import openpyxl
+
+    rows = openpyxl.load_workbook(SHEET, read_only=True, data_only=True)["Premiacao"].iter_rows(values_only=True)
+    sheet = {(r[0], r[2]): r[3] for r in rows if r[4] == "USD"}
+    lib, sud = "CONMEBOL Libertadores", "CONMEBOL Sudamericana"
+    expected = {
+        "Libertadores: fase de grupos — participação": sheet[(lib, "Fase de grupos — participação")],
+        "Libertadores: fase de grupos — por vitória (+0x44)": sheet[(lib, "Fase de grupos — por vitória")],
+        "Libertadores: oitavas de final": sheet[(lib, "Oitavas de final")],
+        "Libertadores: quartas de final": sheet[(lib, "Quartas de final")],
+        "Libertadores: semifinal": sheet[(lib, "Semifinal")],
+        "Libertadores: vice-campeão": sheet[(lib, "Vice-campeão")],
+        "Libertadores: campeão": sheet[(lib, "Campeão")],
+        "Sul-Americana: 1ª fase (perdedor)": sheet[(sud, "1ª fase — visitante")],
+        "Sul-Americana: playoff (2ª fase)": sheet[(sud, "Playoff")],
+        "Sul-Americana: oitavas de final": sheet[(sud, "Oitavas de final")],
+        "Sul-Americana: quartas de final": sheet[(sud, "Quartas de final")],
+        "Sul-Americana: semifinal": sheet[(sud, "Semifinal")],
+        "Sul-Americana: vice-campeão": sheet[(sud, "Vice-campeão")],
+        "Sul-Americana: campeão": sheet[(sud, "Campeão")],
+    }
+    got = {label: usd for _, _, usd, label in premiacao.CONMEBOL_2026}
+    for label, usd in expected.items():
+        assert got[label] == usd, label
+    assert got["Libertadores: fase de grupos — por empate (+0x40)"] == 0
