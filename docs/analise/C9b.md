@@ -278,3 +278,11 @@ prêmio das ligas e as cotas de TV.
   com desmontagem do stub ok. Instalado: no `fm_brasil.exe` `0x00B0E160` = `call
   0x015BA200 ; nop`, stub com `mov ecx, 0x583C9`, e os dois `push` dos grupos voltaram ao
   original. Falta ver no jogo.
+- 31/10, New Game novo com o Flamengo, resultado do `premio_vitoria_libertadores`: **deu
+  certo**. Notícia de 11/05/2026 "Flamengo recebe R$1.800.000 ... pela vitória sobre a
+  Universidad de Chile na Copa Libertadores" (pago £361.417 = R$ 1.835.998; a notícia
+  arredonda). 5 jogos nos grupos até 24/05. "Prêmios em Dinheiro": abril (Último Mês)
+  R$ 5,5M = 3 × R$ 1,836M; maio (Este Mês) R$ 5,67M = 2 × R$ 1,836M + R$ 2M (hipótese: a 5ª
+  fase da Copa do Brasil, que paga R$ 2 mi); temporada R$ 23,58M. Bate com 5 vitórias em 5
+  jogos (a conferir em Calend. & Result.). Sem prêmio em empate ou derrota visto até
+  aqui (não houve). Falta: save e carregar, e ganhar de novo.
