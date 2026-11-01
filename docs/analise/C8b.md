@@ -93,4 +93,10 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   (0x00BB32E9), `push 3`/`push 2` (0x00BB32DE/0x00BB32DC), `0x00BB32F4` = `call
   0x015BA240` + 8 `nop`, e o stub com 20/7 (`push 0x14`, `push 6`) a 11/9 (`push 0xB`, `push
   8`) seguido de `push -1 ; push 3 ; push 4 ; call 0x00ADC540 ; ret`. Falta ver no jogo.
+- 01/11, busca do limite de estrangeiros (em andamento): `0x00A57460` (texto das regras de
+  inscrição) não é virtual e só é chamado de `0x00870738` (tela). Classes com RTTI por
+  perto: `RULE_GROUP_ARRAY` (vtable `0x00EA4B78`, construtor `0x004C6DF0`, chamado só de
+  `0x00E0FE40`) e `LEAGUE_SETTINGS` (`0x011180AC`, as regras da fase de liga da C9b). Hipótese:
+  as regras de inscrição vêm do `server_db` (dados da competição), não do código. Próximo:
+  ver no jogo o que a Série A mostra hoje e procurar o registro no banco.
 
