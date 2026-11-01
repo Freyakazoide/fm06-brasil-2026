@@ -123,3 +123,35 @@ def bench_swaps(data: bytes):
 
     return (Swap(off(BENCH_AT), bytes.fromhex("B007"), bytes([0xB0, BENCH_2026])),
             *(Swap(off(at), bytes.fromhex("6A07"), bytes([0x6A, BENCH_2026])) for at in BENCH_TEXT_AT))
+
+
+# Banco de 12 em todas as competições (depois do banco_12_2026). Os outros casos de 0x00AD5420
+# devolvem 3 (0x00AD5438), 4, 6, 8, 9, 11, 5 ou 9 (0x00AD5450, `lea eax, [eax*4+5]`) e 5 (fora da
+# tabela, 0x00AD5463); todos viram 12. Fica o índice 19 (0 reservas, 0 trocas). No texto, os
+# `push N` do parâmetro 1 que sobram viram `push 0xC`. As trocas do índice 21 (4, em
+# 0x008E8A0B) viram 5, como as outras.
+BENCH_ALL_AT = (0x00AD5438, 0x00AD543B, 0x00AD543E, 0x00AD5444, 0x00AD5447, 0x00AD544A,
+                0x00AD5463)                                  # mov al, N
+BENCH_ALL_LEA_AT = 0x00AD5450        # cmp byte ptr [esp+8], 0 ; sete al ; lea ... ; ret
+BENCH_ALL_TEXT_AT = (0x00AD502D, 0x00AD5059, 0x00AD5062, 0x00AD506B, 0x00AD5074, 0x00AD507D,
+                     0x00AD50BA, 0x00AD50C6, 0x00AD5110, 0x00AD5119, 0x00AD5155, 0x00AD5165)
+SUBS_FOUR_AT = 0x008E8A0B            # mov al, 4
+
+
+def bench_all_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    swaps = []
+    for at in BENCH_ALL_AT:
+        old = data[off(at):off(at) + 3]
+        assert old[0] == 0xB0 and old[2] == 0xC3, hex(at)
+        swaps.append(Swap(off(at), old[:2], bytes([0xB0, BENCH_2026])))
+    old = data[off(BENCH_ALL_LEA_AT):off(BENCH_ALL_LEA_AT) + 3]
+    assert old == bytes.fromhex("807C24")
+    swaps.append(Swap(off(BENCH_ALL_LEA_AT), old, bytes([0xB0, BENCH_2026, 0xC3])))
+    for at in BENCH_ALL_TEXT_AT:
+        old = data[off(at):off(at) + 2]
+        assert old[0] == 0x6A, hex(at)
+        swaps.append(Swap(off(at), old, bytes([0x6A, BENCH_2026])))
+    swaps.append(Swap(off(SUBS_FOUR_AT), bytes.fromhex("B004"), bytes([0xB0, SUBS_2026])))
+    return tuple(swaps)

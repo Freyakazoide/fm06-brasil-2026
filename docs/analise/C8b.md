@@ -90,7 +90,7 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   estadual).
 - Limite de 9 estrangeiros: patch `estrangeiros_2026` (Diário, 01/11).
 - 5 substituições: patch `substituicoes_2026` (Diário, 01/11).
-- 12 reservas no banco: patch `banco_12_2026` (Diário, 01/11).
+- 12 reservas no banco: patches `banco_12_2026` e `banco_12_todas` (Diário, 01/11).
 
 ## Diário
 
@@ -167,3 +167,19 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   todas as competições que usavam 7. Testes ok. Instalado: no `fm_brasil.exe` `0x00AD5441` =
   `B00C` e os quatro `push` = `6A0C`. Falta ver no jogo; hipótese a conferir: a tela de
   escalação mostra 12 vagas de reserva sem travar.
+- 01/11, banco no jogo: **deu certo** num jogo do Carioca. 12 reservas relacionados
+  (Estatísticas Equipe, números 12 a 24), 5 trocas feitas, e o adversário também troca
+  (usuário, print).
+- 01/11, patch `banco_12_todas`: o `banco_12_2026` só mudou os índices que tinham 7. Os outros
+  casos de `0x00AD5420` agora também devolvem 12:
+  - `mov al, 3/4/6/8/9/11` em `0x00AD5438`…`0x00AD544A`;
+  - o caso 5 ou 9 em `0x00AD5450` (vira `mov al, 0xC ; ret`);
+  - o 5 de fora da tabela em `0x00AD5463`.
+
+  Fica o índice 19 (0 reservas, 0 trocas). No texto da tela, os 12 `push N` restantes do
+  parâmetro 1 também viram 12. As trocas do índice 21 (4, em `0x008E8A0B`) viram 5. Assim,
+  estaduais, Copa do Brasil, CONMEBOL e Mundial ficam com 12 reservas e pelo menos 5 trocas.
+  Os amistosos continuam com 7 ou 12 trocas.
+
+  Testes ok, instalado: no `fm_brasil.exe` todos os casos do switch são `B00C C3`, menos o
+  índice 19 (`32C0`). Falta ver uma competição que não seja a Série A nem o Carioca.

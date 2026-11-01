@@ -135,6 +135,12 @@ def _banco_12_2026_swaps(data: bytes):
     return bench_swaps(data)
 
 
+def _banco_12_todas_swaps(data: bytes):
+    from .transferencias import bench_all_swaps
+
+    return bench_all_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -513,6 +519,14 @@ PATCHES = {
             "acompanha. Vale para todas as competições que usavam 7. Ver "
             "src/fm06patch/transferencias.py e docs/analise/C8b.md.",
             build=_banco_12_2026_swaps,
+        ),
+        Patch(
+            "banco_12_todas",
+            "12 reservas em todas as competições (estaduais, Copa do Brasil, CONMEBOL, Mundial...): "
+            "os outros casos de 0x00AD5420 (3, 4, 5, 6, 8, 9 e 11) devolvem 12, o texto da tela "
+            "acompanha e as trocas do índice 21 (4) viram 5. Fica o índice 19 (0/0). Depois do "
+            "banco_12_2026. Ver src/fm06patch/transferencias.py e docs/analise/C8b.md.",
+            build=_banco_12_todas_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

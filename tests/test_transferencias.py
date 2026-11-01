@@ -118,3 +118,30 @@ def test_bench_2026():
     for at in transferencias.BENCH_TEXT_AT:
         assert data[off(at):off(at) + 2] == bytes.fromhex("6A07")
         assert out[off(at):off(at) + 2] == bytes.fromhex("6A0C")
+
+
+def _switch_values(data, func):
+    """Valor devolvido por cada índice (0 a 25) de um switch `mov al, N ; ret`."""
+    ins = _disasm(data, func, 0x50)
+    table, jumps = ins[3], ins[4]
+    bytes_at = int(table.op_str.split("+ ")[1].rstrip("]"), 16)
+    dwords_at = int(jumps.op_str.split("+ ")[1].rstrip("]"), 16)
+    out = []
+    for i in range(26):
+        case = data[off(bytes_at) + i]
+        target = struct.unpack_from("<I", data, off(dwords_at) + 4 * case)[0]
+        code = data[off(target):off(target) + 3]
+        out.append(code[1] if code[0] == 0xB0 and code[2] == 0xC3 else None)
+    return out
+
+
+def test_bench_all():
+    data = EXE.read_bytes()
+    out = exe_patches.apply(data, ["substituicoes_2026", "banco_12_2026", "banco_12_todas"])
+    named = _switch_values(out, 0x00AD5420)
+    assert named[19] is None                                            # 0 reservas: xor al, al
+    assert [v for i, v in enumerate(named) if i != 19] == [12] * 25
+    assert out[off(0x00AD5463):off(0x00AD5463) + 2] == bytes.fromhex("B00C")   # fora da tabela
+    used = _switch_values(out, 0x008E89F0)
+    assert used[21] == 5
+    assert min(v for i, v in enumerate(used) if i != 19) == 5
