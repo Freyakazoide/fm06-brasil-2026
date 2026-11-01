@@ -53,6 +53,12 @@ SERVER_BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
 REPORT = ROOT / "workspace" / "mods" / "reforcos.csv"
 DONORS = ROOT / "workspace" / "mods" / "doadores.json"   # versão antiga: doadores de nacionalidade
 PER_FOREIGN_CLUB = 2
+# folga por clube: no New Game o jogo empresta alguns jogadores a outros clubes (01/11: 60 dos
+# 6.691 levados, 1 ou 2 por clube; o Atlético Piauiense ficou com 22 de 24). O que sobrar fica
+# com nome de hoje (montar_elencos)
+MARGIN = 2
+SMALL = 26          # só nos elencos pequenos (os completados com fictícios até 24): nos maiores,
+                    # 1 ou 2 a menos não deixa o clube abaixo de 24 e os hospedeiros carregados não bastam
 PEOPLE_SHA256 = "B21DDF3417B2B2F715FA2DB008190334B888DC6436DC0DEDABB35FD96885DF4A"   # docs/reversing/people-db.md
 
 
@@ -128,12 +134,14 @@ def main() -> None:
     club_index = {**abroad, **indexes}
     for row in identities + foreign:
         uid, club = int(row["uid_jogo"]), row["clube_2026"]
-        missing = min(sizes.get(club, 0), args.limite) - hosts.get(uid, 0)
-        if missing > 0:
+        size = min(sizes.get(club, 0), args.limite)
+        missing = size - hosts.get(uid, 0)
+        margin = max(0, min(MARGIN, missing + MARGIN)) if 0 < size <= SMALL else 0
+        if missing > 0 or margin:
             if uid not in club_index:
                 print(f"[AVISO] {club}: índice do clube {uid} não achado no server_db")
                 continue
-            needs.append((club, uid, missing))
+            needs.append((club, uid, max(0, missing), margin))
 
     # doadores: brasileiros de clubes fora de 2026, depois até 2 por clube estrangeiro (fora
     # os clubes da CONMEBOL de 2026)
@@ -170,17 +178,36 @@ def main() -> None:
     donors = [d for d in excess + donors if not people_contracts.caps(people, d.at, tables)]   # seleção viraria brasileiro
 
     moves, report, pool = {}, [], iter(donors)
-    for club, uid, missing in needs:
+
+    def give(club: str, uid: int, donor) -> None:
+        moves[donor.uid] = club_index[uid]
+        taken[club] += 1
+        report.append({"jogador_uid": donor.uid, "clube_antigo_indice": donor.club,
+                       "clube_2026": club, "clube_uid": uid})
+
+    for club, uid, missing, _ in needs:
         for _ in range(missing):
             donor = next(pool, None)
             if donor is None:
                 break
-            moves[donor.uid] = club_index[uid]
-            taken[club] += 1
-            report.append({"jogador_uid": donor.uid, "clube_antigo_indice": donor.club,
-                           "clube_2026": club, "clube_uid": uid})
-    for club, uid, missing in needs:
+            give(club, uid, donor)
+    # a folga vem depois de todos terem o que falta, e só com quem o jogo carrega
+    loaded_clubs = set(brazil) | south
+    spare_margin = 0
+    for club, uid, _, margin in needs:
+        for _ in range(margin):
+            donor = next(pool, None)
+            if donor is None or donor.club not in loaded_clubs:
+                break
+            give(club, uid, donor)
+            spare_margin += 1
+        else:
+            continue
+        break
+    for club, uid, missing, _ in needs:
         print(f"{club:32} {hosts.get(uid, 0):3} hospedeiros + {taken[club]:3} (faltavam {missing})")
+    print(f"[OK] folga de até {MARGIN} nos elencos de até {SMALL}: {spare_margin} de "
+          f"{sum(n[3] for n in needs)} jogadores (para quando o jogo empresta alguém no New Game)")
     unloaded = Counter(r["clube_2026"] for r in report if r["clube_antigo_indice"] not in brazil
                        and r["clube_antigo_indice"] not in south)
     if unloaded:
