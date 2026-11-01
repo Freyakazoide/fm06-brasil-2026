@@ -68,5 +68,9 @@
 		<record from="rr_icon" to="graphics/pictures/comp/313214/icon"/>
 		<record from="ap" to="graphics/pictures/comp/313192/logo"/>
 		<record from="ap_icon" to="graphics/pictures/comp/313192/icon"/>
+		<record from="mt" to="graphics/pictures/comp/313204/logo"/>
+		<record from="mt_icon" to="graphics/pictures/comp/313204/icon"/>
+		<record from="ro" to="graphics/pictures/comp/313212/logo"/>
+		<record from="ro_icon" to="graphics/pictures/comp/313212/icon"/>
 	</list>
 </record>

@@ -128,8 +128,8 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
   jogo; faltam os artilheiros de 2005 a 2025 (não estão na planilha).
 - Mídia de 2026 (ficha C11, 01/11): o FM06 só tinha mídia inglesa, polonesa e o O JOGO;
   entraram 23 fontes brasileiras (`aplicar_midia.py`), falta ver se as notícias citam.
-- Logos das competições (ficha C12, 01/11): 33 competições com logo da Wikipédia
-  (`gerar_logos_competicoes.py`); faltam Mato-Grossense e Rondoniense. Escudo na tabela e
+- Logos das competições (ficha C12, 01/11): 35 competições com logo (Wikipédia e
+  2 arquivos do usuário; `gerar_logos_competicoes.py`). Escudo na tabela e
   imagem nas notícias exigem mexer no código das telas.
 - Mais histórico e mais perfis a cada rodada de dados: jogos e gols por passagem para
   quem só tem os clubes (a `historico_carreira.xlsx` tem prioridade sobre as
