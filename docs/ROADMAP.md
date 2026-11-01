@@ -56,7 +56,7 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Nomes dos regens | 🧪 | `nomes_regens.xlsx` |
 | Joias da base (regens de verdade) | 🧪 | 25 garotos na `regens_futuros_2026.xlsx` (`FUTURE_REGEN`) |
 | Lesões no começo | 🧪 | `aplicar_lesoes.py` (STARTING_INJURY, ficha C3b); suspensões: a aba da planilha está vazia |
-| Rigor dos árbitros | ⏳ | falta saber qual dos 10 atributos é qual |
+| Rigor dos árbitros | ➖ | fora do mod (decisão do usuário, 01/11): só os nomes de 2026 |
 | Segunda nacionalidade, cláusula de rescisão | ❌ | campos não localizados |
 | Jogador novo sem hospedeiro | ❌ | exige o formato completo do `people_db` |
 
@@ -107,7 +107,9 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 - ~~Lesões do começo de 2026 (ficha C3b)~~: entrou em 01/11 (tabela STARTING_INJURY do
   server_db, `aplicar_lesoes.py`); suspensões (STARTING_BAN) esperam dados na planilha.
-- Rigor dos árbitros.
+- ~~Rigor dos árbitros~~: fora (01/11, decisão do usuário); os árbitros ficam só com o nome
+  de 2026. Candidato anotado: o único getter de atributo do OFFICIAL é `0x00A6E010`
+  (`[ecx-0x23]`, 4º dos 10 bytes), slot 127 da vtable `0x010F8FBC`.
 - Clubes que "gostam" de pessoas (lista de relações do clube, tipo 3): limpar as que
   apontam para pessoas de 2005 que viraram outra pessoa de 2026.
 

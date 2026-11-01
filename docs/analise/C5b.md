@@ -161,3 +161,8 @@ o usuário confirmou as dívidas em 0 ("Empréstimos em Dívida" vazio).
 
   Hipótese a ver no jogo: na posse do técnico a folha já está em +0x90, então o Flamengo deve
   mostrar orçamento salarial ≥ folha + 10% (cerca de R$ 11,6 mi/mês para R$ 10,6 mi de folha).
+- 01/11, no jogo (New Game, 26/12/2025): Flamengo com orçamento salarial de R$ 27 mi/mês para
+  folha de R$ 10,57 mi; Fluminense com R$ 7,75 mi para R$ 6,03 mi (usuário, prints). Nos dois,
+  a fórmula já passa da folha + 10%, então o piso não precisou agir. O Flamengo de 27/10 tinha
+  saldo menor (sem o patrocínio de 2026 pago no início) e ficava abaixo. Sem travamento.
+  Aprovado pelo usuário ("fechou").

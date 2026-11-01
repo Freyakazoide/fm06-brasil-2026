@@ -86,3 +86,5 @@ Hipóteses a ver no jogo:
   começam lesionados, como o Neymar. O início vai no máximo até `LATEST_START` = 22/12/2025
   (o do Neymar); a volta continua a da planilha. Instalado: Saúl e Cano agora começam em
   (355, 2005). Falta ver no jogo.
+- 01/11, no jogo: **deu certo**. Os quatro começam lesionados (usuário: "funcionou
+  perfeitamente as lesões").
