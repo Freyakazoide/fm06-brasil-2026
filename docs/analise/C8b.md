@@ -122,5 +122,6 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   a regra de elenco sai (os 13 bytes da chamada refeita no stub do `janelas_2026` viram
   `nop`; a CBF limita só os relacionados). Vale para todas as competições do Brasil que usam
   essas regras. A redução aprovada para 2027–2030 (8, 7, 6, 5) não entra: o valor é fixo.
-  Testes ok. Não instalado: jogo aberto.
+  Testes ok. Instalado (`aplicar_tudo --rapido`): no `fm_brasil.exe` `0x00BBA3D0` = `6A09`
+  e o stub termina em `call 0x00ADED50`, 13 `nop` e `ret`. Falta ver no jogo.
 
