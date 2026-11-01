@@ -183,3 +183,5 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
 
   Testes ok, instalado: no `fm_brasil.exe` todos os casos do switch são `B00C C3`, menos o
   índice 19 (`32C0`). Falta ver uma competição que não seja a Série A nem o Carioca.
+- 01/11, `banco_12_todas` no jogo: **deu certo** ("tudo rodando", usuário). C8b fechada; ficam
+  de fora a janela complementar de março e a redução de estrangeiros de 2027–2030.

@@ -78,8 +78,8 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 ### Fase 3: dinheiro dos clubes
 
 - ~~Orçamento de contratações de 2026 (ficha C5b)~~: entrou em 27/10 (tabela do
-  FINANCE_MANAGER no server_db). Falta: o orçamento salarial (fórmula do jogo + diretoria)
-  e os empréstimos de 2005 que continuam na tabela (Flamengo R$ 115 mi).
+  FINANCE_MANAGER no server_db). Falta: o orçamento salarial (fórmula do jogo + diretoria).
+  Os empréstimos de 2005 foram zerados em 01/11.
 - Patrocínio de 2026 (ficha C1b + `patrocinadores_2026.xlsx`, já preenchida).
 - Premiação e cotas de TV de 2026 (ficha C9b + `premiacao_2026.xlsx`, já preenchida).
 
@@ -90,7 +90,9 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
   TESTES_PENDENTES). Falta: a comissão além do técnico e os clubes de 2026 que não
   existem no FM06 (ficam de fora).
 - ~~Técnicos das seleções (`selecoes_2026.csv`)~~: entrou em 22/10.
-- Regras de transferência de 2026 (ficha C8b).
+- ~~Regras de transferência de 2026 (ficha C8b)~~: entrou em 01/11 (janelas 5/1–3/3 e
+  20/7–11/9, 9 estrangeiros por jogo e sem limite no elenco, 5 trocas e 12 reservas em todas
+  as competições).
 
 ### ~~Atributos direto no people_db~~ (feito em 25/10)
 
