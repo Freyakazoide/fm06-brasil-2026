@@ -90,8 +90,10 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 - ~~Elencos e técnicos de 2026 da primeira divisão dos outros 9 países da CONMEBOL~~:
   entrou em 24/10 (`coletar_estrangeiros.py`, `docs/JOGADORES_2026.md`, item 13 do
-  TESTES_PENDENTES). Falta: a comissão além do técnico e os clubes de 2026 que não
-  existem no FM06 (ficam de fora).
+  TESTES_PENDENTES). Falta: os clubes de 2026 que não existem no FM06 (ficam de fora).
+- Comissão além do técnico (01/11, `coletar_comissao_estrangeiros.py`): 170 pessoas de 16
+  clubes, tiradas das tabelas da Wikipédia em inglês cujo técnico é o de 2026. Os outros 100
+  clubes não têm tabela de 2026 e ficam com a comissão do FM06.
 - ~~Técnicos das seleções (`selecoes_2026.csv`)~~: entrou em 22/10.
 - ~~Regras de transferência de 2026 (ficha C8b)~~: entrou em 01/11 (janelas 5/1–3/3 e
   20/7–11/9, 9 estrangeiros por jogo e sem limite no elenco, 5 trocas e 12 reservas em todas

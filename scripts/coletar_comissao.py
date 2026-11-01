@@ -37,7 +37,7 @@ OUT = ROOT / "data" / "brasil" / "comissao" / "comissao_2026.csv"
 FIELDS = ["serie", "clube", "uf", "cargo", "funcao", "nome", "nacionalidade", "nascimento", "fonte", "atualizado"]
 SECTION = re.compile(r"(?i)staff|technical|coaching|personnel|management team|comiss")
 ROLES = [   # ordem importa: "Health and performance manager" é médico, não técnico
-    ("medico", re.compile(r"(?i)doctor|physician|medic|physio|massag|masseur|nutrition|physiolog|psycholog|health")),
+    ("medico", re.compile(r"(?i)doctor|physician|medic|physio|kinesi|massag|masseur|nutrition|physiolog|psycholog|health")),
     ("olheiro", re.compile(r"(?i)scout")),
     ("analista", re.compile(r"(?i)analys|performance coordinator")),
     ("preparador", re.compile(r"(?i)goalkeep|fitness|physical|conditioning|strength|preparador")),
@@ -80,9 +80,12 @@ def staff_rows(text: str) -> tuple[list[tuple[str, str, str, str]], str]:
         if not SECTION.search(head) or re.search(r"(?i)former|history|records", head):
             continue
         body = text[start:end]
-        stamp = re.search(r"\{\{updated\|([^|}]+)", body) or re.search(r"(?i)last updated:?\s*([^<\n]+)", body)
-        for table in wikitables.tables(body):
-            for cells in wikitables.rows(table)[1:]:
+        stamp = re.search(r"\{\{updated\|([^|}]+)", body) or re.search(r"(?i)Fb cs footer\s*\|\s*u\s*=\s*([^|}]+)", body) or re.search(r"(?i)last updated:?\s*([^<\n]+)", body)
+        # tabela comum (1ª linha é o cabeçalho) ou {{Fb cs header}} (o cabeçalho vem do modelo)
+        found_tables = [(t, 1) for t in wikitables.tables(body)]
+        found_tables += [(t, 0) for t in re.findall(r"(?is)\{\{\s*Fb cs header[^}]*\}\}(.*?)(?:\n\|\}|\{\{\s*Fb cs footer)", body)]
+        for table, skip in found_tables:
+            for cells in wikitables.rows(table)[skip:]:
                 if len(cells) < 2:
                     continue
                 plain = [wikitables._plain(wikitables.link_text(c)[0] if "[[" in c else c) for c in cells]

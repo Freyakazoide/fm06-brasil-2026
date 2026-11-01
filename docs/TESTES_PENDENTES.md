@@ -55,6 +55,7 @@ clubes não entram. Conferido em 25/10: com a opção, os clubes carregaram.
 | 14 | ~~Bola de Ouro (histórico de prêmios)~~ ✅ conferido em 01/11 | Mundo > Brasil > Série A > Prêmios (Jogador do Ano > histórico) | 2025 Arrascaeta, 2024 Estêvão ... 2006 Lucas Leiva, com o clube "-"; a ficha do jogador não mostra prêmios de antes do jogo | `aplicar_premios.py` (ficha C4b) |
 | 15 | Mídia brasileira | Notícias: boatos de transferência e notícias de clubes grandes nas primeiras semanas (Flamengo, Corinthians, Grêmio, Atlético-MG) | a notícia cita ge, Lance!, O Globo, Folha, Zero Hora, Itatiaia... em vez de jornal inglês ou de nenhum | `aplicar_midia.py` (ficha C11) |
 | 16 | Logos das competições | cabeçalho da tela de cada competição: Série A, B, C e D, Copa do Brasil, Libertadores, Sul-Americana, Paulistão, Carioca, Gauchão… | o logo de 2026 de cada uma (o da Série A no lugar do círculo verde de teste). Mato-Grossense 2026 e FFER no Rondoniense | `gerar_logos_competicoes.py --instalar` (ficha C12) |
+| 17 | Comissão dos clubes da CONMEBOL | staff do Boca Juniors, River Plate, Estudiantes, Belgrano e Rosario Central | Boca: Diego Markic e Juan Gobet (auxiliares), Gustavo Roberti (preparador físico), Cristián Muñoz (goleiros); River: Marcelo Escudero, Christian Manfredi, Marcelo Barovero; ninguém de 2005 com nome antigo nesses cargos | `coletar_comissao_estrangeiros.py` + `aplicar_comissao.py` |
 
 Antes de rodar, `python scripts\validar_entregas.py` confere as planilhas.
 

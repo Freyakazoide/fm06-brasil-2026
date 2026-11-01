@@ -31,6 +31,7 @@ DATA = ROOT / "data" / "estrangeiros"
 IDENTITIES = DATA / "identidade_estrangeiros.csv"
 PLAYERS = DATA / "jogadores_estrangeiros_2026.xlsx"
 COACHES = DATA / "tecnicos_estrangeiros_2026.csv"
+STAFF = DATA / "comissao_estrangeiros_2026.csv"          # auxiliares, preparadores... (coletar_comissao_estrangeiros.py)
 CAREERS = DATA / "carreiras_estrangeiros_2026.csv"
 BR_IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 BR_PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"

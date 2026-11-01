@@ -14,7 +14,8 @@ de data/brasil/comissao/selecoes_2026.csv (linha com nome) ocupa o técnico da s
 no banco (Parreira -> Ancelotti). A pessoa de 2005 que é alguém de 2026 (mesmo nome e
 nascimento: o Ancelotti do Milan, o Forlán jogador) também ganha nome de hoje, do país
 dela, para o jogo não ter dois. Dos clubes da CONMEBOL de data/estrangeiros
-(coletar_estrangeiros.py) entra só o técnico (tecnicos_estrangeiros_2026.csv); o resto
+(coletar_estrangeiros.py) entram o técnico (tecnicos_estrangeiros_2026.csv) e a comissão da
+comissao_estrangeiros_2026.csv (coletar_comissao_estrangeiros.py); o resto
 da comissão de 2005 desses clubes fica como está. Rodar depois do montar_elencos.py (usa
 a lista dos jogadores montados).
 
@@ -130,8 +131,10 @@ def main() -> None:
             continue
         wanted.append(comissao.Wanted(uid_of[row["clube"]], row["clube"], row["cargo"], row["nome"],
                                       row["nacionalidade"] or "BRA", row["nascimento"]))   # sem dado: brasileiro
-    if estrangeiros.COACHES.exists():               # técnicos dos clubes da CONMEBOL
-        for row in csv.DictReader(estrangeiros.COACHES.open(encoding="utf-8-sig")):
+    for path in (estrangeiros.COACHES, estrangeiros.STAFF):   # técnicos e comissão dos clubes da CONMEBOL
+        if not path.exists():
+            continue
+        for row in csv.DictReader(path.open(encoding="utf-8-sig")):
             if row["clube_2026"] in uid_of and row["nome"].strip():
                 nation = estrangeiros.NATIONS.get(row.get("pais", ""), (0, ""))[1]
                 wanted.append(comissao.Wanted(uid_of[row["clube_2026"]], row["clube_2026"], row["cargo"] or "tecnico",
