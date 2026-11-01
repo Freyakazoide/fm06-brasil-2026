@@ -18,6 +18,11 @@ pode crescer.
 
 O catálogo INJURY (lista de 83 tipos em 0x5C8041 do banco original) tem o nome em inglês
 ("twisted ankle", "damaged knee cartilage"...); KINDS liga as palavras da planilha ao índice.
+
+No jogo (01/11): Neymar (início 22/12/2025) e Paulinho (1/7/2025) começam lesionados; Saúl
+(20/1/2026) e Cano (10/1/2026), com início depois do New Game (dia 359 de 2005 do motor =
+26/12/2025), não se machucam nem quando a data chega. Por isso o início vai no máximo até
+LATEST_START; a volta continua a da planilha.
 """
 
 from __future__ import annotations
@@ -31,6 +36,7 @@ YEAR_SHIFT = -20
 RECORD = 28
 _DATA = struct.Struct("<BIIHHHHBBB")     # 20 bytes antes do par (índice, UID)
 NO_DATE = (0, 1900)
+LATEST_START = dt.date(2025, 12, 22)     # o início do Neymar, que deu certo
 
 # palavras inteiras da coluna "lesao" (em minúsculas; a primeira que aparecer vale) -> índice no INJURY
 KINDS = (

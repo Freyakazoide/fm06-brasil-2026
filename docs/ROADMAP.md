@@ -55,7 +55,7 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Árbitros de 2026 (18 do quadro FIFA) | 🧪 | `aplicar_arbitros.py` |
 | Nomes dos regens | 🧪 | `nomes_regens.xlsx` |
 | Joias da base (regens de verdade) | 🧪 | 25 garotos na `regens_futuros_2026.xlsx` (`FUTURE_REGEN`) |
-| Lesões e suspensões no começo | ⏳ | ficha C3b (o `INJURY` é o catálogo de lesões; falta a lesão do jogador) |
+| Lesões no começo | 🧪 | `aplicar_lesoes.py` (STARTING_INJURY, ficha C3b); suspensões: a aba da planilha está vazia |
 | Rigor dos árbitros | ⏳ | falta saber qual dos 10 atributos é qual |
 | Segunda nacionalidade, cláusula de rescisão | ❌ | campos não localizados |
 | Jogador novo sem hospedeiro | ❌ | exige o formato completo do `people_db` |
@@ -104,7 +104,8 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 ### Fase 5: começo de jogo mais real
 
-- Lesões do começo de 2026 (ficha C3b, com a planilha que já existe).
+- ~~Lesões do começo de 2026 (ficha C3b)~~: entrou em 01/11 (tabela STARTING_INJURY do
+  server_db, `aplicar_lesoes.py`); suspensões (STARTING_BAN) esperam dados na planilha.
 - Rigor dos árbitros.
 - Clubes que "gostam" de pessoas (lista de relações do clube, tipo 3): limpar as que
   apontam para pessoas de 2005 que viraram outra pessoa de 2026.

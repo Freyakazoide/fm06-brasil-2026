@@ -68,3 +68,8 @@ def test_person_index():
     people = PEOPLE.read_bytes()
     assert lesoes.person_index(people, 811) == 317                 # Filippo Inzaghi
     assert lesoes.person_index(people, 114) == 71                  # Johan Mjällby
+
+
+def test_latest_start_before_new_game():
+    # New Game no dia 359 de 2005 do motor (26/12/2025); o Neymar (22/12) pegou, o Saúl (20/1) não
+    assert lesoes.engine_date(lesoes.LATEST_START) < (359, 2005)

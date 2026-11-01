@@ -80,3 +80,9 @@ Hipóteses a ver no jogo:
 - 01/11, instalado (`aplicar_tudo --rapido`, etapa 3 `aplicar_lesoes.py --apply`): no
   `server_db.dat` do jogo a lista está em `0x13D512C` (o banco cresce antes dela) com 1.229
   registros; os 4 últimos são os da tabela acima. Falta ver no jogo.
+- 01/11, no jogo: Neymar e Paulinho **começam lesionados** (deu certo). Saúl e Cano **sem
+  efeito**: não começam lesionados nem se machucam quando a data de início chega. Conclusão:
+  1ª data = início e só vale lesão que já começou no New Game. Decidido (usuário): todos
+  começam lesionados, como o Neymar. O início vai no máximo até `LATEST_START` = 22/12/2025
+  (o do Neymar); a volta continua a da planilha. Instalado: Saúl e Cano agora começam em
+  (355, 2005). Falta ver no jogo.

@@ -6,7 +6,8 @@
 Rodar depois do montar_elencos.py: o jogador é achado pelo clube e nome comum na
 jogadores_2026.xlsx (nascimento), pelo nome e nascimento no brasil_2026_jogadores.json (UID do
 hospedeiro) e pelo UID no people_db (índice da pessoa). A lesão vai para o fim da lista
-STARTING_INJURY do server_db do jogo, com as datas do motor (ano - 20). Rodar de novo não
+STARTING_INJURY do server_db do jogo, com as datas do motor (ano - 20); o início vai no
+máximo até 22/12/2025 (lesão que começa depois do New Game não pega). Rodar de novo não
 duplica (src/fm06patch/lesoes.py, ficha C3b).
 """
 
@@ -75,7 +76,8 @@ def main() -> None:
         elif index is None:
             problems.append(f"{label}: UID {uid} sem registro único no people_db")
         else:
-            injury = lesoes.Injury(index, kind[0], lesoes.engine_date(row.desde), lesoes.engine_date(row.volta))
+            start = min(row.desde, lesoes.LATEST_START)          # início depois do New Game não pega
+            injury = lesoes.Injury(index, kind[0], lesoes.engine_date(start), lesoes.engine_date(row.volta))
             wanted.append(injury)
             print(f"{label}: UID {uid}, pessoa {index}, lesão {kind[0]} ({kind[1]}), "
                   f"{row.desde} a {row.volta} (motor {injury.start} a {injury.end})")
