@@ -111,6 +111,12 @@ def _premio_vitoria_libertadores_swaps(data: bytes):
     return group_win_swaps(data)
 
 
+def _janelas_2026_swaps(data: bytes):
+    from .transferencias import windows_swaps
+
+    return windows_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -457,6 +463,14 @@ PATCHES = {
             "o valor quando a competição da fase tem a vtable da Libertadores (0x01154CF4). Ver "
             "src/fm06patch/premiacao.py e docs/analise/C9b.md.",
             build=_premio_vitoria_libertadores_swaps,
+        ),
+        Patch(
+            "janelas_2026",
+            "Janelas de transferência do Brasil em 2026 (CBF): 5/1 a 3/3 e 20/7 a 11/9 no lugar da "
+            "janela única de 1/1 a 26/9. A 1ª troca os push de 0x00ADED50 em 0x00BB32A0 "
+            "(BRA_TRANSFER_RULES); a 2ª é gravada por um stub na .fm26 chamado de 0x00BB32F4. "
+            "Ver src/fm06patch/transferencias.py e docs/analise/C8b.md.",
+            build=_janelas_2026_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",
