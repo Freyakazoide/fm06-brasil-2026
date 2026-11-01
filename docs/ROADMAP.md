@@ -54,7 +54,7 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Pessoa de 2005 que é alguém de 2026 (Ancelotti do Milan, Forlán jogador) | 🧪 | ganha nome de hoje (`aplicar_comissao.py`) |
 | Árbitros de 2026 (18 do quadro FIFA) | 🧪 | `aplicar_arbitros.py` |
 | Nomes dos regens | 🧪 | `nomes_regens.xlsx` |
-| Joias da base (regens de verdade) | 🧪 | 25 garotos na `regens_futuros_2026.xlsx` (`FUTURE_REGEN`) |
+| Joias da base (regens de verdade) | 🧪 | 32 garotos na `regens_futuros_2026.xlsx` (`FUTURE_REGEN`): sub-17 de 2025/2026 e sub-15 do Palmeiras |
 | Lesões no começo | 🧪 | `aplicar_lesoes.py` (STARTING_INJURY, ficha C3b); suspensões: a aba da planilha está vazia |
 | Rigor dos árbitros | ➖ | fora do mod (decisão do usuário, 01/11): só os nomes de 2026 |
 | Segunda nacionalidade, cláusula de rescisão | ❌ | campos não localizados |
@@ -72,7 +72,9 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 ### Fase 2: base e regens
 
 - ~~Campo de base e de instalações do clube (ficha C6)~~: entrou em 23/10.
-- Força da base de cada país (ficha C10 respondida: falta a planilha com os valores).
+- ~~Força da base de cada país~~: não há o campo (01/11, C10): "Development" é o nível
+  econômico do país (1/2/3); a base sai da reputação da nação (Brasil 9550, a maior) e das
+  notas de base dos clubes, que o mod já grava.
 - Como a chegada da base funciona (ficha C7) e as joias em quantidade.
 
 ### Fase 3: dinheiro dos clubes
