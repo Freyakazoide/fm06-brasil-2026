@@ -158,13 +158,16 @@ def main() -> None:
         report.append([uid, ident["clube_2026"], ident["uf"], ident["fm06_nome"],
                        "sim" if path else "NÃO", "sim" if row else "NÃO",
                        ", ".join(k for k, v in kits.items() if v)])
-    ours = {club["uid"] for club in clubs}                  # clubes de 2005 que voltaram (C13): só o escudo
+    ours = {club["uid"]: club for club in clubs}            # clubes de 2005 que voltaram (C13): só o escudo
     old = CLUBES / "escudos_2005.csv"
     for row in csv.DictReader(old.open(encoding="utf-8-sig")) if old.exists() else []:
-        path = CLUBES / "escudos_2005" / f"{row['uid_jogo']}.png"
-        if int(row["uid_jogo"]) not in ours and path.exists():
-            clubs.append({"uid": int(row["uid_jogo"]), "slug": _slug(int(row["uid_jogo"]), row["clube_fm06"]),
-                          "escudo": path.read_bytes(), "kits": {}})
+        path, uid = CLUBES / "escudos_2005" / f"{row['uid_jogo']}.png", int(row["uid_jogo"])
+        if not path.exists():
+            continue
+        if uid in ours:                                     # na identidade com o tipo "2005"
+            ours[uid]["escudo"] = ours[uid]["escudo"] or path.read_bytes()
+        else:
+            clubs.append({"uid": uid, "slug": _slug(uid, row["clube_fm06"]), "escudo": path.read_bytes(), "kits": {}})
     for part in ("logos/clubs", "kits/clubs"):           # só o que é deste script (os logos das
         shutil.rmtree(OUT / "data" / "graphics" / "pictures" / part, ignore_errors=True)   # competições ficam)
     count = graficos.pacote(OUT, clubs)

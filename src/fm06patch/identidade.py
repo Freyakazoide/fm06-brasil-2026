@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .estaduais_clubes import uf_of
-from .server_teams import is_new, true_uids
+from .server_teams import find_brazil_teams, is_new, true_uids
 
 
 @dataclass
@@ -24,8 +24,15 @@ class Identity:
     clube: str          # nome de 2026
     uf: str
     fm06: str           # nome original no FM06
-    tipo: str           # equivalente / substituto / novo (clube criado, clubes_novos.py)
+    tipo: str           # equivalente / substituto / novo (clube criado) / 2005 (voltou, sem competição)
     onde: str           # "Série A", "estadual SP"...
+
+
+# clubes de 2005 que voltaram com a Fase 6 (os que eram substitutos): ficam fora das competições
+# de 2026, mas com 24 fictícios no nível de hoje (gerar_ficticios.py), com os jogadores de 2005
+# do próprio clube de hospedeiros, e a comissão com nomes de hoje. O jogo só gera elenco para
+# clube vazio: o Paraná ficava com os 8 que sobravam (01/11)
+CLUBS_2005 = Path(__file__).resolve().parents[2] / "data" / "brasil" / "clubes" / "escudos_2005.csv"
 
 
 def build(data: bytes, placements, states) -> list[Identity]:
@@ -52,6 +59,15 @@ def build(data: bytes, placements, states) -> list[Identity]:
         else:
             found[p.team.club_uid] = Identity(uids[p.team.club_uid], p.team.club_uid, p.team.short_name, "",
                                               p.team.short_name, "vaga extra", f"Série {p.serie}")
+    if CLUBS_2005.exists():
+        repo_of = {true: repo for repo, true in uids.items()}
+        names = {t.club_uid: t.short_name for t in find_brazil_teams(data)}
+        taken = {i.uid for i in found.values()}
+        for row in csv.DictReader(CLUBS_2005.open(encoding="utf-8-sig")):
+            uid = int(row["uid_jogo"])
+            repo = repo_of.get(uid)
+            if uid not in taken and repo in names:
+                found[repo] = Identity(uid, repo, names[repo], "", names[repo], "2005", "fora de 2026")
     return sorted(found.values(), key=lambda i: (i.onde, i.clube))
 
 

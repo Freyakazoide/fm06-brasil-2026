@@ -228,7 +228,7 @@ def main() -> None:
     print(f"[OK] reputação de {len(changes)} substitutos ajustada (ex.: "
           + ", ".join(f"{c} {a}->{b}" for a, b, c in list(changes.values())[:3]) + ")")
     identities = identidade.build(data, placements, states)
-    outside = reputacao.outside(data, find_brazil_teams(data), {i.repo_uid for i in identities}, states)
+    outside = reputacao.outside(data, find_brazil_teams(data), {i.repo_uid for i in identities if i.tipo != "2005"}, states)
     db = reputacao.apply(db, outside)
     print(f"[OK] reputação de {len(outside)} clubes brasileiros fora de 2026 limitada à do estadual da UF (ex.: "
           + ", ".join(f"{c} {a}->{b}" for a, b, c in list(outside.values())[:3]) + ")")

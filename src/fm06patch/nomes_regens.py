@@ -52,6 +52,9 @@ def read_table(data: bytes, start: int) -> tuple[list[Name], int]:
 NEW_UID = 110_000_000        # acima dos UIDs do banco (máx. ~74 milhões) e dos do histórico (100 milhões)
 NEW_SHARE = 0.7              # parte do "uso" da nação que fica com os nomes novos
 KINDS = {"prenome": "first", "sobrenome": "second", "apelido": "common"}
+# o nome completo do jogador tem no máximo 2 palavras (pedido do usuário, 01/11): prenome e
+# sobrenome de uma palavra só ("Pedro Antônio de Oliveira" não sai mais); apelido de até duas
+MAX_WORDS = {"first": 1, "second": 1, "common": 2}
 
 
 def _record(text: str, uses: int, nation: int, index: int, uid: int) -> bytes:
@@ -90,6 +93,9 @@ def plan(data: bytes, wanted: dict[tuple[str, int], dict[str, int]], starts: dic
             if table != kind or not weights:
                 continue
             mine = {n.text.casefold(): n for n in names if n.nation == nation}
+            for n in mine.values():                       # compostos que o banco já tinha: uso 0
+                if len(n.text.split()) > MAX_WORDS[kind] and n.uses:
+                    uses_at.append((n.at + 5 + 2 * len(n.text) + 2, 0))
             listed = {text.casefold() for text in weights}
             old_total = sum(n.uses for key, n in mine.items() if key not in listed)
             scale = (old_total * NEW_SHARE / (1 - NEW_SHARE) / sum(weights.values())) if old_total else 1.0
@@ -138,6 +144,8 @@ def load_sheet(path) -> dict[tuple[str, int], dict[str, int]]:
         kind = KINDS.get(str(row[col["tipo"]] or "").strip().casefold())
         text = str(row[col["nome"]] or "").strip()
         if nation is None or kind is None or not text or len(text) > 40:
+            continue
+        if len(text.split()) > MAX_WORDS[kind]:        # nome completo com no máximo 2 palavras
             continue
         weight = row[col["peso"]]
         weight = int(weight) if str(weight or "").strip().isdigit() else 50

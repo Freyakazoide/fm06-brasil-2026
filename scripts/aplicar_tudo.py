@@ -6,7 +6,7 @@
     python scripts\\aplicar_tudo.py --etapa 3    (recomeça da etapa 3, depois de um erro)
 
 Etapas (o script para e avisa quando o jogo tem de ser aberto ou fechado):
-1. jogo fechado: aplicar_brasil_2026.py --apply e reforcar_elencos.py --apply (na primeira
+1. jogo fechado: aplicar_brasil_2026.py --apply, gerar_ficticios.py --apply e reforcar_elencos.py --apply (na primeira
    vez, antes do reforço, um New Game para contar os elencos de 2005 sem reforço);
 2. jogo aberto (New Game, tela principal): live_player_editor.py --squads-all, que conta
    os jogadores de 2005 de cada clube; depois feche o jogo;
@@ -126,6 +126,7 @@ def main() -> None:
     if args.etapa <= 1:
         need_closed()
         run(1, "aplicar_brasil_2026.py", "--apply")
+        run(1, "gerar_ficticios.py", "--apply")         # completa os elencos (24) com a reputação de agora
         if not args.rapido:
             if not HOSTS_BASE.exists() and not HOSTS.exists():     # instalação nova: contar antes do reforço
                 print("\nPrimeira vez: o reforço precisa da contagem dos elencos de 2005 sem reforço.")

@@ -14,7 +14,10 @@ ocupa um jogador de 2005 como qualquer outro, com nome, posição, idade e CA/PA
 - Nível: CA pela reputação do clube no server_db do jogo (a da instalação), calibrado pelos
   jogadores reais da planilha (mediana 76 nos clubes pequenos): ~68 até 3.500 de reputação,
   ~96 em 7.000, com variação; PA maior nos jovens.
-- Nomes: os brasileiros de hoje da nomes_regens.xlsx, sem repetir no clube.
+- Nomes: os brasileiros de hoje da nomes_regens.xlsx, no máximo 2 palavras (prenome e
+  sobrenome de uma palavra), sem repetir no clube. Uns 28% ganham nome de jogo pelas chances da
+  aba Regras_apelido: o sobrenome, um apelido da lista (o peso é a raridade), diminutivo,
+  origem (Baiano, Gaúcho...), porte físico e "-gol" para atacante.
 
 O sorteio é fixo por clube (a mesma planilha a cada rodada). Para pôr um jogador de verdade no
 lugar de um fictício: apague a linha daqui e ponha o jogador na jogadores_2026.xlsx; na próxima
@@ -58,22 +61,60 @@ def target_ca(reputation: int) -> int:
     return max(60, min(110, round(68 + max(0, reputation - 3500) * 28 / 3500)))
 
 
-def names_of_brazil() -> tuple[list[str], list[int], list[str], list[int]]:
+def names_of_brazil() -> tuple[list[str], list[int], list[str], list[int], list[str], list[int]]:
+    """Prenomes, sobrenomes e apelidos brasileiros (com o peso = raridade) da nomes_regens.xlsx;
+    o load_sheet já tira prenome e sobrenome de mais de uma palavra."""
     table = nomes_regens.load_sheet(REGEN_NAMES)
     brazil = NATION_CODES["Brasil"]
-    first, second = table.get(("first", brazil), {}), table.get(("second", brazil), {})
-    return list(first), list(first.values()), list(second), list(second.values())
+    first, second, nick = (table.get((kind, brazil), {}) for kind in ("first", "second", "common"))
+    return list(first), list(first.values()), list(second), list(second.values()), list(nick), list(nick.values())
 
 
-def player(rng: random.Random, club: str, role: str, ca: int, reputation: int, names, taken: set[str],
+# nome de jogo (apelido), com as chances da aba Regras_apelido da nomes_regens.xlsx; o resto
+# joga com prenome e sobrenome
+GENTILIC = {"AC": "Acreano", "AL": "Alagoano", "AM": "Amazonense", "AP": "Amapá", "BA": "Baiano", "CE": "Cearense",
+            "DF": "Brasília", "ES": "Capixaba", "GO": "Goiano", "MA": "Maranhão", "MG": "Mineiro", "MS": "Pantanal",
+            "MT": "Cuiabano", "PA": "Paraense", "PB": "Paraíba", "PE": "Pernambuco", "PI": "Piauí", "PR": "Paranaense",
+            "RJ": "Carioca", "RN": "Potiguar", "RO": "Rondônia", "RR": "Roraima", "RS": "Gaúcho", "SC": "Catarina",
+            "SE": "Sergipe", "SP": "Paulista", "TO": "Tocantins"}
+SIZE = ["Magrão", "Baixinho", "Pezão", "Galego", "Careca", "Cabeção"]
+
+
+def diminutive(name: str) -> str:
+    if name[-1] in "oa":
+        return name[:-1] + ("inho" if name[-1] == "o" else "inha" if not name.endswith("ia") else "inho")
+    return name + "zinho"
+
+
+def nickname(rng: random.Random, first: str, second: str, role: str, uf: str, nicks, nick_w) -> str:
+    roll = rng.random() * 100
+    if roll < 12:
+        return second                                   # sobrenome como nome de jogo (Ribeiro)
+    if roll < 20 and nicks:
+        return rng.choices(nicks, nick_w)[0]            # apelido da lista, pela raridade
+    if roll < 25:
+        return diminutive(first)                        # Gabriel -> Gabrielzinho
+    if roll < 27 and uf in GENTILIC:
+        return f"{first} {GENTILIC[uf]}" if rng.random() < 0.5 else GENTILIC[uf]
+    if roll < 28:
+        return rng.choice(SIZE)
+    if roll < 28.5 and role == "ST":
+        return first[:4].rstrip("aeiou") + "gol"
+    return ""
+
+
+def player(rng: random.Random, club: str, uf: str, role: str, ca: int, reputation: int, names, taken: set[str],
            numbers: set[int]) -> dict:
-    first_names, first_w, surnames, surname_w = names
+    first_names, first_w, surnames, surname_w, nicks, nick_w = names
     while True:
         first = rng.choices(first_names, first_w)[0]
         second = rng.choices(surnames, surname_w)[0]
-        if f"{first} {second}" not in taken and first != second:
+        common = nickname(rng, first, second, role, uf, nicks, nick_w)
+        if f"{first} {second}" not in taken and common not in taken and first != second:
             break
     taken.add(f"{first} {second}")
+    if common:
+        taken.add(common)
     age = rng.choices(range(17, 35), [3, 5, 6, 7, 8, 8, 8, 8, 7, 7, 6, 6, 5, 4, 3, 3, 2, 2])[0]
     level = max(40, min(150, round(rng.gauss(ca, 7) - (8 if age <= 19 else 0))))
     growth = rng.randint(12, 45) if age <= 21 else rng.randint(4, 15) if age <= 24 else rng.randint(0, 5)
@@ -82,7 +123,7 @@ def player(rng: random.Random, club: str, role: str, ca: int, reputation: int, n
     number = next(n for n in range(1, 99) if n not in numbers and (n > 23 or rng.random() < 0.5))
     numbers.add(number)
     month, day = rng.randint(1, 12), rng.randint(1, 28)
-    return {"clube": club, "numero": number, "nome_comum": "", "primeiro_nome": first, "sobrenome": second,
+    return {"clube": club, "numero": number, "nome_comum": common, "primeiro_nome": first, "sobrenome": second,
             "nascimento": f"{2026 - age - 1}-{month:02d}-{day:02d}", "nacionalidade": "Brasil",
             "segunda_nacionalidade": None, "posicoes": role,
             "pe": rng.choices(["D", "E", "A"], [74, 22, 4])[0], "altura": height,
@@ -125,7 +166,7 @@ def main() -> None:
         taken = {f"{r.get('primeiro_nome')} {r.get('sobrenome')}" for r in sheet if r.get("clube") == club}
         numbers = {int(r["numero"]) for r in sheet if r.get("clube") == club and str(r.get("numero") or "").isdigit()}
         for role in sorted(need, key=list(SHAPE).index):
-            out.append(player(rng, club, role, target_ca(rep), rep, names, taken, numbers))
+            out.append(player(rng, club, ident["uf"], role, target_ca(rep), rep, names, taken, numbers))
         report.append((club, ident["uf"], count[club], missing, rep, target_ca(rep)))
     for club, uf, have, missing, rep, ca in report:
         print(f"{uf}  {club:28} {have:2} na planilha + {missing:2} fictícios (reputação {rep}, CA ~{ca})")
