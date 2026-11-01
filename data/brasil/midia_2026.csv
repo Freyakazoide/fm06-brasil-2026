@@ -1,0 +1,24 @@
+nome,meio,periodicidade,alcance,cidade,clubes,endereco
+ge,site,continua,pais,,,https://ge.globo.com/
+Lance!,site,continua,pais,,,https://www.lance.com.br/
+UOL Esporte,site,continua,pais,,,https://www.uol.com.br/esporte/
+Placar,revista,mensal,pais,,,https://placar.com.br/
+SporTV,tv,continua,pais,,,
+ESPN Brasil,tv,continua,pais,,,
+CazéTV,tv,continua,pais,,,
+Folha de S.Paulo,jornal,diaria,cidade,São Paulo,Corinthians;Palmeiras;São Paulo;Santos,
+O Estado de S. Paulo,jornal,diaria,cidade,São Paulo,Corinthians;Palmeiras;São Paulo;Santos,
+O Globo,jornal,diaria,cidade,Rio de Janeiro,Flamengo;Fluminense;Vasco da Gama;Botafogo,
+Extra,jornal,diaria,cidade,Rio de Janeiro,Flamengo;Fluminense;Vasco da Gama;Botafogo,
+Estado de Minas,jornal,diaria,cidade,Belo Horizonte,Atlético-MG;Cruzeiro;América-MG,
+O Tempo,jornal,diaria,cidade,Belo Horizonte,Atlético-MG;Cruzeiro;América-MG,
+Rádio Itatiaia,radio,continua,cidade,Belo Horizonte,Atlético-MG;Cruzeiro;América-MG,
+Zero Hora,jornal,diaria,cidade,Porto Alegre,Grêmio;Internacional,
+Rádio Gaúcha,radio,continua,cidade,Porto Alegre,Grêmio;Internacional,
+Correio do Povo,jornal,diaria,cidade,Porto Alegre,Grêmio;Internacional,
+A Tarde,jornal,diaria,cidade,Salvador,Bahia;Vitória,
+Jornal do Commercio,jornal,diaria,cidade,Recife,Sport;Náutico;Santa Cruz,
+Diario de Pernambuco,jornal,diaria,cidade,Recife,Sport;Náutico;Santa Cruz,
+O Povo,jornal,diaria,cidade,Fortaleza,Ceará;Fortaleza,
+Diário do Nordeste,jornal,diaria,cidade,Fortaleza,Ceará;Fortaleza,
+Gazeta do Povo,site,continua,cidade,Curitiba,Athletico-PR;Coritiba,https://www.gazetadopovo.com.br/

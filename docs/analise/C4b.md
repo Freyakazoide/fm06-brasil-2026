@@ -79,3 +79,7 @@ Ficam de fora:
   - a ligação com um hospedeiro sai.
 
   Falta ver no jogo.
+- 01/11, **conferido no jogo** pelo usuário: o histórico do Jogador do Ano mostra 2025
+  Arrascaeta, 2024 Estêvão, 2023 Luis Suárez ... 2006 Lucas Leiva. O clube aparece "-" (o
+  registro não tem clube). A ficha dos jogadores ligados não mostra o prêmio: hipótese, não
+  conferida no código, de que a ficha só lista prêmios ganhos durante o jogo.

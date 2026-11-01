@@ -123,10 +123,12 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 
 ### Fase 7: acabamento
 
-- ~~Prêmios históricos~~ (ficha C4b, 01/11): Bola de Ouro de 2006 a 2025 no histórico do jogo
+- ~~Prêmios históricos~~ ✅ (ficha C4b, conferido em 01/11): Bola de Ouro de 2006 a 2025 no histórico do jogo
   (`aplicar_premios.py`); Craque do Brasileirão e Bola de Prata não têm prêmio equivalente no
   jogo; faltam os artilheiros de 2005 a 2025 (não estão na planilha).
-- Logos das competições e mídia (jornais) de 2026: campos ainda não procurados.
+- Mídia de 2026 (ficha C11, 01/11): o FM06 só tinha mídia inglesa, polonesa e o O JOGO;
+  entraram 23 fontes brasileiras (`aplicar_midia.py`), falta ver se as notícias citam.
+- Logos das competições: campos ainda não procurados.
 - Mais histórico e mais perfis a cada rodada de dados: jogos e gols por passagem para
   quem só tem os clubes (a `historico_carreira.xlsx` tem prioridade sobre as
   transferências).
