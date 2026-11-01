@@ -123,6 +123,12 @@ def _estrangeiros_2026_swaps(data: bytes):
     return foreign_swaps(data)
 
 
+def _substituicoes_2026_swaps(data: bytes):
+    from .transferencias import subs_swaps
+
+    return subs_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -485,6 +491,14 @@ PATCHES = {
             "regra de transferência tipo 4 = 3, refeita pelo stub do janelas_2026). Depois do "
             "janelas_2026. Ver src/fm06patch/transferencias.py e docs/analise/C8b.md.",
             build=_estrangeiros_2026_swaps,
+        ),
+        Patch(
+            "substituicoes_2026",
+            "5 substituições por jogo (IFAB, 2026) no lugar de 3: 0x008E89F0 (máximo de trocas da "
+            "partida por índice) devolve 5 onde devolvia 3 (0x008E8A08) e o texto da tela de Regras "
+            "acompanha (push 3 em 0x00AD500C e 0x00AD513E). Vale para todas as competições. Ver "
+            "src/fm06patch/transferencias.py e docs/analise/C8b.md.",
+            build=_substituicoes_2026_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

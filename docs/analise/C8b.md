@@ -83,6 +83,7 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   janela complementar de março fica de fora (o jogo não tem a restrição de quem jogou
   estadual).
 - Limite de 9 estrangeiros: patch `estrangeiros_2026` (Diário, 01/11).
+- 5 substituições: patch `substituicoes_2026` (Diário, 01/11).
 
 ## Diário
 
@@ -124,4 +125,27 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   essas regras. A redução aprovada para 2027–2030 (8, 7, 6, 5) não entra: o valor é fixo.
   Testes ok. Instalado (`aplicar_tudo --rapido`): no `fm_brasil.exe` `0x00BBA3D0` = `6A09`
   e o stub termina em `call 0x00ADED50`, 13 `nop` e `ret`. Falta ver no jogo.
-
+- 01/11, estrangeiros no jogo: **deu certo**. New Game, Série A > Regras: "A convocatória não
+  pode incluir mais do que 9 jogadores estrangeiros." e a linha de estrangeiros no elenco sumiu
+  (usuário, print). As janelas aparecem como "Entre Quinta-Feira 5 Janeiro 2026 e Sexta-Feira
+  3 Março 2026" e "Entre Quinta-Feira 20 Julho 2026 e Segunda-Feira 11 Setembro 2026"; o dia da
+  semana continua o do ano do motor (só aparência).
+- 01/11, substituições. Conferido no código:
+  - A tela mostra "7 suplentes convocados, máximo 3 utilizados" a partir de `0x00AD4FC0`
+    (chamada só de `0x006A2019`), com o byte `CLIENT_FIXTURE+0x121` (vtable `0x0109D7C4`,
+    `.?AVCLIENT_FIXTURE@@`; lido do servidor em `0x006A4DAF`) como índice de 0 a 25 (tabela
+    `0x00AD5184`/`0x00AD51A0`).
+  - O mesmo índice vai a duas funções: `0x00AD5420` (suplentes convocados, 8 chamadores) e
+    `0x008E89F0` (máximo de trocas; chamada só de `0x00952A95`, que grava em
+    `[partida+0xF78]` com o índice `[[partida+0x64]+0x44]`).
+  - Tabela (convocados/utilizados): 0 = 7/3, 1 = 5/3, 2 = 3/3, 3 = 5/3, 4 = 7/3, 5 e 6 = 4/3,
+    7 = 6/3, 8 = 12/3, 9 = 7/7, 10 = 9/3, 11 a 14 = 5/3, 15 = 6/3, 16 = 8/5, 17 = 9/5,
+    18 = 12/12, 19 = 0/0, 20 = 7/5, 21 = 7/4, 22 = 5 ou 9/3, 23 = 5/5, 24 = 9/6, 25 = 11/3.
+    O Brasil usa 0 ou 4 (a tela mostra 7/3); não achei onde o índice é gravado.
+  - Em `0x008E89F0`, todos os índices que devolvem 3 passam pelo mesmo `mov al, 3`
+    (`0x008E8A08`).
+- 01/11, patch `substituicoes_2026`: `0x008E8A08` `B003` -> `B005` (máximo de trocas 5 em
+  todos os índices que eram 3) e o texto acompanha (`push 3` -> `push 5` em `0x00AD500C` e
+  `0x00AD513E`). Vale para todas as competições, como a regra da IFAB em 2026. O número de
+  suplentes (7) não muda. Hipótese a testar no jogo: nenhuma outra parte (tela de
+  substituição, IA) trava em 3. Testes ok.

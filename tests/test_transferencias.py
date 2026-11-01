@@ -93,3 +93,16 @@ def test_foreign_rules_2026():
     after = stub[stub.index(calls[0]) + 1:]
     assert [x.mnemonic for x in after][:14] == ["nop"] * 13 + ["ret"]
 
+
+
+def test_subs_2026():
+    data = EXE.read_bytes()
+    used = _disasm(data, 0x008E89F0, 0x30)
+    assert [(x.mnemonic, x.op_str) for x in used if x.address == transferencias.SUBS_USED_AT] == [("mov", "al, 3")]
+    out = exe_patches.apply(data, ["substituicoes_2026"])
+    used = _disasm(out, 0x008E89F0, 0x30)
+    assert [(x.mnemonic, x.op_str) for x in used if x.address == transferencias.SUBS_USED_AT] == [("mov", "al, 5")]
+    for at in transferencias.SUBS_TEXT_AT:
+        assert data[off(at):off(at) + 2] == bytes.fromhex("6A03")
+        assert out[off(at):off(at) + 2] == bytes.fromhex("6A05")
+        assert out[off(at) + 2:off(at) + 4] == bytes.fromhex("6A02")      # parâmetro 2 = utilizados

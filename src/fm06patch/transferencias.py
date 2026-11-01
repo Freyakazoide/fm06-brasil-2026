@@ -87,3 +87,22 @@ def foreign_swaps(data: bytes):
     assert stub[at + 13:] == b"\xC3"
     return (Swap(off(MATCH_FOREIGN_AT), bytes.fromhex("6A03"), bytes([0x6A, MATCH_FOREIGN_2026])),
             Swap(sec_off(SECOND_STUB + at), stub[at:at + 13], bytes.fromhex("90" * 13)))
+
+
+# Substituições (ficha C8b). A partida guarda o máximo de trocas em [partida+0xF78], vindo de
+# 0x008E89F0(índice), chamada só de 0x00952A95 com o índice de substituições da competição
+# ([[partida+0x64]+0x44]). Tabela por índice (0 a 25): quase todos devolvem 3 pelo mesmo
+# `mov al, 3` (0x008E8A08); o 9 (amistoso) devolve 7. O texto da tela de Regras sai de
+# 0x00AD4FC0 com o mesmo índice (CLIENT_FIXTURE+0x121): "N suplentes convocados, máximo M
+# utilizados", com M = 3 nos `push 3` de 0x00AD500C e 0x00AD513E. 2026: 5 trocas (IFAB, vale no
+# mundo todo), então o 3 vira 5 em todos os índices. O banco (N, de 0x00AD5420) fica.
+SUBS_USED_AT = 0x008E8A08            # mov al, 3
+SUBS_TEXT_AT = (0x00AD500C, 0x00AD513E)   # push 3 (máximo utilizados)
+SUBS_2026 = 5
+
+
+def subs_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    return (Swap(off(SUBS_USED_AT), bytes.fromhex("B003"), bytes([0xB0, SUBS_2026])),
+            *(Swap(off(at), bytes.fromhex("6A03"), bytes([0x6A, SUBS_2026])) for at in SUBS_TEXT_AT))
