@@ -230,6 +230,22 @@ def _config(records: list[tuple[str, str]]) -> str:
             '\t<list id="maps">\n' + "\n".join(lines) + '\n\t</list>\n</record>\n')
 
 
+def pacote_competicoes(out: Path, comps: list[tuple[int, str, bytes]], pack: str = "bra2026") -> int:
+    """comps: (UID da competição, nome do arquivo, imagem). Grava logo e ícone em
+    out/data/graphics/pictures/logos/comps/<pack>/ com a chave graphics/pictures/comp/<UID>/...
+    (ficha C12: o logo aparece no cabeçalho da tela da competição). Devolve o nº de imagens."""
+    logos = out / "data" / "graphics" / "pictures" / "logos" / "comps" / pack
+    logos.mkdir(parents=True, exist_ok=True)
+    records = []
+    for uid, slug, image in comps:
+        for kind, size in SIZES.items():
+            name = slug if kind == "logo" else f"{slug}_{kind}"
+            logo_png(image, size).save(logos / f"{name}.png")
+            records.append((name, f"graphics/pictures/comp/{uid}/{kind}"))
+    (logos / "config.xml").write_text(_config(records), encoding="utf-8")
+    return len(records)
+
+
 def pacote(out: Path, clubs: list[dict], pack: str = "bra2026") -> int:
     """clubs: uid, slug, escudo (bytes ou None), logo_size e kit_size (opcionais) e kits
     {"home": dict, "away": dict, "third": dict}; cada kit pode ter estilo, patrocinador e fornecedor.
