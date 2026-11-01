@@ -34,7 +34,7 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Rivais e clássicos | 🧪 | `rivais.py` (a tela de informações não mostra; falta a notícia de clássico) |
 | CT, base e captação de 2026 (40 clubes) | 🧪 | `instalacoes.py` + aba Estrutura |
 | Orçamento de transferências de 2026 (40 clubes) | ✅ | `orcamentos.py` + aba Estrutura (ficha C5b); o salarial segue a fórmula do jogo |
-| Clubes de 2026 que não existem no FM06 (38 nas séries, 88 nos estaduais) | ⚠️ | ocupam um clube de 2005 ("substitutos"); criar clube novo exige o formato completo do registro |
+| Clubes de 2026 que não existem no FM06 (88) | ✅ | clubes novos no `server_db` (`clubes_novos.py`, ficha C13); nenhum clube de 2005 é ocupado |
 
 ### Pessoas
 
@@ -117,11 +117,15 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 - ~~Clubes que "gostam" de pessoas~~: entrou em 01/11 (`aplicar_relacoes.py`, etapa 3): 143
   relações tipo 3 de 54 clubes que apontavam para hospedeiros saíram.
 
-### Fase 6: clubes de verdade no lugar dos substitutos
+### ~~Fase 6: clubes de verdade no lugar dos substitutos~~ (feita em 01/11)
 
-- Entender o registro completo do clube no `server_db` (já sabemos nomes, cores,
-  estádio, saldo, rivais, times) para criar clubes novos em vez de ocupar um de 2005.
-  É o maior trabalho que falta; os substitutos funcionam, então fica por último.
+- Os 88 clubes de 2026 que não existiam no FM06 são clubes novos no fim das listas de clubes
+  e de times (ficha C13, `montar_clubes_novos.py` + `clubes_novos.py` na etapa 1), com cores,
+  escudo, elenco e comissão de 2026. Os clubes de 2005 que eram ocupados (Paraná, Santo André,
+  São Caetano...) voltaram com nome e elenco de 2005. O Luverdense e o Decisão, que a busca
+  não via, usam os clubes do banco.
+- Falta: os escudos do Horizonte e do Santa Cruz de Natal; os clubes de 2005 que voltaram
+  não têm escudo.
 
 ### Fase 7: acabamento
 
