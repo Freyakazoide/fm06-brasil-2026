@@ -315,7 +315,7 @@ def main() -> None:
               f"(lista em {HISTORY_REPORT.relative_to(ROOT)})")
         HISTORY_REPORT.write_text("\n".join(history.unmatched) + "\n", encoding="utf-8")
     if REGEN_NAMES.exists() and not args.sem_nomes_regens:      # nomes dos regens (muda o tamanho)
-        starts = nomes_regens.locate(db, data)
+        starts = nomes_regens.locate(db, pristine)          # TABLES são posições do original puro
         changes = nomes_regens.plan(db, nomes_regens.load_sheet(REGEN_NAMES), starts)
         db = nomes_regens.apply(db, changes, starts)
         print(f"[OK] nomes de regens: {sum(len(a) for _, a in changes.values())} novos e "

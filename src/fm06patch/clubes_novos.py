@@ -29,6 +29,7 @@ CLUB_TAIL = 18                  # bytes entre as relações e o par que fecha o 
 TEAM_CLUB = 14                  # o índice do clube fica 14 bytes antes do par do time
 FIRST_NATION = 0x7E             # o 1º clube do banco é albanês
 TEAM_TYPES = (10, 11, 12)
+TEAM_MANAGER = 23               # u32 técnico (TEAM+0x70, elenco_times.MANAGER + 1)
 TEAM_STATE = 47                 # u32 estadual do time (TEAM+0x64, estaduais_clubes.STATE_FIELD)
 
 
@@ -195,6 +196,7 @@ def clone_team(data: bytes, team: Team, club_index: int, index: int, uid: int, s
     head[2] = 0                                                     # classificação anterior
     struct.pack_into("<II", head, 7, NONE, NONE)                    # divisão atual e anterior
     struct.pack_into("<I", head, TEAM_STATE, state)
+    struct.pack_into("<I", head, TEAM_MANAGER, NONE)                # sem o técnico do doador
     tail = bytearray(data[team.tail_at:team.end])
     struct.pack_into("<I", tail, len(tail) - 8 - TEAM_CLUB, club_index)
     struct.pack_into("<II", tail, len(tail) - 8, index, uid)
@@ -217,6 +219,14 @@ def add(data: bytes, clubs: Records, teams: Records, club_bytes: bytes, team_byt
 
 
 NEW_UID = 9_100_000             # UIDs dos clubes novos (o do teste 1 foi 9000001)
+CLUBS_END_602 = 0x5B8590        # fim da lista de clubes no banco 6.0.2
+
+
+def shift(data: bytes) -> int:
+    """Quanto o que vem depois da lista de clubes (as tabelas de nomes) andou com os clubes
+    novos: 0 no banco 6.0.2."""
+    clubs = club_list(data)
+    return clubs.end(len(clubs.ends) - 1) - CLUBS_END_602
 
 
 @dataclass

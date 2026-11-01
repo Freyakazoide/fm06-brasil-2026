@@ -48,8 +48,10 @@ class Team:
     spans: dict[str, tuple[int, int]] = field(default_factory=dict)   # (início, fim) de cada lista no arquivo
 
 
-def read_team(server: bytes, start: int) -> Team | None:
-    """O registro que começa em ``start`` (o 0x0A), ou None se não parece um time."""
+def read_team(server: bytes, start: int, closing_at: int | None = None) -> Team | None:
+    """O registro que começa em ``start`` (o 0x0A), ou None se não parece um time.
+    ``closing_at``: posição do par (índice, UID) que fecha o registro, para o último time da
+    lista (depois dele não vem outro 0x0A; é o caso dos clubes novos, ficha C13)."""
     if server[start:start + 2] != b"\x0a\x00" or start + PREFIX + 8 > len(server):
         return None
     value = struct.unpack_from("<I", server, start - 8)[0] + 1
@@ -68,6 +70,11 @@ def read_team(server: bytes, start: int) -> Team | None:
             return None
         team.lists[name], team.spans[name] = items, (at, at + size)
         at += size
+    if closing_at is not None:
+        if struct.unpack_from("<I", server, closing_at)[0] != value:
+            return None
+        team.uid = struct.unpack_from("<I", server, closing_at + 4)[0]
+        return team
     closing = re.compile(re.escape(struct.pack("<I", value)) + rb"(....)\x0a\x00", re.S).search(server, at, at + 0x4000)
     if not closing:                                     # o par (índice, UID) que fecha este time
         return None
@@ -84,6 +91,16 @@ def all_teams(server: bytes) -> list[Team]:
         team = read_team(server, lo + match.start())
         if team:        # 3 times (172, 394, 452) têm antes um trecho que também parece time; o
             found[(team.value, team.uid)] = team    # de verdade é o segundo (as pessoas batem)
+    from .clubes_novos import team_list
+
+    try:                                                # o último time da lista não tem 0x0A depois
+        records = team_list(server)
+    except ValueError:                                  # banco de teste sem as listas inteiras
+        return list(found.values())
+    last = len(records.ends) - 1
+    team = read_team(server, records.start(last), records.ends[last])
+    if team:
+        found[(team.value, team.uid)] = team
     return list(found.values())
 
 

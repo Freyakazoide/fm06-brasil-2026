@@ -115,7 +115,7 @@ def names_by_nation(server: bytes) -> dict[tuple[str, int], dict[str, int]]:
     """(tabela, nação) -> {nome: uso} dos primeiros nomes e sobrenomes do banco (no formato do
     nomes_regens.load_sheet): nomes de cada país para quem não tem nome de hoje na planilha."""
     out: dict[tuple[str, int], dict[str, int]] = {}
-    for kind, (lo, hi) in zip(("first", "second"), NAME_TABLES):
+    for kind, (lo, hi) in zip(("first", "second"), _tables(server)):
         for _, text, usage, nation in _name_entries(server, lo, hi):
             if text.strip() and '"' not in text:
                 names = out.setdefault((kind, nation), {})
@@ -123,8 +123,16 @@ def names_by_nation(server: bytes) -> dict[tuple[str, int], dict[str, int]]:
     return out
 
 
+def _tables(server: bytes) -> list[tuple[int, int]]:
+    """NAME_TABLES no banco dado: os clubes novos (clubes_novos.py) deslocam as tabelas."""
+    from .clubes_novos import shift
+
+    delta = shift(server)
+    return [(lo + delta, hi + delta) for lo, hi in NAME_TABLES]
+
+
 def name_tables(server: bytes) -> tuple[dict[int, str], dict[int, str], dict[int, str]]:
-    return tuple(_walk_names(server, lo, hi) for lo, hi in NAME_TABLES)
+    return tuple(_walk_names(server, lo, hi) for lo, hi in _tables(server))
 
 
 def _uids(people: bytes, table) -> set[int]:
