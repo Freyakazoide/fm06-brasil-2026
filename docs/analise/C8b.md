@@ -149,3 +149,5 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   `0x00AD513E`). Vale para todas as competições, como a regra da IFAB em 2026. O número de
   suplentes (7) não muda. Hipótese a testar no jogo: nenhuma outra parte (tela de
   substituição, IA) trava em 3. Testes ok.
+- 01/11, `substituicoes_2026` instalado (`aplicar_tudo --rapido`): no `fm_brasil.exe`
+  `0x008E8A08` = `B005`, `0x00AD500C` e `0x00AD513E` = `6A05`. Falta ver no jogo.
