@@ -106,3 +106,20 @@ def subs_swaps(data: bytes):
 
     return (Swap(off(SUBS_USED_AT), bytes.fromhex("B003"), bytes([0xB0, SUBS_2026])),
             *(Swap(off(at), bytes.fromhex("6A03"), bytes([0x6A, SUBS_2026])) for at in SUBS_TEXT_AT))
+
+
+# Banco de reservas. Os suplentes convocados vêm de 0x00AD5420(índice); os índices 0, 4, 9, 20 e
+# 21 devolvem 7 pelo mesmo `mov al, 7` (0x00AD5441). O texto da tela usa `push 7` (parâmetro 1)
+# em 0x00AD4FFC (índices 0 e 4), 0x00AD5021 (20), 0x00AD5039 (21) e 0x00AD5095 (9). 2026: até 12
+# reservas no Brasileirão (CBF, regra da FIFA); os índices 8 e 18 já usam 12, então o jogo
+# aceita esse número. Vale para todas as competições que usavam 7.
+BENCH_AT = 0x00AD5441                # mov al, 7
+BENCH_TEXT_AT = (0x00AD4FFC, 0x00AD5021, 0x00AD5039, 0x00AD5095)   # push 7 (convocados)
+BENCH_2026 = 12
+
+
+def bench_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    return (Swap(off(BENCH_AT), bytes.fromhex("B007"), bytes([0xB0, BENCH_2026])),
+            *(Swap(off(at), bytes.fromhex("6A07"), bytes([0x6A, BENCH_2026])) for at in BENCH_TEXT_AT))

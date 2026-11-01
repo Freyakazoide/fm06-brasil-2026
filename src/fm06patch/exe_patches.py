@@ -129,6 +129,12 @@ def _substituicoes_2026_swaps(data: bytes):
     return subs_swaps(data)
 
 
+def _banco_12_2026_swaps(data: bytes):
+    from .transferencias import bench_swaps
+
+    return bench_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -499,6 +505,14 @@ PATCHES = {
             "acompanha (push 3 em 0x00AD500C e 0x00AD513E). Vale para todas as competições. Ver "
             "src/fm06patch/transferencias.py e docs/analise/C8b.md.",
             build=_substituicoes_2026_swaps,
+        ),
+        Patch(
+            "banco_12_2026",
+            "Até 12 reservas no banco (CBF, 2026) no lugar de 7: 0x00AD5420 (suplentes convocados "
+            "por índice) devolve 12 onde devolvia 7 (0x00AD5441) e o texto da tela de Regras "
+            "acompanha. Vale para todas as competições que usavam 7. Ver "
+            "src/fm06patch/transferencias.py e docs/analise/C8b.md.",
+            build=_banco_12_2026_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

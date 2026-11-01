@@ -72,6 +72,12 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   cair para 8 (2027), 7 (2028), 6 (2029) e 5 (2030).
   [SBT News](https://sbtnews.sbt.com.br/noticia/brasil/cbf-aprova-reducao-gradual-de-estrangeiros-no-brasileirao),
   [Times Brasil](https://timesbrasil.com.br/esportes/cbf-e-clubes-aprovam-reducao-do-limite-de-estrangeiros-a-partir-de-2027/).
+- Substituições: 5 por jogo (regra da IFAB/FIFA, adotada pela CBF).
+  [Band](https://www.band.com.br/esportes/cbf-aprova-regras-da-copa-do-mundo-para-o-brasileirao-entenda-202608101704).
+- Banco: até 12 reservas no Brasileirão (CBF seguindo a FIFA; o Fluminense levou 12 na 6ª
+  rodada de 2026). Fonte de torcida, não o regulamento:
+  [NETFLU](https://www.netflu.com.br/abel-esnoba-e-nao-vai-aderir-novidade-no-banco/),
+  [NETFLU, 6ª rodada](https://www.netflu.com.br/veja-opcoes-de-zubeldia-no-banco-de-reservas-do-fluminense-diante-do-athletico-pr-br-2026/).
 
 ## Consequência
 
@@ -84,6 +90,7 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   estadual).
 - Limite de 9 estrangeiros: patch `estrangeiros_2026` (Diário, 01/11).
 - 5 substituições: patch `substituicoes_2026` (Diário, 01/11).
+- 12 reservas no banco: patch `banco_12_2026` (Diário, 01/11).
 
 ## Diário
 
@@ -151,3 +158,12 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   substituição, IA) trava em 3. Testes ok.
 - 01/11, `substituicoes_2026` instalado (`aplicar_tudo --rapido`): no `fm_brasil.exe`
   `0x008E8A08` = `B005`, `0x00AD500C` e `0x00AD513E` = `6A05`. Falta ver no jogo.
+- 01/11, substituições no jogo: **deu certo**. A tela mostra "7 suplentes convocados, máximo 5
+  utilizados" e deu para fazer as 5 trocas (usuário, print). Problema: o banco é pequeno.
+- 01/11, patch `banco_12_2026`: em `0x00AD5420` os índices 0, 4, 9, 20 e 21 devolvem 7 pelo
+  mesmo `mov al, 7` (`0x00AD5441`), que vira `mov al, 0xC`. O texto acompanha: `push 7` ->
+  `push 0xC` em `0x00AD4FFC` (índices 0 e 4), `0x00AD5021` (20), `0x00AD5039` (21) e
+  `0x00AD5095` (9). Os índices 8 e 18 já usam 12, então o número existe no jogo. Vale para
+  todas as competições que usavam 7. Testes ok. Instalado: no `fm_brasil.exe` `0x00AD5441` =
+  `B00C` e os quatro `push` = `6A0C`. Falta ver no jogo; hipótese a conferir: a tela de
+  escalação mostra 12 vagas de reserva sem travar.

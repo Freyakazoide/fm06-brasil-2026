@@ -106,3 +106,15 @@ def test_subs_2026():
         assert data[off(at):off(at) + 2] == bytes.fromhex("6A03")
         assert out[off(at):off(at) + 2] == bytes.fromhex("6A05")
         assert out[off(at) + 2:off(at) + 4] == bytes.fromhex("6A02")      # parâmetro 2 = utilizados
+
+
+def test_bench_2026():
+    data = EXE.read_bytes()
+    named = _disasm(data, 0x00AD5420, 0x30)
+    assert [(x.mnemonic, x.op_str) for x in named if x.address == transferencias.BENCH_AT] == [("mov", "al, 7")]
+    out = exe_patches.apply(data, ["banco_12_2026"])
+    named = _disasm(out, 0x00AD5420, 0x30)
+    assert [(x.mnemonic, x.op_str) for x in named if x.address == transferencias.BENCH_AT] == [("mov", "al, 0xc")]
+    for at in transferencias.BENCH_TEXT_AT:
+        assert data[off(at):off(at) + 2] == bytes.fromhex("6A07")
+        assert out[off(at):off(at) + 2] == bytes.fromhex("6A0C")
