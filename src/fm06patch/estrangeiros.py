@@ -35,6 +35,7 @@ STAFF = DATA / "comissao_estrangeiros_2026.csv"          # auxiliares, preparado
 CAREERS = DATA / "carreiras_estrangeiros_2026.csv"
 BR_IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 BR_PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
+FICTIONAL = ROOT / "data" / "brasil" / "jogadores" / "ficticios_2026.xlsx"      # gerar_ficticios.py
 
 # país (alpha2 do Sofascore) -> (código da nação no banco, sigla, nome, "série" do CA)
 NATIONS = {
@@ -206,7 +207,7 @@ def team_values(server: bytes) -> dict[int, int]:
 
 
 def player_files() -> list[Path]:
-    return [p for p in (BR_PLAYERS, PLAYERS) if p.exists()]
+    return [p for p in (BR_PLAYERS, FICTIONAL, PLAYERS) if p.exists()]
 
 
 def nation_of(uid: int, rows: list[dict] | None = None) -> int:

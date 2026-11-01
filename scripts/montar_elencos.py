@@ -148,6 +148,9 @@ def main() -> None:
     parser.add_argument("--year-shift", type=int, default=-20)   # motor 2006 = 2026 (ano exibido + 20)
     args = parser.parse_args()
     clubs = _targets(PLAYERS)
+    if estrangeiros.FICTIONAL.exists():                 # fictícios que completam os elencos (gerar_ficticios.py)
+        for club, items in _targets(estrangeiros.FICTIONAL).items():
+            clubs[club].extend(items)
     if estrangeiros.PLAYERS.exists():                   # clubes da CONMEBOL (coletar_estrangeiros.py)
         clubs.update(_targets(estrangeiros.PLAYERS))
     hosts = _hosts(args.hospedeiros)

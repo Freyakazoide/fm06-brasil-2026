@@ -228,6 +228,10 @@ def main() -> None:
     print(f"[OK] reputação de {len(changes)} substitutos ajustada (ex.: "
           + ", ".join(f"{c} {a}->{b}" for a, b, c in list(changes.values())[:3]) + ")")
     identities = identidade.build(data, placements, states)
+    outside = reputacao.outside(data, find_brazil_teams(data), {i.repo_uid for i in identities}, states)
+    db = reputacao.apply(db, outside)
+    print(f"[OK] reputação de {len(outside)} clubes brasileiros fora de 2026 limitada à do estadual da UF (ex.: "
+          + ", ".join(f"{c} {a}->{b}" for a, b, c in list(outside.values())[:3]) + ")")
     db, painted = cores.apply(db, cores.plan(identities))
     print(f"[OK] cores de 2026 (tela do clube e uniforme da partida) em {painted} substitutos")
     teams_by_repo = {p.team.club_uid: p.team.offset for p in placements}

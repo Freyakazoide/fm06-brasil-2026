@@ -42,7 +42,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import clubes_novos, elenco_times, estaduais_clubes, estrangeiros, historico, people_contracts, server_teams  # noqa: E402
+from fm06patch import clubes_novos, elenco_times, estrangeiros, historico, people_contracts, server_teams  # noqa: E402
 
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
@@ -102,6 +102,8 @@ def main() -> None:
     ours = {int(r["uid_jogo"]) for r in identities + foreign}
     hosts = Counter(int(r["clube_uid"]) for r in csv.DictReader(args.hospedeiros.open(encoding="utf-8")))
     sheet = _sheet_rows()
+    if estrangeiros.FICTIONAL.exists():              # fictícios que completam os elencos (gerar_ficticios.py)
+        sheet += _sheet_rows(estrangeiros.FICTIONAL)
     if foreign and estrangeiros.PLAYERS.exists():
         sheet += _sheet_rows(estrangeiros.PLAYERS)
     sizes = Counter(r["clube"] for r in sheet)
@@ -115,11 +117,8 @@ def main() -> None:
     in_db = Counter(c.club for c in found.values() if c.club in abroad_clubs)
     for uid, index in abroad.items():
         hosts.setdefault(uid, in_db[index])
-    # clubes que jogam um estadual: com certeza carregados (o par "00 BD 00 00 00" também pega
-    # alguns estrangeiros, que o jogo não carrega)
     true = server_teams.true_uids(server)
     repo_of = {v: k for k, v in true.items()}
-    playing = {true.get(t.club_uid) for t in estaduais_clubes.state_teams(server)}
     host_uids = {int(r["uid"]) for r in csv.DictReader(args.hospedeiros.open(encoding="utf-8"))}
 
     needs = []
@@ -136,6 +135,7 @@ def main() -> None:
     # doadores: brasileiros de clubes fora de 2026, depois até 2 por clube estrangeiro (fora
     # os clubes da CONMEBOL de 2026)
     donors = [c for c in found.values() if c.club in brazil and brazil[c.club] not in ours]
+    brazilian_donors = len(donors)
     taken: Counter = Counter()
     by_club: dict[int, list] = defaultdict(list)
     for c in found.values():
@@ -159,12 +159,13 @@ def main() -> None:
                            "clube_2026": club, "clube_uid": uid})
     for club, uid, missing in needs:
         print(f"{club:32} {hosts.get(uid, 0):3} hospedeiros + {taken[club]:3} (faltavam {missing})")
-    print(f"[OK] {len(moves)} jogadores movidos para {len(needs)} clubes ({len(donors)} doadores disponíveis)")
+    print(f"[OK] {len(moves)} jogadores movidos para {len(needs)} clubes ({len(donors)} doadores disponíveis, "
+          f"{brazilian_donors} de clubes brasileiros fora de 2026)")
 
     # excedentes: jogadores de 2005 (do banco) além do elenco de 2026 ficariam no clube com o
-    # nome de 2005; vão para clubes brasileiros fora de 2026 (nos estrangeiros ficam e ganham
-    # um nome de hoje do país no montar_elencos.py)
-    spare = [i for i, u in brazil.items() if u not in ours and u in playing]
+    # nome de 2005; vão para os clubes estrangeiros que doaram (até 01/11 iam para clubes
+    # brasileiros fora de 2026, que agora ficam vazios e o jogo gera o elenco no New Game)
+    spare = sorted(by_club)
     removed = 0
     for row in identities:
         uid, club = int(row["uid_jogo"]), row["clube_2026"]
@@ -174,7 +175,7 @@ def main() -> None:
             for c in sorted(own, key=lambda c: c.until)[:extra]:   # quem tem contrato mais curto sai
                 moves[c.uid] = spare[removed % len(spare)]
                 removed += 1
-    print(f"[OK] {removed} jogadores de 2005 que sobravam nos clubes de 2026 saíram para clubes fora de 2026")
+    print(f"[OK] {removed} jogadores de 2005 que sobravam nos clubes de 2026 saíram para clubes estrangeiros")
 
     if not args.apply:
         print("\nSimulação. Para gravar, rode de novo com --apply.")
