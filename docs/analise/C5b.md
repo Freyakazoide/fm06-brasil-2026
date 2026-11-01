@@ -138,5 +138,8 @@ código: o setup só cria o empréstimo com valor diferente de 0 (`0x006D4569`, 
 com os dois campos em 0, `0x006D44CD`…`0x006D44D7`). `orcamentos.clear_loans` zera valor e
 prazo dos registros dos 278 clubes de `identidade_fm06.csv` depois do orçamento;
 `aplicar_brasil_2026.py` chama. Testes ok (Flamengo £22,5 mi -> 0, clubes de fora
-iguais). Falta instalar (jogo aberto) e ver no jogo.
+iguais). Instalado (`aplicar_tudo --rapido`): "empréstimos de 2005 zerados em 68 registros
+de clubes brasileiros (£160.450.000)" (67 clubes; o Guarani tem dois). No `server_db` do
+jogo: nenhum clube brasileiro com empréstimo, os 352 de fora iguais ao original, Flamengo
+com empréstimo 0 e orçamento £14.921.260 (R$ 75,8 mi). Falta ver no jogo.
 
