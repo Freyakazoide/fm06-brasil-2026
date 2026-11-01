@@ -47,5 +47,6 @@ def test_add_club(db):
     n_at, m_at = cn.club_lists(out, start, pair)
     assert struct.unpack_from("<BI", out, n_at) == (1, 19445) and out[m_at] == 0          # sem relações
     new_team = cn.parse_team(out, teams2.start(19445), teams2.end(19445))
+    assert struct.unpack_from("<I", out, new_team.start + cn.TEAM_STATE)[0] == cn.NONE     # sem estadual
     assert new_team.players == [] and struct.unpack_from("<I", out, new_team.end - 22)[0] == new
     assert clubs2.uid(out, 198) == 322 and teams2.uid(out, 290) == 322            # o resto não muda

@@ -27,6 +27,7 @@ CLUB_TAIL = 18                  # bytes entre as relações e o par que fecha o 
 TEAM_CLUB = 14                  # o índice do clube fica 14 bytes antes do par do time
 FIRST_NATION = 0x7E             # o 1º clube do banco é albanês
 TEAM_TYPES = (10, 11, 12)
+TEAM_STATE = 47                 # u32 estadual do time (TEAM+0x64, estaduais_clubes.STATE_FIELD)
 
 
 @dataclass
@@ -181,10 +182,13 @@ def parse_team(data: bytes, start: int, end: int) -> Team | None:
 
 
 def clone_team(data: bytes, team: Team, club_index: int, index: int, uid: int) -> bytes:
-    """Time novo copiado de outro: sem jogadores, sem divisão, ligado ao clube novo."""
+    """Time novo copiado de outro: sem jogadores, sem divisão e sem estadual, ligado ao clube
+    novo. O estadual herdado punha um 21º time no Paulista de 20 e o Brasil sumia da lista de
+    países do New Game (teste 1)."""
     head = bytearray(data[team.start:team.lists_at])
     head[2] = 0                                                     # classificação anterior
     struct.pack_into("<II", head, 7, NONE, NONE)                    # divisão atual e anterior
+    struct.pack_into("<I", head, TEAM_STATE, NONE)
     tail = bytearray(data[team.tail_at:team.end])
     struct.pack_into("<I", tail, len(tail) - 8 - TEAM_CLUB, club_index)
     struct.pack_into("<II", tail, len(tail) - 8, index, uid)
