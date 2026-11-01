@@ -26,7 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import arbitros  # noqa: E402
+from fm06patch import arbitros, clubes_novos  # noqa: E402
 
 SHEET = ROOT / "data" / "modelos" / "arbitros_2026.xlsx"
 PEOPLE_BACKUP = ROOT / "workspace" / "baseline" / "people_db.original.dat"
@@ -51,7 +51,8 @@ def main() -> None:
         shutil.copy2(people_path, PEOPLE_BACKUP)
         print(f"[OK] cópia do people_db original em {PEOPLE_BACKUP}")
     original = PEOPLE_BACKUP.read_bytes()
-    server = (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes()
+    server = clubes_novos.with_new_clubs(       # o original com os clubes novos (C13)
+        (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes())
 
     referees = arbitros.load_sheet(SHEET)
     print("Lendo os árbitros do people_db...", flush=True)

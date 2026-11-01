@@ -42,7 +42,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import elenco_times, estaduais_clubes, estrangeiros, historico, people_contracts, server_teams  # noqa: E402
+from fm06patch import clubes_novos, elenco_times, estaduais_clubes, estrangeiros, historico, people_contracts, server_teams  # noqa: E402
 
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
@@ -94,7 +94,8 @@ def main() -> None:
     if hashlib.sha256(people).hexdigest().upper() != PEOPLE_SHA256:
         print(f"[AVISO] workspace/baseline/{BACKUP.name} não é o people_db de 12/10 (o do teste do Saviola): "
               "se foi copiado de um jogo já mexido, o reforço corrige os times, mas confira os elencos")
-    server = (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes()
+    server = clubes_novos.with_new_clubs(       # o original com os clubes novos (C13)
+        (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes())
 
     identities = list(csv.DictReader(IDENTITIES.open(encoding="utf-8-sig")))
     foreign = estrangeiros.identity_rows()          # clubes da CONMEBOL (vazio sem data/estrangeiros)

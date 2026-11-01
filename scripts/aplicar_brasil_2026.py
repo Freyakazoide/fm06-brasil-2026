@@ -53,7 +53,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from fm06patch.brasil_2026 import SERIES, apply as apply_db, apply_last_season, lnc_text, plan, write_report  # noqa: E402
 from fm06patch.server_teams import find_brazil_teams  # noqa: E402
 from fm06patch.exe_patches import EXE_SHA256, PATCHES, apply as apply_exe  # noqa: E402
-from fm06patch import (campeoes, cores, estaduais_clubes, estadios, financas, historico, instalacoes,  # noqa: E402
+from fm06patch import (campeoes, clubes_novos, cores, estaduais_clubes, estadios, financas, historico, instalacoes,  # noqa: E402
                        identidade, nomes_fases, nomes_regens, orcamentos, patrocinio, regens_futuros, reputacao,
                        rivais, traducao)
 import aplicar_historico  # noqa: E402
@@ -176,7 +176,10 @@ def main() -> None:
                 print(f"[OK] removido {path}")
         return
 
-    data = original_server_db(server)
+    pristine = original_server_db(server)
+    data = clubes_novos.with_new_clubs(pristine)              # clubes de 2026 que não existem no FM06 (C13)
+    if len(data) != len(pristine):
+        print(f"[OK] clubes novos: {', '.join(c.short for c in clubes_novos.load_sheet(pristine))}")
     taken = frozenset(estaduais_clubes.equivalents(data))     # clubes do FM06 que já são um clube de 2026
     placements = plan(data, DATA_DIR, taken)
     counts = Counter(p.serie for p in placements)
@@ -210,7 +213,7 @@ def main() -> None:
 
     if not BACKUP.exists():
         BACKUP.parent.mkdir(parents=True, exist_ok=True)
-        BACKUP.write_bytes(data)
+        BACKUP.write_bytes(pristine)
         print(f"[OK] cópia do banco original em {BACKUP}")
     db, missing = apply_last_season(apply_db(data, placements), placements, DATA_DIR / "classificacao_2025.csv")
     if missing:

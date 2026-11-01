@@ -31,6 +31,20 @@ NONE = 0xFFFFFFFF
 _RECORD = re.compile(rb"\x0a\x00(.)(..)\x00\x00(....)(....)", re.S)
 _DATES = b"\x6c\x07\x00\x00\x6c\x07\x00\x00\x6c\x07\x00\x00\x00"
 _CLUB_TAIL = b"\x00\xbd\x00\x00\x00"
+# fim da lista de clubes com folga: 0x5B8590 no banco 6.0.2, mais os clubes novos que o
+# clubes_novos.py põe no fim dela. A busca dos times brasileiros fica em BRAZIL_END, como sempre:
+# depois dele há 24 clubes brasileiros de atualizações do banco (Luverdense, Coruripe, Estácio de
+# Sá...) que nunca entraram no plano; olhar além dele só para os clubes novos (NEW_REPO).
+CLUBS_END = 0x700000
+BRAZIL_END = 0x400000
+LAST_CLUB_UID = 0x0206D174          # o último clube e o último time do banco 6.0.2
+NEW_UIDS = range(9_100_000, 9_110_000)     # clubes_novos.NEW_UID
+
+
+def _new_repo(uid: int) -> bool:
+    """O "UID do repositório" de um clube novo: o do registro anterior (o último do banco ou
+    outro clube novo)."""
+    return uid == LAST_CLUB_UID or uid in NEW_UIDS
 
 
 @dataclass
@@ -79,7 +93,7 @@ def _string(data: bytes, offset: int) -> tuple[str, int]:
     return data[offset + 4:end].decode("utf-16le", "replace"), end + 2
 
 
-def club_names(data: bytes, uid: int, limit: int = 0x400000) -> tuple[str, str]:
+def club_names(data: bytes, uid: int, limit: int = CLUBS_END) -> tuple[str, str]:
     """Nome longo e curto do clube.
 
     O registro do clube começa com u32, u32 UID, 00 BD 00 00 00 00, apelidos e,
@@ -168,9 +182,9 @@ def find_brazil_teams(data: bytes) -> list[TeamRecord]:
     """Todos os times de clubes brasileiros (nação 0xBD no registro do clube),
     mais os que estão nas divisões nacionais."""
     teams = {t.club_uid: t for t in find_teams(data)}
-    for match in _CLUB_HEADER.finditer(data, 0, 0x400000):
+    for match in _CLUB_HEADER.finditer(data, 0, CLUBS_END):
         uid = struct.unpack("<I", match.group(2))[0]
-        if uid == 0 or uid in teams:
+        if uid == 0 or uid in teams or (match.start() >= BRAZIL_END and not _new_repo(uid)):
             continue
         mark = data.find(_DATES, match.end(), match.end() + 0x600)
         if mark < 0:

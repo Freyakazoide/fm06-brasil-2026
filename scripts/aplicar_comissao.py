@@ -41,7 +41,7 @@ import openpyxl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import comissao, elenco_times, estrangeiros, historico, nomes_regens, people_contracts  # noqa: E402
+from fm06patch import clubes_novos, comissao, elenco_times, estrangeiros, historico, nomes_regens, people_contracts  # noqa: E402
 
 STAFF_CSV = ROOT / "data" / "brasil" / "comissao" / "comissao_2026.csv"
 IDENTITIES = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
@@ -119,7 +119,8 @@ def main() -> None:
         shutil.copy2(people_path, PEOPLE_BACKUP)
         print(f"[OK] cópia do people_db original em {PEOPLE_BACKUP}")
     original = PEOPLE_BACKUP.read_bytes()
-    server = (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes()
+    server = clubes_novos.with_new_clubs(       # o original com os clubes novos (C13)
+        (SERVER_BACKUP if SERVER_BACKUP.exists() else game / "data" / "db" / "server_db.dat").read_bytes())
 
     identities = _identities()
     uid_of = {r["clube_2026"]: int(r["uid_jogo"]) for r in identities}

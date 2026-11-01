@@ -30,7 +30,7 @@ from pathlib import Path
 from . import historico
 from .estaduais import ID as STATE_ID
 from .estaduais_clubes import (LOWER_ID, STATE_FIELD, _words, normalize, state_teams, uf_of)
-from .server_teams import _DATES, _string, find_brazil_teams
+from .server_teams import _DATES, BRAZIL_END, _string, find_brazil_teams
 
 CSV_PATH = Path(__file__).resolve().parents[2] / "data" / "brasil" / "historico" / "campeoes.csv"
 NONE = historico.NONE
@@ -120,7 +120,7 @@ def foreign_teams(data: bytes) -> list[Team]:
     codes = {code: nation for nation, code in FOREIGN.items()}
     pattern = re.compile(rb"(....)(....)\x00([" + re.escape(bytes(codes)) + rb"])\x00\x00\x00\x00", re.S)
     teams = []
-    for match in pattern.finditer(data, 0, 0x400000):
+    for match in pattern.finditer(data, 0, BRAZIL_END):
         uid = struct.unpack("<I", match.group(2))[0]
         mark = data.find(_DATES, match.end(), match.end() + 0x600)
         if mark < 0:

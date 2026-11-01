@@ -23,6 +23,8 @@ from __future__ import annotations
 import struct
 from dataclasses import dataclass
 
+from .server_teams import CLUBS_END
+
 BRL_PER_GBP = 5.08
 
 
@@ -61,7 +63,7 @@ def read(data: bytes, start: int) -> ClubFinance:
 def record_start(data: bytes, repo_uid: int, nation: int = 0xBD) -> int:
     """Posição do byte de tipo do registro do clube que server_teams.club_names(repo_uid) lê."""
     needle = struct.pack("<I", repo_uid) + b"\x00" + struct.pack("<I", nation)
-    at = data.find(needle, 0, 0x400000)
+    at = data.find(needle, 0, CLUBS_END)
     if at < 0:
         raise ValueError(f"clube {repo_uid} não achado")
     return at + 4

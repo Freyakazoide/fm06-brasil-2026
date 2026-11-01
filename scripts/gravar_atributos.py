@@ -26,7 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from fm06patch import atributos_jogadores  # noqa: E402
+from fm06patch import atributos_jogadores, clubes_novos  # noqa: E402
 
 PLAYERS = ROOT / "workspace" / "mods" / "brasil_2026_jogadores.json"
 SERVER_BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"
@@ -60,7 +60,7 @@ def main() -> None:
     factor = json.loads((ROOT / "config" / "local.json").read_text(encoding="utf-8")).get("wage_factor")
     if not factor:
         print("[AVISO] sem wage_factor em config/local.json: o salário fica como está")
-    changes = atributos_jogadores.plan(people, server_path.read_bytes(), players, spec.get("year_shift", 0),
+    changes = atributos_jogadores.plan(people, clubes_novos.with_new_clubs(server_path.read_bytes()), players, spec.get("year_shift", 0),
                                        wage_factor=float(factor) if factor else None)
     data = atributos_jogadores.apply(people, changes) if args.apply else None   # pode desfazer gravações (aviso)
 
