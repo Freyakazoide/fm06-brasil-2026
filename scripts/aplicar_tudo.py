@@ -11,9 +11,10 @@ Etapas (o script para e avisa quando o jogo tem de ser aberto ou fechado):
 2. jogo aberto (New Game, tela principal): live_player_editor.py --squads-all, que conta
    os jogadores de 2005 de cada clube; depois feche o jogo;
 3. jogo fechado: montar_elencos.py, aplicar_comissao.py --apply, aplicar_arbitros.py --apply,
-   aplicar_historico.py --apply, gravar_atributos.py --apply (atributos, CA/PA, personalidade,
-   físico, nascimento, nação, preferred moves e jogos pela seleção dos jogadores direto no
-   people_db) e a cópia do .lnc dos jogadores para data\\db\\lnc\\all. Depois: New Game.
+   aplicar_historico.py --apply, aplicar_lesoes.py --apply (lesões do começo de 2026),
+   gravar_atributos.py --apply (atributos, CA/PA, personalidade, físico, nascimento, nação,
+   preferred moves e jogos pela seleção dos jogadores direto no people_db) e a cópia do .lnc
+   dos jogadores para data\\db\\lnc\\all. Depois: New Game.
 
 O injetor (live_player_editor.py ... --apply, a antiga etapa 4) não é mais usado: tudo o que
 ele gravava na memória vai agora no arquivo (docs\\reversing\\rea-atributos.md). Continua para
@@ -148,6 +149,7 @@ def main() -> None:
         run(3, "aplicar_comissao.py", "--apply")
         run(3, "aplicar_arbitros.py", "--apply")
         run(3, "aplicar_historico.py", "--apply")
+        run(3, "aplicar_lesoes.py", "--apply")
         run(3, "gravar_atributos.py", "--apply")
         lnc.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(PLAYERS_LNC, lnc)
