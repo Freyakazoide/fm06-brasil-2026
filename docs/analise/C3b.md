@@ -77,3 +77,6 @@ Hipóteses a ver no jogo:
   - `person_index` dá 811 → 317 e 114 → 71;
   - a inserção no banco falso e no original não mexe no resto do arquivo e não duplica;
   - o texto da planilha vira o tipo certo ("calcanhar" não cai em "lca").
+- 01/11, instalado (`aplicar_tudo --rapido`, etapa 3 `aplicar_lesoes.py --apply`): no
+  `server_db.dat` do jogo a lista está em `0x13D512C` (o banco cresce antes dela) com 1.229
+  registros; os 4 últimos são os da tabela acima. Falta ver no jogo.
