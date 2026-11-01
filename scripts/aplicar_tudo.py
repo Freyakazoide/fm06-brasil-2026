@@ -87,8 +87,9 @@ def need_closed() -> None:
 
 def need_open() -> None:
     wait("Abra o fm_brasil.exe e comece um New Game com: Países Escolhidos = só o Brasil; Base Dados = a\n"
-         "    maior; Carregar Todos Jogadores de = os países da América do Sul (senão os clubes da CONMEBOL\n"
-         "    ficam sem os jogadores de 2026). Espere chegar na tela principal.")
+         "    maior; Carregar Todos Jogadores de = os 9 países da América do Sul: Argentina, Bolívia,\n"
+         "    Chile, Colômbia, Equador, Paraguai, Peru, Uruguai e Venezuela (sem um deles, os clubes da\n"
+         "    CONMEBOL ficam sem os jogadores de 2026). Espere chegar na tela principal.")
     while game_running() is False:
         wait("Não achei o fm_brasil.exe aberto. Abra o jogo e chegue na tela principal.")
 
