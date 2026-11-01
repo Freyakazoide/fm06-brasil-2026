@@ -117,6 +117,12 @@ def _janelas_2026_swaps(data: bytes):
     return windows_swaps(data)
 
 
+def _estrangeiros_2026_swaps(data: bytes):
+    from .transferencias import foreign_swaps
+
+    return foreign_swaps(data)
+
+
 def _ano_exibido_swaps(data: bytes):
     from .ano_exibido import build
 
@@ -471,6 +477,14 @@ PATCHES = {
             "(BRA_TRANSFER_RULES); a 2ª é gravada por um stub na .fm26 chamado de 0x00BB32F4. "
             "Ver src/fm06patch/transferencias.py e docs/analise/C8b.md.",
             build=_janelas_2026_swaps,
+        ),
+        Patch(
+            "estrangeiros_2026",
+            "Estrangeiros de 2026 (CBF): até 9 relacionados por jogo (regra de convocatória código 4 "
+            "da bra_setup_fixture_rules, push em 0x00BBA3D0, era 3) e sem limite no elenco (sai a "
+            "regra de transferência tipo 4 = 3, refeita pelo stub do janelas_2026). Depois do "
+            "janelas_2026. Ver src/fm06patch/transferencias.py e docs/analise/C8b.md.",
+            build=_estrangeiros_2026_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

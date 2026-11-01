@@ -82,7 +82,7 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   0x00ADC540` (13 bytes: `call` + 8 `nop`), que grava a janela e refaz essa chamada. A
   janela complementar de março fica de fora (o jogo não tem a restrição de quem jogou
   estadual).
-- Limite de 9 estrangeiros: depende de achar a regra de inscrição (acima).
+- Limite de 9 estrangeiros: patch `estrangeiros_2026` (Diário, 01/11).
 
 ## Diário
 
@@ -99,4 +99,28 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
   `0x00E0FE40`) e `LEAGUE_SETTINGS` (`0x011180AC`, as regras da fase de liga da C9b). Hipótese:
   as regras de inscrição vêm do `server_db` (dados da competição), não do código. Próximo:
   ver no jogo o que a Série A mostra hoje e procurar o registro no banco.
+- 01/11, janelas no jogo: **deu certo**. Proposta depois de 3/3 ficou para a janela de
+  20/7 (usuário). A tela de Regras da Série A mostra "Entre Sexta-Feira 5 Janeiro 2027 e
+  Sábado 3 Março 2027" e "Entre Quinta-Feira 20 Julho 2026 e Segunda-Feira 11 Setembro
+  2026". Visto: o dia da semana é o do ano do motor (5/1/2007 foi sexta; 5/1/2027 é terça),
+  efeito do `ano_exibido_mais_20`; só aparência, não mexido.
+- 01/11, a mesma tela mostra as duas regras de estrangeiros:
+  - "Regras de Jogo: A convocatória não pode incluir mais do que 3 jogadores estrangeiros."
+    = regra de convocatória código 4 (texto em `0x00A57CAE`, "The match squad must have no
+    more than..."; códigos 2, 3, 4 e 0x35, tabela `0x00A58748`). Gravada pela
+    `bra_setup_fixture_rules` (`0x00BBA3B0`, registrada pelo nome em `0x00AEB239` dentro de
+    `0x00AEA970`): `push 0 ; push -1 ; push 3 ; push 4 ; call 0x00A58C60`.
+    `0x00A58C60(código, valor, byte, troca)` cria a regra de 8 bytes {+0 código, +1 byte,
+    +4 valor} (`0x00A58CBA`…`0x00A58CC3`) e troca a existente com o mesmo código.
+  - "Regras de Transferências: Clubes só podem ter 3 jogadores estrangeiros no elenco." =
+    regra de transferência tipo 4 = 3 (`0x00ADC540`, texto "Teams are restricted to N
+    foreign players in their squad", `0x00ADA87D`). **Conferido: tipo 4 é o limite de
+    estrangeiros no elenco.**
+  - "7 suplentes convocados, máximo 3 utilizados" vem de `0x00AD4FC0`, valores fixos por
+    índice da competição (+0x121); não mexido.
+- 01/11, patch `estrangeiros_2026`: convocatória 3 -> 9 (`0x00BBA3D0`, `6A03` -> `6A09`) e
+  a regra de elenco sai (os 13 bytes da chamada refeita no stub do `janelas_2026` viram
+  `nop`; a CBF limita só os relacionados). Vale para todas as competições do Brasil que usam
+  essas regras. A redução aprovada para 2027–2030 (8, 7, 6, 5) não entra: o valor é fixo.
+  Testes ok. Não instalado: jogo aberto.
 

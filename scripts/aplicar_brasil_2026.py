@@ -81,6 +81,7 @@ EXE_PATCHES = [
     "premiacao_conmebol_2026",
     "premio_vitoria_libertadores",
     "janelas_2026",
+    "estrangeiros_2026",
 ]
 SERVER_SHA256 = "9FB7A4A2B87798120BF4D9DA9E86E7DABB99C668802B2FB9ECB035230F66BE62"
 BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"

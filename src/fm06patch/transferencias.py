@@ -63,3 +63,27 @@ def windows_swaps(data: bytes):
             Swap(off(FIRST_END_DAY_AT), bytes.fromhex("6A1A"), bytes([0x6A, first_end[0]])),
             Swap(off(NEXT_CALL_AT), data[off(NEXT_CALL_AT):off(NEXT_CALL_AT) + 13], site),
             Swap(sec_off(SECOND_STUB), bytes(len(code)), code))
+
+
+# Estrangeiros (ficha C8b). Por jogo: `bra_setup_fixture_rules` (0x00BBA3B0, registrada pelo
+# nome em 0x00AEA970) grava a regra de convocatória código 4 = 3 por 0x00A58C60 (código,
+# valor, -1, 0); os códigos 2, 3, 4 e 0x35 são "The match squad must have no more than N
+# foreign players" (0x00A57C7E). 2026: 9 relacionados nas Séries A e B (vale para todas as
+# competições do Brasil que usam essas regras). No elenco: a regra de transferência tipo 4 =
+# 3 ("Clubes só podem ter 3 jogadores estrangeiros no elenco") é a chamada que o stub das
+# janelas refaz; a CBF não limita o elenco, então ela sai (o stub vira `ret` depois da 2ª
+# janela). Depende do janelas_2026.
+MATCH_FOREIGN_AT = 0x00BBA3D0        # push 3
+MATCH_FOREIGN_2026 = 9
+
+
+def foreign_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    (_, _), second = WINDOWS_2026
+    stub = _second_stub(*second)
+    redo = bytes(Asm(0).push(-1).push(3).push(4).mov_ecx_esi().code) + b"\xE8"
+    at = stub.index(redo)
+    assert stub[at + 13:] == b"\xC3"
+    return (Swap(off(MATCH_FOREIGN_AT), bytes.fromhex("6A03"), bytes([0x6A, MATCH_FOREIGN_2026])),
+            Swap(sec_off(SECOND_STUB + at), stub[at:at + 13], bytes.fromhex("90" * 13)))

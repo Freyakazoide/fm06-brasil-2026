@@ -73,3 +73,23 @@ def test_applies_with_all_patches():
     assert "janelas_2026" in aplicar.EXE_PATCHES
     out = exe_patches.apply(EXE.read_bytes(), aplicar.EXE_PATCHES)
     assert out[off(transferencias.NEXT_CALL_AT)] == 0xE8
+
+
+@pytest.mark.skipif(not EXE.exists(), reason="sem o fm.exe original em workspace/rea")
+def test_foreign_rules_2026():
+    data = EXE.read_bytes()
+    fixture = _disasm(data, 0x00BBA3B0, 0x30)
+    assert _pushes_before(fixture, 0x00BBA3D6) == [0, -1, 3, 4]       # código 4, valor 3
+    out = exe_patches.apply(data, ["janelas_2026", "estrangeiros_2026"])
+    fixture = _disasm(out, 0x00BBA3B0, 0x30)
+    assert _pushes_before(fixture, 0x00BBA3D6) == [0, -1, 9, 4]
+    sys.path.insert(0, str(ROOT / "workspace" / "pydeps"))
+    capstone = pytest.importorskip("capstone")
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    at = sec_off(transferencias.SECOND_STUB)
+    stub = list(md.disasm(out[at:at + 0x40], transferencias.SECOND_STUB))
+    calls = [x for x in stub if x.mnemonic == "call"]
+    assert [int(c.op_str, 16) for c in calls] == [transferencias.WINDOW]
+    after = stub[stub.index(calls[0]) + 1:]
+    assert [x.mnemonic for x in after][:14] == ["nop"] * 13 + ["ret"]
+
