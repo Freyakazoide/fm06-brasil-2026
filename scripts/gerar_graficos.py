@@ -156,7 +156,8 @@ def main() -> None:
         report.append([uid, ident["clube_2026"], ident["uf"], ident["fm06_nome"],
                        "sim" if path else "NÃO", "sim" if row else "NÃO",
                        ", ".join(k for k, v in kits.items() if v)])
-    shutil.rmtree(OUT / "data", ignore_errors=True)
+    for part in ("logos/clubs", "kits/clubs"):           # só o que é deste script (os logos das
+        shutil.rmtree(OUT / "data" / "graphics" / "pictures" / part, ignore_errors=True)   # competições ficam)
     count = graficos.pacote(OUT, clubs)
     lnc = OUT / "data" / "db" / "lnc" / "all" / "brasil_2026_clubes.lnc"
     lnc.parent.mkdir(parents=True, exist_ok=True)
