@@ -55,3 +55,28 @@ def test_original_table():
     assert by_team[287] == [(0, 0, 4_700_000)]
     assert sorted(by_team[290]) == [(0, 0, 50_000), (22_500_000, 103, 0)]
     assert (0, 0, 100_000_000) in by_team[544]
+
+
+def test_clear_loans_keeps_budget_and_other_clubs():
+    records = [(10, 900_000, 60, 1_000_000, 1), (11, 0, 0, 2000, 0), (12, 500_000, 42, 0, 1)] +               [(500 + i, 0, 0, 1000, 0) for i in range(120)] + [(77, 300_000, 30, 0, 1)]
+    db = fake_db(records)
+    out, cleared = orcamentos.clear_loans(db, {10, 11, 12})
+    assert len(out) == len(db) and len(cleared) == 2
+    table = {e.team: (e.loan, e.months, e.budget) for e in orcamentos.entries(out)}
+    assert table[10] == (0, 0, 1_000_000) and table[12] == (0, 0, 0)
+    assert table[77] == (300_000, 30, 0)
+
+
+@pytest.mark.skipif(not ORIGINAL.exists(), reason="sem o server_db original")
+def test_clear_loans_brazil_original():
+    import csv
+
+    data = ORIGINAL.read_bytes()
+    ids = csv.DictReader((ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv").open(encoding="utf-8-sig"))
+    teams = {t for t in (orcamentos.team_index(data, int(r["uid_repo"])) for r in ids if r["uid_repo"]) if t}
+    out, cleared = orcamentos.clear_loans(data, teams)
+    before = {e.at: e for e in orcamentos.entries(data)}
+    assert 290 in teams and any(e.team == 290 and before[e.at].loan == 22_500_000 for e in cleared)   # Flamengo
+    assert all(e.loan == 0 for e in orcamentos.entries(out) if e.team in teams)
+    assert sum(1 for e in orcamentos.entries(out) if e.loan) == 420 - len(cleared)
+

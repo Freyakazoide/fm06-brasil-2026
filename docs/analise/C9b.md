@@ -291,3 +291,8 @@ prêmio das ligas e as cotas de TV.
   de maio R$ 5,67M -> R$ 7,5M e da temporada R$ 23,58M -> R$ 25,42M (+R$ 1,84M nos dois).
   Se o save foi carregado antes desse jogo, não foi informado: o teste de save/carregar
   continua em aberto.
+- 31/10, mesmo save: o usuário salvou e carregou, e as vitórias seguintes pagaram ("deu
+  certinho"): o prêmio por vitória vale depois de carregar o save. Oitavas: **deu certo**,
+  notícia de 16/08/2026 "Flamengo recebe R$6.750.000 ... por disputar a Copa Libertadores
+  da América do Sul" (£1.328.740 × 5,08 = R$ 6.750.000), "Prêmios em Dinheiro" de agosto
+  R$ 6,74M, temporada R$ 32,17M. A rodada aparece na notícia como "2ª Elim.".

@@ -130,5 +130,13 @@ câmbio do mod (R$ 5,08):
 O resto vai de R$ 0,5 mi (North) a R$ 22,9 mi (Vasco, Internacional), espalhado pelas
 Séries A a D e estaduais. A aba Estrutura de `clubes_estrutura_2026.xlsx` só tem dívida
 para o Flamengo (R$ 174 mi, coluna `divida_brl`). Mexer é só trocar `loan`/`months` nos
-registros (mesmo tamanho, como o orçamento); falta decidir o que pôr.
+registros (mesmo tamanho, como o orçamento).
+
+Decisão do usuário (31/10): zerar todos, Flamengo incluído ("começar clean"). Conferido no
+código: o setup só cria o empréstimo com valor diferente de 0 (`0x006D4569`, `test ebx, ebx
+; je 0x006D4594`), e um registro com orçamento continua valendo sem empréstimo (só é pulado
+com os dois campos em 0, `0x006D44CD`…`0x006D44D7`). `orcamentos.clear_loans` zera valor e
+prazo dos registros dos 278 clubes de `identidade_fm06.csv` depois do orçamento;
+`aplicar_brasil_2026.py` chama. Testes ok (Flamengo £22,5 mi -> 0, clubes de fora
+iguais). Falta instalar (jogo aberto) e ver no jogo.
 

@@ -20,6 +20,10 @@ dois (orçamento num, empréstimo noutro, como o Flamengo) e o setup trata os do
 mesmo registro. Por isso um clube sem registro ganha o registro que sobra quando os dois de
 outro clube da planilha viram um só; o arquivo não muda de tamanho e nenhum clube fora da
 planilha muda.
+
+Empréstimos de 2005 (ficha C5b, 31/10): o setup só cria o empréstimo se o valor do registro
+não for 0 (0x006D4569, `test ebx, ebx ; je`). clear_loans zera valor e prazo nos registros
+dos clubes brasileiros; o orçamento do mesmo registro continua valendo.
 """
 
 from __future__ import annotations
@@ -132,6 +136,13 @@ def apply(data: bytes, changes: list[Entry], into: bytes | None = None) -> bytes
     for entry in changes:
         out[entry.at:entry.at + _DATA.size] = entry.pack()
     return bytes(out)
+
+
+def clear_loans(db: bytes, teams: set[int]) -> tuple[bytes, list[Entry]]:
+    """Zera empréstimo e prazo dos registros desses times (lidos em ``db``, já com o orçamento).
+    Devolve o banco e os registros como ficaram."""
+    cleared = [replace(e, loan=0, months=0) for e in entries(db) if e.team in teams and e.loan]
+    return apply(db, cleared), cleared
 
 
 def load_sheet(path) -> dict[str, float]:

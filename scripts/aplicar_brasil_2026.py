@@ -287,6 +287,12 @@ def main() -> None:
             name_of = {u: c for c, u in by_name.items()}
             print("[AVISO] sem orçamento (sem time no banco ou sem registro livre): "
                   + ", ".join(name_of.get(u, str(u)) for u in budget_plan.missing))
+        teams = {t for t in (orcamentos.team_index(data, i.repo_uid) for i in identities if i.repo_uid)
+                 if t is not None}
+        before = {e.at: e.loan for e in orcamentos.entries(db)}
+        db, loans = orcamentos.clear_loans(db, teams)
+        print(f"[OK] empréstimos de 2005 zerados em {len(loans)} registros de clubes brasileiros "
+              f"(£{sum(before[e.at] for e in loans):,})")
     db, cleared = historico.clear_brazil_continental(db)
     if cleared:
         print("[OK] vaga continental do banco original retirada:", ", ".join(cleared))
