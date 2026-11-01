@@ -85,6 +85,7 @@ EXE_PATCHES = [
     "substituicoes_2026",
     "banco_12_2026",
     "banco_12_todas",
+    "orcamento_salarial_folha",
 ]
 SERVER_SHA256 = "9FB7A4A2B87798120BF4D9DA9E86E7DABB99C668802B2FB9ECB035230F66BE62"
 BACKUP = ROOT / "workspace" / "baseline" / "server_db.original.dat"

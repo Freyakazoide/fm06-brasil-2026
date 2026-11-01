@@ -80,3 +80,36 @@ def test_clear_loans_brazil_original():
     assert all(e.loan == 0 for e in orcamentos.entries(out) if e.team in teams)
     assert sum(1 for e in orcamentos.entries(out) if e.loan) == 420 - len(cleared)
 
+
+
+def test_wage_stub():
+    from fm06patch import exe_patches
+    from fm06patch.exe_cave import off, sec_off
+
+    sys.path.insert(0, str(ROOT / "workspace" / "pydeps"))
+    capstone = pytest.importorskip("capstone")
+    exe = ROOT / "workspace" / "rea" / "fm_602_original.exe"
+    if not exe.exists():
+        pytest.skip("sem o exe original")
+    data = exe.read_bytes()
+    assert struct.unpack_from("<I", data, off(orcamentos.WAGE_SLOT_AT))[0] == orcamentos.WAGE_FORMULA
+    out = exe_patches.apply(data, ["orcamento_salarial_folha"])
+    assert struct.unpack_from("<I", out, off(orcamentos.WAGE_SLOT_AT))[0] == orcamentos.WAGE_STUB
+    md = capstone.Cs(capstone.CS_ARCH_X86, capstone.CS_MODE_32)
+    at = sec_off(orcamentos.WAGE_STUB)
+    ins = list(md.disasm(out[at:at + 0x40], orcamentos.WAGE_STUB))
+    text = [f"{i.mnemonic} {i.op_str}".strip() for i in ins]
+    assert text[:4] == ["push esi", "mov esi, ecx", "push dword ptr [esp + 8]", f"call {orcamentos.WAGE_FORMULA:#x}"]
+    assert "mov eax, dword ptr [esi + 0x90]" in text and "imul eax, eax, 0xb" in text
+    tail = [i.mnemonic for i in ins][text.index("cmp eax, ecx"):][:5]
+    assert tail == ["cmp", "jge", "mov", "pop", "ret"]
+
+
+def _run_stub(formula, payroll):
+    """O que o desvio devolve, em Python (mesma conta)."""
+    return max(formula, payroll * orcamentos.WAGE_MARGIN // 10)
+
+
+def test_wage_rule():
+    assert _run_stub(413_803, 520_578) == 572_635          # Flamengo de 27/10: sobe para a folha + 10%
+    assert _run_stub(341_132, 100_000) == 341_132          # fórmula maior fica

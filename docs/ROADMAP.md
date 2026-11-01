@@ -78,7 +78,8 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 ### Fase 3: dinheiro dos clubes
 
 - ~~Orçamento de contratações de 2026 (ficha C5b)~~: entrou em 27/10 (tabela do
-  FINANCE_MANAGER no server_db). Falta: o orçamento salarial (fórmula do jogo + diretoria).
+  FINANCE_MANAGER no server_db). Orçamento salarial: patch `orcamento_salarial_folha`
+  (01/11, nunca abaixo da folha + 10%).
   Os empréstimos de 2005 foram zerados em 01/11.
 - Patrocínio de 2026 (ficha C1b + `patrocinadores_2026.xlsx`, já preenchida).
 - Premiação e cotas de TV de 2026 (ficha C9b + `premiacao_2026.xlsx`, já preenchida).

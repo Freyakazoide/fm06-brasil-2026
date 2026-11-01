@@ -143,4 +143,21 @@ de clubes brasileiros (£160.450.000)" (67 clubes; o Guarani tem dois). No `serv
 jogo: nenhum clube brasileiro com empréstimo, os 352 de fora iguais ao original, Flamengo
 com empréstimo 0 e orçamento £14.921.260 (R$ 75,8 mi). New Game (01/11): **deu certo**,
 o usuário confirmou as dívidas em 0 ("Empréstimos em Dívida" vazio).
+- 01/11, orçamento salarial. Conferido no código:
+  - a fórmula `0x008AB710` (método `0xC8`) não tem chamada direta;
+  - só é usada pelas vtables, com ponteiros em `0x010EF40C`, `0x010EF56C` e `0x010EFEDC`
+    (finanças completas `0x010EFE14` + `0xC8`);
+  - devolve o valor; quem chama grava em +0x88 (init `0x00A87170` e posse do técnico
+    `0x006F4F4C`).
 
+  No New Game de 27/10, o Flamengo tinha orçamento £413.803/sem para uma folha (+0x90) de
+  £520.578/sem: começava estourado.
+- 01/11, patch `orcamento_salarial_folha`: o ponteiro `0x010EFEDC` vai para um desvio em
+  `.fm26+0x6300`. O desvio chama a fórmula e devolve o maior entre ela e a folha × 11/10
+  (`max(eax, [esi+0x90]*11/10)`, `ret 4`). Só nas finanças completas; as outras duas vtables
+  ficam.
+
+  Testes ok. Instalado: no `fm_brasil.exe` `0x010EFEDC` = `0x015BA300` e o desvio confere.
+
+  Hipótese a ver no jogo: na posse do técnico a folha já está em +0x90, então o Flamengo deve
+  mostrar orçamento salarial ≥ folha + 10% (cerca de R$ 11,6 mi/mês para R$ 10,6 mi de folha).

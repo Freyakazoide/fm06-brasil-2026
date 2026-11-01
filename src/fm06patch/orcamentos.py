@@ -32,6 +32,7 @@ import struct
 from dataclasses import dataclass, replace
 
 from . import server_teams
+from .exe_cave import SECTION_VA, Asm, off, sec_off, section_swaps
 from .financas import BRL_PER_GBP
 
 RECORD = 24
@@ -159,3 +160,36 @@ def load_sheet(path) -> dict[str, float]:
         if club and value not in (None, ""):
             out[club] = float(value)
     return out
+
+
+# Orçamento salarial (ficha C5b). O init das finanças completas (0x00A87170) e a posse do
+# técnico (0x006F4F4C) gravam em +0x88 o que o método 0xC8 devolve (0x008AB710, fórmula com a
+# reputação do clube e da nação); ninguém chama a fórmula direto, só pelas vtables (finanças
+# completas 0x010EFE14: ponteiro em 0x010EFEDC). No New Game de 27/10 o Flamengo ficou com
+# £413.803/sem de orçamento para £520.578/sem de folha (+0x90). O patch troca esse ponteiro
+# por um desvio que chama a fórmula e devolve o maior entre ela e a folha + 10%.
+WAGE_FORMULA = 0x008AB710
+WAGE_SLOT_AT = 0x010EFEDC           # vtable das finanças completas + 0xC8
+WAGE_STUB = SECTION_VA + 0x6300
+PAYROLL = 0x90                      # folha semanal (£), conferida com a tela
+WAGE_MARGIN = 11                    # folha × 11 / 10
+
+
+def _wage_stub() -> bytes:
+    a = Asm(WAGE_STUB)
+    a.raw(bytes.fromhex("56" "8BF1" "FF742408"))            # push esi ; mov esi, ecx ; push [esp+8]
+    a.call(WAGE_FORMULA)                                    # eax = fórmula
+    a.raw(bytes.fromhex("50" "8B86") + struct.pack("<I", PAYROLL)   # push eax ; mov eax, [esi+0x90]
+          + bytes.fromhex("6BC0") + bytes([WAGE_MARGIN])            # imul eax, eax, 11
+          + bytes.fromhex("33D2" "B90A000000" "F7F1" "8BC8" "58")   # eax / 10 -> ecx ; pop eax
+          + bytes.fromhex("3BC1" "7D02" "8BC1" "5E" "C20400"))      # eax = max(eax, ecx) ; ret 4
+    return bytes(a.code)
+
+
+def wage_swaps(data: bytes):
+    from .exe_patches import Swap
+
+    code = _wage_stub()
+    return (*section_swaps(data),
+            Swap(off(WAGE_SLOT_AT), struct.pack("<I", WAGE_FORMULA), struct.pack("<I", WAGE_STUB)),
+            Swap(sec_off(WAGE_STUB), bytes(len(code)), code))

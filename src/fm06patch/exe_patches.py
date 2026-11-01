@@ -135,6 +135,12 @@ def _banco_12_2026_swaps(data: bytes):
     return bench_swaps(data)
 
 
+def _orcamento_salarial_swaps(data: bytes):
+    from .orcamentos import wage_swaps
+
+    return wage_swaps(data)
+
+
 def _banco_12_todas_swaps(data: bytes):
     from .transferencias import bench_all_swaps
 
@@ -527,6 +533,14 @@ PATCHES = {
             "acompanha e as trocas do índice 21 (4) viram 5. Fica o índice 19 (0/0). Depois do "
             "banco_12_2026. Ver src/fm06patch/transferencias.py e docs/analise/C8b.md.",
             build=_banco_12_todas_swaps,
+        ),
+        Patch(
+            "orcamento_salarial_folha",
+            "Orçamento salarial nunca abaixo da folha + 10%: o ponteiro do método 0xC8 das finanças "
+            "completas (0x010EFEDC, fórmula 0x008AB710) vai para um desvio na .fm26 que devolve o "
+            "maior entre a fórmula e a folha semanal (+0x90) × 1,1. Ver src/fm06patch/orcamentos.py "
+            "e docs/analise/C5b.md.",
+            build=_orcamento_salarial_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",
