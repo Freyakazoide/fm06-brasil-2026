@@ -122,6 +122,7 @@ def apply(data: bytes, colours: dict[int, list]) -> tuple[bytes, int]:
 
 
 def plan(identities, path: Path = UNIFORMES) -> dict[int, list]:
-    """Cores de 2026 dos substitutos (UID do repositório -> conjuntos)."""
+    """Cores de 2026 dos substitutos e dos clubes novos, que vêm com as cores do clube copiado
+    (UID do repositório -> conjuntos)."""
     rows = kit_rows([{"uid_jogo": i.uid, "clube_2026": i.clube, "uf": i.uf} for i in identities], sheet(path))
-    return {i.repo_uid: club_colours(rows[i.uid]) for i in identities if i.tipo == "substituto" and i.uid in rows}
+    return {i.repo_uid: club_colours(rows[i.uid]) for i in identities if i.tipo in ("substituto", "novo") and i.uid in rows}

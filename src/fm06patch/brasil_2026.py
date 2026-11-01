@@ -15,7 +15,7 @@ import csv
 from dataclasses import dataclass
 from pathlib import Path
 
-from .server_teams import DIVISIONS, NONE, TeamRecord, find_brazil_teams, write_team
+from .server_teams import DIVISIONS, NONE, TeamRecord, find_brazil_teams, is_new, write_team
 
 SERIES = ("A", "B", "C", "D")
 SIZES = {"A": 20, "B": 20, "C": 20, "D": 96}
@@ -35,7 +35,7 @@ class Placement:
     clube: str          # nome em 2026 ("" para vaga extra)
     estado: str
     team: TeamRecord
-    kind: str           # "equivalente" ou "substituto"
+    kind: str           # "equivalente", "substituto" ou "novo" (clube criado, clubes_novos.py)
 
 
 def read_csv(path: Path) -> list[dict[str, str]]:
@@ -80,7 +80,8 @@ def plan(data: bytes, data_dir: Path, avoid: frozenset[int] = frozenset()) -> li
         rows = [(n, r) for n, r in enumerate(clubs) if r["serie"] == serie]
         for number, row in rows:
             if number in exact:
-                placements.append(Placement(serie, row["clube"], row["estado"], exact[number], "equivalente"))
+                placements.append(Placement(serie, row["clube"], row["estado"], exact[number],
+                                            "novo" if is_new(exact[number]) else "equivalente"))
             else:
                 placements.append(Placement(serie, row["clube"], row["estado"], substitute(), "substituto"))
         for _ in range(SIZES[serie] - len(rows)):

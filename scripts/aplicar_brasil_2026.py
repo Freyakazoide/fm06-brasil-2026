@@ -185,7 +185,7 @@ def main() -> None:
     counts = Counter(p.serie for p in placements)
     kinds = Counter(p.kind for p in placements)
     print("Clubes por série:", {s: counts[s] for s in SERIES},
-          f"({kinds['equivalente']} equivalentes, {kinds['substituto']} substitutos)")
+          f"({kinds['equivalente']} equivalentes, {kinds['novo']} clubes novos, {kinds['substituto']} substitutos)")
     print("\nSubstitutos (clube de 2026 -> clube do FM06):")
     for p in placements:
         if p.kind == "substituto":
@@ -326,7 +326,7 @@ def main() -> None:
         uid_of = {i.clube: i.uid for i in identities}
         fm06 = {c.name: uid for uid, c in clubs.items() if uid not in set(uid_of.values())}
         pairs, missing = rivais.load_sheet(STRUCTURE, uid_of, fm06)
-        changes = rivais.plan(clubs, pairs, {i.uid for i in identities if i.tipo == "substituto"})
+        changes = rivais.plan(clubs, pairs, {i.uid for i in identities if i.tipo in ("substituto", "novo")})
         db = rivais.apply(db, clubs, changes)
         print(f"[OK] rivais: {len(pairs)} clássicos da aba Rivais; {len(changes)} clubes com a lista de rivais "
               "nova (os substitutos perdem os rivais do clube de 2005)")

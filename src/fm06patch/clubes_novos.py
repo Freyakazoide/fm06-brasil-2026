@@ -290,3 +290,17 @@ def with_new_clubs(data: bytes, path: Path = SHEET) -> bytes:
         return data
     wanted = load_sheet(data, path)
     return create(data, wanted)[0] if wanted else data
+
+
+_COMPS: dict[tuple[int, int], int] = {}
+
+
+def comps_start(data: bytes) -> int:
+    """Posição do u32 quantidade da lista de competições: logo depois da lista de clubes, que
+    cresce com os clubes novos (0x5B8590 no banco 6.0.2)."""
+    key = (id(data), len(data))
+    if key not in _COMPS:
+        clubs = club_list(data)
+        _COMPS.clear()
+        _COMPS[key] = clubs.end(len(clubs.ends) - 1)
+    return _COMPS[key]

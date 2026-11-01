@@ -20,7 +20,7 @@ São Paulo,SP,São Paulo
 Vasco da Gama,RJ,Vasco
 Vitória,BA,Vitória
 América-MG,MG,América (MG)
-Athletic,MG,
+Athletic,MG,Athletic
 Atlético-GO,GO,Atlético Goianiense
 Avaí,SC,Avaí
 Botafogo-SP,SP,Botafogo (SP)
@@ -39,16 +39,16 @@ Ponte Preta,SP,Ponte Preta
 São Bernardo,SP,São Bernardo
 Sport,PE,Sport Recife
 Vila Nova,GO,Vila Nova (GO)
-Amazonas,AM,
+Amazonas,AM,Amazonas
 Anápolis,GO,Anápolis
-Barra,SC,
+Barra,SC,Barra-SC
 Botafogo-PB,PB,Botafogo (PB)
 Brusque,SC,Brusque
 Caxias,RS,Caxias
 Confiança,SE,Confiança (SE)
 Ferroviária,SP,Ferroviária (SP)
 Figueirense,SC,Figueirense
-Floresta,CE,
+Floresta,CE,Floresta-CE
 Guarani,SP,Guarani
 Inter de Limeira,SP,Inter de Limeira
 Itabaiana,SE,Itabaiana
@@ -59,91 +59,91 @@ Paysandu,PA,Paysandu
 Santa Cruz,PE,Santa Cruz
 Volta Redonda,RJ,Volta Redonda
 Ypiranga,RS,Ypiranga (RS)
-Galvez,Acre,
-Humaitá,Acre,
+Galvez,Acre,Galvez
+Humaitá,Acre,Humaitá
 Independência,Acre,Independência
 ASA,Alagoas,ASA
 CSE,Alagoas,CSE
 Oratório,Amapá,Oratório
 Trem,Amapá,Trem Desportivo
-Manaus,Amazonas,
+Manaus,Amazonas,Manaus
 Nacional,Amazonas,Nacional (AM)
 Atlético de Alagoinhas,Bahia,Atlético (BA)
 Jacuipense,Bahia,Jacuipense
-Juazeirense,Bahia,
-Porto,Bahia,
-Atlético Cearense,Ceará,
+Juazeirense,Bahia,Juazeirense
+Porto,Bahia,Porto
+Atlético Cearense,Ceará,Atlético Cearense
 Ferroviário,Ceará,Ferroviário (CE)
-Maracanã,Ceará,
-Tirol,Ceará,
+Maracanã,Ceará,Maracanã
+Tirol,Ceará,Tirol
 Brasiliense,Distrito Federal,Brasiliense
-Capital,Distrito Federal,
+Capital,Distrito Federal,Capital
 Ceilândia,Distrito Federal,Ceilândia
 Gama,Distrito Federal,Gama
-Real Noroeste,Espírito Santo,
+Real Noroeste,Espírito Santo,Real Noroeste
 Rio Branco-ES,Espírito Santo,Rio Branco (ES)
 Vitória-ES,Espírito Santo,Vitória (ES)
-ABECAT,Goiás,
+ABECAT,Goiás,ABECAT
 Aparecidense,Goiás,Aparecidense
 CRAC,Goiás,CRAC
 Goiatuba,Goiás,Goiatuba
 Inhumas,Goiás,Inhumas
-IAPE,Maranhão,
+IAPE,Maranhão,IAPE
 Imperatriz,Maranhão,Imperatriz
 Moto Club,Maranhão,Moto Clube
 Sampaio Corrêa,Maranhão,Sampaio Corrêa
-Luverdense,Mato Grosso,
+Luverdense,Mato Grosso,Luverdense
 Mixto,Mato Grosso,Mixto (MT)
 Operário VG,Mato Grosso,Operário (MT)
-Primavera,Mato Grosso,
+Primavera,Mato Grosso,Primavera-MT
 União Rondonópolis,Mato Grosso,União Rondonópolis
 Ivinhema,Mato Grosso do Sul,Ivinhema
 Operário-MS,Mato Grosso do Sul,Operário (MS)
-Betim,Minas Gerais,
+Betim,Minas Gerais,Betim
 Democrata GV,Minas Gerais,Democrata
 Pouso Alegre,Minas Gerais,Guarani de Pouso Alegre
 Tombense,Minas Gerais,Tombense
 Uberlândia,Minas Gerais,Uberlândia
 Águia de Marabá,Pará,Águia de Marabá
 Tuna Luso,Pará,Tuna Luso
-Serra Branca,Paraíba,
-Sousa,Paraíba,
+Serra Branca,Paraíba,Serra Branca
+Sousa,Paraíba,Sousa-PB
 Treze,Paraíba,Treze
-Azuriz,Paraná,
+Azuriz,Paraná,Azuriz
 FC Cascavel,Paraná,Cascavel
 Cianorte,Paraná,Cianorte
-PSTC/São Joseense,Paraná,
+PSTC/São Joseense,Paraná,PSTC/São Joseense
 Central,Pernambuco,Central (PE)
-Decisão Goiana,Pernambuco,
-Maguary,Pernambuco,
-Retrô,Pernambuco,
-Altos,Piauí,
+Decisão Goiana,Pernambuco,Decisão
+Maguary,Pernambuco,Maguary
+Retrô,Pernambuco,Retrô
+Altos,Piauí,Altos
 Fluminense-PI,Piauí,Fluminense (PI)
 Parnahyba,Piauí,Parnahyba
 Piauí,Piauí,Piauí
 América-RJ,Rio de Janeiro,América (RJ)
 Madureira,Rio de Janeiro,Madureira
-Maricá,Rio de Janeiro,
+Maricá,Rio de Janeiro,Maricá
 Nova Iguaçu,Rio de Janeiro,Nova Iguaçu
 Portuguesa-RJ,Rio de Janeiro,Portuguesa (RJ)
-Sampaio Corrêa-RJ,Rio de Janeiro,
+Sampaio Corrêa-RJ,Rio de Janeiro,Sampaio Corrêa-RJ
 América-RN,Rio Grande do Norte,América (RN)
-Laguna,Rio Grande do Norte,
+Laguna,Rio Grande do Norte,Laguna
 ABC,Rio Grande do Norte,ABC
 Brasil de Pelotas,Rio Grande do Sul,Brasil de Pelotas
-Guarany de Bagé,Rio Grande do Sul,
+Guarany de Bagé,Rio Grande do Sul,Guarany de Bagé
 São José-RS,Rio Grande do Sul,São José (RS)
 São Luiz,Rio Grande do Sul,São Luiz
-Gazin Porto Velho,Rondônia,
-Guaporé,Rondônia,
+Gazin Porto Velho,Rondônia,Gazin Porto Velho
+Guaporé,Rondônia,Guaporé
 GAS,Roraima,GAS
-Monte Roraima,Roraima,
+Monte Roraima,Roraima,Monte Roraima
 São Raimundo-RR,Roraima,São Raimundo (RR)
 Blumenau,Santa Catarina,Blumenau
 Joinville,Santa Catarina,Joinville
 Marcílio Dias,Santa Catarina,Marcílio Dias
 Santa Catarina,Santa Catarina,Santa Catarina
-Água Santa,São Paulo,
+Água Santa,São Paulo,Água Santa
 Noroeste,São Paulo,Noroeste
 Portuguesa,São Paulo,Portuguesa
 Velo Clube,São Paulo,Velo Clube
@@ -153,5 +153,5 @@ Sergipe,Sergipe,Sergipe
 Araguaína,Tocantins,Araguaína
 Tocantinópolis,Tocantins,Tocantinópolis
 CSA,Alagoas,CSA
-Manauara,Amazonas,
-Iguatu,Ceará,
+Manauara,Amazonas,Manauara
+Iguatu,Ceará,Iguatu

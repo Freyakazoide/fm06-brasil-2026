@@ -151,7 +151,7 @@ def main() -> None:
         short, full = names.get(name) or names.get(ident["clube_2026"]) or (ident["clube_2026"],) * 2
         if ident["tipo"] != "vaga extra" and normalize(short) != normalize(ident["fm06_nome"]):
             renames.append((uid, short, full))
-        if row and ident["tipo"] == "substituto":
+        if row and ident["tipo"] in ("substituto", "novo"):
             colours.append((uid, cores.club_colours(row)))
         report.append([uid, ident["clube_2026"], ident["uf"], ident["fm06_nome"],
                        "sim" if path else "NÃO", "sim" if row else "NÃO",

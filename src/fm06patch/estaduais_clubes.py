@@ -55,7 +55,10 @@ ALIASES = {
 
 
 def comp_index(data: bytes, comp_id: int) -> int:
-    at = data.find(struct.pack("<I", comp_id), 0x5B0000, 0x5C0000)
+    from .clubes_novos import comps_start
+
+    start = comps_start(data)                   # a lista de competições anda com os clubes novos
+    at = data.find(struct.pack("<I", comp_id), start, start + 0x10000)
     if at < 0:
         raise ValueError(f"competição {comp_id:#x} não está na tabela do banco")
     return struct.unpack_from("<I", data, at - 4)[0]

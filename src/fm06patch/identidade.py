@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .estaduais_clubes import uf_of
-from .server_teams import true_uids
+from .server_teams import is_new, true_uids
 
 
 @dataclass
@@ -24,7 +24,7 @@ class Identity:
     clube: str          # nome de 2026
     uf: str
     fm06: str           # nome original no FM06
-    tipo: str           # equivalente / substituto
+    tipo: str           # equivalente / substituto / novo (clube criado, clubes_novos.py)
     onde: str           # "Série A", "estadual SP"...
 
 
@@ -40,7 +40,8 @@ def build(data: bytes, placements, states) -> list[Identity]:
         if known is None:
             found[e.team.club_uid] = Identity(uids[e.team.club_uid], e.team.club_uid, e.clube, e.uf,
                                               e.team.short_name,
-                                              "substituto" if e.substitute else "equivalente", f"estadual {e.uf}")
+                                              "substituto" if e.substitute else "novo" if is_new(e.team) else
+                                              "equivalente", f"estadual {e.uf}")
         else:
             known.onde += f", estadual {e.uf}"
     for p in placements:
