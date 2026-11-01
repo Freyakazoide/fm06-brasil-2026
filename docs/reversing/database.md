@@ -86,6 +86,10 @@ depois dos hospedeiros) tira essas 143 de 54 clubes. Ficam:
 - os técnicos que são a mesma pessoa nos dois anos (Diego Aguirre, Noel Sanvicente);
 - as referências FFFFFFFF.
 
+No jogo (01/11, usuário), o Flamengo mostra o Zico como favorito e os outros clubes parecem
+sem favoritos. O Corinthians continua com 12 no banco (Luxemburgo 139418, Marcelinho
+139043...). Hipótese: a tela só mostra parte da lista ou só certo tipo de pessoa; não conferido.
+
 ## Instalações do clube (CT, base, captação)
 
 No começo do registro do clube (a ordem em `src/fm06patch/financas.py`): `u8 -> CLUB+0xE0`
