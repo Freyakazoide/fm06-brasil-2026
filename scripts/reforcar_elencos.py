@@ -141,6 +141,13 @@ def main() -> None:
     for c in found.values():
         if c.club not in brazil and c.club not in abroad_clubs:
             by_club[c.club].append(c)
+    # depois dos brasileiros, todos os jogadores dos clubes sul-americanos fora de 2026: o jogo
+    # carrega os países da América do Sul (etapa 2). De outros países o jogador não existe no
+    # New Game e não serve de hospedeiro (01/11: os clubes da CONMEBOL ficavam com 2 ou 3)
+    south = {club["index"] for alpha2 in estrangeiros.NATIONS if alpha2 != "BR"
+             for club in estrangeiros.fm06_clubs(server, alpha2, set(indexes))} - set(abroad_clubs)
+    for club in sorted(south):
+        donors += by_club.pop(club, [])
     for club, people_of_club in sorted(by_club.items(), key=lambda kv: -len(kv[1])):
         donors += people_of_club[:PER_FOREIGN_CLUB]
     donors = [d for d in donors if d.uid not in host_uids]
