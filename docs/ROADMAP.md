@@ -54,7 +54,7 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 | Pessoa de 2005 que é alguém de 2026 (Ancelotti do Milan, Forlán jogador) | 🧪 | ganha nome de hoje (`aplicar_comissao.py`) |
 | Árbitros de 2026 (18 do quadro FIFA) | 🧪 | `aplicar_arbitros.py` |
 | Nomes dos regens | 🧪 | `nomes_regens.xlsx` |
-| Joias da base (regens de verdade) | 🧪 | 32 garotos na `regens_futuros_2026.xlsx` (`FUTURE_REGEN`): sub-17 de 2025/2026 e sub-15 do Palmeiras |
+| Joias da base (regens de verdade) | ✅ | 32 garotos na `regens_futuros_2026.xlsx` (`FUTURE_REGEN`): sub-17 de 2025/2026 e sub-15 do Palmeiras |
 | Lesões no começo | 🧪 | `aplicar_lesoes.py` (STARTING_INJURY, ficha C3b); suspensões: a aba da planilha está vazia |
 | Rigor dos árbitros | ➖ | fora do mod (decisão do usuário, 01/11): só os nomes de 2026 |
 | Segunda nacionalidade, cláusula de rescisão | ❌ | campos não localizados |
