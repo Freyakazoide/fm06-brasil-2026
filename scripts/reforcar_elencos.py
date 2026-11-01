@@ -149,13 +149,25 @@ def main() -> None:
     # New Game e não serve de hospedeiro (01/11: os clubes da CONMEBOL ficavam com 2 ou 3)
     south = {club["index"] for alpha2 in estrangeiros.NATIONS if alpha2 != "BR"
              for club in estrangeiros.fm06_clubs(server, alpha2, set(indexes))} - set(abroad_clubs)
+    loaded = len(donors)
     for club in sorted(south):
         donors += by_club.pop(club, [])
+    loaded = len(donors) - loaded
     for club, people_of_club in sorted(by_club.items(), key=lambda kv: -len(kv[1])):
         donors += people_of_club[:PER_FOREIGN_CLUB]
     donors = [d for d in donors if d.uid not in host_uids]
+    # excedentes: jogadores de 2005 além do elenco de 2026 do clube (a planilha mais os fictícios),
+    # quem tem contrato mais curto. São brasileiros carregados pelo jogo: servem de hospedeiros aos
+    # outros clubes antes dos doadores; os que sobrarem saem para clubes estrangeiros (abaixo)
+    excess = []
+    for row in identities:
+        uid, club = int(row["uid_jogo"]), row["clube_2026"]
+        own = [c for c in found.values() if brazil.get(c.club) == uid]
+        extra = len(own) - sizes.get(club, 0)
+        if sizes.get(club, 0) and extra > 0:
+            excess += sorted(own, key=lambda c: c.until)[:extra]
     tables = comissao_tables(server)                # sem quem joga por seleção: o argentino da
-    donors = [d for d in donors if not people_contracts.caps(people, d.at, tables)]   # seleção viraria brasileiro
+    donors = [d for d in excess + donors if not people_contracts.caps(people, d.at, tables)]   # seleção viraria brasileiro
 
     moves, report, pool = {}, [], iter(donors)
     for club, uid, missing in needs:
@@ -169,22 +181,22 @@ def main() -> None:
                            "clube_2026": club, "clube_uid": uid})
     for club, uid, missing in needs:
         print(f"{club:32} {hosts.get(uid, 0):3} hospedeiros + {taken[club]:3} (faltavam {missing})")
+    unloaded = Counter(r["clube_2026"] for r in report if r["clube_antigo_indice"] not in brazil
+                       and r["clube_antigo_indice"] not in south)
+    if unloaded:
+        print(f"[AVISO] {sum(unloaded.values())} hospedeiros de clubes que o jogo não carrega (fora da América do "
+              f"Sul), em {len(unloaded)} clubes: " + ", ".join(f"{c} {n}" for c, n in unloaded.most_common(15)))
     print(f"[OK] {len(moves)} jogadores movidos para {len(needs)} clubes ({len(donors)} doadores disponíveis, "
-          f"{brazilian_donors} de clubes brasileiros fora de 2026)")
+          f"{brazilian_donors} de clubes brasileiros fora de 2026, {loaded} de sul-americanos)")
 
-    # excedentes: jogadores de 2005 (do banco) além do elenco de 2026 ficariam no clube com o
-    # nome de 2005; vão para os clubes estrangeiros que doaram (até 01/11 iam para clubes
-    # brasileiros fora de 2026, que agora ficam vazios e o jogo gera o elenco no New Game)
+    # excedentes que sobraram: ficariam no clube com o nome de 2005; vão para os clubes
+    # estrangeiros que doaram
     spare = sorted(by_club)
     removed = 0
-    for row in identities:
-        uid, club = int(row["uid_jogo"]), row["clube_2026"]
-        own = [c for c in found.values() if brazil.get(c.club) == uid and c.uid not in moves]
-        extra = len(own) - sizes.get(club, 0)
-        if sizes.get(club, 0) and extra > 0:
-            for c in sorted(own, key=lambda c: c.until)[:extra]:   # quem tem contrato mais curto sai
-                moves[c.uid] = spare[removed % len(spare)]
-                removed += 1
+    for c in excess:                                # os excedentes que não viraram hospedeiros
+        if c.uid not in moves:
+            moves[c.uid] = spare[removed % len(spare)]
+            removed += 1
     print(f"[OK] {removed} jogadores de 2005 que sobravam nos clubes de 2026 saíram para clubes estrangeiros")
 
     if not args.apply:

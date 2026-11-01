@@ -19,6 +19,10 @@ ocupa um jogador de 2005 como qualquer outro, com nome, posição, idade e CA/PA
   aba Regras_apelido: o sobrenome, um apelido da lista (o peso é a raridade), diminutivo,
   origem (Baiano, Gaúcho...), porte físico e "-gol" para atacante.
 
+Clube de 2005 que voltou (tipo "2005" na identidade) ganha no máximo um fictício por jogador
+de 2005 que já tem (contagem sem reforço): troca os próprios, sem tirar hospedeiro de outro
+clube (os carregados não bastam para todos).
+
 O sorteio é fixo por clube (a mesma planilha a cada rodada). Para pôr um jogador de verdade no
 lugar de um fictício: apague a linha daqui e ponha o jogador na jogadores_2026.xlsx; na próxima
 rodada o gerador só completa o que faltar.
@@ -46,6 +50,7 @@ PLAYERS = ROOT / "data" / "brasil" / "jogadores" / "jogadores_2026.xlsx"
 OUT = ROOT / "data" / "brasil" / "jogadores" / "ficticios_2026.xlsx"
 IDENTITY = ROOT / "data" / "brasil" / "clubes" / "identidade_fm06.csv"
 REGEN_NAMES = ROOT / "data" / "modelos" / "nomes_regens.xlsx"
+HOSTS_BASE = ROOT / "workspace" / "elencos_2005_sem_reforco.csv"   # jogadores de cada clube sem reforço
 ELENCO = 24
 SHAPE = {"GK": 3, "CB": 4, "RB": 2, "LB": 2, "DM": 2, "CM": 4, "AM": 2, "RW": 1, "LW": 1, "ST": 3}
 HEIGHT = {"GK": (184, 196), "CB": (180, 193), "ST": (174, 190)}
@@ -151,10 +156,13 @@ def main() -> None:
     true = server_teams.true_uids(server)
     reputation = {true.get(t.club_uid, t.club_uid): t.reputation for t in server_teams.find_brazil_teams(server)}
     names = names_of_brazil()
+    own = Counter(int(r["clube_uid"]) for r in csv.DictReader(HOSTS_BASE.open(encoding="utf-8")))         if HOSTS_BASE.exists() else Counter()
     out, report = [], []
     for ident in csv.DictReader(IDENTITY.open(encoding="utf-8-sig")):
         club = ident["clube_2026"]
         missing = ELENCO - count[club]
+        if ident["tipo"] == "2005":                 # clube de 2005 que voltou: troca os próprios
+            missing = min(missing, own[int(ident["uid_jogo"])])    # jogadores, sem tirar de outros
         if not club or missing <= 0:
             continue
         rep = reputation.get(int(ident["uid_jogo"]), 1500)
