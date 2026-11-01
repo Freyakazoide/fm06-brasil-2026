@@ -119,7 +119,10 @@ def main() -> None:
         hosts.setdefault(uid, in_db[index])
     true = server_teams.true_uids(server)
     repo_of = {v: k for k, v in true.items()}
-    host_uids = {int(r["uid"]) for r in csv.DictReader(args.hospedeiros.open(encoding="utf-8"))}
+    # só quem é hospedeiro de um clube de 2026 de hoje: a contagem sem reforço pode ser de antes
+    # dos clubes novos (C13), quando o Paraná era o Novorizontino, e os do Paraná não saíam
+    host_uids = {int(r["uid"]) for r in csv.DictReader(args.hospedeiros.open(encoding="utf-8"))
+                 if int(r["clube_uid"]) in ours}
 
     needs = []
     club_index = {**abroad, **indexes}
