@@ -141,5 +141,6 @@ prazo dos registros dos 278 clubes de `identidade_fm06.csv` depois do orçamento
 iguais). Instalado (`aplicar_tudo --rapido`): "empréstimos de 2005 zerados em 68 registros
 de clubes brasileiros (£160.450.000)" (67 clubes; o Guarani tem dois). No `server_db` do
 jogo: nenhum clube brasileiro com empréstimo, os 352 de fora iguais ao original, Flamengo
-com empréstimo 0 e orçamento £14.921.260 (R$ 75,8 mi). Falta ver no jogo.
+com empréstimo 0 e orçamento £14.921.260 (R$ 75,8 mi). New Game (01/11): **deu certo**,
+o usuário confirmou as dívidas em 0 ("Empréstimos em Dívida" vazio).
 

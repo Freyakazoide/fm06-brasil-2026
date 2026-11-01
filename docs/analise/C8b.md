@@ -89,3 +89,8 @@ as competições brasileiras gravam essa regra (no código ou no `server_db`).
 - 01/11, patch `janelas_2026` escrito. Testes: a janela original desmontada é 1/1–26/9; com
   o patch, 5/1–3/3 no lugar e o stub com 20/7–11/9 seguido da chamada original; aplica com
   todos os outros patches.
+- 01/11, instalado (`aplicar_tudo --rapido`): no `fm_brasil.exe` a 1ª janela tem `push 5`
+  (0x00BB32E9), `push 3`/`push 2` (0x00BB32DE/0x00BB32DC), `0x00BB32F4` = `call
+  0x015BA240` + 8 `nop`, e o stub com 20/7 (`push 0x14`, `push 6`) a 11/9 (`push 0xB`, `push
+  8`) seguido de `push -1 ; push 3 ; push 4 ; call 0x00ADC540 ; ret`. Falta ver no jogo.
+
