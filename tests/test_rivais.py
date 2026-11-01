@@ -74,6 +74,26 @@ class RivaisTest(unittest.TestCase):
                          {"Vasco": 90, "Botafogo": 70, "Fluminense": 80})
         self.assertEqual(max(clubs[324].rivals().values()), 101)                   # Gre-Nal
 
+    def test_drop_people_keeps_rivals(self) -> None:
+        data = _db()
+        clubs = rivais.read(data)
+        changes = rivais.drop_people(clubs, {10210})
+        self.assertEqual(changes, {322: [(1, 5, 70, 12)]})                          # só a pessoa sai
+        self.assertEqual(rivais.drop_people(clubs, {12}), {})                       # rival não é pessoa
+        out = rivais.apply(data, clubs, changes)
+        self.assertEqual(len(out), len(data) - 8)
+        self.assertEqual(rivais.read(out)[322].relations, [(1, 5, 70, 12)])
+
+    @unittest.skipUnless(Path(SERVER_DB).exists(), "defina FM06_SERVER_DB com o server_db.dat original")
+    def test_real_people_relations(self) -> None:
+        clubs = rivais.read(Path(SERVER_DB).read_bytes())
+        corinthians = [r for r in clubs[319].relations if r[0] == rivais.PERSON]
+        self.assertIn((3, 1, 80, 139156), corinthians)                             # o Ricardinho de 2005
+        people = Path(SERVER_DB).with_name("people_db.original.dat")
+        if people.exists():
+            self.assertEqual(rivais.person_indices(people.read_bytes(), {811, 3301206}),
+                             {811: 317, 3301206: 139156})                           # Inzaghi; hospedeiro do Neymar
+
 
 if __name__ == "__main__":
     unittest.main()

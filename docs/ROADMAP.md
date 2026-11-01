@@ -110,8 +110,8 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 - ~~Rigor dos árbitros~~: fora (01/11, decisão do usuário); os árbitros ficam só com o nome
   de 2026. Candidato anotado: o único getter de atributo do OFFICIAL é `0x00A6E010`
   (`[ecx-0x23]`, 4º dos 10 bytes), slot 127 da vtable `0x010F8FBC`.
-- Clubes que "gostam" de pessoas (lista de relações do clube, tipo 3): limpar as que
-  apontam para pessoas de 2005 que viraram outra pessoa de 2026.
+- ~~Clubes que "gostam" de pessoas~~: entrou em 01/11 (`aplicar_relacoes.py`, etapa 3): 143
+  relações tipo 3 de 54 clubes que apontavam para hospedeiros saíram.
 
 ### Fase 6: clubes de verdade no lugar dos substitutos
 

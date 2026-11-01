@@ -12,6 +12,7 @@ Etapas (o script para e avisa quando o jogo tem de ser aberto ou fechado):
    os jogadores de 2005 de cada clube; depois feche o jogo;
 3. jogo fechado: montar_elencos.py, aplicar_comissao.py --apply, aplicar_arbitros.py --apply,
    aplicar_historico.py --apply, aplicar_lesoes.py --apply (lesões do começo de 2026),
+   aplicar_relacoes.py --apply (pessoas queridas dos clubes que viraram outra pessoa),
    gravar_atributos.py --apply (atributos, CA/PA, personalidade, físico, nascimento, nação,
    preferred moves e jogos pela seleção dos jogadores direto no people_db) e a cópia do .lnc
    dos jogadores para data\\db\\lnc\\all. Depois: New Game.
@@ -150,6 +151,7 @@ def main() -> None:
         run(3, "aplicar_arbitros.py", "--apply")
         run(3, "aplicar_historico.py", "--apply")
         run(3, "aplicar_lesoes.py", "--apply")
+        run(3, "aplicar_relacoes.py", "--apply")
         run(3, "gravar_atributos.py", "--apply")
         lnc.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(PLAYERS_LNC, lnc)

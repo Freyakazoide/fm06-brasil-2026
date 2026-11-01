@@ -142,3 +142,33 @@ def load_sheet(path, uid_of: dict[str, int], fm06: dict[str, int]) -> tuple[list
         if None not in uids:
             pairs.append((uids[0], uids[1], level))
     return pairs, sorted(set(missing))
+
+
+# Pessoas queridas e não queridas (tipo 3, relação 1 e 2): a referência é o índice da pessoa no
+# people_db (Flamengo: Zagallo 6390, Romário 5020, Petkovic 138366). Das 280 dos clubes
+# brasileiros, 143 apontam para pessoas de 2005 que o mod reaproveitou para outra de 2026
+# (hospedeiros): o Corinthians "gostava" do Neymar (era o Ricardinho), o São Paulo "não gostava"
+# dele. drop_people tira essas; as outras ficam.
+PERSON = 3
+
+
+def drop_people(clubs: dict[int, Club], gone: set[int]) -> dict[int, list[tuple[int, int, int, int]]]:
+    """Relações novas por UID, sem as de pessoa (tipo 3) que apontam para os índices ``gone``."""
+    changes = {}
+    for uid, club in clubs.items():
+        relations = [r for r in club.relations if not (r[0] == PERSON and r[3] in gone)]
+        if relations != club.relations:
+            changes[uid] = relations
+    return changes
+
+
+def person_indices(people: bytes, uids: set[int]) -> dict[int, int]:
+    """UID -> índice da pessoa (o par que fecha a parte comum do registro), só UID com um índice."""
+    from .comissao import _PERSON_END
+
+    found: dict[int, set[int]] = {}
+    for match in _PERSON_END.finditer(people):
+        index, uid = struct.unpack("<II", match.group(1) + match.group(2))
+        if uid in uids and index < 2_000_000:
+            found.setdefault(uid, set()).add(index)
+    return {uid: next(iter(i)) for uid, i in found.items() if len(i) == 1}

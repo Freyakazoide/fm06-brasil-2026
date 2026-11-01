@@ -75,6 +75,17 @@ Conferido nos 695 clubes brasileiros (693 com a lista de times logo antes).
 No leitor do CLUB (`0x00A31C70`) as duas quantidades são lidas como u16 (`0x00C59430`),
 mas no arquivo ocupam 1 byte; vale o que está no arquivo. `src/fm06patch/rivais.py`.
 
+Tipo 3 (pessoa): a referência é o **índice da pessoa** no `people_db` (o u32 antes do UID no
+fim da parte comum do registro). Exemplos: Flamengo com Zagallo 6390, Romário 5020, Petkovic
+138366 e Adriano 127777; São Paulo com Rogério Ceni 138977 e Kaká 26326. Nos clubes
+brasileiros são 280 (271 queridas e 9 não queridas). Destas, 143 apontam para pessoas que o mod
+reaproveitou para outra de 2026: o Corinthians "gostava" do índice 139156 (Ricardinho), que
+virou o Neymar, e o São Paulo "não gostava" dele. O `scripts/aplicar_relacoes.py` (etapa 3,
+depois dos hospedeiros) tira essas 143 de 54 clubes. Ficam:
+- as pessoas que não viraram outra;
+- os técnicos que são a mesma pessoa nos dois anos (Diego Aguirre, Noel Sanvicente);
+- as referências FFFFFFFF.
+
 ## Instalações do clube (CT, base, captação)
 
 No começo do registro do clube (a ordem em `src/fm06patch/financas.py`): `u8 -> CLUB+0xE0`
