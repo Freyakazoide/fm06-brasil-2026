@@ -543,6 +543,16 @@ PATCHES = {
             build=_orcamento_salarial_swaps,
         ),
         Patch(
+            "base_brasileira_forte",
+            "Regens de país jogável (no mod, só o Brasil) com mais potencial: a fórmula do PA "
+            "f = 5,0 − 0,1 × League Standard 2 − 0,0002 × reputação (0x0077C398, fsubr qword ptr "
+            "[0x00E31798]) passa a ler o 4,0 que já existe em 0x010A1368. Brasil: f de 1,69 para 0,69; "
+            "PA 160+ de 0,9% para 2,2% dos regens, PA abaixo de 120 de 74% para 43%. Salários, "
+            "orçamento e diretoria não mudam (eles usam o League Standard 2, que fica). Ver "
+            "docs/analise/C7.md, rodadas 3 e 4.",
+            (Swap(0x77C398 - 0x400000, bytes.fromhex("DC2D9817E300"), bytes.fromhex("DC2D68130A01")),),
+        ),
+        Patch(
             "exp_regra_rebaixa_a",
             "EXPERIMENTAL, sem efeito visível: 2º argumento da regra de movimento Série A -> B.",
             (_push_count(0x7BA4F3, 2, 4, SERIE_B),),
