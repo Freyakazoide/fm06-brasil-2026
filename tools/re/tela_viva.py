@@ -53,11 +53,11 @@ def main() -> None:
     action = sys.argv[1]
     if action == "ficha-instalar":
         assert read_memory(h, SHEET, len(SHEET_STOLEN)) == SHEET_STOLEN
-        stub = b"" + SHEET_SLOT.to_bytes(4, "little") + SHEET_STOLEN
-        stub += b"é" + (SHEET + len(SHEET_STOLEN) - (SHEET_STUB + len(stub) + 5)).to_bytes(4, "little", signed=True)
+        stub = bytes([0x89, 0x0D]) + SHEET_SLOT.to_bytes(4, "little") + SHEET_STOLEN
+        stub += bytes([0xE9]) + (SHEET + len(SHEET_STOLEN) - (SHEET_STUB + len(stub) + 5)).to_bytes(4, "little", signed=True)
         cr.poke(h, SHEET_SLOT, bytes(4))
         cr.poke(h, SHEET_STUB, stub)
-        cr.poke(h, SHEET, b"é" + (SHEET_STUB - (SHEET + 5)).to_bytes(4, "little", signed=True) + b"")
+        cr.poke(h, SHEET, bytes([0xE9]) + (SHEET_STUB - (SHEET + 5)).to_bytes(4, "little", signed=True) + bytes([0x90, 0x90]))
         print("gravador da ficha instalado: abra a ficha de um jogador")
         return
     if action == "ficha-desfazer":
