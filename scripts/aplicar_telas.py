@@ -135,6 +135,17 @@ REPORT_HEADER = f"""
 				<layout class="stick_to_sides_attachment" alignment="right" inset="30"/>
 				<layout class="stick_to_sides_attachment" alignment="top" inset="10"/>
 			</widget>
+			<!-- nome e numero nas costas: globais Bnom/Bnum gravadas pelo patch centro_colunas -->
+			<widget class="text" id="cdnm" standard_spec="text" style="none" alignment="centre" width="140">
+				<layout class="stick_to_sides_attachment" alignment="right" inset="30"/>
+				<layout class="stick_to_sides_attachment" alignment="top" inset="38"/>
+				<attachment class="get_global_attachment" get_property="Bnom" set_property="text"/>
+			</widget>
+			<widget class="text" id="cdnu" standard_spec="title, large" style="none" alignment="centre" width="140">
+				<layout class="stick_to_sides_attachment" alignment="right" inset="30"/>
+				<layout class="stick_to_sides_attachment" alignment="top" inset="60"/>
+				<attachment class="get_global_attachment" get_property="Bnum" set_property="text"/>
+			</widget>
 		</container>"""
 
 
