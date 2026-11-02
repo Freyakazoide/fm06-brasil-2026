@@ -117,14 +117,22 @@ REPORT_TITLE = 'title="Relatorio de Desenvolvimento"'
 REPORT_AFTER = "		</container> <!-- menus -->"
 REPORT_HEADER = f"""
 
-		<!-- cabecalho do mod: emblema da Central, titulo e camisa de costas -->
-		<container class="round_box" id="cdhd">
-			<layout class="arrange_horizontal_attachment" layout="100,-1,170" offset="0"/>
-			<layout class="fit_children_attachment" alignment="vertical" offset="0"/>
-			<widget class="picture" id="cdem" file="{GRAPHICS}/emblema" auto_size="all"/>
+		<!-- cabecalho do mod: emblema da Central, titulo e camisa de costas; cada filho preso as bordas -->
+		<container class="round_box" id="cdhd" height="172">
+			<widget class="picture" id="cdem" file="{GRAPHICS}/emblema" auto_size="all">
+				<layout class="stick_to_sides_attachment" alignment="left" inset="16"/>
+				<layout class="stick_to_sides_attachment" alignment="top" inset="44"/>
+			</widget>
 			<widget class="text" id="cdtt" standard_spec="title, large" style="none" multiline="true"
-				text="Centro de Desenvolvimento - relatorio da comissao tecnica" auto_size="vertical"/>
-			<widget class="picture" id="cdcm" file="{GRAPHICS}/camisa_figueirense" auto_size="all"/>
+				text="Centro de Desenvolvimento - relatorio da comissao tecnica" auto_size="vertical">
+				<layout class="stick_to_sides_attachment" alignment="left" inset="120"/>
+				<layout class="stick_to_sides_attachment" alignment="right" inset="200"/>
+				<layout class="stick_to_sides_attachment" alignment="top" inset="72"/>
+			</widget>
+			<widget class="picture" id="cdcm" file="{GRAPHICS}/camisa_figueirense" auto_size="all">
+				<layout class="stick_to_sides_attachment" alignment="right" inset="30"/>
+				<layout class="stick_to_sides_attachment" alignment="top" inset="10"/>
+			</widget>
 		</container>"""
 
 
