@@ -131,8 +131,16 @@ def analyse(atributos: dict[str, int], futuro: dict[str, int]) -> dict:
             if attr in attrs:
                 gaps.setdefault(category, []).append((PT[attr], atributos.get(attr, 0), goal, gap))
     focus = sorted(gaps.items(), key=lambda kv: -sum(g[3] for g in kv[1]))[:3]
+    strongest = sorted(weights, key=lambda a: -atributos.get(a, 0) * weights[a])[:4]
+    weakest = sorted(weights, key=lambda a: atributos.get(a, 0) * weights[a])[:4]
+    left, right = atributos.get("Left foot", 0), atributos.get("Right foot", 0)
+    preferred_foot = "ambos" if min(left, right) >= 15 else "esquerdo" if left > right else "direito"
     return {
-        "posicoes": rows[:4], "sugestao": advice, "nova_posicao": new_position, "alvo": target["pos"],
+        "posicoes": rows[:4], "mapa_posicoes": rows, "sugestao": advice,
+        "nova_posicao": new_position, "alvo": target["pos"], "alvo_nome": target["nome"],
+        "pe_preferido": preferred_foot,
+        "pontos_fortes": [(PT[a], atributos.get(a, 0)) for a in strongest],
+        "pontos_fracos": [(PT[a], atributos.get(a, 0)) for a in weakest],
         "treino": [{"categoria": c, "atributos": [(n, v, g) for n, v, g, _ in sorted(items, key=lambda i: -i[3])[:3]]}
                    for c, items in focus],
     }

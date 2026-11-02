@@ -1,0 +1,56 @@
+"""Dados demonstrativos para desenvolver a interface com o FM06 fechado."""
+
+from __future__ import annotations
+
+import datetime as dt
+
+import adjunto
+import analitica
+from leitor import POSITIONS
+
+
+def _player(uid: int, name: str, age: int, team: str, position: str, hab: int, pot: int,
+            moral: int, highlights: dict[str, int]) -> dict:
+    values = {name: 9 for name in adjunto.PT}
+    values.update({direct: 1 for direct in POSITIONS.values()})
+    values.update({"Left foot": 8, "Right foot": 18, POSITIONS[position]: 18, **highlights})
+    future = {key: min(20, value + (3 if value < 15 else 2)) for key, value in values.items()}
+    assistant = adjunto.analyse(values, future)
+    analysis = analitica.analyse_player(age=age, team=team, hab=hab, pot=pot, moral=moral,
+                                        adjunto=assistant, ability_judge=14, potential_judge=17)
+    return {
+        "uid": uid, "nome": name, "apelido": name.split()[-1], "idade": age,
+        "nascimento": f"{2026-age}-03-12", "time": team, "ca": 0, "pa": 0,
+        "hab": hab, "pot": pot, "altura": 178, "peso": 72, "moral": moral,
+        "condicao_raw": 4000, "ritmo_raw": 7080, "cansaco_raw": 0,
+        "valor_pedido_raw": 1250000, "reputacao": {"local": 1200, "atual": 900, "mundial": 100},
+        "internacional": {"jogos": 0, "gols": 0, "sub21_jogos": 2, "sub21_gols": 0},
+        "pe_preferido": assistant["pe_preferido"], "posicoes": [position],
+        "familiaridades": {short: values[direct] for short, direct in POSITIONS.items()},
+        "movimentos": ["Vem para dentro", "Tenta fazer passes longos"],
+        "atributos": values, "futuro": future, "nivel": "jogador de Série A",
+        "adjunto": assistant, "analise": analysis,
+    }
+
+
+def payload() -> dict:
+    players = [
+        _player(1, "Afonso Guedes", 16, "Sub-20", "M C", 4, 8, 16,
+                {"Passing": 15, "Creativity": 15, "Decision": 13, "Technique": 14}),
+        _player(2, "Rafael Venâncio", 17, "Sub-20", "GR", 5, 7, 12,
+                {"Goalkeeper": 18, "Handling": 15, "Reflexes": 16, "One on one": 14}),
+        _player(3, "Diego Rodrigues", 18, "B", "DC", 6, 8, 9,
+                {"Tackling": 15, "Marking": 14, "Heading": 16, "Strength": 15}),
+        _player(4, "Toninho Silva", 18, "Principal", "MA C", 7, 8, 17,
+                {"Passing": 16, "Creativity": 16, "Technique": 15, "First Touch": 14}),
+    ]
+    history = {}
+    for player in players:
+        history[str(player["uid"])] = [
+            {"data": "2026-05-04", "hab": max(0, player["hab"] - 1), "pot": player["pot"],
+             "tec": 9.8, "men": 10.4, "fis": 10.8},
+            {"data": "2026-08-04", "hab": player["hab"], "pot": player["pot"],
+             "tec": 10.5, "men": 11.0, "fis": 11.2},
+        ]
+    return {"schema_version": 2, "info": {"data": dt.date(2026, 8, 4).isoformat(), "time_uid": 301306,
+            "avaliador_hab": 14, "avaliador_pot": 17}, "jovens": players, "historico": history}

@@ -36,6 +36,7 @@ from fm06patch import live_player as lp  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import adjunto  # noqa: E402
+import analitica  # noqa: E402
 
 PEOPLE, PLAYING = 0x014EAA54, 0x014EAA6C
 HUMAN_VT, PLAYER_VT = 0x010F6F8C, 0x010F1034
@@ -49,6 +50,9 @@ POSITIONS = {                             # posição exibida -> atributo DIRECT
     "M C": "Mid. Center", "M E": "Mid. Left", "MA D": "Att. M.R.", "MA C": "Att. M.C.",
     "MA E": "Att. M.L.", "PL": "Att. Center",
 }
+PREFERRED_MOVES = json.loads(
+    (ROOT / "reverse" / "fmm" / "preferred_moves_layout.json").read_text(encoding="utf-8")
+)["moves"]
 
 
 @dataclass
@@ -63,11 +67,24 @@ class Jovem:
     pa: int
     hab: int                               # estrelas da comissão, 0..10
     pot: int
+    altura: int = 0
+    peso: int = 0
+    moral: int = 0
+    condicao_raw: int = 0
+    ritmo_raw: int = 0
+    cansaco_raw: int = 0
+    valor_pedido_raw: int = 0
+    reputacao: dict[str, int] = field(default_factory=dict)
+    internacional: dict[str, int] = field(default_factory=dict)
+    pe_preferido: str = ""
     posicoes: list[str] = field(default_factory=list)
+    familiaridades: dict[str, int] = field(default_factory=dict)
+    movimentos: list[str] = field(default_factory=list)
     atributos: dict[str, int] = field(default_factory=dict)
     futuro: dict[str, int] = field(default_factory=dict)      # projeção do olheiro no auge
     nivel: str = ""                                           # onde pode chegar
     adjunto: dict = field(default_factory=dict)               # melhor posição e foco de treino
+    analise: dict = field(default_factory=dict)                # indicadores explicáveis da Central
 
 
 # Futuro potencial (opinião do olheiro): o PA que ele enxerga é o das estrelas (pot × 20, com o erro
@@ -133,6 +150,13 @@ def stars(uid: int, value: int, judge: int, salt: int) -> int:
     return (tenths + 5) // 10
 
 
+def preferred_moves(jogo: Jogo, uid_at: int) -> list[str]:
+    """Movimentos preferidos do bitset já mapeado em reverse/fmm."""
+    raw = jogo.raw(uid_at - 48, 6)
+    return [move.get("visible_portuguese") or move["move_name"] for move in PREFERRED_MOVES
+            if raw[move["fmm_index"] // 8] & (1 << (move["fmm_index"] % 8))]
+
+
 def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
     jogo = Jogo()
     people = jogo.table(PEOPLE)
@@ -150,13 +174,14 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
         team = jogo.u32(r + 0x74)
         if not team or jogo.u32(team + 0x38) != my_club:
             continue
-        uid = jogo.u32(r + 0x14)
+        uid_at = r + 0x14
+        uid = jogo.u32(uid_at)
         day, year = struct.unpack("<HH", jogo.raw(r + 0x14 + lp.BORN_REL, 4))
         born = dt.date(year, 1, 1) + dt.timedelta(days=day)
         age = today.year - born.year - ((today.month, today.day) < (born.month, born.day))
         if age > max_age:
             continue
-        ca, pa = jogo.u16(r + 0x14 - 204), jogo.u16(r + 0x14 - 202)
+        ca, pa = jogo.u16(uid_at - 204), jogo.u16(uid_at - 202)
         values: dict[str, int] = {}
         projected: dict[str, int] = {}
         pot = stars(uid, pa, potential_judge, 0x9E3779B9)
@@ -167,17 +192,34 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             for a in attributes.values():
                 values[a.name] = lp.decode_attribute(a, raw[0x14 + a.rel], ca)
             projected = future(raw, attributes.values(), ca, seen_pa)
-        positions = [short for short, name in POSITIONS.items() if values.get(name, 0) >= 15]
+        familiarities = {short: values.get(name, 0) for short, name in POSITIONS.items()}
+        positions = [short for short, value in familiarities.items() if value >= 15]
+        left, right = values.get("Left foot", 0), values.get("Right foot", 0)
+        foot = "ambos" if min(left, right) >= 15 else "esquerdo" if left > right else "direito"
+        moral = jogo.raw(uid_at - 184, 1)[0]
+        assistant = adjunto.analyse(values, projected) if values else {}
         kind = jogo.raw(team + 0x3C, 1)[0]
-        teams.setdefault(team, TEAM_KIND.get(kind, f"time tipo {kind}"))
+        team_name = teams.setdefault(team, TEAM_KIND.get(kind, f"time tipo {kind}"))
+        analysis = analitica.analyse_player(
+            age=age, team=team_name,
+            hab=stars(uid, ca, ability_judge, 0x2545F491), pot=pot, moral=moral,
+            adjunto=assistant, ability_judge=ability_judge, potential_judge=potential_judge)
         out.append(Jovem(
             uid=uid, nome=f"{jogo.text(jogo.u32(r + 44))} {jogo.text(jogo.u32(r + 48))}".strip(),
             apelido=jogo.text(jogo.u32(r + 52)), idade=age,
-            nascimento=born.replace(year=born.year + YEAR_SHIFT).isoformat(), time=teams[team],
-            ca=ca, pa=pa, hab=stars(uid, ca, ability_judge, 0x2545F491),
-            pot=pot, posicoes=positions, atributos=values, futuro=projected,
+            nascimento=born.replace(year=born.year + YEAR_SHIFT).isoformat(), time=team_name,
+            ca=ca, pa=pa, hab=stars(uid, ca, ability_judge, 0x2545F491), pot=pot,
+            altura=jogo.u16(uid_at - 76), peso=jogo.u16(uid_at - 78), moral=moral,
+            condicao_raw=jogo.u16(uid_at - 216), ritmo_raw=jogo.u16(uid_at - 214),
+            cansaco_raw=jogo.u16(uid_at - 212), valor_pedido_raw=jogo.u32(uid_at - 192),
+            reputacao={"local": jogo.u16(uid_at - 210), "atual": jogo.u16(uid_at - 208),
+                       "mundial": jogo.u16(uid_at - 206)},
+            internacional={"jogos": jogo.raw(uid_at + 72, 1)[0], "gols": jogo.raw(uid_at + 74, 1)[0],
+                           "sub21_jogos": jogo.raw(uid_at + 73, 1)[0], "sub21_gols": jogo.raw(uid_at + 75, 1)[0]},
+            pe_preferido=foot, posicoes=positions, familiaridades=familiarities,
+            movimentos=preferred_moves(jogo, uid_at), atributos=values, futuro=projected,
             nivel=next(text for floor, text in LEVELS if seen_pa >= floor),
-            adjunto=adjunto.analyse(values, projected) if values else {}))
+            adjunto=assistant, analise=analysis))
     info = {"data": today.replace(year=today.year + YEAR_SHIFT).isoformat(), "time_uid": jogo.u32(my_team + 0x14),
             "time_humano": f"0x{my_team:08X}",
             "clube": f"0x{my_club:08X}", "avaliador_hab": ability_judge, "avaliador_pot": potential_judge}
