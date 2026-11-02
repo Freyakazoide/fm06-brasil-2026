@@ -135,6 +135,12 @@ def _banco_12_2026_swaps(data: bytes):
     return bench_swaps(data)
 
 
+def _centro_swaps(data: bytes):
+    from .centro import exe_swaps
+
+    return exe_swaps(data)
+
+
 def _fornada_swaps(data: bytes):
     from .fornada import exe_swaps
 
@@ -567,6 +573,15 @@ PATCHES = {
             "data/modelos/fornada_tipos.csv (posições, pés, perfil e movimentos preferidos). Ver "
             "src/fm06patch/fornada.py.",
             build=_fornada_swaps,
+        ),
+        Patch(
+            "centro_colunas",
+            "Colunas do Centro de Desenvolvimento (ficha T1): o metodo 1 da vtable 0x010F1020 "
+            "(propriedades do jogador, 0x00A47530 -> 0x00A40D20) passa por um desvio na .fm26 que "
+            "responde Pest/Pesp (estrelas 0-10 da comissao: maior Npja/Npjp do adjunto e dos "
+            "olheiros do time do humano, com erro por jogador) e PCAB/PPAB (CA/PA). Ver "
+            "src/fm06patch/centro.py.",
+            build=_centro_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

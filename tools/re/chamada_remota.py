@@ -115,6 +115,18 @@ def property_hook_code() -> bytes:
     return bytes(c)
 
 
+def property_code(person: int, code: int) -> bytes:
+    """Pergunta a propriedade ``code`` à pessoa (ponteiro da tabela de pessoas; a interface de
+    propriedades fica em +4, método 1) e devolve o primeiro dword do valor (o número)."""
+    c = bytearray()
+    c += b"\x83\xEC\x08\x31\xC0\x89\x04\x24\x89\x44\x24\x04"            # valor vazio em [esp]
+    c += b"\x54\x68" + code.to_bytes(4, "little")                        # push &valor; push código
+    c += b"\xB9" + (person + 4).to_bytes(4, "little")                     # ecx = pessoa + 4
+    c += b"\x8B\x01\xFF\x50\x04"                                         # call [[ecx]+4]
+    c += b"\x8B\x04\x24\x83\xC4\x08\xC2\x04\x00"                          # eax = número; ret 4
+    return bytes(c)
+
+
 def game() -> tuple[int, int]:
     for name in ("fm_brasil.exe", "fm.exe"):
         try:

@@ -31,7 +31,26 @@ BASELINE = ROOT / "workspace" / "baseline" / "telas"
 FILES = ("sections.xml", "screens/team.xml", "panels/person search list.xml")
 SKIN = "brasil 2026"
 SKIN_PARENT = "aurora 2006 left - flow"
-SKIN_SOURCES = ("skins/aurora 2006/panels/person search list.xml", f"skins/{SKIN_PARENT}/config.xml")
+SKIN_SOURCES = ("skins/aurora 2006/panels/person search list.xml", "skins/aurora 2006/panels/person list table.xml",
+                f"skins/{SKIN_PARENT}/config.xml")
+# colunas de estrelas da comissão (codigos respondidos pelo patch centro_colunas do executável)
+COLUMNS_BEFORE = '<record>\n\t\t\t<flags id="id" value="PCAB" />'
+COLUMN = """<record>
+			<flags id="id" value="{code}" />
+			<flags id="width" value="50" />
+			<record id="column_properties">
+				<flags id="alignment" value="centre_x,centre_y" />
+			</record>
+			<record id="column_heading" height="20" size="10">
+				<flags id="alignment" value="centre_x,centre_y" />
+				<string id="text" value="{title}" />
+				<string id="hint" value="{hint}" />
+			</record>
+		</record>
+
+		"""
+STAR_COLUMNS = (COLUMN.format(code="Pest", title="Hab.", hint="Habilidade atual, de 0 a 10, na opiniao da comissao")
+                + COLUMN.format(code="Pesp", title="Pot.", hint="Potencial, de 0 a 10, na opiniao da comissao"))
 SKIN_XML = f"""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE propertylist SYSTEM "http://www.sigames.com/dtds/propertylist.dtd">
 
@@ -70,8 +89,8 @@ VIEW_ITEM = '''<record id="dsnv">
 							<flags id="Page"/> <!-- idade -->
 							<flags id="Ppos"/> <!-- posicao -->
 							<flags id="Pclb"/> <!-- clube -->
-							<flags id="PCAB"/> <!-- CA -->
-							<flags id="PPAB"/> <!-- PA -->
+							<flags id="Pest"/> <!-- estrelas: habilidade (comissao) -->
+							<flags id="Pesp"/> <!-- estrelas: potencial (comissao) -->
 							<flags id="Pdva"/> <!-- valor -->
 						</record>
 					</record>
@@ -102,6 +121,9 @@ def build(originals: dict[str, str]) -> dict[str, str]:
     return {
         f"skins/{SKIN}/{SKIN}.xml": SKIN_XML,
         f"skins/{SKIN}/config.xml": originals[f"skins/{SKIN_PARENT}/config.xml"],
+        f"skins/{SKIN}/panels/person list table.xml": insert_before(
+            originals["skins/aurora 2006/panels/person list table.xml"], COLUMNS_BEFORE, STAR_COLUMNS,
+            "aurora 2006/person list table.xml"),
         f"skins/{SKIN}/panels/person search list.xml": insert_before(
             originals["skins/aurora 2006/panels/person search list.xml"], VIEW_BEFORE, VIEW_ITEM,
             "aurora 2006/person search list.xml"),
