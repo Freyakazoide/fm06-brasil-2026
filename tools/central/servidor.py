@@ -57,6 +57,23 @@ def remember(lista, info) -> dict[str, list[dict]]:
     return series
 
 
+_BACKGROUND: bytes | None = None
+
+
+def background() -> bytes:
+    """O campo de treino do MD em JPG leve (feito uma vez, na primeira vez que a página pede)."""
+    global _BACKGROUND
+    if _BACKGROUND is None:
+        import io
+        from PIL import Image
+        image = Image.open(ASSETS / "fundo-centro-treinamento.png").convert("RGB")
+        image.thumbnail((1600, 1600))
+        buffer = io.BytesIO()
+        image.save(buffer, "JPEG", quality=80, optimize=True)
+        _BACKGROUND = buffer.getvalue()
+    return _BACKGROUND
+
+
 class Central(BaseHTTPRequestHandler):
     max_age = 19
 
@@ -70,6 +87,9 @@ class Central(BaseHTTPRequestHandler):
                 self.reply(200, body.encode("utf-8"), "application/json; charset=utf-8")
             except Exception as error:                                   # jogo fechado, etc.
                 self.reply(503, json.dumps({"erro": str(error)}).encode("utf-8"), "application/json")
+            return
+        if path == "/fundo.jpg":
+            self.reply(200, background(), "image/jpeg")
             return
         if path in FILES:
             file, kind = FILES[path]

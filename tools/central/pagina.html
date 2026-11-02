@@ -6,80 +6,99 @@
 <title>Centro de Desenvolvimento</title>
 <style>
   :root {
-    --bg: #101410; --panel: #1a201a; --panel2: #222a22; --line: #2f3a2f;
-    --text: #e8ece6; --muted: #9aa69a; --accent: #f2c230; --green: #3fae5a;
-    --low: #c0533f; --mid: #d9a33a; --high: #59b86b; --top: #8fd18a;
+    --bg: #0b100c; --panel: rgba(20, 27, 21, .86); --panel2: rgba(31, 41, 32, .9); --line: rgba(120, 150, 120, .22);
+    --text: #eef2ec; --muted: #9fac9f; --gold: #f2c230; --gold2: #ffdf7a;
+    --low: #d0634b; --mid: #e0aa3e; --high: #5fbf72; --top: #9be08f;
+    --gk: #e8c547; --def: #4f8fd6; --mid-line: #4fb36a; --att: #d65a4f;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: radial-gradient(ellipse at top, #1c2a1c, var(--bg) 60%); color: var(--text);
-         font: 14px/1.4 "Segoe UI", Tahoma, sans-serif; min-height: 100vh; }
-  header { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
-  header img { width: 52px; height: 52px; object-fit: contain; }
-  header h1 { margin: 0; font-size: 22px; letter-spacing: .3px; }
+  body { margin: 0; color: var(--text); font: 14px/1.45 "Segoe UI", Tahoma, sans-serif; min-height: 100vh;
+         background: linear-gradient(180deg, rgba(8,12,9,.55), rgba(8,12,9,.92) 45%, var(--bg)), url("/fundo.jpg") center top / cover fixed, var(--bg); }
+  header { display: flex; align-items: center; gap: 16px; padding: 18px 24px 14px; }
+  header img { width: 64px; height: 64px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,.6)); }
+  header h1 { margin: 0; font-size: 26px; letter-spacing: .4px; text-shadow: 0 2px 8px rgba(0,0,0,.7); }
   header .sub { color: var(--muted); font-size: 13px; }
-  header .right { margin-left: auto; text-align: right; color: var(--muted); font-size: 12px; }
-  button { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
-           padding: 6px 12px; cursor: pointer; font: inherit; }
-  button:hover { border-color: var(--accent); }
-  main { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 16px; padding: 16px 20px; }
-  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
-  .list { display: flex; flex-direction: column; gap: 6px; }
-  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
-  .chip { padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); cursor: pointer; font-size: 12px; }
-  .chip.on { color: #111; background: var(--accent); border-color: var(--accent); }
-  .card { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 9px 12px; border-radius: 8px;
-          background: var(--panel); border: 1px solid transparent; cursor: pointer; }
+  header .right { margin-left: auto; text-align: right; color: var(--muted); font-size: 12px; display: grid; gap: 6px; justify-items: end; }
+  button, select, input { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+           padding: 6px 12px; font: inherit; }
+  button { cursor: pointer; } button:hover { border-color: var(--gold); }
+  main { display: grid; grid-template-columns: minmax(290px, 370px) 1fr; gap: 18px; padding: 4px 24px 18px; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+
+  /* lista */
+  .list { display: flex; flex-direction: column; gap: 8px; }
+  .tools { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { padding: 3px 11px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); cursor: pointer; font-size: 12px;
+          background: var(--panel); }
+  .chip.on { color: #17140a; background: var(--gold); border-color: var(--gold); font-weight: 600; }
+  #cards { display: flex; flex-direction: column; gap: 6px; max-height: calc(100vh - 230px); overflow: auto; padding-right: 2px; }
+  .card { display: grid; grid-template-columns: 34px 1fr auto; gap: 1px 10px; align-items: center; padding: 8px 10px;
+          border-radius: 10px; background: var(--panel); border: 1px solid transparent; cursor: pointer; backdrop-filter: blur(4px); }
   .card:hover { border-color: var(--line); }
-  .card.sel { border-color: var(--accent); background: var(--panel2); }
-  .card .nm { font-weight: 600; }
-  .card .meta { color: var(--muted); font-size: 12px; }
-  .stars { color: var(--accent); letter-spacing: 1px; white-space: nowrap; }
-  .stars .off { color: #4a554a; }
-  .stars .half { background: linear-gradient(90deg, var(--accent) 50%, #4a554a 50%); -webkit-background-clip: text;
-                 background-clip: text; color: transparent; }
-  .detail { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-height: 400px; }
-  .top { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: center; }
+  .card.sel { border-color: var(--gold); background: var(--panel2); box-shadow: 0 0 0 1px rgba(242,194,48,.25) inset; }
+  .badge { grid-row: span 2; width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center;
+           font-size: 11px; font-weight: 800; color: #0b0f0b; }
+  .card .nm { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .meta { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .st { grid-row: span 2; text-align: right; }
+  .card .st small { display: block; color: var(--muted); font-size: 11px; }
+
+  .stars { white-space: nowrap; letter-spacing: 1px; color: var(--gold); text-shadow: 0 0 6px rgba(242,194,48,.25); }
+  .stars .off { color: #3a453a; text-shadow: none; }
+  .stars .half { background: linear-gradient(90deg, var(--gold) 50%, #3a453a 50%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stars.big { font-size: 24px; letter-spacing: 3px; }
+
+  /* ficha */
+  .detail { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px; min-height: 420px; backdrop-filter: blur(6px); }
+  .top { display: grid; grid-template-columns: 210px 1fr 170px; gap: 22px; align-items: center; }
+  @media (max-width: 1100px) { .top { grid-template-columns: 190px 1fr; } .pitch { display: none; } }
   @media (max-width: 600px) { .top { grid-template-columns: 1fr; } }
-  .shirt { position: relative; width: 220px; height: 220px; }
-  .shirt img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(0,0,0,.5)); }
+  .shirt { position: relative; width: 210px; height: 210px; }
+  .shirt img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 16px rgba(0,0,0,.6)); }
   .shirt svg { position: absolute; inset: 0; }
-  .shirt text { font: 800 17px "Segoe UI", sans-serif; letter-spacing: 1.5px; fill: #fff; stroke: #000; stroke-width: 3px;
-                paint-order: stroke; text-transform: uppercase; }
-  .who h2 { margin: 0 0 2px; font-size: 26px; }
-  .who .meta { color: var(--muted); }
-  .pos { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
-  .pos span { background: #24402a; color: #bfe8c6; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-  .grades { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: center; margin-top: 8px; }
-  .grades .big { font-size: 22px; }
-  .verdict { margin-top: 12px; padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--panel2);
-             border-radius: 0 8px 8px 0; color: #f3e6b8; }
-  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 18px; }
-  .group h3 { margin: 0 0 8px; font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: .6px; }
-  .attr { display: grid; gap: 8px; align-items: center; font-size: 13px; padding: 1px 0; }
-  .bar { height: 6px; background: #2b332b; border-radius: 3px; overflow: hidden; }
-  .bar { position: relative; }
-  .bar i { position: absolute; left: 0; top: 0; display: block; height: 100%; border-radius: 3px; }
-  .bar i.fut { opacity: .28; }
-  .attr { grid-template-columns: 1fr 90px 44px; }
-  .attr em { color: var(--muted); font-style: normal; font-size: 11px; }
-  .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 16px; }
-  .legend i { display: inline-block; width: 18px; height: 6px; border-radius: 3px; background: var(--high); vertical-align: middle; margin-right: 5px; }
-  .legend i.fut { opacity: .28; }
-  .future { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 760px) { .future { grid-template-columns: 1fr; } }
-  .box { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
-  .box h3 { margin: 0 0 6px; font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: .6px; }
-  .box .big { font-size: 18px; font-weight: 600; }
-  .box ul { margin: 6px 0 0; padding-left: 18px; color: var(--text); }
-  .chart svg { width: 100%; height: 170px; }
-  .chart .axis { stroke: #3a463a; stroke-width: 1; }
-  .chart text { fill: var(--muted); font-size: 10px; }
-  .keys { display: flex; gap: 12px; font-size: 12px; color: var(--muted); margin-top: 4px; flex-wrap: wrap; }
+  .shirt text { font: 800 17px "Segoe UI", sans-serif; letter-spacing: 1.6px; fill: #fff; stroke: #050505; stroke-width: 3.2px; paint-order: stroke; }
+  .who h2 { margin: 0; font-size: 30px; line-height: 1.1; }
+  .who .meta { color: var(--muted); margin-top: 2px; }
+  .pos { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 12px; }
+  .pos span { padding: 2px 9px; border-radius: 5px; font-size: 12px; font-weight: 700; color: #0b0f0b; }
+  .grades { display: grid; grid-template-columns: auto 1fr; gap: 2px 16px; align-items: center; }
+  .grades span:nth-child(odd) { color: var(--muted); }
+  .pitch svg { width: 100%; height: auto; display: block; }
+  .verdict { margin-top: 14px; padding: 10px 14px; border-left: 3px solid var(--gold); background: var(--panel2);
+             border-radius: 0 10px 10px 0; color: #f6e7b4; }
+
+  .row2 { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 14px; margin-top: 18px; }
+  @media (max-width: 1100px) { .row2 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) { .row2 { grid-template-columns: 1fr; } }
+  .box { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .box h3 { margin: 0 0 8px; font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: .8px; }
+  .box .big { font-size: 18px; font-weight: 700; line-height: 1.25; margin: 2px 0 6px; }
+  .box ul { margin: 0; padding-left: 18px; }
+  .box li b { color: var(--top); }
+  .radar svg, .chart svg { width: 100%; height: auto; display: block; }
+  .radar .grid { fill: none; stroke: rgba(160,190,160,.18); }
+  .radar .now { fill: rgba(95,191,114,.45); stroke: #5fbf72; stroke-width: 2; }
+  .radar .fut { fill: rgba(242,194,48,.08); stroke: var(--gold); stroke-width: 1.6; stroke-dasharray: 4 3; }
+  .radar text, .chart text { fill: var(--muted); font-size: 10px; }
+  .chart .axis { stroke: rgba(160,190,160,.18); }
+  .keys { display: flex; gap: 12px; font-size: 11px; color: var(--muted); margin-top: 4px; flex-wrap: wrap; }
   .keys b { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
+
+  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; margin-top: 18px; }
+  .group h3 { margin: 0 0 8px; font-size: 12px; color: var(--gold); text-transform: uppercase; letter-spacing: .8px; }
+  .attr { display: grid; grid-template-columns: 1fr 96px 50px; gap: 8px; align-items: center; font-size: 13px; padding: 1.5px 0; }
+  .bar { position: relative; height: 7px; background: rgba(255,255,255,.07); border-radius: 4px; overflow: hidden; }
+  .bar i { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; }
+  .bar i.fut { opacity: .3; }
   .attr b { text-align: right; font-variant-numeric: tabular-nums; }
+  .attr em { color: var(--gold2); font-style: normal; font-size: 11px; font-weight: 400; }
+  .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 14px; }
+  .legend i { display: inline-block; width: 18px; height: 7px; border-radius: 4px; background: var(--high); vertical-align: middle; margin-right: 5px; }
+  .legend i.fut { opacity: .3; }
   .empty, .error { color: var(--muted); padding: 40px; text-align: center; }
   .error { color: #f0a090; }
-  .foot { color: var(--muted); font-size: 12px; padding: 0 20px 16px; }
+  .foot { color: var(--muted); font-size: 12px; padding: 0 24px 18px; }
 </style>
 </head>
 <body>
@@ -96,12 +115,19 @@
 </header>
 <main>
   <section class="list">
+    <div class="tools">
+      <input id="search" placeholder="Buscar jogador…">
+      <select id="sort">
+        <option value="pot">Potencial</option><option value="hab">Habilidade</option>
+        <option value="idade">Idade</option><option value="nome">Nome</option>
+      </select>
+    </div>
     <div class="filters" id="filters"></div>
     <div id="cards"></div>
   </section>
   <section class="detail" id="detail"><div class="empty">Escolha um jogador.</div></section>
 </main>
-<div class="foot">Lido ao vivo da memória do jogo (só leitura). As estrelas são a opinião da comissão:
+<div class="foot">Lido ao vivo da memória do jogo (só leitura). Estrelas e futuro são a opinião da comissão e dos olheiros:
 quanto melhor o avaliador, menor o erro.</div>
 
 <script>
@@ -120,19 +146,44 @@ const GROUPS = {
 const KEEPER = [["Handling","Jogo de Mãos"],["Reflexes","Reflexos"],["One on one","Um contra Um"],["Aer ability","Alcance Aéreo"],
   ["Cmd of area","Comando de Área"],["Communiction","Comunicação"],["Kicking","Pontapé"],["Rushing out","Saídas"],
   ["Punch","Socar"],["Eccentricity","Excentricidade"],["Long throws","Lançamentos"]];
+const AXES = [
+  ["Ataque", ["Finishing", "Off the ball", "Composure", "Dribbling"]],
+  ["Criação", ["Passing", "Creativity", "Technique", "First Touch"]],
+  ["Defesa", ["Tackling", "Marking", "Positioning", "Anticipation"]],
+  ["Físico", ["Pace", "Acceleration", "Strength", "Stamina"]],
+  ["Mental", ["Decision", "Determination", "Work rate", "Team work"]],
+  ["Jogo aéreo", ["Heading", "Jumping", "Bravery"]],
+];
+const AXES_GK = [
+  ["Reflexos", ["Reflexes", "One on one"]], ["Mãos", ["Handling", "Punch"]],
+  ["Área", ["Aer ability", "Cmd of area", "Rushing out"]], ["Distribuição", ["Kicking", "Long throws"]],
+  ["Mental", ["Decision", "Concentration", "Composure", "Communiction"]], ["Físico", ["Agility", "Jumping", "Acceleration"]],
+];
+// posição -> [x, y] no campo (atacando para cima), setor
+const PITCH = {
+  "GR": [50, 92, "gk"], "DE": [16, 74, "def"], "DC": [50, 76, "def"], "DD": [84, 74, "def"],
+  "AE": [12, 60, "def"], "AD": [88, 60, "def"], "MD": [50, 62, "mid"],
+  "M E": [16, 46, "mid"], "M C": [50, 48, "mid"], "M D": [84, 46, "mid"],
+  "MA E": [18, 30, "att"], "MA C": [50, 32, "att"], "MA D": [82, 30, "att"], "PL": [50, 16, "att"],
+};
+const LINE_COLOR = { gk: "var(--gk)", def: "var(--def)", mid: "var(--mid-line)", att: "var(--att)" };
+const LINE_NAME = { gk: "GR", def: "DEF", mid: "MEI", att: "ATA" };
 
 let data = null, selected = null, team = "Todos";
 
-function stars(v) {                       // 0..10 -> 5 estrelas com meias
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const color = v => v >= 16 ? "var(--top)" : v >= 12 ? "var(--high)" : v >= 8 ? "var(--mid)" : "var(--low)";
+const line = j => (PITCH[j.posicoes[0]] || [0, 0, "mid"])[2];
+const short = j => (j.apelido || j.nome.split(" ").pop());
+
+function stars(v, big = false) {             // 0..10 -> 5 estrelas com meias
   let s = "";
   for (let i = 1; i <= 5; i++) {
     const n = v - (i - 1) * 2;
     s += n >= 2 ? "★" : n === 1 ? '<span class="half">★</span>' : '<span class="off">★</span>';
   }
-  return `<span class="stars" title="${v}/10">${s}</span>`;
+  return `<span class="stars ${big ? "big" : ""}" title="${v}/10">${s}</span>`;
 }
-const color = v => v >= 16 ? "var(--top)" : v >= 12 ? "var(--high)" : v >= 8 ? "var(--mid)" : "var(--low)";
-const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 function verdict(j) {
   if (j.pot >= 9) return "Joia da base: a comissão vê nível de seleção. Prioridade total no desenvolvimento.";
@@ -142,36 +193,72 @@ function verdict(j) {
   return "A comissão não vê futuro no clube por enquanto.";
 }
 
-function best(j) {                       // os atributos que mais vão crescer
+function best(j) {                           // os atributos que mais vão crescer
   const names = Object.fromEntries([...GROUPS["Técnicos"], ...GROUPS["Mentais"], ...GROUPS["Físicos"], ...KEEPER]);
   return Object.entries(j.futuro).filter(([k]) => names[k])
     .map(([k, f]) => [names[k], j.atributos[k] ?? 0, f]).sort((a, b) => (b[2] - b[1]) - (a[2] - a[1])).slice(0, 4);
 }
 
+function radar(j) {
+  const axes = j.posicoes.includes("GR") ? AXES_GK : AXES, n = axes.length, R = 78, C = 105;
+  const avg = (src, keys) => keys.reduce((s, k) => s + (src[k] ?? 0), 0) / keys.length;
+  const pt = (i, v) => { const a = -Math.PI / 2 + 2 * Math.PI * i / n;
+    return [C + Math.cos(a) * R * v / 20, C + Math.sin(a) * R * v / 20]; };
+  const poly = vals => vals.map((v, i) => pt(i, v).map(x => x.toFixed(1)).join(",")).join(" ");
+  const rings = [5, 10, 15, 20].map(v => `<polygon class="grid" points="${poly(Array(n).fill(v))}"/>`).join("");
+  const spokes = axes.map((_, i) => `<line class="grid" x1="${C}" y1="${C}" x2="${pt(i, 20)[0]}" y2="${pt(i, 20)[1]}"/>`).join("");
+  const labels = axes.map(([name], i) => { const [x, y] = pt(i, 24.5);
+    return `<text x="${x}" y="${y + 3}" text-anchor="middle">${name}</text>`; }).join("");
+  const now = axes.map(([, k]) => avg(j.atributos, k)), fut = axes.map(([, k]) => avg(j.futuro, k));
+  return `<svg viewBox="-24 -4 258 218">${rings}${spokes}<polygon class="fut" points="${poly(fut)}"/><polygon class="now" points="${poly(now)}"/>${labels}</svg>
+    <div class="keys"><span><b style="background:#5fbf72"></b>agora</span><span><b style="background:transparent;border:1px dashed var(--gold)"></b>futuro (olheiro)</span></div>`;
+}
+
+function pitch(j) {
+  const dots = j.posicoes.map((p, i) => { const [x, y, l] = PITCH[p] || [];
+    return x === undefined ? "" : `<circle cx="${x}" cy="${y}" r="${i ? 5.5 : 7}" fill="${LINE_COLOR[l]}" stroke="#08100a" stroke-width="1.5" opacity="${i ? .8 : 1}"/>
+      <text x="${x}" y="${y + 13}" text-anchor="middle" font-size="6.5" fill="#e8f0e6">${esc(p)}</text>`; }).join("");
+  return `<svg viewBox="0 0 100 104"><rect x="2" y="2" width="96" height="100" rx="3" fill="#1d4a28" stroke="#6fa77a" stroke-width=".8"/>
+    <g stroke="#6fa77a" stroke-width=".7" fill="none"><line x1="2" y1="52" x2="98" y2="52"/><circle cx="50" cy="52" r="10"/>
+    <rect x="28" y="84" width="44" height="18"/><rect x="38" y="95" width="24" height="7"/><rect x="28" y="2" width="44" height="18"/></g>${dots}</svg>`;
+}
+
 function chart(points) {
   if (points.length < 2)
-    return '<div class="empty" style="padding:20px">Primeira foto guardada. Avance o jogo e clique em Atualizar para ver a evolução.</div>';
-  const W = 320, H = 150, L = 24, B = 18, n = points.length;
+    return '<div class="empty" style="padding:24px 10px">Primeira foto guardada. Avance o jogo e clique em <b>Atualizar do jogo</b> para ver a evolução.</div>';
+  const W = 300, H = 160, L = 22, B = 18, n = points.length;
   const x = i => L + (W - L - 8) * i / (n - 1), y = v => 8 + (H - B - 8) * (1 - v / 20);
-  const line = (key, col, scale = 1) => `<polyline fill="none" stroke="${col}" stroke-width="2" points="${
-    points.map((p, i) => `${x(i)},${y(p[key] * scale)}`).join(" ")}"/>`;
+  const ln = (key, col, scale = 1) => `<polyline fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round" points="${
+    points.map((p, i) => `${x(i).toFixed(1)},${y(p[key] * scale).toFixed(1)}`).join(" ")}"/>`;
   const ticks = [0, 5, 10, 15, 20].map(v => `<line class="axis" x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}"/><text x="2" y="${y(v) + 3}">${v}</text>`).join("");
-  const dates = [0, n - 1].map(i => `<text x="${x(i) - (i ? 40 : 0)}" y="${H - 4}">${points[i].data.split("-").reverse().join("/")}</text>`).join("");
-  return `<svg viewBox="0 0 ${W} ${H}">${ticks}${dates}${line("tec", "#59b86b")}${line("men", "#5aa0d8")}${line("fis", "#d9a33a")}${line("hab", "#f2c230", 2)}</svg>
-    <div class="keys"><span><b style="background:#59b86b"></b>técnicos</span><span><b style="background:#5aa0d8"></b>mentais</span><span><b style="background:#d9a33a"></b>físicos</span><span><b style="background:#f2c230"></b>habilidade (comissão)</span></div>`;
+  const dates = [0, n - 1].map(i => `<text x="${i ? W - 44 : L}" y="${H - 4}">${points[i].data.split("-").reverse().join("/")}</text>`).join("");
+  return `<svg viewBox="0 0 ${W} ${H}">${ticks}${dates}${ln("tec", "#5fbf72")}${ln("men", "#5aa0d8")}${ln("fis", "#e0aa3e")}${ln("hab", "#f2c230", 2)}</svg>
+    <div class="keys"><span><b style="background:#5fbf72"></b>técnicos</span><span><b style="background:#5aa0d8"></b>mentais</span><span><b style="background:#e0aa3e"></b>físicos</span><span><b style="background:#f2c230"></b>habilidade</span></div>`;
+}
+
+function visible() {
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  const order = document.getElementById("sort").value;
+  const key = { pot: j => [-j.pot, -j.hab], hab: j => [-j.hab, -j.pot], idade: j => [j.idade, -j.pot], nome: j => [short(j)] }[order];
+  return data.jovens
+    .filter(j => team === "Todos" || j.time === team)
+    .filter(j => !q || (j.nome + " " + j.apelido).toLowerCase().includes(q))
+    .sort((a, b) => { const ka = key(a), kb = key(b);
+      for (let i = 0; i < ka.length; i++) if (ka[i] !== kb[i]) return ka[i] < kb[i] ? -1 : 1; return 0; });
 }
 
 function renderList() {
   const teams = ["Todos", ...new Set(data.jovens.map(j => j.time))];
   document.getElementById("filters").innerHTML = teams.map(t =>
-    `<span class="chip ${t === team ? "on" : ""}" data-t="${esc(t)}">${esc(t)}</span>`).join("");
-  const list = data.jovens.filter(j => team === "Todos" || j.time === team);
-  document.getElementById("cards").innerHTML = list.length ? list.map(j => `
+    `<span class="chip ${t === team ? "on" : ""}" data-t="${esc(t)}">${esc(t)} · ${t === "Todos" ? data.jovens.length : data.jovens.filter(j => j.time === t).length}</span>`).join("");
+  const list = visible();
+  document.getElementById("cards").innerHTML = list.length ? list.map(j => { const l = line(j); return `
     <div class="card ${selected === j.uid ? "sel" : ""}" data-uid="${j.uid}">
-      <div class="nm">${esc(j.apelido || j.nome)}</div><div>${stars(j.pot)}</div>
+      <div class="badge" style="background:${LINE_COLOR[l]}">${LINE_NAME[l]}</div>
+      <div class="nm">${esc(short(j))}</div>
+      <div class="st">${stars(j.pot)}<small>Hab. ${j.hab} · Pot. ${j.pot}</small></div>
       <div class="meta">${j.idade} anos · ${esc(j.time)} · ${esc(j.posicoes.join(", ") || "—")}</div>
-      <div class="meta">Hab. ${j.hab} · Pot. ${j.pot}</div>
-    </div>`).join("") : '<div class="empty">Nenhum jovem.</div>';
+    </div>`; }).join("") : '<div class="empty">Nenhum jovem.</div>';
 }
 
 function renderDetail() {
@@ -179,36 +266,33 @@ function renderDetail() {
   if (!j) { document.getElementById("detail").innerHTML = '<div class="empty">Escolha um jogador.</div>'; return; }
   const keeper = j.posicoes.includes("GR");
   const groups = keeper ? {"Goleiro": KEEPER, "Mentais": GROUPS["Mentais"], "Físicos": GROUPS["Físicos"]} : GROUPS;
-  const name = (j.apelido || j.nome.split(" ").pop()).toUpperCase();
+  const name = short(j).toUpperCase();
   document.getElementById("detail").innerHTML = `
     <div class="top">
-      <div class="shirt">
-        <img src="/camisa.png" alt="">
-        <svg viewBox="0 0 220 220"><path id="arc" d="M 52 74 Q 110 58 168 74" fill="none"/>
-          <text><textPath href="#arc" startOffset="50%" text-anchor="middle">${esc(name)}</textPath></text></svg>
-      </div>
+      <div class="shirt"><img src="/camisa.png" alt="">
+        <svg viewBox="0 0 210 210"><path id="arc" d="M 48 72 Q 105 55 162 72" fill="none"/>
+          <text><textPath href="#arc" startOffset="50%" text-anchor="middle">${esc(name)}</textPath></text></svg></div>
       <div class="who">
-        <h2>${esc(j.apelido || j.nome)}</h2>
+        <h2>${esc(short(j))}</h2>
         <div class="meta">${esc(j.nome)} · ${j.idade} anos (${j.nascimento.split("-").reverse().join("/")}) · ${esc(j.time)}</div>
-        <div class="pos">${j.posicoes.map(p => `<span>${esc(p)}</span>`).join("") || "<span>sem posição</span>"}</div>
-        <div class="grades">
-          <span>Habilidade atual</span><span class="big">${stars(j.hab)}</span>
-          <span>Potencial</span><span class="big">${stars(j.pot)}</span>
-        </div>
+        <div class="pos">${j.posicoes.map(p => `<span style="background:${LINE_COLOR[(PITCH[p] || [0,0,"mid"])[2]]}">${esc(p)}</span>`).join("") || "<span>sem posição</span>"}</div>
+        <div class="grades"><span>Habilidade atual</span>${stars(j.hab, true)}<span>Potencial</span>${stars(j.pot, true)}</div>
         <div class="verdict">${verdict(j)}</div>
       </div>
+      <div class="pitch">${pitch(j)}</div>
     </div>
-    <div class="future">
+    <div class="row2">
       <div class="box"><h3>Futuro potencial (olheiro)</h3>
-        <div>Se treinar bem, pode chegar a</div><div class="big">${esc(j.nivel)}</div>
+        <div style="color:var(--muted)">Se treinar bem, pode chegar a</div><div class="big">${esc(j.nivel)}</div>
         <ul>${best(j).map(([label, v, f]) => `<li>${label}: ${v} → <b>${f}</b></li>`).join("")}</ul></div>
-      <div class="box chart"><h3>Evolução</h3>${chart(data.historico[String(j.uid)] || [])}</div>
+      <div class="box radar"><h3>Perfil</h3>${radar(j)}</div>
+      <div class="box chart"><h3>Evolução</h3>${chart(data.historico?.[String(j.uid)] || [])}</div>
     </div>
     <div class="legend"><span><i></i>agora</span><span><i class="fut"></i>futuro na visão do olheiro</span></div>
     <div class="groups">${Object.entries(groups).map(([title, attrs]) => `
       <div class="group"><h3>${title}</h3>${attrs.map(([key, label]) => {
         const v = j.atributos[key] ?? 0, f = j.futuro[key] ?? v;
-        return `<div class="attr"><span>${label}</span><div class="bar"><i class="fut" style="width:${f * 5}%;background:${color(f)}"></i><i style="width:${v * 5}%;background:${color(v)}"></i></div><b>${v}${f > v ? ` <em>→ ${f}</em>` : ""}</b></div>`;
+        return `<div class="attr"><span>${label}</span><div class="bar"><i class="fut" style="width:${f * 5}%;background:${color(f)}"></i><i style="width:${v * 5}%;background:${color(v)}"></i></div><b>${v}${f > v ? ` <em>→${f}</em>` : ""}</b></div>`;
       }).join("")}</div>`).join("")}
     </div>`;
 }
@@ -223,12 +307,12 @@ async function load() {
     if (!data.jovens.some(j => j.uid === selected)) selected = data.jovens[0]?.uid ?? null;
     const i = data.info;
     document.getElementById("when").textContent =
-      `${i.data.split("-").reverse().join("/")} · avaliadores ${i.avaliador_hab}/${i.avaliador_pot}`;
+      `${i.data.split("-").reverse().join("/")} · comissão ${i.avaliador_hab}/${i.avaliador_pot} em avaliar`;
     renderList(); renderDetail();
   } catch (e) {
     document.getElementById("when").textContent = "sem conexão com o jogo";
     document.getElementById("detail").innerHTML =
-      `<div class="error">Não consegui ler o jogo: ${esc(e.message)}.<br>Abra o fm_brasil.exe e clique em Atualizar.</div>`;
+      `<div class="error">Não consegui ler o jogo: ${esc(e.message)}.<br>Abra o fm_brasil.exe e clique em Atualizar do jogo.</div>`;
   }
 }
 
@@ -240,6 +324,8 @@ document.getElementById("filters").addEventListener("click", e => {
   const c = e.target.closest(".chip"); if (!c) return;
   team = c.dataset.t; renderList();
 });
+document.getElementById("search").addEventListener("input", renderList);
+document.getElementById("sort").addEventListener("change", renderList);
 document.getElementById("reload").addEventListener("click", load);
 load();
 </script>
