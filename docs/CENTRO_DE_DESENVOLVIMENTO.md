@@ -657,3 +657,16 @@ Conferido nos XML da Aurora e do jogo:
   potencial (Profissionalismo 45%, Determinação 30%, Ambição 25%) e alertas ("risco de estagnar" com
   Profissionalismo até 8). Só leitura; aparece na aba Comissão. A fórmula da chance é nossa (hipótese
   inspirada no FM), não do motor.
+- 02/11, **jogos não oficiais, resolvido**: o getter de propriedades do jogador (vtable `[R+4]`,
+  entrada 1 → 0xA40D20 → 0x8C8D60) trata `Pfrm` em 0x8C9EBF chamando a vfunc 0x6C do objeto `R-0xCC`
+  (0x8924F0), que devolve `[R-0x90]`: o **objeto de estatísticas** do jogador (carregado sob demanda;
+  se for 0, o jogo o busca num cache, 0xAEF3A0/0xAEF480). Nele:
+  `+0x0C` id (igual a `[R+0x18]`), `+0x2C` as 5 últimas notas (1 byte cada; Geraldo 07 06 06 06 06,
+  Tardelli 7 8 7 7 6, Guedes 7 7 6 7 7, iguais ao `Pfrm`), `+0x14 + 4*categoria` ponteiro para o
+  registro da temporada (0 Não competitivo, 1 Liga, 2 Copa, 3 Continental, 4 Internacional, 5 Global;
+  vazio = 0). O registro tem 3 vtables e os 28 u16 a partir de +0x0C (mapa da seção de estatísticas).
+  Conferido: Geraldo, categoria 0 = 15 titular, 7 banco, 1 gol, soma de notas 137 / 22 jogos = 6,23,
+  igual à coluna "Não Oficiais" do jogo; Guedes, Liga = Global (1 jogo, 71 min, nota 7). A nota média é
+  soma/(titular+banco): o campo [27] não serve de divisor (goleiro Eric: [27] = 1 em 7 jogos;
+  hipótese: jogos sem sofrer gol, com [3] = 11 gols sofridos). A aba Desempenho mostra o quadro
+  "Não oficiais" e a leitura da comissão usa esses números. Leitura direta da memória, sem chamada remota.

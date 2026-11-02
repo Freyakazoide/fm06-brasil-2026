@@ -241,7 +241,32 @@ def season_stats(jogo: Jogo, handle, r: int) -> dict:
         for name in STAT_DOUBLES:
             out[name] = None                                  # sem jogos: médias não fazem sentido
     out["forma"] = recent_form(jogo, ask("Pfrm"))
+    out["nao_oficiais"] = stat_record(jogo, r, NON_COMPETITIVE)
     return out
+
+
+# Objeto de estatísticas do jogador: [R-0x90] (vfunc 0x6C do objeto R-0xCC, 0x8924F0; carregado sob
+# demanda, pode estar vazio). +0x2C: as 5 últimas notas (1 byte cada). +0x14 + 4*categoria: ponteiro
+# para o registro da temporada (0 Não competitivo, 1 Liga, 2 Copa, 3 Continental, 4 Internacional,
+# 5 Global); o registro tem 3 vtables e 28 u16 a partir de +0x0C. Conferido no Geraldo (Sub-20): não
+# oficiais 15 (7), 1 gol, nota 137/22 = 6,23, igual à aba Estatísticas do jogo. [27] não é o número de
+# jogos com nota: no goleiro Eric vale 1 (hipótese: jogos sem sofrer gol; [3] = gols sofridos).
+STATS_OBJECT, NON_COMPETITIVE = 0x90, 0
+
+
+def stat_record(jogo: Jogo, r: int, category: int) -> dict:
+    try:
+        holder = jogo.u32(r - STATS_OBJECT)
+        record = jogo.u32(holder + 0x14 + 4 * category) if holder else 0
+        if not record:
+            return {}
+        v = struct.unpack("<28H", jogo.raw(record + 0x0C, 56))
+    except OSError:
+        return {}
+    return {"jogos": v[0], "banco": v[1], "gols": v[2], "assistencias": v[6], "melhor_em_campo": v[11],
+            "vermelhos": v[12], "amarelos": v[13], "minutos": v[25],
+            "nota": round(v[26] / (v[0] + v[1]), 2) if v[0] + v[1] else None,      # soma das notas / jogos
+            "passes_pct": round(v[15] / v[14] * 100, 1) if v[14] else None}
 
 
 def recent_form(jogo: Jogo, pointer: int) -> list[int]:

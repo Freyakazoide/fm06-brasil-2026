@@ -540,3 +540,7 @@ button.ghost:disabled { opacity: .4; cursor: not-allowed; }
 .trait-alert.bom { border-left-color: var(--positive); } .trait-alert.bom .ui-icon { color: var(--positive); }
 .trait-alert.risco { border-left-color: var(--danger); } .trait-alert.risco .ui-icon { color: var(--danger); }
 .trait-alert.atencao { border-left-color: var(--warning); } .trait-alert.atencao .ui-icon { color: var(--warning); }
+
+/* jogos não oficiais (aba Desempenho) */
+.unofficial { margin: 9px 0; border-left: 3px solid var(--info); }
+.unofficial .metric-grid { margin-top: 0; }
