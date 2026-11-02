@@ -28,6 +28,13 @@ RUNTIME_UID = 102_000_000
 
 
 def main() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--uid-min", type=int, default=RUNTIME_UID,
+                        help="só garotos com UID acima deste (peneira: o maior UID da fornada de janeiro)")
+    parser.add_argument("--pa-min", type=int, default=0, help="só garotos com PA a partir deste")
+    args = parser.parse_args()
     _, h = cr.game()
     u = lambda at: struct.unpack("<I", read_memory(h, at, 4))[0]
 
@@ -44,15 +51,19 @@ def main() -> None:
             if raw:
                 clubs[struct.unpack_from("<I", raw, 0x14)[0]] = (raw[0xE1], raw[0xE0], club)
     by_club = defaultdict(list)
+    top_uid = 0
     for person in table(0x014EAA54):
         raw = read_memory(h, person - 0xD0, 0x1C8) if person else None
         if not raw or struct.unpack_from("<I", raw, 0xD0)[0] != PLAYER_VTABLE:
             continue
         uid = struct.unpack_from("<I", raw, 0xD0 + 0x14)[0]
         born = struct.unpack_from("<H", raw, 0xD0 + 0x14 + 52 + 2)[0]
-        if uid < RUNTIME_UID or born != year - 16:
+        if uid < args.uid_min or born != year - 16:
             continue
         ca, pa = struct.unpack_from("<HH", raw, 0xD0 + 0x14 - 204)
+        if pa < args.pa_min:
+            continue
+        top_uid = max(top_uid, uid)
         club = struct.unpack_from("<I", raw, 0xD0 - 48)[0]
         by_club[club].append((ca, pa))
     rows = []
@@ -63,7 +74,10 @@ def main() -> None:
                      sum(pa >= 150 for pa in pas), max(pas)))
     rows.sort(reverse=True)
     total = sum(r[4] for r in rows)
-    print(f"{total} garotos de 16 anos criados em tempo de jogo, em {len(rows)} clubes (ano do motor {year})")
+    print(f"{total} garotos de 16 anos criados em tempo de jogo, em {len(rows)} clubes (ano do motor {year}); "
+          f"maior UID {top_uid}")
+    if not rows:
+        return
     print(f"{'clube':>9} {'base':>4} {'capt':>4} {'qtd':>3} {'PA médio':>8} {'PA≥150':>6} {'maior':>5}")
     for row in rows[:15] + [None] + rows[-10:]:
         if row is None:
