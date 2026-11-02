@@ -22,7 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = ROOT / "workspace" / "baseline" / "telas"
-FILES = ("sections.xml", "screens/team.xml")
+FILES = ("sections.xml", "screens/team.xml", "panels/person search list.xml")
 
 SECTION = "tcdv"
 TITLE = "Centro de Desenvolvimento"
@@ -31,6 +31,27 @@ MENU_ITEM = f'\n                <record id="{SECTION}" section="{SECTION}" text=
 SCREEN_AFTER = '<widget class="team_information_panel" id="tcip" title="Information" late_loading="true" />'
 SCREEN_ITEM = (f'\n\t<widget class="person_search_panel" id="{SECTION}" title="{TITLE}" '
                f'person_list_view_menu="play" type="1" late_loading="true"/>')
+
+
+# visão "Desenvolvimento" no menu "Vêr" das listas de jogadores da busca (person search list.xml,
+# widget "play"): colunas por código de propriedade (person list table.xml); PCAB/PPAB são o CA e
+# o PA, que o jogo só mostrava numa visão de depuração
+VIEW_BEFORE = '<record id="geni"> '
+VIEW_ITEM = '''<record id="dsnv">
+						<string id="name" value="Desenvolvimento"/>
+						<record id="view">
+							<flags id="Pnfo"/> <!-- status -->
+							<flags id="Pnam"/> <!-- nome -->
+							<flags id="Page"/> <!-- idade -->
+							<flags id="Ppos"/> <!-- posicao -->
+							<flags id="Pclb"/> <!-- clube -->
+							<flags id="PCAB"/> <!-- CA -->
+							<flags id="PPAB"/> <!-- PA -->
+							<flags id="Pdva"/> <!-- valor -->
+						</record>
+					</record>
+
+					'''
 
 
 def game_data() -> Path:
@@ -45,8 +66,16 @@ def insert_after(text: str, anchor: str, addition: str, name: str) -> str:
     return text.replace(anchor, anchor + addition)
 
 
+def insert_before(text: str, anchor: str, addition: str, name: str) -> str:
+    if text.count(anchor) != 1:
+        raise SystemExit(f"[ERRO] {name}: âncora não achada (ou repetida): {anchor[:60]}...")
+    return text.replace(anchor, addition + anchor)
+
+
 def build(originals: dict[str, str]) -> dict[str, str]:
     return {
+        "panels/person search list.xml": insert_before(originals["panels/person search list.xml"], VIEW_BEFORE,
+                                                       VIEW_ITEM, "person search list.xml"),
         "sections.xml": insert_after(originals["sections.xml"], MENU_AFTER, MENU_ITEM, "sections.xml"),
         "screens/team.xml": insert_after(originals["screens/team.xml"], SCREEN_AFTER, SCREEN_ITEM,
                                          "screens/team.xml"),
