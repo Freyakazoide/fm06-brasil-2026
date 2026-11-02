@@ -32,7 +32,7 @@ FILES = ("sections.xml", "screens/team.xml", "panels/person search list.xml")
 SKIN = "brasil 2026"
 SKIN_PARENT = "aurora 2006 left - flow"
 SKIN_SOURCES = ("skins/aurora 2006/panels/person search list.xml", "skins/aurora 2006/panels/person list table.xml",
-                f"skins/{SKIN_PARENT}/config.xml")
+                f"skins/{SKIN_PARENT}/config.xml", "skins/aurora 2006/panels/player training.xml")
 # colunas de estrelas da comissão (codigos respondidos pelo patch centro_colunas do executável)
 COLUMNS_BEFORE = '<record>\n\t\t\t<flags id="id" value="PCAB" />'
 COLUMN = """<record>
@@ -99,6 +99,58 @@ VIEW_ITEM = '''<record id="dsnv">
 					'''
 
 
+# Relatório de Desenvolvimento (etapa A do docs/CENTRO_DE_DESENVOLVIMENTO.md): a tela Treino > Geral
+# do jogador (player training.xml) ganha um cabeçalho com o emblema da Central e a camisa de costas.
+# Os ids do painel original ficam todos (o código do jogo preenche cada um pelo id). A camisa ainda é
+# fixa (Figueirense); nome e número dependem de achar a pessoa da tela no executável.
+ASSETS = ROOT / "data" / "brasil" / "telas" / "centro_desenvolvimento" / "assets"
+GRAPHICS = "centro"                                     # skins/<skin>/graphics/centro
+IMAGES = {"emblema": ("emblema-centro-desenvolvimento.png", 84),
+          "camisa_figueirense": ("camisa-costas-figueirense-base.png", 150)}
+GRAPHICS_CONFIG = """<record>
+	<!-- imagens do mod: guardadas depois de lidas -->
+	<boolean id="cache" value="true"/>
+</record>
+"""
+REPORT_TITLE_OLD = 'title="Training Overview[COMMENT - person screen training section title]"'
+REPORT_TITLE = 'title="Relatorio de Desenvolvimento"'
+REPORT_AFTER = "		</container> <!-- menus -->"
+REPORT_HEADER = f"""
+
+		<!-- cabecalho do mod: emblema da Central, titulo e camisa de costas -->
+		<container class="round_box" id="cdhd">
+			<layout class="arrange_horizontal_attachment" layout="100,-1,170" offset="0"/>
+			<layout class="fit_children_attachment" alignment="vertical" offset="0"/>
+			<widget class="picture" id="cdem" file="{GRAPHICS}/emblema" auto_size="all"/>
+			<widget class="text" id="cdtt" standard_spec="title, large" style="none" multiline="true"
+				text="Centro de Desenvolvimento - relatorio da comissao tecnica" auto_size="vertical"/>
+			<widget class="picture" id="cdcm" file="{GRAPHICS}/camisa_figueirense" auto_size="all"/>
+		</container>"""
+
+
+def images() -> dict[str, bytes]:
+    """PNGs pequenos para a skin, recortados na parte visível e reduzidos (caminhos a partir de data)."""
+    import io
+    from PIL import Image
+    out = {}
+    for name, (source, size) in IMAGES.items():
+        image = Image.open(ASSETS / source).convert("RGBA")
+        alpha = image.getchannel("A").point(lambda v: 255 if v > 24 else 0)
+        image = image.crop(alpha.getbbox())
+        image.thumbnail((size, size), Image.LANCZOS)
+        buffer = io.BytesIO()
+        image.save(buffer, "PNG", optimize=True)
+        out[f"skins/{SKIN}/graphics/{GRAPHICS}/{name}.png"] = buffer.getvalue()
+    return out
+
+
+def report_panel(original: str) -> str:
+    if original.count(REPORT_TITLE_OLD) != 1:
+        raise SystemExit("[ERRO] player training.xml: título original não achado")
+    return insert_after(original.replace(REPORT_TITLE_OLD, REPORT_TITLE), REPORT_AFTER, REPORT_HEADER,
+                        "player training.xml")
+
+
 def game_data() -> Path:
     return Path(json.loads((ROOT / "config" / "local.json").read_text(encoding="utf-8"))["game_dir"]) / "data"
 
@@ -130,6 +182,9 @@ def build(originals: dict[str, str]) -> dict[str, str]:
             "aurora 2006/person search list.xml"),
         "panels/person search list.xml": insert_before(originals["panels/person search list.xml"], VIEW_BEFORE,
                                                        VIEW_ITEM, "person search list.xml"),
+        f"skins/{SKIN}/panels/player training.xml": report_panel(
+            originals["skins/aurora 2006/panels/player training.xml"]),
+        f"skins/{SKIN}/graphics/{GRAPHICS}/config.xml": GRAPHICS_CONFIG,
         "sections.xml": insert_after(originals["sections.xml"], MENU_AFTER, MENU_ITEM, "sections.xml"),
         "screens/team.xml": insert_after(originals["screens/team.xml"], SCREEN_AFTER, SCREEN_ITEM,
                                          "screens/team.xml"),
@@ -161,12 +216,18 @@ def main() -> None:
             raise SystemExit(f"[ERRO] {name}: o jogo lê os XML como ASCII")
         added = len(text) - len(originals.get(name, ""))
         print(f"{name}: +{added} caracteres")
+    pictures = images()
+    for name, raw in pictures.items():
+        print(f"{name}: {len(raw)} bytes")
     if not args.apply:
         print("(simulação: rode com --apply para gravar)")
         return
     for name, text in new.items():
         (data / name).parent.mkdir(parents=True, exist_ok=True)
         (data / name).write_text(text, encoding="utf-8")
+    for name, raw in pictures.items():
+        (data / name).parent.mkdir(parents=True, exist_ok=True)
+        (data / name).write_bytes(raw)
     print(f"[OK] gravado em {data}. Abra o jogo de novo para ler os XML.")
 
 
