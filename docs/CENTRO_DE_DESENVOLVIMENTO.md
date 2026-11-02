@@ -670,3 +670,11 @@ Conferido nos XML da Aurora e do jogo:
   soma/(titular+banco): o campo [27] não serve de divisor (goleiro Eric: [27] = 1 em 7 jogos;
   hipótese: jogos sem sofrer gol, com [3] = 11 gols sofridos). A aba Desempenho mostra o quadro
   "Não oficiais" e a leitura da comissão usa esses números. Leitura direta da memória, sem chamada remota.
+  **Confirmado pelo usuário (02/11):** Eric Venâncio (goleiro) na ficha do jogo = 7 (0) jogos, 0 gols,
+  nota 6,57, 630 minutos, igual à Central. Divisor titular+banco validado também em goleiro.
+- 02/11, **jogos oficiais por competição**: a ordem das categorias do objeto de estatísticas foi
+  conferida no save inteiro. Em 1.707 jogadores com mais de uma competição, Global (5) = Liga (1) +
+  Copa (2) + Continental (3); os 246 que não batem são todos jogadores com jogos pela Seleção (4), que
+  o jogo deixa fora do Global (ex.: Erik Hagen, Liga 15 jogos + Seleção 5, Global 15). Ex. de clube:
+  Marcos Antônio Cipriano, Liga 23 jogos/13 gols + Copa 6/4 = Global 29/17. A aba Desempenho mostra a
+  tabela "Por competição" quando o jovem jogou mais de uma (no Figueirense, até 02/11, só Liga).

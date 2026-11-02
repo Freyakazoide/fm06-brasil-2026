@@ -250,6 +250,12 @@ function unofficialPanel(j, u) {
     <div class="metric-grid">${metric("Jogos", `${u.jogos}<small> (${u.banco})</small>`, "titular (banco)")}${metric("Gols", u.gols, `${u.assistencias} assistência${u.assistencias === 1 ? "" : "s"}`)}${metric("Nota média", fmtRating(u.nota), `${u.minutos.toLocaleString("pt-BR")} minutos`)}${metric("Passes certos", u.passes_pct === null ? "—" : `${Math.round(u.passes_pct)}%`, `melhor em campo ${u.melhor_em_campo}`)}</div>
     <p class="raw-note">Mesmos números da aba Estatísticas do jogo, coluna Não Oficiais. Não contam nas estatísticas oficiais, mas mostram quem está pronto para subir.</p></section>`;
 }
+function competitionTable(rows) {
+  const entries = Object.entries(rows || {});
+  if (entries.length < 2) return "";                                    // uma só: os números de cima já dizem tudo
+  return `<section class="panel">${heading("Por competição","shield",3)}<table class="comp-table"><thead><tr><th></th><th>Jogos</th><th>Gols</th><th>Assist.</th><th>Min.</th><th>Nota</th></tr></thead>
+    <tbody>${entries.map(([name, c]) => `<tr><td>${esc(name)}</td><td>${c.jogos}<small> (${c.banco})</small></td><td>${c.gols}</td><td>${c.assistencias}</td><td>${c.minutos.toLocaleString("pt-BR")}</td><td><b>${fmtRating(c.nota)}</b></td></tr>`).join("")}</tbody></table></section>`;
+}
 function performanceTab(j) {
   const st = j.estatisticas || {}, intl = j.internacional || {}, games = (st.jogos || 0) + (st.banco || 0);
   const pctBar = (label, value, colour, suffix = "%") => `<div class="gauge"><span>${label}</span>${bar(value ?? 0, suffix === "%" ? 100 : 5, colour)}<b>${value === null || value === undefined ? "—" : `${value.toLocaleString("pt-BR")}${suffix}`}</b></div>`;
@@ -258,7 +264,7 @@ function performanceTab(j) {
   const uo = st.nao_oficiais && Object.keys(st.nao_oficiais).length ? st.nao_oficiais : {jogos: 0, banco: 0};
   const per90 = st.jogos ? ` · ${(st.gols / Math.max(1, st.jogos)).toFixed(2)} por jogo` : "";
   return `<div class="metric-grid">${metric("Jogos", `${st.jogos}<small> (${st.banco})</small>`, "oficiais · titular (banco)")}${metric("Gols", st.gols, `na temporada${per90}`)}${metric("Assistências", st.assistencias, "na temporada")}${metric("Nota média", rating === null ? "—" : rating.toFixed(2).replace(".", ","), ratingNote)}</div>
-  ${unofficialPanel(j, st.nao_oficiais)}
+  ${competitionTable(st.por_competicao)}${unofficialPanel(j, st.nao_oficiais)}
   <div class="grid-2"><section class="panel">${heading("Rendimento","chart",3)}${pctBar("Passes certos", st.passes_pct, "var(--info)")}${pctBar("Chutes no alvo", st.chutes_alvo_pct, "var(--accent)")}${pctBar("Desarmes por jogo", st.desarmes_jogo, "var(--positive)", "")}
     ${(st.forma || []).length ? `<div class="form-strip"><span>Forma recente <small>(todos os jogos, inclusive ${j.time === "Principal" ? "amistosos" : "Sub-20"})</small></span><div>${st.forma.map(n => `<b class="form-${n >= 7 ? "good" : n >= 6 ? "ok" : "bad"}">${n}</b>`).join("")}</div></div>` : ""}
     <div class="perf-badges"><span>${icon("star",13)} Melhor em campo <b>${st.melhor_em_campo}</b></span><span class="card-y">Amarelos <b>${st.amarelos}</b></span><span class="card-r">Vermelhos <b>${st.vermelhos}</b></span></div>

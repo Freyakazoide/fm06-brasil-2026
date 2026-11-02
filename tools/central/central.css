@@ -544,3 +544,10 @@ button.ghost:disabled { opacity: .4; cursor: not-allowed; }
 /* jogos não oficiais (aba Desempenho) */
 .unofficial { margin: 9px 0; border-left: 3px solid var(--info); }
 .unofficial .metric-grid { margin-top: 0; }
+
+/* jogos oficiais por competição (aba Desempenho) */
+.comp-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.comp-table th { color: var(--muted); font-size: 10px; text-transform: uppercase; text-align: right; padding: 4px 6px; }
+.comp-table td { padding: 6px; text-align: right; border-top: 1px solid #1d3d5c; }
+.comp-table td:first-child, .comp-table th:first-child { text-align: left; font-weight: 700; }
+.comp-table small { color: var(--muted); }
