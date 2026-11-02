@@ -206,6 +206,13 @@ HAS_YOUTH_TEAM, SQUAD_SIZE = 0x00A28E70, 0x009DDF30
 TEMPLATE_NEW, ALLOC, PLAYING_NEW, SET_PLAYING = 0x00A47930, 0x00A3BB00, 0x007B9670, 0x00A3EF40
 CREATE, CONTRACT, RANDOM = 0x0077BEF0, 0x00779B40, 0x00C4E1F0
 PLAYING_FIRST, PLAYING_LAST = 8, 86                 # cópia do modelo: UID do bloco + 8 .. + 86
+# base do clube no potencial (ficha C14): q = base (CLUB+0xE1) + captação (CLUB+0xE0), de 2 a 40,
+# notas que a diretoria e a regulação das finanças sobem com investimento (0xA289A0). Com chance
+# de q/2 % o garoto é uma "joia": PA no mínimo 120 + sorteio até 2q; senão PA + (q − 20) / 2.
+# PA entre 40 e 200; o CA não passa do PA.
+CLUB_YOUTH, CLUB_RECRUITMENT = 0xE1, 0xE0
+PLAYER_CA, PLAYER_PA = -0xB8, -0xB6                 # u16, do começo da assinatura (UID − 204/202)
+GEM_BASE, PA_MIN, PA_MAX = 120, 40, 200
 RECORD = 88                                         # 79 bytes do bloco, 1 livre, 6 de movimentos
 TEMPLATES = 256
 
@@ -311,7 +318,19 @@ def make_youth_code(base: int, templates: int, count: int) -> bytes:
     a.raw("8BF0 85F6").jump("0F84", "fim")
     a.raw("8B85F0FBFFFF 33C9")
     a.label("mov").raw("8A540850 08540EE4 41 83F906").jump("0F82", "mov")      # OR nos 48 bits
-    a.raw("57 8B16 8BCE FF92").u32(0x278).raw("50 B9").u32(MANAGER).call(CONTRACT)
+    # base e captação do clube no potencial
+    a.raw("0FB687").u32(CLUB_YOUTH).raw("0FB68F").u32(CLUB_RECRUITMENT).raw("03C1 8985F4FBFFFF")
+    a.raw("6A64 B9").u32(RNG).call(RANDOM).raw("03C0 3B85F4FBFFFF").jump("0F8D", "ajuste")
+    a.raw("8B85F4FBFFFF 03C0 40 50 B9").u32(RNG).call(RANDOM)            # joia: 120 + sorteio(2q+1)
+    a.raw("05").u32(GEM_BASE).raw("0FB78E").u32(PLAYER_PA)
+    a.raw("3BC1").jump("0F8E", "pronto").jump("E9", "limites")
+    a.label("ajuste").raw("8B85F4FBFFFF 83E814 D1F8 0FB78E").u32(PLAYER_PA).raw("03C1")   # PA + (q - 20) / 2
+    a.label("limites").raw("3D").u32(PA_MAX).jump("0F8E", "max").raw("B8").u32(PA_MAX)
+    a.label("max").raw("83F8").raw(bytes([PA_MIN])).jump("0F8D", "min").raw("B8").u32(PA_MIN)
+    a.label("min").raw("668986").u32(PLAYER_PA)
+    a.raw("0FB78E").u32(PLAYER_CA).raw("3BC8").jump("0F8E", "pronto")
+    a.raw("668986").u32(PLAYER_CA)                                          # CA <= PA
+    a.label("pronto").raw("57 8B16 8BCE FF92").u32(0x278).raw("50 B9").u32(MANAGER).call(CONTRACT)
     a.label("fim").raw("5F 5E 5B 8BE5 5D C20800")
     return a.done()
 
