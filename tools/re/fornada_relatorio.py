@@ -4,8 +4,8 @@ base e a captação do clube (ficha C14).
     python tools\\re\\fornada_relatorio.py
 
 Lê a tabela de pessoas ([0x014EAA54]): jogador (ACTUAL_PLAYER, assinatura 0x010F1034) com UID
-de tempo de jogo (a partir de 102.000.000) e nascido no ano do motor − 16. O clube vem do UID em
-jogador − 48 e a base/captação de CLUB+0xE1/+0xE0 na tabela de clubes ([0x014EAA30]).
+de tempo de jogo (a partir de 102.000.000) e nascido no ano do motor - 16. O clube vem do UID em
+jogador - 48 e a base/captação de CLUB+0xE1/+0xE0 na tabela de clubes ([0x014EAA30]).
 """
 
 from __future__ import annotations
@@ -89,7 +89,7 @@ def main() -> None:
         group = [r for r in rows if low <= r[0] <= high]
         if group:
             n = sum(r[4] for r in group)
-            print(f"base+captação {low:2}–{high:2}: {len(group):3} clubes, PA médio "
+            print(f"base+captação {low:2}-{high:2}: {len(group):3} clubes, PA médio "
                   f"{sum(r[5] * r[4] for r in group) / n:5.1f}, PA>=150 por clube {sum(r[6] for r in group) / len(group):.2f}")
 
 
