@@ -6,14 +6,14 @@
 <title>Centro de Desenvolvimento</title>
 <style>
   :root {
-    --bg: #0b100c; --panel: rgba(20, 27, 21, .86); --panel2: rgba(31, 41, 32, .9); --line: rgba(120, 150, 120, .22);
+    --bg: #0b100c; --panel: rgba(16, 23, 17, .78); --panel2: rgba(27, 37, 28, .82); --line: rgba(120, 150, 120, .22);
     --text: #eef2ec; --muted: #9fac9f; --gold: #f2c230; --gold2: #ffdf7a;
     --low: #d0634b; --mid: #e0aa3e; --high: #5fbf72; --top: #9be08f;
     --gk: #e8c547; --def: #4f8fd6; --mid-line: #4fb36a; --att: #d65a4f;
   }
   * { box-sizing: border-box; }
   body { margin: 0; color: var(--text); font: 14px/1.45 "Segoe UI", Tahoma, sans-serif; min-height: 100vh;
-         background: linear-gradient(180deg, rgba(8,12,9,.55), rgba(8,12,9,.92) 45%, var(--bg)), url("/fundo.jpg") center top / cover fixed, var(--bg); }
+         background: linear-gradient(180deg, rgba(8,12,9,.15), rgba(8,12,9,.55) 55%, rgba(8,12,9,.8)), url("/fundo.jpg") center / cover fixed, var(--bg); }
   header { display: flex; align-items: center; gap: 16px; padding: 18px 24px 14px; }
   header img { width: 64px; height: 64px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,.6)); }
   header h1 { margin: 0; font-size: 26px; letter-spacing: .4px; text-shadow: 0 2px 8px rgba(0,0,0,.7); }
@@ -217,7 +217,7 @@ function radar(j) {
 function pitch(j) {
   const dots = j.posicoes.map((p, i) => { const [x, y, l] = PITCH[p] || [];
     return x === undefined ? "" : `<circle cx="${x}" cy="${y}" r="${i ? 5.5 : 7}" fill="${LINE_COLOR[l]}" stroke="#08100a" stroke-width="1.5" opacity="${i ? .8 : 1}"/>
-      <text x="${x}" y="${y + 13}" text-anchor="middle" font-size="6.5" fill="#e8f0e6">${esc(p)}</text>`; }).join("");
+      <text x="${x + (x > 60 ? -9 : 9)}" y="${y + 2.5}" text-anchor="${x > 60 ? "end" : "start"}" font-size="6.5" fill="#e8f0e6">${esc(p)}</text>`; }).join("");
   return `<svg viewBox="0 0 100 104"><rect x="2" y="2" width="96" height="100" rx="3" fill="#1d4a28" stroke="#6fa77a" stroke-width=".8"/>
     <g stroke="#6fa77a" stroke-width=".7" fill="none"><line x1="2" y1="52" x2="98" y2="52"/><circle cx="50" cy="52" r="10"/>
     <rect x="28" y="84" width="44" height="18"/><rect x="38" y="95" width="24" height="7"/><rect x="28" y="2" width="44" height="18"/></g>${dots}</svg>`;
@@ -231,9 +231,9 @@ function chart(points) {
   const ln = (key, col, scale = 1) => `<polyline fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round" points="${
     points.map((p, i) => `${x(i).toFixed(1)},${y(p[key] * scale).toFixed(1)}`).join(" ")}"/>`;
   const ticks = [0, 5, 10, 15, 20].map(v => `<line class="axis" x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}"/><text x="2" y="${y(v) + 3}">${v}</text>`).join("");
-  const dates = [0, n - 1].map(i => `<text x="${i ? W - 44 : L}" y="${H - 4}">${points[i].data.split("-").reverse().join("/")}</text>`).join("");
-  return `<svg viewBox="0 0 ${W} ${H}">${ticks}${dates}${ln("tec", "#5fbf72")}${ln("men", "#5aa0d8")}${ln("fis", "#e0aa3e")}${ln("hab", "#f2c230", 2)}</svg>
-    <div class="keys"><span><b style="background:#5fbf72"></b>técnicos</span><span><b style="background:#5aa0d8"></b>mentais</span><span><b style="background:#e0aa3e"></b>físicos</span><span><b style="background:#f2c230"></b>habilidade</span></div>`;
+  const dates = [0, n - 1].map(i => `<text x="${i ? W - 2 : L}" y="${H - 4}" text-anchor="${i ? "end" : "start"}">${points[i].data.split("-").reverse().join("/")}</text>`).join("");
+  return `<svg viewBox="0 0 ${W} ${H}">${ticks}${dates}${ln("tec", "#5fbf72")}${ln("men", "#5aa0d8")}${ln("fis", "#e0aa3e")}${ln("hab", "#f4f1e4", 2).replace("<polyline", '<polyline stroke-dasharray="5 4"')}</svg>
+    <div class="keys"><span><b style="background:#5fbf72"></b>técnicos</span><span><b style="background:#5aa0d8"></b>mentais</span><span><b style="background:#e0aa3e"></b>físicos</span><span><b style="background:#f4f1e4"></b>habilidade (comissão, tracejada)</span></div>`;
 }
 
 function visible() {
