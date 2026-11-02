@@ -75,7 +75,7 @@ class FornadaTest(unittest.TestCase):
         self.assertLessEqual(len(code), 0x80)                      # cabe antes do laço
 
     def test_sieve_chance_follows_recruitment(self) -> None:
-        code = fornada.sieve_code(0x015C0C00, 0x015BB140)
+        code = fornada.sieve_code(0x015C0C00, 0x015BB140, 0x015C0E00)
         self.assertIn(bytes.fromhex("8D0480 83E819"), code)        # 5c - 25
         self.assertIn(b"\x05" + fornada.SIEVE_BASE.to_bytes(4, "little"), code)   # PA 140 + sorteio
 

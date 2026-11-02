@@ -307,7 +307,7 @@ def hook_code(base: int, events: list[tuple[int, int, int]]) -> bytes:
 def _club_loop(a: _Code, body) -> None:
     """Para cada clube de país jogável com time de juniores e elenco até 100: ebx = clube,
     [ebp-8] = nação; body(a) monta o que fazer e pode saltar para "prox"."""
-    a.raw("55 8BEC 83EC10 53 56 57 33FF")                         # edi = índice do clube
+    a.raw("55 8BEC 83EC50 53 56 57 33FF")                         # edi = índice do clube
     a.label("laco").raw("A1").u32(CLUBS).raw("8B4004 3B7808").jump("0F8D", "fim")
     a.raw("8B4004 8B1CB8 85DB").jump("0F84", "prox")             # ebx = clube
     a.raw("8B83").u32(CLUB_NATION).raw("85C0").jump("0F84", "prox")
@@ -319,18 +319,33 @@ def _club_loop(a: _Code, body) -> None:
     a.label("fim").raw("5F 5E 5B 8BE5 5D C3")
 
 
-def all_clubs_code(base: int, make_youth: int, per_club: int) -> bytes:
+def _list_start(a: _Code) -> None:
+    """Lista de pessoas vazia em [ebp-0x40] (vtable, dados, quantidade)."""
+    a.raw("C745C0").u32(PERSON_LIST_VTABLE).raw("C745C400000000 C645C800 C645CC00")
+
+
+def _news_and_free(a: _Code, news: int) -> None:
+    """Notícia de juniores com a lista [ebp-0x40] e libera os dados da lista."""
+    a.raw("8D45C0 50 53").call(news)
+    a.raw("8B45C4 85C0").jump("0F84", "prox").raw("50").call(FREE).raw("83C404")
+
+
+def all_clubs_code(base: int, make_youth: int, per_club: int, news: int) -> bytes:
     a = _Code(base)
 
     def body(a: _Code) -> None:
+        _list_start(a)
         a.raw("C745F4").u32(per_club)
-        a.label("garoto").raw("FF75F8 53").call(make_youth).raw("FF4DF4").jump("0F85", "garoto")
+        a.label("garoto").raw("FF75F8 53").call(make_youth).raw("85C0").jump("0F84", "sem")
+        a.raw("50 8D4DC0").call(LIST_ADD)
+        a.label("sem").raw("FF4DF4").jump("0F85", "garoto")
+        _news_and_free(a, news)
 
     _club_loop(a, body)
     return a.done()
 
 
-def sieve_code(base: int, make_youth: int) -> bytes:
+def sieve_code(base: int, make_youth: int, news: int) -> bytes:
     """A peneira: chance de 5c - 25 % por clube (c = captação) de 1 garoto de PA alto."""
     a = _Code(base)
 
@@ -341,8 +356,12 @@ def sieve_code(base: int, make_youth: int) -> bytes:
         a.raw("FF75F8 53").call(make_youth).raw("85C0").jump("0F84", "prox").raw("8BF0")
         a.raw("8B45F4 83C0").raw(bytes([SIEVE_SPREAD])).raw("50 B9").u32(RNG).call(RANDOM)
         a.raw("05").u32(SIEVE_BASE).raw("3D").u32(PA_MAX).jump("0F8E", "teto").raw("B8").u32(PA_MAX)
-        a.label("teto").raw("0FB78E").u32(PLAYER_PA).raw("3BC1").jump("0F8E", "prox")
+        a.label("teto").raw("0FB78E").u32(PLAYER_PA).raw("3BC1").jump("0F8E", "noticia")
         a.raw("668986").u32(PLAYER_PA)                                  # PA = o maior
+        a.label("noticia")                                              # "<jogador> ganha chance"
+        _list_start(a)
+        a.raw("56 8D4DC0").call(LIST_ADD)
+        _news_and_free(a, news)
 
     _club_loop(a, body)
     return a.done()
@@ -420,19 +439,23 @@ def exe_swaps(data: bytes):
     from .exe_cave import SECTION_VA, off, sec_off, section_swaps, u32
     from .exe_patches import Swap
 
-    hook, all_clubs, make_youth = SECTION_VA + 0x7000, SECTION_VA + 0x7080, SECTION_VA + 0x7140
+    # .fm26: gatilho 0x7000, garoto 0x7140, anos 0x7300/0x7304, modelos 0x7400-0xCC00, peneira
+    # 0xCC00, notícia 0xCE00, laço da fornada 0xCF00
+    hook, make_youth = SECTION_VA + 0x7000, SECTION_VA + 0x7140
     last_year, last_sieve, table = SECTION_VA + 0x7300, SECTION_VA + 0x7304, SECTION_VA + 0x7400
-    sieve = SECTION_VA + 0xCC00                                          # depois dos 256 modelos
+    sieve, news, all_clubs = SECTION_VA + 0xCC00, SECTION_VA + 0xCE00, SECTION_VA + 0xCF00
     cfg = load_config()
-    parts = [(hook, hook_code(hook, [(cfg.day, all_clubs, last_year), (cfg.sieve_day, sieve, last_sieve)])),
-             (all_clubs, all_clubs_code(all_clubs, make_youth, cfg.per_club)),
-             (make_youth, make_youth_code(make_youth, table, TEMPLATES)),
-             (table, template_table()),
-             (sieve, sieve_code(sieve, make_youth))]
-    limits = [all_clubs, make_youth, last_year, sieve, SECTION_VA + 0x10000]   # cada parte até a seguinte
-    for (start, code), limit in zip(parts, limits):
+    parts = [(hook, hook_code(hook, [(cfg.day, all_clubs, last_year), (cfg.sieve_day, sieve, last_sieve)]),
+              SECTION_VA + 0x7140),
+             (make_youth, make_youth_code(make_youth, table, TEMPLATES), last_year),
+             (table, template_table(), sieve),
+             (sieve, sieve_code(sieve, make_youth, news), news),
+             (news, news_code(news), all_clubs),
+             (all_clubs, all_clubs_code(all_clubs, make_youth, cfg.per_club, news), SECTION_VA + 0x10000)]
+    for start, code, limit in parts:
         if start + len(code) > limit:
             raise ValueError(f"fornada: código em 0x{start:X} invade 0x{limit:X}")
+    parts = [(start, code) for start, code, _ in parts]
     swaps = list(section_swaps(data))
     swaps += [Swap(sec_off(start), bytes(len(code)), code) for start, code in parts]
     old = b"\xE8" + u32(DAILY_TARGET - (DAILY_CALL + 5))
