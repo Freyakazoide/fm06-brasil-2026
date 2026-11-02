@@ -106,7 +106,7 @@ VIEW_ITEM = '''<record id="dsnv">
 ASSETS = ROOT / "data" / "brasil" / "telas" / "centro_desenvolvimento" / "assets"
 GRAPHICS = "centro"                                     # skins/<skin>/graphics/centro
 IMAGES = {"emblema": ("emblema-centro-desenvolvimento.png", 84),
-          "camisa_figueirense": ("camisa-costas-figueirense-base.png", 150)}
+          "camisa_figueirense": ("camisa-costas-figueirense-base.png", 140)}
 GRAPHICS_CONFIG = """<record>
 	<!-- imagens do mod: guardadas depois de lidas -->
 	<boolean id="cache" value="true"/>
@@ -123,11 +123,13 @@ REPORT_HEADER = f"""
 				<layout class="stick_to_sides_attachment" alignment="left" inset="16"/>
 				<layout class="stick_to_sides_attachment" alignment="top" inset="44"/>
 			</widget>
-			<widget class="text" id="cdtt" standard_spec="title, large" style="none" multiline="true"
-				text="Centro de Desenvolvimento - relatorio da comissao tecnica" auto_size="vertical">
-				<layout class="stick_to_sides_attachment" alignment="left" inset="120"/>
-				<layout class="stick_to_sides_attachment" alignment="right" inset="200"/>
-				<layout class="stick_to_sides_attachment" alignment="top" inset="72"/>
+			<widget class="label" id="cdtt" text="Centro de Desenvolvimento" size="20" style="shadowed" auto_size="all">
+				<layout class="stick_to_sides_attachment" alignment="left" inset="130"/>
+				<layout class="stick_to_sides_attachment" alignment="top" inset="58"/>
+			</widget>
+			<widget class="label" id="cdst" text="Relatorio da comissao tecnica sobre o jovem" size="12" auto_size="all">
+				<layout class="stick_to_sides_attachment" alignment="left" inset="132"/>
+				<layout class="stick_to_sides_attachment" alignment="top" inset="92"/>
 			</widget>
 			<widget class="picture" id="cdcm" file="{GRAPHICS}/camisa_figueirense" auto_size="all">
 				<layout class="stick_to_sides_attachment" alignment="right" inset="30"/>
