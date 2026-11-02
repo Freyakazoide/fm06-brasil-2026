@@ -75,7 +75,8 @@ falta implementar · ⏳ precisa de ficha de código ou de dado · ❌ não mape
 - ~~Força da base de cada país~~: não há o campo (01/11, C10): "Development" é o nível
   econômico do país (1/2/3); a base sai da reputação da nação (Brasil 9550, a maior) e das
   notas de base dos clubes, que o mod já grava.
-- Como a chegada da base funciona (ficha C7) e as joias em quantidade.
+- Como a chegada da base funciona (ficha C7, em andamento em 01/11). Joias em quantidade:
+  fora (01/11, decisão do usuário): o jogo cria a base sozinho; ficam as 32 da planilha.
 
 ### Fase 3: dinheiro dos clubes
 

@@ -51,9 +51,9 @@ planilha direto, com todos os nomes e as regras.
 
 ## A conferir no jogo
 
-Os reservas e juniores que o jogo cria (Marília Res., Portuguesa Res.) devem sair com
-nomes brasileiros, sem "Alamosi" nem "Mohamed". Se ainda aparecerem, a hipótese do bloco
-está errada.
+✅ **Conferido pelo usuário em 01/11:** os reservas e juniores que o jogo cria (Marília Res.,
+Portuguesa Res.) saem com nomes brasileiros, sem "Alamosi" nem "Mohamed". A hipótese do bloco
+ficou de pé: o nome novo tem de estar dentro do bloco da nação.
 
 ## Quem sobra nos clubes de 2026
 
