@@ -519,3 +519,8 @@ button.ghost:disabled { opacity: .4; cursor: not-allowed; }
 .vs-stat { display: grid; grid-template-columns: 1fr 90px 90px; padding: 5px 0; border-bottom: 1px solid var(--border-soft); }
 .vs-stat span { color: var(--muted); } .vs-stat b { text-align: right; } .vs-stat.head b { color: var(--accent); font-size: 12px; }
 .position-map-shell { height: auto; overflow: visible; padding: 10px 12px; }
+.form-strip { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 8px 10px; background: #061d33; border: 1px solid #17486f; border-radius: 4px; }
+.form-strip span { color: var(--muted); font-size: 12px; font-weight: 700; } .form-strip small { font-weight: 400; }
+.form-strip div { display: flex; gap: 4px; }
+.form-strip b { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 4px; font: 400 13px "Silkscreen",sans-serif; color: #071422; }
+.form-good { background: var(--positive); } .form-ok { background: var(--accent); } .form-bad { background: var(--danger); }

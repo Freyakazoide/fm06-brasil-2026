@@ -642,3 +642,9 @@ Conferido nos XML da Aurora e do jogo:
   mais jogou. Nota na posição agora/futuro/titular, veredito, 8 atributos-chave e temporada lado a lado.
   Ex.: Otacílio, Geraldo e Diogo (volantes) contra Breno (nº 5); Guedes (ala esquerdo) contra Arthur
   Henrique (nº 6).
+- 02/11, **jogos não oficiais, achados**: as estatísticas ficam em 6 categorias (`0xAB1A80` dá os
+  nomes: 0 Non Competitive, Liga, Copa, Continental, Internacional, Global). A aba Forma do jogo não
+  pergunta propriedades de estatística ao jogador (sonda `tools/re/codigos_pedidos.py`): recebe a tabela
+  pronta, calculada do histórico de partidas. `Pfrm` dá as 5 últimas notas de **todos** os jogos (inclui
+  Sub-20): Geraldo 7, 6, 6, 6, 6. A Central mostra essa forma recente; os totais não oficiais (gols,
+  nota média) seguem pendentes (histórico de partidas do jogador, a mapear).

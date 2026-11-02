@@ -226,7 +226,21 @@ def season_stats(jogo: Jogo, handle, r: int) -> dict:
     if not out["jogos"] and not out["banco"]:
         for name in STAT_DOUBLES:
             out[name] = None                                  # sem jogos: médias não fazem sentido
+    out["forma"] = recent_form(jogo, ask("Pfrm"))
     return out
+
+
+def recent_form(jogo: Jogo, pointer: int) -> list[int]:
+    """Pfrm: lista do jogo com as últimas notas (até 5), contando todos os jogos, inclusive os não
+    oficiais (Sub-20). Lista: vtable, dados, quantidade; cada item é um valor (número, tipo)."""
+    try:
+        _, data, count = struct.unpack("<III", jogo.raw(pointer, 12))
+        if not 0 < count <= 10:
+            return []
+        items = struct.unpack(f"<{count}I", jogo.raw(data, 4 * count))
+        return [jogo.u32(item) for item in items]
+    except (OSError, struct.error):
+        return []
 
 
 def assistant() -> dict:
