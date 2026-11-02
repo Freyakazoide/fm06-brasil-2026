@@ -65,10 +65,11 @@ def main() -> None:
     total = sum(r[4] for r in rows)
     print(f"{total} garotos de 16 anos criados em tempo de jogo, em {len(rows)} clubes (ano do motor {year})")
     print(f"{'clube':>9} {'base':>4} {'capt':>4} {'qtd':>3} {'PA médio':>8} {'PA≥150':>6} {'maior':>5}")
-    for q, club, youth, recruitment, n, mean, stars, best in rows[:15] + [None] + rows[-10:]:
-        if q is None:
+    for row in rows[:15] + [None] + rows[-10:]:
+        if row is None:
             print("      ...")
             continue
+        q, club, youth, recruitment, n, mean, stars, best = row
         print(f"{club:>9} {youth:>4} {recruitment:>4} {n:>3} {mean:>8.1f} {stars:>6} {best:>5}")
     for low, high in ((0, 12), (13, 20), (21, 28), (29, 40)):
         group = [r for r in rows if low <= r[0] <= high]
