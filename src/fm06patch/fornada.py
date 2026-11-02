@@ -213,17 +213,28 @@ PLAYING_FIRST, PLAYING_LAST = 8, 86                 # cópia do modelo: UID do b
 CLUB_YOUTH, CLUB_RECRUITMENT = 0xE1, 0xE0
 PLAYER_CA, PLAYER_PA = -0xB8, -0xB6                 # u16, do começo da assinatura (UID − 204/202)
 GEM_BASE, PA_MIN, PA_MAX = 120, 40, 200
+# peneira (ficha C14): na segunda data da configuração, cada clube com captação c tem chance de
+# 5c - 25 % (c 10 -> 25 %, 15 -> 50 %, 20 -> 75 %) de ganhar 1 garoto de PA no mínimo
+# 140 + sorteio até 40 + c (máximo 200): investir em captação traz meninos bons.
+SIEVE_BASE, SIEVE_SPREAD = 140, 41
 RECORD = 88                                         # 79 bytes do bloco, 1 livre, 6 de movimentos
 TEMPLATES = 256
 
 
-def load_config(path: Path = CONFIG) -> tuple[int, int]:
-    """(dia do ano base 0, garotos por clube)."""
+@dataclass(frozen=True)
+class Config:
+    day: int            # fornada: dia do ano (base 0)
+    per_club: int
+    sieve_day: int      # peneira: dia do ano (base 0)
+
+
+def load_config(path: Path = CONFIG) -> Config:
     import datetime as dt
 
     row = next(csv.DictReader(path.open(encoding="utf-8-sig")))
-    day = dt.date(2006, int(row["mes"]), int(row["dia"])).timetuple().tm_yday - 1
-    return day, int(row["quantidade"])
+    day_of = lambda d, m: dt.date(2006, int(m), int(d)).timetuple().tm_yday - 1    # ano do motor
+    return Config(day_of(row["dia"], row["mes"]), int(row["quantidade"]),
+                  day_of(row["peneira_dia"], row["peneira_mes"]))
 
 
 def template_table(types: list[Type] | None = None, count: int = TEMPLATES, seed: int = 2026) -> bytes:
@@ -276,18 +287,22 @@ class _Code:
         return bytes(self.code)
 
 
-def hook_code(base: int, all_clubs: int, last_year: int, day: int) -> bytes:
+def hook_code(base: int, events: list[tuple[int, int, int]]) -> bytes:
+    """events: (dia do ano, rotina, onde guarda o último ano em que rodou)."""
     a = _Code(base)
     a.raw("56 8BF1 FF742408").call(DAILY_TARGET)                  # a chamada original (ret 4)
-    a.raw("0FB705").u32(TODAY_DAY).raw("3D").u32(day).jump("0F85", "fim")
-    a.raw("0FB705").u32(TODAY_YEAR).raw("3B05").u32(last_year).jump("0F84", "fim")
-    a.raw("A3").u32(last_year).call(all_clubs)                    # uma vez por ano
-    a.label("fim").raw("5E C20400")
+    for n, (day, routine, last_year) in enumerate(events):
+        a.raw("0FB705").u32(TODAY_DAY).raw("3D").u32(day).jump("0F85", f"prox{n}")
+        a.raw("0FB705").u32(TODAY_YEAR).raw("3B05").u32(last_year).jump("0F84", f"prox{n}")
+        a.raw("A3").u32(last_year).call(routine)                  # uma vez por ano
+        a.label(f"prox{n}")
+    a.raw("5E C20400")
     return a.done()
 
 
-def all_clubs_code(base: int, make_youth: int, per_club: int) -> bytes:
-    a = _Code(base)
+def _club_loop(a: _Code, body) -> None:
+    """Para cada clube de país jogável com time de juniores e elenco até 100: ebx = clube,
+    [ebp-8] = nação; body(a) monta o que fazer e pode saltar para "prox"."""
     a.raw("55 8BEC 83EC10 53 56 57 33FF")                         # edi = índice do clube
     a.label("laco").raw("A1").u32(CLUBS).raw("8B4004 3B7808").jump("0F8D", "fim")
     a.raw("8B4004 8B1CB8 85DB").jump("0F84", "prox")             # ebx = clube
@@ -295,15 +310,42 @@ def all_clubs_code(base: int, make_youth: int, per_club: int) -> bytes:
     a.raw("80B8").u32(NATIONS_PLAYABLE).raw("00").jump("0F84", "prox")   # só país jogável
     a.raw("8945F8 8BCB").call(HAS_YOUTH_TEAM).raw("84C0").jump("0F84", "prox")
     a.raw("6A00 8BCB").call(SQUAD_SIZE).raw("663D6400").jump("0F8F", "prox")  # elenco > 100
-    a.raw("C745F4").u32(per_club)
-    a.label("garoto").raw("FF75F8 53").call(make_youth).raw("FF4DF4").jump("0F85", "garoto")
+    body(a)
     a.label("prox").raw("47").jump("E9", "laco")
     a.label("fim").raw("5F 5E 5B 8BE5 5D C3")
+
+
+def all_clubs_code(base: int, make_youth: int, per_club: int) -> bytes:
+    a = _Code(base)
+
+    def body(a: _Code) -> None:
+        a.raw("C745F4").u32(per_club)
+        a.label("garoto").raw("FF75F8 53").call(make_youth).raw("FF4DF4").jump("0F85", "garoto")
+
+    _club_loop(a, body)
+    return a.done()
+
+
+def sieve_code(base: int, make_youth: int) -> bytes:
+    """A peneira: chance de 5c - 25 % por clube (c = captação) de 1 garoto de PA alto."""
+    a = _Code(base)
+
+    def body(a: _Code) -> None:
+        a.raw("0FB683").u32(CLUB_RECRUITMENT).raw("8945F4")      # [ebp-0xC] = captação
+        a.raw("8D0480 83E819").jump("0F8E", "prox").raw("8945F0")   # [ebp-0x10] = 5c - 25
+        a.raw("6A64 B9").u32(RNG).call(RANDOM).raw("3B45F0").jump("0F8D", "prox")
+        a.raw("FF75F8 53").call(make_youth).raw("85C0").jump("0F84", "prox").raw("8BF0")
+        a.raw("8B45F4 83C0").raw(bytes([SIEVE_SPREAD])).raw("50 B9").u32(RNG).call(RANDOM)
+        a.raw("05").u32(SIEVE_BASE).raw("3D").u32(PA_MAX).jump("0F8E", "teto").raw("B8").u32(PA_MAX)
+        a.label("teto").raw("0FB78E").u32(PLAYER_PA).raw("3BC1").jump("0F8E", "prox")
+        a.raw("668986").u32(PLAYER_PA)                                  # PA = o maior
+
+    _club_loop(a, body)
     return a.done()
 
 
 def make_youth_code(base: int, templates: int, count: int) -> bytes:
-    """stdcall(clube, nação)."""
+    """stdcall(clube, nação) -> o garoto (0 se falhou)."""
     a = _Code(base)
     a.raw("55 8BEC 81EC10040000 53 56 57 8B7D08 8B5D0C")         # edi = clube, ebx = nação
     a.raw("6A01 8D8D00FCFFFF").call(TEMPLATE_NEW)                 # molde em [ebp-0x400]
@@ -331,6 +373,7 @@ def make_youth_code(base: int, templates: int, count: int) -> bytes:
     a.raw("0FB78E").u32(PLAYER_CA).raw("3BC8").jump("0F8E", "pronto")
     a.raw("668986").u32(PLAYER_CA)                                          # CA <= PA
     a.label("pronto").raw("57 8B16 8BCE FF92").u32(0x278).raw("50 B9").u32(MANAGER).call(CONTRACT)
+    a.raw("8BC6")                                                    # devolve o garoto (0 se falhou)
     a.label("fim").raw("5F 5E 5B 8BE5 5D C20800")
     return a.done()
 
@@ -340,13 +383,15 @@ def exe_swaps(data: bytes):
     from .exe_patches import Swap
 
     hook, all_clubs, make_youth = SECTION_VA + 0x7000, SECTION_VA + 0x7080, SECTION_VA + 0x7140
-    last_year, table = SECTION_VA + 0x7300, SECTION_VA + 0x7400
-    day, per_club = load_config()
-    parts = [(hook, hook_code(hook, all_clubs, last_year, day)),
-             (all_clubs, all_clubs_code(all_clubs, make_youth, per_club)),
+    last_year, last_sieve, table = SECTION_VA + 0x7300, SECTION_VA + 0x7304, SECTION_VA + 0x7400
+    sieve = SECTION_VA + 0xCC00                                          # depois dos 256 modelos
+    cfg = load_config()
+    parts = [(hook, hook_code(hook, [(cfg.day, all_clubs, last_year), (cfg.sieve_day, sieve, last_sieve)])),
+             (all_clubs, all_clubs_code(all_clubs, make_youth, cfg.per_club)),
              (make_youth, make_youth_code(make_youth, table, TEMPLATES)),
-             (table, template_table())]
-    limits = [all_clubs, make_youth, last_year, SECTION_VA + 0x10000]      # cada parte até a seguinte
+             (table, template_table()),
+             (sieve, sieve_code(sieve, make_youth))]
+    limits = [all_clubs, make_youth, last_year, sieve, SECTION_VA + 0x10000]   # cada parte até a seguinte
     for (start, code), limit in zip(parts, limits):
         if start + len(code) > limit:
             raise ValueError(f"fornada: código em 0x{start:X} invade 0x{limit:X}")
