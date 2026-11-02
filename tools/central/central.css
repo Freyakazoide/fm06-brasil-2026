@@ -418,3 +418,25 @@ footer { height: 24px; padding: 2px 15px; color: var(--faint); font-size: 8px; l
 .chart > svg, .radar > svg { max-height: 340px; }
 .pitch-card .mini-pitch svg { max-height: 150px; }
 .pitch-marker text, .squad-sprite text { font-size: 4.4px; }
+
+/* Cabeçalho do jogador e abas presos juntos; compactos ao rolar */
+.sticky-head { position: sticky; top: 0; z-index: 12; background: #04182b; box-shadow: 0 6px 12px rgba(0,6,14,.55); }
+.sticky-head .player-header, .sticky-head .tabs { position: static; }
+.sticky-head .player-header { transition: min-height .15s ease, padding .15s ease; }
+.sticky-head.scrolled .player-header { min-height: 0; padding: 5px 14px; grid-template-columns: 52px 1fr; gap: 10px; }
+.sticky-head.scrolled .shirt { width: 46px; height: 46px; }
+.sticky-head.scrolled .shirt svg { display: none; }
+.sticky-head.scrolled .pitch-card, .sticky-head.scrolled .bio, .sticky-head.scrolled .tag-row,
+.sticky-head.scrolled .screen-kicker, .sticky-head.scrolled .head-readybar, .sticky-head.scrolled .readiness-help { display: none; }
+.sticky-head.scrolled .identity { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.sticky-head.scrolled .identity h1 { font-size: 22px; margin: 0; }
+.sticky-head.scrolled .headline-metrics { margin: 0; }
+@media (max-width:860px) { .sticky-head { position: static; } }
+
+/* Contraste: rótulos pequenos estavam apagados demais */
+:root { --faint: #9cb9d8; }
+.growth-values small { color: #b7cde6; font-size: 9px; font-weight: 700; letter-spacing: .4px; }
+.growth-values b { font-size: 15px; }
+.diagnosis-kpis span, .ranking-head, .training-head small, .decision > strong small { font-size: 8.5px; color: #b0c7e0; }
+.readiness-parts small, .diagnosis-kpis b small { font-size: 9px; color: #b0c7e0; }
+.metric small, .kpi small, .raw-note { color: #b0c7e0; }

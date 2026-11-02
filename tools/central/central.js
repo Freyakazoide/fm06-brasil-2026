@@ -205,7 +205,7 @@ function playerHeader(j) {
 }
 function renderTabs(j) {
   const nav=`<nav class="tabs" role="tablist">${TABS.map(([id,label,tabIcon])=>`<button class="tab ${ui.tab===id?"active":""}" data-tab="${id}" role="tab" aria-selected="${ui.tab===id}">${icon(tabIcon,14)}<span>${label}</span></button>`).join("")}</nav>`;
-  return `${playerHeader(j)}${nav}<div class="tab-content">${renderTab(j)}</div>`;
+  return `<div class="sticky-head">${playerHeader(j)}${nav}</div><div class="tab-content">${renderTab(j)}</div>`;
 }
 function verdict(j) {
   if(j.analise.fase==="Pronto para minutos")return "A comissão entende que ele já pode receber minutos controlados em nível mais alto.";
@@ -307,3 +307,9 @@ async function watchGame() {
   } catch {}
 }
 setInterval(watchGame, 2000); watchGame();
+
+// cabeçalho do jogador + abas ficam presos no topo; ao rolar, o cabeçalho encolhe
+document.getElementById("workspace").addEventListener("scroll", event => {
+  const head = event.currentTarget.querySelector(".sticky-head");
+  if (head) head.classList.toggle("scrolled", event.currentTarget.scrollTop > 60);
+});
