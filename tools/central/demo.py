@@ -28,7 +28,7 @@ def _player(uid: int, name: str, age: int, team: str, position: str, hab: int, p
         "internacional": {"jogos": 0, "gols": 0, "sub21_jogos": 2, "sub21_gols": 0},
         "pe_preferido": assistant["pe_preferido"], "posicoes": [position],
         "familiaridades": {short: values[direct] for short, direct in POSITIONS.items()},
-        "movimentos": ["Vem para dentro", "Tenta fazer passes longos"],
+        "movimentos": ["Vem para dentro", "Tenta fazer passes longos"], "movimentos_idx": [39, 43],
         "atributos": values, "futuro": future, "nivel": "jogador de Série A",
         "adjunto": assistant, "analise": analysis,
     }

@@ -471,3 +471,24 @@ footer { height: 24px; padding: 2px 15px; color: var(--faint); font-size: 8px; l
 button.ghost { padding: 6px 10px; background: #0a2a47; border: 1px solid var(--border-bright); border-radius: 4px; cursor: pointer; font-weight: 700; }
 button.ghost:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
 button.ghost:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Treinador adjunto na aba Habilidades */
+.coach-card { display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: start; background: linear-gradient(105deg,#0b3154,#071f37); }
+.coach-portrait { display: grid; justify-items: center; gap: 4px; text-align: center; }
+.coach-face { background: radial-gradient(circle at 50% 40%, #16507f, #062038); border: 2px solid var(--border-bright); border-radius: 6px; box-shadow: 0 3px 0 #01070e, inset 0 0 0 1px #020b14; image-rendering: pixelated; }
+.coach-name { font-weight: 800; font-size: 14px; }
+.coach-portrait small { color: var(--muted); font-size: 11px; }
+.coach-speech { position: relative; padding: 12px 14px; background: #eef4fb; color: #0b1a2a; border-radius: 8px; border: 2px solid #9ec6ea; box-shadow: 0 3px 0 #01070e; }
+.coach-speech::before { content: ""; position: absolute; left: -12px; top: 22px; border: 6px solid transparent; border-right-color: #9ec6ea; border-width: 7px 12px 7px 0; }
+.coach-speech p { margin: 0 0 8px; font-size: 14px; line-height: 1.45; }
+.coach-picks { display: grid; gap: 6px; }
+.coach-pick { display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; background: #fff; border: 1px solid #c8dcef; border-radius: 6px; }
+.coach-pick.ready { border-color: #4fbf7d; box-shadow: inset 3px 0 0 #4fbf7d; }
+.coach-pick b { display: block; font-size: 14px; color: #0b1a2a; }
+.coach-pick small { color: #3a5674; font-size: 12px; }
+.pick-rank { width: 24px; height: 24px; display: grid; place-items: center; background: #0b3154; color: #ffda3d; border-radius: 4px; font: 400 12px "Silkscreen",sans-serif; }
+.coach-pick button.ghost { color: #0b3154; background: #e6f0fa; border-color: #9ec6ea; }
+.skill-more { margin-top: 9px; }
+.skill-more summary { cursor: pointer; display: flex; align-items: center; gap: 7px; color: var(--muted); font-weight: 700; list-style: none; }
+.skill-more[open] summary { margin-bottom: 8px; color: var(--text); }
+@media (max-width:1000px) { .coach-card { grid-template-columns: 1fr; } .coach-speech::before { display: none; } }

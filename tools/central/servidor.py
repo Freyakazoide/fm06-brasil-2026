@@ -104,9 +104,25 @@ def save_plans(time_uid, plans: dict) -> None:
     plans_file(time_uid).write_text(json.dumps(plans, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
-def attach_skills(payload: dict) -> dict:
+_ASSISTANT: dict = {}
+
+
+def assistant_cached(demo: bool) -> dict:
+    """Nome do adjunto, perguntado ao jogo uma vez a cada 10 minutos."""
+    if demo:
+        return {"nome": "Henrique Pacheco", "npja": 12, "npjp": 13, "uid": 7}
+    if not _ASSISTANT or time.time() - _ASSISTANT.get("_t", 0) > 600:
+        try:
+            _ASSISTANT.update(leitor.assistant(), _t=time.time())
+        except Exception:
+            _ASSISTANT.update({"nome": "Seu adjunto", "npja": 0, "npjp": 0, "uid": 0}, _t=time.time())
+    return {k: v for k, v in _ASSISTANT.items() if k != "_t"}
+
+
+def attach_skills(payload: dict, demo: bool = False) -> dict:
     """Junta a cada jovem o plano ativo (avaliado pela data do jogo) e o catálogo de habilidades."""
     info, plans = payload["info"], load_plans(payload["info"]["time_uid"])
+    info["adjunto"] = assistant_cached(demo)
     for j in payload["jovens"]:
         known = j.get("movimentos_idx", [])
         plan = plans["ativos"].get(str(j["uid"]))
@@ -114,6 +130,7 @@ def attach_skills(payload: dict) -> dict:
             "plano": habilidades.evaluate(plan, info["data"], j["atributos"], j["idade"], known) if plan else None,
             "catalogo": habilidades.catalog_for(j["atributos"], known),
             "semanas_estimadas": habilidades.weeks_needed(j["atributos"], j["idade"]),
+            "sugestoes": habilidades.suggest(j["atributos"], known, (j.get("adjunto") or {}).get("alvo", "")),
             "aprendidos": [a for a in plans["aprendidos"] if a["uid"] == j["uid"]],
         }
     return payload
@@ -165,7 +182,7 @@ class Central(BaseHTTPRequestHandler):
                     lista, info = leitor.jovens(self.max_age)
                     payload = {"schema_version": 2, "info": info, "jovens": [asdict(j) for j in lista],
                                "historico": remember(lista, info)}
-                payload = attach_skills(payload)
+                payload = attach_skills(payload, self.demo)
                 body = json.dumps(payload, ensure_ascii=False)
                 self.reply(200, body.encode("utf-8"), "application/json; charset=utf-8")
             except Exception as error:                                   # jogo fechado, etc.

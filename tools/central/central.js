@@ -268,17 +268,37 @@ function contractTab(j) {
   <div class="grid-2"><section class="panel">${heading("Situação do contrato","briefcase",3)}<div class="contract-line"><span>Início</span><b>${dateBR(j.contrato_inicio)}</b></div><div class="contract-line"><span>Fim</span><b>${j.contrato_fim?dateBR(j.contrato_fim):"sem data"}</b></div><div class="contract-line"><span>Time</span><b>${esc(j.time)}</b></div>${j.contrato_fim?`<div class="contract-track">${bar(clamp(100-(left/36)*100,0,100),100,left<=6?"var(--danger)":left<=12?"var(--warning)":"var(--positive)")}</div>`:""}<div class="callout" style="margin-top:10px">${esc(status[0].toUpperCase()+status.slice(1))}.</div></section>
   <section class="panel">${heading("Leitura da comissão","info",3)}<div class="callout" style="margin-top:0">${j.contrato_fim===null?"Contrato de formação: quando ele subir de nível, vale oferecer o primeiro contrato profissional para não perdê-lo de graça.":left<=6&&j.pot>=7?"Potencial alto e contrato no fim: prioridade de renovação.":left<=6?"Vence em menos de 6 meses: renovar agora ou deixar sair no fim do vínculo.":left<=12?"Entra no último ano: avaliar renovação ou empréstimo.":"Sem urgência contratual."}</div><p class="raw-note">Salário bruto no jogo: ${j.salario_raw} (semanal); mostrado em reais por mês pela conversão da ficha do jogo.</p></section></div>`;
 }
+// rosto do treinador adjunto em pixel (16x15), no padrão dos bonecos: cabelo e pele pelo UID,
+// terno azul e gravata verde do clube
+const FACE = ["....hhhhhhhh....","...hhhhhhhhhh...","..hhhssssssshh..","..hssssssssssh..","..ssseessseesss.",
+  "..ssssssssssss..","..sssssnnsssss..","..ssssmmmmssss..","...ssssssssss...","....ssssssss....",
+  "...jjjwwtwwjjj..","..jjjjwttwjjjj..",".jjjjjjttjjjjjj.","jjjjjjjttjjjjjjj","jjjjjjjjjjjjjjjj"];
+function coachFace(uid=0, size=64) {
+  const skin = SKINS[Math.abs(uid) % SKINS.length], hair = HAIRS[Math.abs(uid >> 2) % HAIRS.length];
+  const colour = {h:hair, s:skin, e:"#1b1410", n:"#00000033", m:"#6e2f25", j:"#1d3c66", w:"#f4f6f8", t:"#2fa04f"};
+  let px = "";
+  FACE.forEach((row, y) => { for (let x = 0; x < 16; x++) { const c = row[x]; if (c !== ".") px += `<rect x="${x}" y="${y}" width="1" height="1" fill="${colour[c]}"/>`; } });
+  return `<svg class="coach-face" width="${size}" height="${size}" viewBox="-2 -2 20 19" shape-rendering="crispEdges" aria-hidden="true">${px}</svg>`;
+}
 function skillsTab(j) {
-  const sk = j.habilidades || {}, plan = sk.plano, known = j.movimentos || [];
+  const sk = j.habilidades || {}, plan = sk.plano, known = j.movimentos || [], coach = data.info.adjunto || {nome: "Seu adjunto"};
   const req = r => r.map(([name, now, need]) => `<span class="req ${now >= need ? "ok" : "no"}">${esc(name)} <b>${now}</b>/${need}</span>`).join("");
+  const firstName = esc(short(j));
+  const suggestions = sk.sugestoes || [];
+  let speech;
+  if (plan) speech = plan.pronto ? `O ${firstName} está pronto: já pode aprender <b>${esc(plan.nome)}</b>. É só confirmar no plano abaixo.`
+    : `Estamos trabalhando <b>${esc(plan.nome)}</b> com o ${firstName}. ${plan.faltando.length ? `Ainda falta ${plan.faltando.map(([n, v, m]) => `${esc(n)} ${v}/${m}`).join(", ")}.` : `Mais ${Math.max(0, Math.ceil(plan.semanas - plan.semanas_feitas))} semanas e ele pega.`} Um plano por vez.`;
+  else if (!suggestions.length) speech = j.posicoes.includes("GR") ? `Para goleiro eu não mexeria em movimentos agora. Foco é treino de goleiro e confiança.` : `Por enquanto não vejo um movimento que combine com o jogo do ${firstName}. Vamos fortalecer a base primeiro.`;
+  else speech = `Para o ${firstName} como ${esc(j.analise?.funcao_alvo || j.adjunto?.alvo || "")}, eu testaria isto:`;
+  const picks = !plan && suggestions.length ? `<div class="coach-picks">${suggestions.map((sug, i) => `<article class="coach-pick ${sug.pronto ? "ready" : ""}">
+      <span class="pick-rank">${i + 1}</span><div><b>${esc(sug.nome)}</b><small>${esc(sug.motivo)}</small></div>
+      <button class="${i ? "ghost" : "primary"}" data-skill-start="${j.uid}" data-idx="${sug.idx}">Começar</button></article>`).join("")}</div>` : "";
+  const coachCard = `<section class="panel coach-card"><div class="coach-portrait">${coachFace(coach.uid || 7, 72)}<span class="coach-name">${esc(coach.nome)}</span><small>Treinador adjunto${coach.npja ? ` · avalia ${coach.npja}/${coach.npjp}` : ""}</small></div>
+    <div class="coach-speech"><p>${speech}</p>${picks}</div></section>`;
   const active = plan ? `<section class="panel skill-active">${heading("Plano em andamento","bolt",3)}
       <div class="skill-head"><span class="skill-ball">${pixelBall(22)}</span><div><b>${esc(plan.nome)}</b><small>desde ${dateBR(plan.inicio)} · ${plan.semanas_feitas} de ${plan.semanas} semanas</small></div>
       ${plan.pronto ? `<button class="primary" data-skill-learn="${j.uid}">${icon("star",14)} Aprender no jogo</button>` : `<button class="ghost" data-skill-cancel="${j.uid}">Cancelar plano</button>`}</div>
-      <div class="skill-progress"><i style="width:${plan.progresso}%"></i><span>${plan.progresso}%</span></div>
-      <div class="callout" style="margin-top:10px">${plan.pronto ? "Treino concluído e requisitos cumpridos: o adjunto libera a habilidade. Clique em <b>Aprender no jogo</b> e salve o jogo depois." :
-        plan.faltando.length ? `Ainda faltam requisitos: ${plan.faltando.map(([n, v, m]) => `${esc(n)} ${v}/${m}`).join(", ")}. O tempo conta, mas ele só aprende quando chegar lá.` :
-        `Requisitos cumpridos. Faltam ${Math.max(0, Math.ceil(plan.semanas - plan.semanas_feitas))} semanas de treino (avance o jogo e atualize).`}</div></section>`
-    : `<section class="panel skill-active">${heading("Plano em andamento","bolt",3)}<div class="empty">Nenhum plano ativo. Escolha uma habilidade abaixo — leva cerca de <b>${sk.semanas_estimadas ?? "?"} semanas</b> para ${esc(short(j))} (Determinação e idade contam).</div></section>`;
+      <div class="skill-progress"><i style="width:${plan.progresso}%"></i><span>${plan.progresso}%</span></div></section>` : "";
   const mine = `<section class="panel">${heading("Movimentos que já tem","star",3)}${known.length ? `<div class="tag-row">${known.map(m => `<span class="tag">${esc(m)}</span>`).join("")}</div>` : '<div class="empty">Nenhum movimento preferido ainda.</div>'}
       ${(sk.aprendidos || []).length ? `<p class="raw-note">Aprendidos na Central: ${sk.aprendidos.map(a => `${esc(a.nome)} (${dateBR(a.data)})`).join(", ")}</p>` : ""}</section>`;
   const cards = (sk.catalogo || []).map(c => `<article class="skill-card ${c.aptidao >= 1 ? "ready" : ""}">
@@ -287,8 +307,8 @@ function skillsTab(j) {
       <div class="skill-reqs">${req(c.requisitos)}</div>
       ${c.opostos.length ? `<small class="skill-warn">substitui: ${c.opostos.map(esc).join(", ")}</small>` : ""}
       <button class="ghost" data-skill-start="${j.uid}" data-idx="${c.idx}" ${plan ? "disabled" : ""}>Iniciar plano</button></article>`).join("");
-  return `<div class="grid-2" style="margin-top:0">${active}${mine}</div>
-    <section class="panel" style="margin-top:9px">${heading("Catálogo de habilidades","target",3)}<p class="raw-note" style="margin-top:0">Ordenado pelo que mais combina com os atributos dele. Verde = requisito cumprido.</p><div class="skill-grid">${cards}</div></section>`;
+  return `${coachCard}${active ? `<div class="grid-2">${active}${mine}</div>` : mine}
+    <details class="panel skill-more"><summary>${icon("target",14)} Outras habilidades (por sua conta, sem recomendação do adjunto)</summary><p class="raw-note">Verde = requisito cumprido. O tempo conta pela data do jogo; ele só aprende quando cumprir todos.</p><div class="skill-grid">${cards}</div></details>`;
 }
 async function skillAction(path, body) {
   const response = await fetch(path, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});

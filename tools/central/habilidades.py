@@ -103,3 +103,32 @@ def evaluate(plan: dict, today: str, attributes: dict[str, int], age: int, known
     return {"idx": index, "nome": CATALOG[index][0], "inicio": plan["inicio"], "semanas": need,
             "semanas_feitas": round(max(0.0, weeks), 1), "progresso": int(min(100, max(0, weeks / need * 100))),
             "faltando": lacking, "pronto": not done and weeks >= need and not lacking, "aprendido": done}
+
+
+# Sugestões do adjunto: encaixe nos requisitos (60%) + utilidade na posição-alvo (40%).
+ATT, WING = {"PL", "MA C", "MA D", "MA E"}, {"MA D", "MA E", "M D", "M E", "AD", "AE"}
+MID, DEF = {"MD", "M C", "MA C"}, {"DC", "DD", "DE", "MD"}
+USEFUL = {
+    **{i: ATT | {"M C"} for i in (8, 9, 10, 11, 42)},
+    **{i: {"PL", "MA C"} for i in (12, 21, 18)},
+    3: {"PL", "MA C", "MA D", "MA E"}, 13: {"PL", "MA D", "MA E"}, 4: WING | {"PL"}, 5: WING | MID,
+    **{i: MID | {"MA C"} for i in (19, 20, 22, 43, 47, 6, 44)},
+    **{i: WING | {"MA C", "PL"} for i in (0, 1, 2, 39, 40, 27, 35, 46, 14)},
+    36: ATT | MID | WING, 45: ATT | MID | WING, 15: DEF, 38: DEF | {"M C"},
+}
+
+
+def suggest(attributes: dict[str, int], known: list[int], target: str, limit: int = 3) -> list[dict]:
+    if target == "GR":
+        return []
+    rows = []
+    for index, (name, req, _) in CATALOG.items():
+        if index in known or target not in USEFUL.get(index, set()):
+            continue
+        score = 0.6 * fit(attributes, index) + 0.4
+        best = sorted(req, key=lambda a: -attributes.get(a, 0))[:2]
+        lacking = missing(attributes, index)
+        reason = (f"já tem {', '.join(f'{PT.get(a, a)} {attributes.get(a, 0)}' for a in best)}"
+                  + (f"; precisa chegar a {', '.join(f'{n} {m}' for n, _, m in lacking)}" if lacking else ""))
+        rows.append({"idx": index, "nome": name, "nota": round(score, 3), "pronto": not lacking, "motivo": reason})
+    return sorted(rows, key=lambda r: (-r["pronto"], -r["nota"]))[:limit]

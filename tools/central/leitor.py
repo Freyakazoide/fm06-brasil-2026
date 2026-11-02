@@ -205,6 +205,33 @@ def learn(uid: int, index: int, opposite: tuple[int, ...] = ()) -> list[int]:
     raise LookupError(f"jogador {uid} não encontrado")
 
 
+STAFF_VT, JOB_ASSISTANT = 0x010F851C, 20
+
+
+def assistant() -> dict:
+    """O treinador adjunto do time do humano que melhor avalia jovens (nome e notas). Pergunta a
+    função (Pcjo) e as notas (Npja/Npjp) ao jogo por chamada remota de leitura (chamada_remota)."""
+    sys.path.insert(0, str(ROOT / "tools" / "re"))
+    import chamada_remota as cr
+    jogo = Jogo()
+    _, handle = cr.game()
+    code = lambda text: int.from_bytes(text.encode(), "big")
+    people = jogo.table(PEOPLE)
+    human = next(p for p in people if p and jogo.u32(p) == HUMAN_VT)
+    team, best = jogo.u32(human + 0x74), None
+    for r in people:
+        if not r or jogo.u32(r) != STAFF_VT or jogo.u32(r + 0x74) != team:
+            continue
+        if cr.run(handle, cr.property_code(r, code("Pcjo"))) != JOB_ASSISTANT:
+            continue
+        a, p = cr.run(handle, cr.property_code(r, code("Npja"))), cr.run(handle, cr.property_code(r, code("Npjp")))
+        row = {"nome": f"{jogo.text(jogo.u32(r + 44))} {jogo.text(jogo.u32(r + 48))}".strip(), "npja": a, "npjp": p,
+               "uid": jogo.u32(r + 0x14)}
+        if not best or a + p > best["npja"] + best["npjp"]:
+            best = row
+    return best or {"nome": "Seu adjunto", "npja": 0, "npjp": 0, "uid": 0}
+
+
 def preferred_moves(jogo: Jogo, uid_at: int) -> list[str]:
     """Movimentos preferidos do bitset já mapeado em reverse/fmm."""
     raw = jogo.raw(uid_at - 48, 6)
