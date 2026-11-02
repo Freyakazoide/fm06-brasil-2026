@@ -17,7 +17,7 @@ class CentroTest(unittest.TestCase):
 
     def test_hook_answers_mod_codes_and_falls_back(self) -> None:
         base = 0x015C1200
-        hook = centro.hook_code(base, base + 0x200)
+        hook = centro.hook_code(base, base + 0x200, base + 0x3F0)
         self.assertTrue(hook.startswith(bytes.fromhex("8B442404")))       # mov eax, [esp+4] (código)
         for value in (centro.STAR_NOW, centro.STAR_POTENTIAL, centro.CA, centro.PA):
             self.assertIn(b"\x3D" + value.to_bytes(4, "little"), hook)
