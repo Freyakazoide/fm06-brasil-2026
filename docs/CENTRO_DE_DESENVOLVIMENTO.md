@@ -613,3 +613,8 @@ Conferido nos XML da Aurora e do jogo:
   `Psnu` do jogo em 14 de 14 jogadores; 255 = sem número). Salário em R$/mês ≈ bruto × 750/38
   (calibrado na ficha do Otacílio: bruto 38 = "R$750 por mês"). A camisa da página mostra nome e
   número.
+- 02/11, **plano de habilidades** (`tools/central/habilidades.py`): catálogo de 32 movimentos
+  preferidos com requisitos de atributo e opostos; tempo 6–20 semanas pela data do jogo
+  (Determinação e idade). Planos em `workspace/central/planos_<UID do time>.json`. Servidor:
+  `POST /plano`, `/plano/cancelar`, `/aprender` (só com o plano pronto). Única escrita da Central:
+  `leitor.learn` grava os 6 bytes do bitset em UID-48 (testado sem mudança regravando um bit já ativo).

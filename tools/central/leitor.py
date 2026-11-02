@@ -91,6 +91,7 @@ class Jovem:
     posicoes: list[str] = field(default_factory=list)
     familiaridades: dict[str, int] = field(default_factory=dict)
     movimentos: list[str] = field(default_factory=list)
+    movimentos_idx: list[int] = field(default_factory=list)  # bits dos movimentos preferidos
     atributos: dict[str, int] = field(default_factory=dict)
     futuro: dict[str, int] = field(default_factory=dict)      # projeção do olheiro no auge
     nivel: str = ""                                           # onde pode chegar
@@ -180,6 +181,30 @@ def contract(jogo: Jogo, r: int) -> dict:
         return {}
 
 
+def move_bits(jogo: Jogo, uid_at: int) -> list[int]:
+    raw = jogo.raw(uid_at - 48, 6)
+    return [i for i in range(48) if raw[i // 8] >> (i % 8) & 1]
+
+
+def learn(uid: int, index: int, opposite: tuple[int, ...] = ()) -> list[int]:
+    """Grava no jogo aberto o movimento preferido `index` do jogador `uid` (e apaga os opostos).
+    Única escrita da Central: 6 bytes do bitset do jogador. Devolve os bits depois da escrita."""
+    sys.path.insert(0, str(ROOT / "tools" / "re"))
+    import chamada_remota as cr
+    jogo = Jogo()
+    for r in jogo.table(PEOPLE):
+        if r and jogo.u32(r) == PLAYER_VT and jogo.u32(r + 0x14) == uid:
+            at = r + 0x14 - 48
+            bits = bytearray(jogo.raw(at, 6))
+            bits[index // 8] |= 1 << (index % 8)
+            for other in opposite:
+                bits[other // 8] &= ~(1 << (other % 8)) & 0xFF
+            _, handle = cr.game()
+            cr.poke(handle, at, bytes(bits))
+            return move_bits(jogo, r + 0x14)
+    raise LookupError(f"jogador {uid} não encontrado")
+
+
 def preferred_moves(jogo: Jogo, uid_at: int) -> list[str]:
     """Movimentos preferidos do bitset já mapeado em reverse/fmm."""
     raw = jogo.raw(uid_at - 48, 6)
@@ -247,7 +272,7 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             internacional={"jogos": jogo.raw(uid_at + 72, 1)[0], "gols": jogo.raw(uid_at + 74, 1)[0],
                            "sub21_jogos": jogo.raw(uid_at + 73, 1)[0], "sub21_gols": jogo.raw(uid_at + 75, 1)[0]},
             pe_preferido=foot, posicoes=positions, familiaridades=familiarities,
-            movimentos=preferred_moves(jogo, uid_at), atributos=values, futuro=projected,
+            movimentos=preferred_moves(jogo, uid_at), movimentos_idx=move_bits(jogo, uid_at), atributos=values, futuro=projected,
             nivel=next(text for floor, text in LEVELS if seen_pa >= floor),
             adjunto=assistant, analise=analysis))
     info = {"data": today.replace(year=today.year + YEAR_SHIFT).isoformat(), "time_uid": jogo.u32(my_team + 0x14),

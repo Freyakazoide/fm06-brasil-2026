@@ -422,7 +422,7 @@ footer { height: 24px; padding: 2px 15px; color: var(--faint); font-size: 8px; l
 /* Cabeçalho do jogador e abas presos juntos; compactos ao rolar */
 .sticky-head { position: sticky; top: 0; z-index: 12; background: #04182b; box-shadow: 0 6px 12px rgba(0,6,14,.55); }
 .sticky-head .player-header, .sticky-head .tabs { position: static; }
-.sticky-head .player-header { transition: min-height .15s ease, padding .15s ease; }
+.sticky-head .player-header { transition: none; }
 .sticky-head.scrolled .player-header { min-height: 0; padding: 5px 14px; grid-template-columns: 52px 1fr; gap: 10px; }
 .sticky-head.scrolled .shirt { width: 46px; height: 46px; }
 .sticky-head.scrolled .shirt svg { display: none; }
@@ -446,3 +446,28 @@ footer { height: 24px; padding: 2px 15px; color: var(--faint); font-size: 8px; l
 .contract-line { display: flex; justify-content: space-between; padding: 6px 2px; border-bottom: 1px solid var(--border-soft); }
 .contract-line span { color: var(--muted); text-transform: uppercase; font-size: 10px; font-weight: 700; }
 .contract-track { margin-top: 10px; }
+
+/* Habilidades */
+.skill-head { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; }
+.skill-head b { display: block; font-size: 16px; }
+.skill-head small { color: var(--muted); }
+.skill-ball { display: grid; place-items: center; }
+.skill-progress { position: relative; height: 16px; margin-top: 10px; background: #041321; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; }
+.skill-progress i { position: absolute; inset: 0 auto 0 0; background: repeating-linear-gradient(90deg,var(--accent) 0 6px,var(--accent-2) 6px 8px); }
+.skill-progress span { position: absolute; right: 6px; top: 0; font: 400 10px/16px "Silkscreen",sans-serif; color: #fff; text-shadow: 0 1px 0 #000; }
+.skill-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(230px,1fr)); gap: 8px; }
+.skill-card { display: grid; gap: 6px; padding: 10px; background: #061d33; border: 1px solid #17486f; border-radius: 4px; }
+.skill-card.ready { border-color: #2f8f5a; box-shadow: inset 0 0 0 1px rgba(85,213,139,.25); }
+.skill-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.skill-card-head b { font-size: 13px; }
+.skill-fit { font: 400 11px "Silkscreen",sans-serif; color: var(--accent); }
+.skill-fitbar { height: 5px; background: #041321; border-radius: 3px; overflow: hidden; }
+.skill-fitbar i { display: block; height: 100%; background: var(--positive); }
+.skill-reqs { display: flex; flex-wrap: wrap; gap: 4px; }
+.req { padding: 1px 6px; border-radius: 3px; font-size: 11px; border: 1px solid; }
+.req.ok { color: #9be8b8; border-color: rgba(85,213,139,.4); background: rgba(85,213,139,.08); }
+.req.no { color: #ffb0a8; border-color: rgba(241,107,114,.45); background: rgba(241,107,114,.08); }
+.skill-warn { color: var(--warning); font-size: 11px; }
+button.ghost { padding: 6px 10px; background: #0a2a47; border: 1px solid var(--border-bright); border-radius: 4px; cursor: pointer; font-weight: 700; }
+button.ghost:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+button.ghost:disabled { opacity: .4; cursor: not-allowed; }

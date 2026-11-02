@@ -25,6 +25,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 import leitor  # noqa: E402
+import habilidades  # noqa: E402
 import demo  # noqa: E402
 
 ASSETS = ROOT / "data" / "brasil" / "telas" / "centro_desenvolvimento" / "assets"
@@ -89,6 +90,35 @@ def background() -> bytes:
 SECTION_NOW, OPENINGS, CENTRO_SECTION = 0x015C17F4, 0x015C17F8, 0x74636476     # 'tcdv'
 
 
+def plans_file(time_uid) -> Path:
+    HISTORY.mkdir(parents=True, exist_ok=True)
+    return HISTORY / f"planos_{time_uid}.json"
+
+
+def load_plans(time_uid) -> dict:
+    file = plans_file(time_uid)
+    return json.loads(file.read_text(encoding="utf-8")) if file.exists() else {"ativos": {}, "aprendidos": []}
+
+
+def save_plans(time_uid, plans: dict) -> None:
+    plans_file(time_uid).write_text(json.dumps(plans, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
+def attach_skills(payload: dict) -> dict:
+    """Junta a cada jovem o plano ativo (avaliado pela data do jogo) e o catálogo de habilidades."""
+    info, plans = payload["info"], load_plans(payload["info"]["time_uid"])
+    for j in payload["jovens"]:
+        known = j.get("movimentos_idx", [])
+        plan = plans["ativos"].get(str(j["uid"]))
+        j["habilidades"] = {
+            "plano": habilidades.evaluate(plan, info["data"], j["atributos"], j["idade"], known) if plan else None,
+            "catalogo": habilidades.catalog_for(j["atributos"], known),
+            "semanas_estimadas": habilidades.weeks_needed(j["atributos"], j["idade"]),
+            "aprendidos": [a for a in plans["aprendidos"] if a["uid"] == j["uid"]],
+        }
+    return payload
+
+
 class Watcher:
     """Lê a tela aberta no jogo; ao entrar na Central de Desenvolvimento, atualiza a página aberta
     ou abre uma no navegador."""
@@ -135,6 +165,7 @@ class Central(BaseHTTPRequestHandler):
                     lista, info = leitor.jovens(self.max_age)
                     payload = {"schema_version": 2, "info": info, "jovens": [asdict(j) for j in lista],
                                "historico": remember(lista, info)}
+                payload = attach_skills(payload)
                 body = json.dumps(payload, ensure_ascii=False)
                 self.reply(200, body.encode("utf-8"), "application/json; charset=utf-8")
             except Exception as error:                                   # jogo fechado, etc.
@@ -155,6 +186,44 @@ class Central(BaseHTTPRequestHandler):
             self.reply(200, file.read_bytes(), kind)
             return
         self.reply(404, f"nao encontrado: {path}".encode("utf-8"), "text/plain; charset=utf-8")
+
+    def do_POST(self) -> None:
+        """Planos de habilidade: /plano {uid, idx}, /plano/cancelar {uid}, /aprender {uid}."""
+        path = urlsplit(self.path).path
+        try:
+            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
+            if self.demo:
+                raise RuntimeError("modo demo: nada é gravado")
+            lista, info = leitor.jovens(self.max_age)
+            player = next(j for j in lista if j.uid == int(body["uid"]))
+            plans = load_plans(info["time_uid"])
+            key = str(player.uid)
+            if path == "/plano":
+                index = int(body["idx"])
+                if index not in habilidades.CATALOG:
+                    raise ValueError("habilidade fora do catálogo")
+                plans["ativos"][key] = {"idx": index, "inicio": info["data"],
+                                        "semanas": habilidades.weeks_needed(player.atributos, player.idade)}
+                result = {"ok": True}
+            elif path == "/plano/cancelar":
+                plans["ativos"].pop(key, None)
+                result = {"ok": True}
+            elif path == "/aprender":
+                plan = plans["ativos"].get(key)
+                state = plan and habilidades.evaluate(plan, info["data"], player.atributos, player.idade, player.movimentos_idx)
+                if not state or not state["pronto"]:
+                    raise ValueError("o plano ainda não está pronto")
+                bits = leitor.learn(player.uid, plan["idx"], habilidades.CATALOG[plan["idx"]][2])
+                plans["ativos"].pop(key)
+                plans["aprendidos"].append({"uid": player.uid, "idx": plan["idx"], "nome": state["nome"], "data": info["data"]})
+                result = {"ok": True, "bits": bits}
+            else:
+                self.reply(404, b"{}", "application/json")
+                return
+            save_plans(info["time_uid"], plans)
+            self.reply(200, json.dumps(result).encode("utf-8"), "application/json")
+        except Exception as error:
+            self.reply(400, json.dumps({"erro": str(error)}, ensure_ascii=False).encode("utf-8"), "application/json")
 
     def reply(self, status: int, body: bytes, kind: str) -> None:
         self.send_response(status)

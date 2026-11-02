@@ -15,7 +15,7 @@ const AXES_GK = [["Reflexos",["Reflexes","One on one"]],["Mãos",["Handling","Pu
 const PITCH = {"GR":[50,92,"gk"],"DE":[16,74,"def"],"DC":[50,76,"def"],"DD":[84,74,"def"],"AE":[12,60,"def"],"AD":[88,60,"def"],"MD":[50,62,"mid"],"M E":[16,46,"mid"],"M C":[50,48,"mid"],"M D":[84,46,"mid"],"MA E":[18,30,"att"],"MA C":[50,32,"att"],"MA D":[82,30,"att"],"PL":[50,16,"att"]};
 const LINE_COLOR = {gk:"var(--gk)",def:"var(--def)",mid:"var(--mid-line)",att:"var(--att)"};
 const LINE_NAME = {gk:"GR",def:"DEF",mid:"MEI",att:"ATA"};
-const TABS = [["overview","Visão geral","dashboard"],["development","Desenvolvimento","trend"],["performance","Desempenho","chart"],["position","Posição e função","pitch"],["health","Saúde","pulse"],["contract","Contrato e carreira","briefcase"],["staff","Comissão","users"]];
+const TABS = [["overview","Visão geral","dashboard"],["development","Desenvolvimento","trend"],["performance","Desempenho","chart"],["position","Posição e função","pitch"],["health","Saúde","pulse"],["contract","Contrato e carreira","briefcase"],["skills","Habilidades","bolt"],["staff","Comissão","users"]];
 const ICONS = {
   dashboard: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="4"/><rect x="14" y="11" width="7" height="10"/><rect x="3" y="14" width="7" height="7"/>',
   trend: '<path d="M3 18l5-5 4 3 8-10"/><path d="M15 6h5v5"/>',
@@ -268,11 +268,39 @@ function contractTab(j) {
   <div class="grid-2"><section class="panel">${heading("Situação do contrato","briefcase",3)}<div class="contract-line"><span>Início</span><b>${dateBR(j.contrato_inicio)}</b></div><div class="contract-line"><span>Fim</span><b>${j.contrato_fim?dateBR(j.contrato_fim):"sem data"}</b></div><div class="contract-line"><span>Time</span><b>${esc(j.time)}</b></div>${j.contrato_fim?`<div class="contract-track">${bar(clamp(100-(left/36)*100,0,100),100,left<=6?"var(--danger)":left<=12?"var(--warning)":"var(--positive)")}</div>`:""}<div class="callout" style="margin-top:10px">${esc(status[0].toUpperCase()+status.slice(1))}.</div></section>
   <section class="panel">${heading("Leitura da comissão","info",3)}<div class="callout" style="margin-top:0">${j.contrato_fim===null?"Contrato de formação: quando ele subir de nível, vale oferecer o primeiro contrato profissional para não perdê-lo de graça.":left<=6&&j.pot>=7?"Potencial alto e contrato no fim: prioridade de renovação.":left<=6?"Vence em menos de 6 meses: renovar agora ou deixar sair no fim do vínculo.":left<=12?"Entra no último ano: avaliar renovação ou empréstimo.":"Sem urgência contratual."}</div><p class="raw-note">Salário bruto no jogo: ${j.salario_raw} (semanal); mostrado em reais por mês pela conversão da ficha do jogo.</p></section></div>`;
 }
+function skillsTab(j) {
+  const sk = j.habilidades || {}, plan = sk.plano, known = j.movimentos || [];
+  const req = r => r.map(([name, now, need]) => `<span class="req ${now >= need ? "ok" : "no"}">${esc(name)} <b>${now}</b>/${need}</span>`).join("");
+  const active = plan ? `<section class="panel skill-active">${heading("Plano em andamento","bolt",3)}
+      <div class="skill-head"><span class="skill-ball">${pixelBall(22)}</span><div><b>${esc(plan.nome)}</b><small>desde ${dateBR(plan.inicio)} · ${plan.semanas_feitas} de ${plan.semanas} semanas</small></div>
+      ${plan.pronto ? `<button class="primary" data-skill-learn="${j.uid}">${icon("star",14)} Aprender no jogo</button>` : `<button class="ghost" data-skill-cancel="${j.uid}">Cancelar plano</button>`}</div>
+      <div class="skill-progress"><i style="width:${plan.progresso}%"></i><span>${plan.progresso}%</span></div>
+      <div class="callout" style="margin-top:10px">${plan.pronto ? "Treino concluído e requisitos cumpridos: o adjunto libera a habilidade. Clique em <b>Aprender no jogo</b> e salve o jogo depois." :
+        plan.faltando.length ? `Ainda faltam requisitos: ${plan.faltando.map(([n, v, m]) => `${esc(n)} ${v}/${m}`).join(", ")}. O tempo conta, mas ele só aprende quando chegar lá.` :
+        `Requisitos cumpridos. Faltam ${Math.max(0, Math.ceil(plan.semanas - plan.semanas_feitas))} semanas de treino (avance o jogo e atualize).`}</div></section>`
+    : `<section class="panel skill-active">${heading("Plano em andamento","bolt",3)}<div class="empty">Nenhum plano ativo. Escolha uma habilidade abaixo — leva cerca de <b>${sk.semanas_estimadas ?? "?"} semanas</b> para ${esc(short(j))} (Determinação e idade contam).</div></section>`;
+  const mine = `<section class="panel">${heading("Movimentos que já tem","star",3)}${known.length ? `<div class="tag-row">${known.map(m => `<span class="tag">${esc(m)}</span>`).join("")}</div>` : '<div class="empty">Nenhum movimento preferido ainda.</div>'}
+      ${(sk.aprendidos || []).length ? `<p class="raw-note">Aprendidos na Central: ${sk.aprendidos.map(a => `${esc(a.nome)} (${dateBR(a.data)})`).join(", ")}</p>` : ""}</section>`;
+  const cards = (sk.catalogo || []).map(c => `<article class="skill-card ${c.aptidao >= 1 ? "ready" : ""}">
+      <div class="skill-card-head"><b>${esc(c.nome)}</b><span class="skill-fit">${Math.round(c.aptidao * 100)}%</span></div>
+      <div class="skill-fitbar"><i style="width:${Math.round(c.aptidao * 100)}%"></i></div>
+      <div class="skill-reqs">${req(c.requisitos)}</div>
+      ${c.opostos.length ? `<small class="skill-warn">substitui: ${c.opostos.map(esc).join(", ")}</small>` : ""}
+      <button class="ghost" data-skill-start="${j.uid}" data-idx="${c.idx}" ${plan ? "disabled" : ""}>Iniciar plano</button></article>`).join("");
+  return `<div class="grid-2" style="margin-top:0">${active}${mine}</div>
+    <section class="panel" style="margin-top:9px">${heading("Catálogo de habilidades","target",3)}<p class="raw-note" style="margin-top:0">Ordenado pelo que mais combina com os atributos dele. Verde = requisito cumprido.</p><div class="skill-grid">${cards}</div></section>`;
+}
+async function skillAction(path, body) {
+  const response = await fetch(path, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) alert(result.erro || "Não deu certo.");
+  await load();
+}
 function staffTab(j) {
   const ah=j.analise.confianca_habilidade, ap=j.analise.confianca_potencial;
   return `<div class="metric-grid">${metric("Confiança habilidade",esc(ah.nivel),`avaliador ${ah.avaliador}/20`)}${metric("Confiança potencial",esc(ap.nivel),`avaliador ${ap.avaliador}/20`)}${metric("Habilidade",stars(j.hab),"opinião da comissão")}${metric("Potencial",stars(j.pot),"opinião da comissão")}</div><div class="grid-2"><section class="panel"><h2>Parecer do adjunto</h2><div class="callout" style="margin-top:0">${esc(j.adjunto?.sugestao||"Sem parecer disponível.")}</div><p class="raw-note">${esc(j.analise.metodologia)}</p></section><section class="panel"><h2>Movimentos preferidos</h2>${j.movimentos.length?`<div class="tag-row">${j.movimentos.map(m=>`<span class="tag">${esc(m)}</span>`).join("")}</div>`:'<div class="empty">Nenhum movimento preferido registrado.</div>'}</section></div>`;
 }
-function renderTab(j) { return ({overview:overviewTab,development:developmentTab,performance:performanceTab,position:positionTab,health:healthTab,contract:contractTab,staff:staffTab}[ui.tab]||overviewTab)(j); }
+function renderTab(j) { return ({overview:overviewTab,development:developmentTab,performance:performanceTab,position:positionTab,health:healthTab,contract:contractTab,skills:skillsTab,staff:staffTab}[ui.tab]||overviewTab)(j); }
 function renderWorkspace() {
   if(ui.academy)return renderAcademy();
   const j=data.jovens.find(p=>p.uid===ui.selectedUid); if(!j){ui.academy=true;return renderAcademy()}
@@ -314,7 +342,25 @@ async function watchGame() {
 setInterval(watchGame, 2000); watchGame();
 
 // cabeçalho do jogador + abas ficam presos no topo; ao rolar, o cabeçalho encolhe
+// com folga entre os limites (encolhe após 160 px, volta só perto do topo): encolher o cabeçalho
+// muda a altura da página, e um limite único fazia ele piscar entre os dois estados
+let headTicking = false;
 document.getElementById("workspace").addEventListener("scroll", event => {
-  const head = event.currentTarget.querySelector(".sticky-head");
-  if (head) head.classList.toggle("scrolled", event.currentTarget.scrollTop > 60);
+  const box = event.currentTarget;
+  if (headTicking) return;
+  headTicking = true;
+  requestAnimationFrame(() => {
+    headTicking = false;
+    const head = box.querySelector(".sticky-head"); if (!head) return;
+    const top = box.scrollTop, compact = head.classList.contains("scrolled");
+    if (!compact && top > 160) head.classList.add("scrolled");
+    else if (compact && top < 8) head.classList.remove("scrolled");
+  });
+}, {passive: true});
+
+document.getElementById("workspace").addEventListener("click", event => {
+  const start = event.target.closest("[data-skill-start]"), cancel = event.target.closest("[data-skill-cancel]"), learn = event.target.closest("[data-skill-learn]");
+  if (start) skillAction("/plano", {uid: Number(start.dataset.skillStart), idx: Number(start.dataset.idx)});
+  if (cancel && confirm("Cancelar o plano de habilidade?")) skillAction("/plano/cancelar", {uid: Number(cancel.dataset.skillCancel)});
+  if (learn && confirm("Gravar a habilidade no jogo aberto? Depois salve o jogo para guardar.")) skillAction("/aprender", {uid: Number(learn.dataset.skillLearn)});
 });
