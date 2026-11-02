@@ -40,6 +40,17 @@ class CentroTest(unittest.TestCase):
                          centro.IS_ATTRIBUTE + 9)                         # segue no cmp seguinte
         self.assertLessEqual(len(code), 0x20)
 
+    def test_prefilter_only_passes_my_club_when_marked(self) -> None:
+        base, flag = 0x015C1740, 0x015C17F0
+        code = centro.prefilter_code(base, flag, 0x015C1400, 0x015C15F0)
+        self.assertTrue(code.startswith(bytes.fromhex("F6460C01 0F85")))  # o teste original continua
+        self.assertIn(bytes.fromhex("833D") + flag.to_bytes(4, "little") + bytes(1), code)
+        ends = [base + len(code) - 5 * (k - 1) + int.from_bytes(code[len(code) - 5 * k + 1:len(code) - 5 * (k - 1)],
+                                                          "little", signed=True) for k in (2, 1)]
+        self.assertEqual(ends, [centro.KNOWN_KEEP, centro.KNOWN_NEXT])
+        panel = centro.panel_code(0x015C1700, flag)
+        self.assertIn(bytes([0x81, 0x79, centro.PANEL_ID]) + centro.CENTRO_ID.to_bytes(4, "little"), panel)
+
 
 if __name__ == "__main__":
     unittest.main()

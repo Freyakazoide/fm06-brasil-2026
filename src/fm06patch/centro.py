@@ -50,6 +50,14 @@ MENU_AT, MENU_ITEM, MENU_ADD = 0x007EF8CA, 0x007F16A0, 0x00CBEEE0
 IS_ATTRIBUTE = 0x00A23A70
 IS_ATTRIBUTE_OLD = bytes.fromhex("8B442404 3D63656450")
 MY_CLUB_YES, MY_CLUB_NO = 20, 1
+# pré-filtro da Central: a busca de jogadores lê os ~18 mil conhecidos em 0xA6B1B0 e entrega cada
+# um à tabela, que calcula todas as colunas. Um método do painel de busca que roda a cada abertura
+# (0x8451C0; a montagem 0x8439C0 só roda uma vez por sessão) marca se a tela é a Central (id do
+# painel em ecx+0x24, conferido na memória); no laço, com a marca, só passa quem é do clube do humano.
+PANEL_SETUP, PANEL_SETUP_OLD, PANEL_ID = 0x008451C0, bytes.fromhex("6AFF684032DD00"), 0x24
+CENTRO_ID = code("tcdv")
+KNOWN_TEST, KNOWN_TEST_OLD = 0x00A6B2C4, bytes.fromhex("F6460C01757F")   # test [esi+0xC],1; jne próximo
+KNOWN_KEEP, KNOWN_NEXT = 0x00A6B2CA, 0x00A6B349
 MY_CLUB_LABEL = b"Meu clube\0"
 JOB, JUDGE_ABILITY, JUDGE_POTENTIAL = code("Pcjo"), code("Npja"), code("Npjp")
 CA_AT, PA_AT, UID_AT = -0xBC, -0xBA, 0x10           # a partir de ecx = jogador + 4
@@ -178,6 +186,33 @@ def attribute_code(base: int) -> bytes:
     return a.done()
 
 
+def panel_code(base: int, flag: int) -> bytes:
+    """Em 0x8439C0: [flag] = 1 se o painel é a Central (tcdv), senão 0; refaz push -1/push e segue."""
+    a = _Code(base)
+    a.raw("50 31C0 8179").raw(bytes([PANEL_ID])).u32(CENTRO_ID).raw("0F94C0 A3").u32(flag).raw("58")
+    a.raw(PANEL_SETUP_OLD)
+    _jmp_to(a, PANEL_SETUP + len(PANEL_SETUP_OLD))
+    return a.done()
+
+
+def prefilter_code(base: int, flag: int, judges: int, cache: int) -> bytes:
+    """Em 0xA6B2C4 (esi = item da lista de conhecidos, [esi] = pessoa): com a marca da Central,
+    pula quem não é do clube do humano (time em pessoa+0x74, clube em time+0x38)."""
+    a = _Code(base)
+    a.raw("F6460C01").jump("0F85", "proximo")
+    a.raw("833D").u32(flag).raw("00").jump("0F84", "fica")
+    a.call(judges)                                                   # guarda o time do humano
+    a.raw("8B15").u32(cache + 12).raw("85D2").jump("0F84", "fica")
+    a.raw("8B06 85C0").jump("0F84", "proximo")
+    a.raw("8B40").raw(bytes([PERSON_TEAM])).raw("85C0").jump("0F84", "proximo")
+    a.raw("8B4038 3B4238").jump("0F85", "proximo")
+    a.label("fica")
+    _jmp_to(a, KNOWN_KEEP)
+    a.label("proximo")
+    _jmp_to(a, KNOWN_NEXT)
+    return a.done()
+
+
 def build(hook_at: int, judges_at: int, helper_at: int, cache_at: int) -> list[tuple[int, bytes]]:
     return [(hook_at, hook_code(hook_at, judges_at, cache_at)),
             (judges_at, judges_code(judges_at, helper_at, cache_at)),
@@ -192,6 +227,7 @@ def exe_swaps(data: bytes):
     cache_at = SECTION_VA + 0xD5F0                                      # cache: 4 dwords zerados
     label_at, menu_at, text_at = SECTION_VA + 0xD600, SECTION_VA + 0xD640, SECTION_VA + 0xD6C0
     attribute_at = SECTION_VA + 0xD6E0
+    panel_at, prefilter_at, flag_at = SECTION_VA + 0xD700, SECTION_VA + 0xD740, SECTION_VA + 0xD7F0
     parts = build(hook_at, judges_at, helper_at, cache_at)
     for (start, code_bytes), end in zip(parts, (judges_at, helper_at, cache_at)):
         if start + len(code_bytes) > end:
@@ -213,4 +249,11 @@ def exe_swaps(data: bytes):
         raise ValueError("centro: desvio de atributo passa de 0xD700")
     swaps.append(Swap(sec_off(attribute_at), bytes(len(attribute)), attribute))
     swaps.append(Swap(off(IS_ATTRIBUTE), IS_ATTRIBUTE_OLD, jump(IS_ATTRIBUTE, attribute_at) + bytes([0x90] * 4)))
+    panel, prefilter = panel_code(panel_at, flag_at), prefilter_code(prefilter_at, flag_at, judges_at, cache_at)
+    if panel_at + len(panel) > prefilter_at or prefilter_at + len(prefilter) > flag_at:
+        raise ValueError("centro: pré-filtro invade o vizinho")
+    swaps += [Swap(sec_off(panel_at), bytes(len(panel)), panel),
+              Swap(sec_off(prefilter_at), bytes(len(prefilter)), prefilter)]
+    swaps.append(Swap(off(PANEL_SETUP), PANEL_SETUP_OLD, jump(PANEL_SETUP, panel_at) + bytes([0x90] * 2)))
+    swaps.append(Swap(off(KNOWN_TEST), KNOWN_TEST_OLD, jump(KNOWN_TEST, prefilter_at) + bytes([0x90])))
     return tuple(swaps)
