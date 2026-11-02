@@ -648,3 +648,12 @@ Conferido nos XML da Aurora e do jogo:
   pronta, calculada do histórico de partidas. `Pfrm` dá as 5 últimas notas de **todos** os jogos (inclui
   Sub-20): Geraldo 7, 6, 6, 6, 6. A Central mostra essa forma recente; os totais não oficiais (gols,
   nota média) seguem pendentes (histórico de partidas do jogador, a mapear).
+- 02/11, **personalidade** (`tools/central/personalidade.py`): os 8 traços ocultos ficam no objeto
+  PData do jogador, ponteiro em `[R+200]` (0xC8; conferido em 200 de 200 jogadores, vtable 0x10B697C).
+  O UID do PData fica em +0x14 e o traço *i* em `PData+0x14+8+i` (1 byte, 1 a 20), na ordem
+  Adaptabilidade, Ambição, Lealdade, Pressão, Profissionalismo, Desportivismo, Temperamento, Polêmica
+  (`live_player.PERSONALITY`). Ex.: Otacílio Profissionalismo 17 / Temperamento 2; Afonso Guedes
+  Profissionalismo 20. A comissão dá um perfil ("Profissional", "Polêmico"...), a chance de atingir o
+  potencial (Profissionalismo 45%, Determinação 30%, Ambição 25%) e alertas ("risco de estagnar" com
+  Profissionalismo até 8). Só leitura; aparece na aba Comissão. A fórmula da chance é nossa (hipótese
+  inspirada no FM), não do motor.

@@ -6,6 +6,7 @@ import datetime as dt
 
 import adjunto
 import analitica
+import personalidade
 from leitor import POSITIONS
 
 
@@ -34,6 +35,9 @@ def _player(uid: int, name: str, age: int, team: str, position: str, hab: int, p
         "movimentos": ["Vem para dentro", "Tenta fazer passes longos"], "movimentos_idx": [39, 43],
         "atributos": values, "futuro": future, "nivel": "jogador de Série A",
         "adjunto": assistant, "analise": analysis,
+        "personalidade": personalidade.analyse({"Adaptability": 9 + uid % 7, "Ambition": 8 + uid % 9, "Loyalty": 12,
+                                                "Pressure": 7 + uid % 10, "Professional": 6 + uid * 3 % 14, "Sportsmanship": 14,
+                                                "Temperament": 5 + uid % 12, "Controversy": 4 + uid % 13}, values),
         "comparacao": adjunto.compare({"uid": uid, "adjunto": assistant, "atributos": values, "futuro": future},
                                       [{"uid": 99, "nome": "Breno Lima", "apelido": "Breno", "idade": 27, "numero": 5, "hab": 5,
                                         "atributos": {k: v + 2 for k, v in values.items()},

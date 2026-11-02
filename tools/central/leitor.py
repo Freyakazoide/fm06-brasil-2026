@@ -36,6 +36,7 @@ from fm06patch import live_player as lp  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import adjunto  # noqa: E402
+import personalidade  # noqa: E402
 import analitica  # noqa: E402
 
 PEOPLE, PLAYING = 0x014EAA54, 0x014EAA6C
@@ -86,6 +87,7 @@ class Jovem:
     contrato_inicio: str | None = None
     contrato_fim: str | None = None                           # None: sem data de fim
     estatisticas: dict = field(default_factory=dict)          # temporada (todas as competições)
+    personalidade: dict = field(default_factory=dict)         # traços ocultos + leitura da comissão
     reputacao: dict[str, int] = field(default_factory=dict)
     internacional: dict[str, int] = field(default_factory=dict)
     pe_preferido: str = ""
@@ -213,6 +215,18 @@ STAFF_VT, JOB_ASSISTANT = 0x010F851C, 20
 STAT_INTS = {"jogos": "Posa", "banco": "Posu", "gols": "Pogl", "assistencias": "Poas", "melhor_em_campo": "Pomo",
              "amarelos": "Poyc", "vermelhos": "Porc"}
 STAT_DOUBLES = {"nota": "Poav", "passes_pct": "Popa", "desarmes_jogo": "Pota", "chutes_alvo_pct": "Post"}
+
+
+PDATA_PTR = 200                                              # [R+200] -> PData (traços de personalidade)
+
+
+def traits(jogo: Jogo, r: int) -> dict[str, int]:
+    try:
+        pdata = jogo.u32(r + PDATA_PTR)
+        raw = jogo.raw(pdata + 0x14 + lp.PERSONALITY_REL, len(lp.PERSONALITY))
+        return {name: raw[i] for i, name in enumerate(lp.PERSONALITY)}
+    except OSError:
+        return {}
 
 
 def season_stats(jogo: Jogo, handle, r: int) -> dict:
@@ -360,6 +374,7 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             altura=jogo.u16(uid_at - 76), peso=jogo.u16(uid_at - 78), moral=moral,
             condicao_raw=jogo.u16(uid_at - 216), ritmo_raw=jogo.u16(uid_at - 214),
             cansaco_raw=jogo.u16(uid_at - 212), valor_pedido_raw=jogo.u32(uid_at - 192), **contract(jogo, r), estatisticas=stats_or_empty(jogo, r),
+            personalidade=personalidade.analyse(traits(jogo, r), values) if values else {},
             reputacao={"local": jogo.u16(uid_at - 210), "atual": jogo.u16(uid_at - 208),
                        "mundial": jogo.u16(uid_at - 206)},
             internacional={"jogos": jogo.raw(uid_at + 72, 1)[0], "gols": jogo.raw(uid_at + 74, 1)[0],

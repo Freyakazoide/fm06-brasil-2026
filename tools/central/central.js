@@ -344,9 +344,25 @@ async function skillAction(path, body) {
   if (!response.ok) alert(result.erro || "Não deu certo.");
   await load();
 }
+// Personalidade: traços ocultos lidos do PData; Polêmica é o único em que número alto é ruim
+const TRAIT_HINT = {"Adaptabilidade":"adapta-se a outro país/clube","Ambição":"quer chegar ao topo","Lealdade":"apego ao clube",
+  "Pressão":"lida com jogo grande","Profissionalismo":"treino, cuidado com o corpo","Desportivismo":"fair play",
+  "Temperamento":"cabeça fria","Polêmica":"cria confusão na imprensa"};
+function personalityPanel(j) {
+  const p = j.personalidade;
+  if (!p || !p.tracos) return `<section class="panel">${heading("Personalidade","users",3)}<div class="empty">Sem leitura de personalidade nesta atualização.</div></section>`;
+  const tone = (name, v) => { const g = name === "Polêmica" ? 21 - v : v; return g >= 15 ? "var(--positive)" : g >= 9 ? "var(--info)" : "var(--danger)"; };
+  const rows = Object.entries(p.tracos).map(([name, v]) => `<div class="trait"><span>${esc(name)}<small>${esc(TRAIT_HINT[name] || "")}</small></span>${bar(v, 20, tone(name, v))}<b>${v}</b></div>`).join("");
+  const ev = p.evolucao || {}, icons = {bom: "star", risco: "flag", atencao: "info"};
+  const notes = (p.alertas || []).map(a => `<div class="trait-alert ${a.tipo}">${icon(icons[a.tipo] || "info", 13)}<span>${esc(a.texto)}</span></div>`).join("");
+  return `<section class="panel personality">${heading("Personalidade","users",3)}
+    <div class="persona-head"><div><small>PERFIL</small><b>${esc(p.perfil)}</b></div><div class="persona-growth ${ev.nivel === "alta" ? "high" : ev.nivel === "baixa" ? "low" : ""}"><small>CHANCE DE ATINGIR O POTENCIAL</small><b>${esc(ev.nivel || "—")}</b><span>${ev.nota ?? "—"}/100</span></div></div>
+    ${rows}${notes ? `<div class="trait-alerts">${notes}</div>` : ""}
+    <p class="raw-note">Traços ocultos do FM (1 a 20). A chance de atingir o potencial pesa Profissionalismo, Ambição e Determinação.</p></section>`;
+}
 function staffTab(j) {
   const ah=j.analise.confianca_habilidade, ap=j.analise.confianca_potencial;
-  return `<div class="metric-grid">${metric("Confiança habilidade",esc(ah.nivel),`avaliador ${ah.avaliador}/20`)}${metric("Confiança potencial",esc(ap.nivel),`avaliador ${ap.avaliador}/20`)}${metric("Habilidade",stars(j.hab),"opinião da comissão")}${metric("Potencial",stars(j.pot),"opinião da comissão")}</div><div class="grid-2"><section class="panel"><h2>Parecer do adjunto</h2><div class="callout" style="margin-top:0">${esc(j.adjunto?.sugestao||"Sem parecer disponível.")}</div><p class="raw-note">${esc(j.analise.metodologia)}</p></section><section class="panel"><h2>Movimentos preferidos</h2>${j.movimentos.length?`<div class="tag-row">${j.movimentos.map(m=>`<span class="tag">${esc(m)}</span>`).join("")}</div>`:'<div class="empty">Nenhum movimento preferido registrado.</div>'}</section></div>`;
+  return `<div class="metric-grid">${metric("Confiança habilidade",esc(ah.nivel),`avaliador ${ah.avaliador}/20`)}${metric("Confiança potencial",esc(ap.nivel),`avaliador ${ap.avaliador}/20`)}${metric("Habilidade",stars(j.hab),"opinião da comissão")}${metric("Potencial",stars(j.pot),"opinião da comissão")}</div><div class="grid-2"><section class="panel"><h2>Parecer do adjunto</h2><div class="callout" style="margin-top:0">${esc(j.adjunto?.sugestao||"Sem parecer disponível.")}</div><p class="raw-note">${esc(j.analise.metodologia)}</p></section>${personalityPanel(j)}</div>`;
 }
 function renderTab(j) { return ({overview:overviewTab,development:developmentTab,performance:performanceTab,position:positionTab,compare:compareTab,health:healthTab,contract:contractTab,skills:skillsTab,staff:staffTab}[ui.tab]||overviewTab)(j); }
 function renderWorkspace() {
