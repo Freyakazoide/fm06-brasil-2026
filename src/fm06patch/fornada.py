@@ -271,6 +271,10 @@ class _Code:
         self.code += b"\xE8" + (target - (self.base + len(self.code) + 5)).to_bytes(4, "little", signed=True)
         return self
 
+    def acall(self, target: int) -> "_Code":
+        """call absoluto (mov eax, alvo ; call eax): para código que roda fora da .fm26."""
+        return self.raw("B8").u32(target).raw("FFD0")
+
     def jump(self, opcode: str, label: str) -> "_Code":
         self.raw(opcode)
         self.fixups.append((len(self.code), label))
@@ -374,6 +378,40 @@ def make_youth_code(base: int, templates: int, count: int) -> bytes:
     a.raw("668986").u32(PLAYER_CA)                                          # CA <= PA
     a.label("pronto").raw("57 8B16 8BCE FF92").u32(0x278).raw("50 B9").u32(MANAGER).call(CONTRACT)
     a.raw("8BC6")                                                    # devolve o garoto (0 se falhou)
+    a.label("fim").raw("5F 5E 5B 8BE5 5D C20800")
+    return a.done()
+
+
+# notícia dos garotos (a mesma da regeneração, 0x0077FB60 em 0x780331–0x7803EE): lista de pessoas
+# (vtable 0xEAEAC0; +4 dados, +8 quantidade), objeto REGENERATION_YOUTH_PROMOTION_NEWS na pilha
+# (0xA160A0 e as vtables), montagem 0x5EC680(0, lista, time) e entrega 0x753E10(notícia, clube, 0)
+# ao gerenciador de notícias 0x0132AAD0. Com 1 garoto a manchete é "<jogador> given chance to
+# shine"; com mais, "<time> get fresh batch of youngsters" (0x5EBCD2).
+PERSON_LIST_VTABLE, LIST_ADD = 0x00EAEAC0, 0x0051ECB0
+NEWS_NEW, NEWS_SETUP, NEWS_SEND, NEWS_MANAGER = 0x00A160A0, 0x005EC680, 0x00753E10, 0x0132AAD0
+NEWS_VTABLES = (0x010B0DB4, 0x010B0DA4, 0x010B0D98)
+FREE = 0x00D7E088                                    # cdecl
+CLUB_TEAMS, CLUB_TEAM_COUNT = 0x64, 0x6C
+
+
+def news_code(base: int, absolute: bool = False) -> bytes:
+    """stdcall(clube, lista de garotos): a notícia de juniores do clube."""
+    a = _Code(base)
+    call = a.acall if absolute else a.call
+    a.raw("55 8BEC 83EC60 53 56 57 8B5D08 8B750C")             # ebx = clube, esi = lista
+    a.raw("80BB").u32(CLUB_TEAM_COUNT).raw("01").jump("0F8C", "fim")
+    a.raw("807E0801").jump("0F8C", "fim")                       # lista vazia
+    a.raw("8D4DB0"); call(NEWS_NEW)                             # notícia em [ebp-0x50]
+    for disp, value in zip((0xB0, 0xB4, 0xB8), NEWS_VTABLES):
+        a.raw("C745").raw(bytes([disp])).u32(value)
+    a.raw("C745D8").u32(0x00E31334).raw("66C745DC0000")         # +0x28, +0x2C
+    a.raw("C745E4").u32(0x00E4DB08).raw("C745E800000000 C645EC00")   # +0x34, +0x38, +0x3C
+    a.raw("C745D400000000 C745E000000000 C745F400000000 C745F000000000")   # +0x24 +0x30 +0x44 +0x40
+    a.raw("0FB683").u32(CLUB_TEAM_COUNT).raw("48 50 8D8B").u32(CLUB_TEAMS)   # time = times[n - 1]
+    a.raw("8B11 FF5228")
+    a.raw("50 56 6A00 8D4DB0"); call(NEWS_SETUP)                # (0, lista, time)
+    a.raw("6A00 53 8D4DB0 51 B9").u32(NEWS_MANAGER); call(NEWS_SEND)
+    a.raw("8B45E8 85C0").jump("0F84", "fim").raw("50"); call(FREE); a.raw("83C404")
     a.label("fim").raw("5F 5E 5B 8BE5 5D C20800")
     return a.done()
 

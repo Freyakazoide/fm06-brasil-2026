@@ -56,11 +56,14 @@ def game() -> tuple[int, int]:
     return pid, handle
 
 
-def run(handle, code: bytes, timeout_ms: int = 10_000) -> int:
-    """Grava ``code`` (stdcall, 1 argumento, devolve eax) e roda numa thread do jogo."""
+def run(handle, code, timeout_ms: int = 10_000) -> int:
+    """Grava ``code`` (stdcall, 1 argumento, devolve eax) e roda numa thread do jogo. ``code``
+    pode ser uma função do endereço da página (para código com call relativo)."""
     page = kernel32.VirtualAllocEx(handle, None, 0x1000, MEM_COMMIT_RESERVE, PAGE_EXECUTE_READWRITE)
     if not page:
         raise OSError(ctypes.get_last_error(), "VirtualAllocEx falhou")
+    if callable(code):
+        code = code(page)
     try:
         written = ctypes.c_size_t()
         buf = ctypes.create_string_buffer(code, len(code))
@@ -170,6 +173,30 @@ PROFILES = {
 }
 
 
+def news_test_code(page: int, club_uid: int, nation_uid: int, count: int) -> bytes:
+    """count garotos no clube pela rotina da fornada (.fm26, patch fornada_base) e a notícia."""
+    sys.path.insert(0, str(ROOT / "src"))
+    from fm06patch import fornada
+    from fm06patch.exe_cave import SECTION_VA
+
+    make_youth, news_at = SECTION_VA + 0x7140, page + 0x400
+    a = fornada._Code(page)
+    a.raw("55 8BEC 83EC40 53 56 57")
+    a.raw("8B0D").u32(0x14EAA4C).raw("68").u32(nation_uid).acall(0x582440).raw("8BD8")   # ebx = nação
+    a.raw("8B0D").u32(0x14EAA30).raw("68").u32(club_uid).acall(0x582440).raw("8BF8")     # edi = clube
+    a.raw("85FF").jump("0F84", "fim").raw("85DB").jump("0F84", "fim")
+    a.raw("C745E0").u32(fornada.PERSON_LIST_VTABLE).raw("C745E400000000 C645E800 C645EC00")
+    a.raw("BE").u32(count)
+    a.label("laco").raw("53 57").acall(make_youth).raw("85C0").jump("0F84", "prox")
+    a.raw("50 8D4DE0").acall(fornada.LIST_ADD)
+    a.label("prox").raw("4E").jump("0F85", "laco")
+    a.raw("8D45E0 50 57").acall(news_at)
+    a.raw("0FB645E8")                                       # devolve quantos entraram na lista
+    a.label("fim").raw("5F 5E 5B 8BE5 5D C20400")
+    main = a.done()
+    return main + bytes(0x400 - len(main)) + fornada.news_code(news_at, absolute=True)
+
+
 def describe(handle, player: int) -> str:
     """Nome, UID, CA e PA do jogador (ACTUAL_PLAYER; mapa na ficha C14)."""
     u = lambda at: struct.unpack("<I", read_memory(handle, at, 4))[0]
@@ -206,6 +233,10 @@ def main() -> None:
     v.add_argument("clube", type=int)
     v.add_argument("--semente", type=int, default=1)
     v.add_argument("--nacao", type=int, default=1651)
+    n = sub.add_parser("noticia", help="garotos pela rotina da fornada e a notícia de juniores")
+    n.add_argument("clube", type=int)
+    n.add_argument("--quantos", type=int, default=2)
+    n.add_argument("--nacao", type=int, default=1651)
     r = sub.add_parser("ler")
     r.add_argument("addr", type=lambda s: int(s, 0))
     r.add_argument("size", type=lambda s: int(s, 0))
@@ -221,6 +252,10 @@ def main() -> None:
         result = run(handle, youth_code(a.clube, a.nacao, PROFILES.get(a.perfil)), timeout_ms=30_000)
         print({1: "nação não achada", 2: "clube não achado", 3: "alocação falhou",
                4: "criação falhou"}.get(result, f"garoto criado: 0x{result:08X}"))
+        return
+    if a.cmd == "noticia":
+        result = run(handle, lambda page: news_test_code(page, a.clube, a.nacao, a.quantos), timeout_ms=60_000)
+        print(f"{result} garoto(s) na lista da notícia")
         return
     if a.cmd in ("tipo", "vitrine"):
         import random
