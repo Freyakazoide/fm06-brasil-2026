@@ -45,6 +45,11 @@ MY_CLUB = code("Pmcl")
 PLAYER_TEAM, TEAM_CLUB = 0x70, 0x38                 # time em ecx + 0x70 (jogador + 0x74); clube no TEAM
 LABEL_DEFAULT, LABEL_SET_RAW, LABEL_DEFAULT_TEXT = 0x00A239F9, 0x00C52100, 0x0109E01C
 MENU_AT, MENU_ITEM, MENU_ADD = 0x007EF8CA, 0x007F16A0, 0x00CBEEE0
+# 0xA23A70(código) diz se o código é atributo (1..20 e "No Mínimo/No Máximo" no filtro); código
+# desconhecido vira condição de texto, que o filtro não testa. Pmcl passa por atributo.
+IS_ATTRIBUTE = 0x00A23A70
+IS_ATTRIBUTE_OLD = bytes.fromhex("8B442404 3D63656450")
+MY_CLUB_YES, MY_CLUB_NO = 20, 1
 MY_CLUB_LABEL = b"Meu clube\0"
 JOB, JUDGE_ABILITY, JUDGE_POTENTIAL = code("Pcjo"), code("Npja"), code("Npjp")
 CA_AT, PA_AT, UID_AT = -0xBC, -0xBA, 0x10           # a partir de ecx = jogador + 4
@@ -133,8 +138,8 @@ def hook_code(base: int, judges: int, cache: int) -> bytes:
     a.raw("8B15").u32(cache + 12).raw("85D2").jump("0F84", "nao")
     a.raw("8B4170 85C0").jump("0F84", "nao")
     a.raw("8B4038 3B4238").jump("0F85", "nao")
-    a.raw("B801000000").jump("E9", "grava")
-    a.label("nao").raw("31C0").jump("E9", "grava")
+    a.raw("B8").u32(MY_CLUB_YES).jump("E9", "grava")
+    a.label("nao").raw("B8").u32(MY_CLUB_NO).jump("E9", "grava")
     a.label("grava").raw("83EC10 50 8D4C2404").call(VALUE_FROM_INT)
     a.raw("8B4C2418 8D0424 50").call(VALUE_COPY)
     a.raw("8D0C24").call(VALUE_FREE)
@@ -164,6 +169,15 @@ def menu_code(base: int) -> bytes:
     return a.done()
 
 
+def attribute_code(base: int) -> bytes:
+    """Em 0xA23A70 (é atributo?): Pmcl -> 1; os outros seguem o original."""
+    a = _Code(base)
+    a.raw("8B442404 3D").u32(MY_CLUB).jump("0F85", "outro").raw("B001 C3")
+    a.label("outro").raw("3D63656450")
+    _jmp_to(a, IS_ATTRIBUTE + 9)
+    return a.done()
+
+
 def build(hook_at: int, judges_at: int, helper_at: int, cache_at: int) -> list[tuple[int, bytes]]:
     return [(hook_at, hook_code(hook_at, judges_at, cache_at)),
             (judges_at, judges_code(judges_at, helper_at, cache_at)),
@@ -177,6 +191,7 @@ def exe_swaps(data: bytes):
     hook_at, judges_at, helper_at = SECTION_VA + 0xD200, SECTION_VA + 0xD400, SECTION_VA + 0xD580
     cache_at = SECTION_VA + 0xD5F0                                      # cache: 4 dwords zerados
     label_at, menu_at, text_at = SECTION_VA + 0xD600, SECTION_VA + 0xD640, SECTION_VA + 0xD6C0
+    attribute_at = SECTION_VA + 0xD6E0
     parts = build(hook_at, judges_at, helper_at, cache_at)
     for (start, code_bytes), end in zip(parts, (judges_at, helper_at, cache_at)):
         if start + len(code_bytes) > end:
@@ -193,4 +208,9 @@ def exe_swaps(data: bytes):
     swaps.append(Swap(off(LABEL_DEFAULT), bytes([0x68]) + LABEL_DEFAULT_TEXT.to_bytes(4, "little"),
                       jump(LABEL_DEFAULT, label_at)))
     swaps.append(Swap(off(MENU_AT), bytes.fromhex("8D4C242851"), jump(MENU_AT, menu_at)))
+    attribute = attribute_code(attribute_at)
+    if attribute_at + len(attribute) > SECTION_VA + 0xD700:
+        raise ValueError("centro: desvio de atributo passa de 0xD700")
+    swaps.append(Swap(sec_off(attribute_at), bytes(len(attribute)), attribute))
+    swaps.append(Swap(off(IS_ATTRIBUTE), IS_ATTRIBUTE_OLD, jump(IS_ATTRIBUTE, attribute_at) + bytes([0x90] * 4)))
     return tuple(swaps)

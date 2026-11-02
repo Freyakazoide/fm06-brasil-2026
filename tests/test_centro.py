@@ -31,6 +31,15 @@ class CentroTest(unittest.TestCase):
             return (21 - max(1, judge)) * 3 // 2
         self.assertEqual((max_error(20), max_error(12), max_error(1), max_error(0)), (1, 13, 30, 30))
 
+    def test_my_club_is_an_attribute(self) -> None:
+        base = 0x015C16E0
+        code = centro.attribute_code(base)
+        self.assertIn(b"=" + centro.MY_CLUB.to_bytes(4, "little"), code)
+        at = len(code) - 5
+        self.assertEqual(base + len(code) + int.from_bytes(code[at + 1:], "little", signed=True),
+                         centro.IS_ATTRIBUTE + 9)                         # segue no cmp seguinte
+        self.assertLessEqual(len(code), 0x20)
+
 
 if __name__ == "__main__":
     unittest.main()
