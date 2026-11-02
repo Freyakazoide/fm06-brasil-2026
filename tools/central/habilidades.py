@@ -43,10 +43,19 @@ CATALOG: dict[int, tuple[str, dict[str, int], tuple[int, ...]]] = {
     36: ("Tenta faltas de longe", {"Set Pieces": 13, "Long Shots": 11}, ()),
     45: ("Bate falta com força", {"Set Pieces": 11, "Long Shots": 12}, ()),
     15: ("Marca em cima", {"Marking": 12, "Aggression": 10, "Work rate": 11}, ()),
-    38: ("Não se joga", {"Determination": 12, "Bravery": 10}, (37,)),
+    38: ("Não dá carrinho", {"Tackling": 11, "Positioning": 11, "Decision": 10}, (37,)),
 }
 
-PT = {"Long Shots": "Chutes Longe", "Technique": "Técnica", "Strength": "Força", "Finishing": "Finalização",
+# nomes como o jogo mostra (tela Posições > Movimentos Preferidos, conferido 02/11) para os que não
+# estão no catálogo e cuja tradução do layout estava errada
+GAME_NAMES = {32: "Sai jogando sob pressão", 37: "Dá carrinho", 38: "Não dá carrinho"}
+
+
+def move_name(index: int, fallback: str) -> str:
+    return CATALOG[index][0] if index in CATALOG else GAME_NAMES.get(index, fallback)
+
+
+PT = {"Tackling": "Desarme", "Positioning": "Posicionamento", "Long Shots": "Chutes Longe", "Technique": "Técnica", "Strength": "Força", "Finishing": "Finalização",
       "Composure": "Compostura", "Dribbling": "Finta", "Flair": "Instinto", "Off the ball": "Sem Bola",
       "Pace": "Velocidade", "Anticipation": "Antecipação", "Stamina": "Resistência", "Work rate": "Índice Trabalho",
       "First Touch": "Primeiro Toque", "Passing": "Passe", "Team work": "Trabalho Equipe", "Decision": "Decisões",

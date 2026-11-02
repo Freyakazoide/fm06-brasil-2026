@@ -618,3 +618,9 @@ Conferido nos XML da Aurora e do jogo:
   (Determinação e idade). Planos em `workspace/central/planos_<UID do time>.json`. Servidor:
   `POST /plano`, `/plano/cancelar`, `/aprender` (só com o plano pronto). Única escrita da Central:
   `leitor.learn` grava os 6 bytes do bitset em UID-48 (testado sem mudança regravando um bit já ativo).
+- 02/11, **primeiro aprendizado real conferido no jogo**: Geraldo, plano encurtado para 1 semana
+  (teste), "Aprender no jogo" em 24/07/2026 gravou o bit 38; a tela Posições do jogo passou a mostrar
+  "Não dá carrinho". O bit 38 ("Does Not Dive Into Tackles") é **não dar carrinho**, não "não se joga"
+  (tradução errada do layout); nomes corrigidos com os do jogo (32 "Sai jogando sob pressão",
+  37 "Dá carrinho", 38 "Não dá carrinho") e requisitos do 38 trocados por Desarme, Posicionamento e
+  Decisões.

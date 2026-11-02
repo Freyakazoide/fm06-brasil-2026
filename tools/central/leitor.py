@@ -208,8 +208,13 @@ def learn(uid: int, index: int, opposite: tuple[int, ...] = ()) -> list[int]:
 def preferred_moves(jogo: Jogo, uid_at: int) -> list[str]:
     """Movimentos preferidos do bitset já mapeado em reverse/fmm."""
     raw = jogo.raw(uid_at - 48, 6)
-    return [move.get("visible_portuguese") or move["move_name"] for move in PREFERRED_MOVES
+    return [adjunto_names(move["fmm_index"], move.get("visible_portuguese") or move["move_name"]) for move in PREFERRED_MOVES
             if raw[move["fmm_index"] // 8] & (1 << (move["fmm_index"] % 8))]
+
+
+def adjunto_names(index: int, fallback: str) -> str:
+    import habilidades
+    return habilidades.move_name(index, fallback)
 
 
 def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
