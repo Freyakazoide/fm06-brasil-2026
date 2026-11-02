@@ -544,3 +544,11 @@ Conferido nos XML da Aurora e do jogo:
   camisa de costas (fixa, Figueirense); o resto do painel original funciona. Aprendido: `picture` e
   `label` soltos precisam de `stick_to_sides_attachment` próprio (o `arrange_horizontal_attachment`
   não os desenha); o widget `text` não mostra texto fixo (é preenchido pelo código).
+- 02/11, **clique na Central abre o Relatório (conferido pelo usuário, teste na memória).** Ao sair
+  de uma tela, `0x51A821` lê a seção dela (`[tela+0x1AC]`, campo comum das telas) para o histórico:
+  o desvio a anota. Ao abrir qualquer tela, `0x4C3D20` decide a seção (`dsub` do link ou a primeira
+  da lista) e `0x4C3DD1` a lê: Perfil (`Pply`) vindo de `tcdv` vira `Ptra` (Treino > Geral). Sem
+  efeito: `0x6AD649` e `0x500160` (não rodam no clique da lista) e uma marca no tratador de eventos
+  `0x8475F0` (todos os painéis de busca recebem eventos; o último foi `srsc`).
+- Pendente: a Central e Pesquisar > Jogadores dividem o mesmo filtro guardado (os dois são busca
+  `type="1"`).

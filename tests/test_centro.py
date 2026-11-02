@@ -60,6 +60,15 @@ class CentroTest(unittest.TestCase):
         self.assertEqual(base + len(code) + int.from_bytes(code[-4:], "little", signed=True),
                          centro.SECTION_LIST_AT + 5)
 
+    def test_click_from_centro_opens_training(self) -> None:
+        last = 0x015C17F0
+        opening = centro.open_code(0x015C1760, last)
+        self.assertTrue(opening.startswith(centro.OPEN_OLD))
+        self.assertIn(bytes([0x81, 0xFF]) + centro.PROFILE.to_bytes(4, "little"), opening)
+        self.assertIn(bytes([0xBF]) + centro.TRAINING.to_bytes(4, "little"), opening)
+        leave = centro.leave_code(0x015C1740, last)
+        self.assertEqual(leave[:11], centro.LEAVE_OLD + bytes([0xA3]) + last.to_bytes(4, "little"))
+
 
 if __name__ == "__main__":
     unittest.main()

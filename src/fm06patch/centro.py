@@ -61,6 +61,14 @@ CENTRO_ID = code("tcdv")
 # srsh) e que vão para 0x5247D7 (call 0xC6E3B0). Fora dela, voltar à Central com "Retornar" refazia
 # a tela inteira (dezenas de segundos). Desvio: tcdv entra na lista (conferido na memória).
 SECTION_LIST_AT, SECTION_LIST_OLD, SECTION_LIST_HIT = 0x005247A9, bytes.fromhex("3D70646374"), 0x005247D7
+# Clique na Central abre o relatório (conferido na memória): ao sair de uma tela, 0x51A821 lê a
+# seção dela ([tela+0x1AC]) para o histórico; o desvio a anota. Ao abrir qualquer tela, 0x4C3DD1 lê
+# a seção já decidida; se for o Perfil (Pply) e a tela anterior era a Central, vira Ptra (Treino >
+# Geral, o Relatório de Desenvolvimento). Tentativas sem efeito: 0x6AD649 e 0x500160 (não rodam no
+# clique da lista) e uma marca nos eventos do painel (todos os painéis de busca recebem eventos).
+LEAVE_AT, LEAVE_OLD = 0x0051A821, bytes.fromhex("8B86AC010000")          # mov eax, [esi+0x1AC]
+OPEN_AT, OPEN_OLD = 0x004C3DD1, bytes.fromhex("8BBEAC010000")            # mov edi, [esi+0x1AC]
+PROFILE, TRAINING = code("Pply"), code("Ptra")
 KNOWN_TEST, KNOWN_TEST_OLD = 0x00A6B2C4, bytes.fromhex("F6460C01757F")   # test [esi+0xC],1; jne próximo
 KNOWN_KEEP, KNOWN_NEXT = 0x00A6B2CA, 0x00A6B349
 MY_CLUB_LABEL = b"Meu clube\0"
@@ -228,6 +236,25 @@ def section_list_code(base: int) -> bytes:
     return a.done()
 
 
+def leave_code(base: int, last: int) -> bytes:
+    """Em 0x51A821: anota a seção da tela que se deixa."""
+    a = _Code(base)
+    a.raw(LEAVE_OLD).raw("A3").u32(last)
+    _jmp_to(a, LEAVE_AT + len(LEAVE_OLD))
+    return a.done()
+
+
+def open_code(base: int, last: int) -> bytes:
+    """Em 0x4C3DD1 (edi = seção da tela que abre): Perfil vindo da Central vira Treino > Geral."""
+    a = _Code(base)
+    a.raw(OPEN_OLD).raw("81FF").u32(PROFILE).jump("0F85", "fim")
+    a.raw("813D").u32(last).u32(CENTRO_ID).jump("0F85", "fim")
+    a.raw("BF").u32(TRAINING).raw("89BEAC010000 C705").u32(last).u32(0)
+    a.label("fim")
+    _jmp_to(a, OPEN_AT + len(OPEN_OLD))
+    return a.done()
+
+
 def build(hook_at: int, judges_at: int, helper_at: int, cache_at: int) -> list[tuple[int, bytes]]:
     return [(hook_at, hook_code(hook_at, judges_at, cache_at)),
             (judges_at, judges_code(judges_at, helper_at, cache_at)),
@@ -269,4 +296,11 @@ def exe_swaps(data: bytes):
         raise ValueError("centro: desvio da lista de seções passa de 0xD740")
     swaps.append(Swap(sec_off(section_list_at), bytes(len(section_list)), section_list))
     swaps.append(Swap(off(SECTION_LIST_AT), SECTION_LIST_OLD, jump(SECTION_LIST_AT, section_list_at)))
+    leave_at, open_at, last_at = SECTION_VA + 0xD740, SECTION_VA + 0xD760, SECTION_VA + 0xD7F0
+    leave, opening = leave_code(leave_at, last_at), open_code(open_at, last_at)
+    if leave_at + len(leave) > open_at or open_at + len(opening) > last_at:
+        raise ValueError("centro: desvios do clique invadem o vizinho")
+    swaps += [Swap(sec_off(leave_at), bytes(len(leave)), leave), Swap(sec_off(open_at), bytes(len(opening)), opening)]
+    swaps.append(Swap(off(LEAVE_AT), LEAVE_OLD, jump(LEAVE_AT, leave_at) + bytes([0x90])))
+    swaps.append(Swap(off(OPEN_AT), OPEN_OLD, jump(OPEN_AT, open_at) + bytes([0x90])))
     return tuple(swaps)
