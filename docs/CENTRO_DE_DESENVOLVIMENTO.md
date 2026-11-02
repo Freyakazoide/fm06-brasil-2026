@@ -552,3 +552,8 @@ Conferido nos XML da Aurora e do jogo:
   `0x8475F0` (todos os painéis de busca recebem eventos; o último foi `srsc`).
 - Pendente: a Central e Pesquisar > Jogadores dividem o mesmo filtro guardado (os dois são busca
   `type="1"`).
+- 02/11, filtro compartilhado (estático, hipótese): o painel recebe o estado da busca do jogo na
+  resposta (`0x844600` -> `0x6AFF50`: tipo em `+5`, contagens `+0x4C/+0x50`, filtro novo em `+0x40`).
+  O filtro fica do lado do jogo, nos conjuntos de dados de busca do humano escolhidos por tipo e
+  nome (`0x54AA10`: tipo em `+5` do conjunto, nome comparado em `+0xDC`). Para a Central ter filtro
+  próprio, o pedido dela precisa de outra chave (tipo ou nome).
