@@ -245,12 +245,14 @@ def leave_code(base: int, last: int) -> bytes:
 
 
 def open_code(base: int, last: int) -> bytes:
-    """Em 0x4C3DD1 (edi = seção da tela que abre): Perfil vindo da Central vira Treino > Geral."""
+    """Em 0x4C3DD1 (edi = seção da tela que abre): Perfil vindo da Central vira Treino > Geral.
+    Também anota a seção aberta em [last+4] e conta as aberturas em [last+8]: a Central externa
+    (tools/central/servidor.py) lê os dois para abrir a página quando se entra na Central."""
     a = _Code(base)
     a.raw(OPEN_OLD).raw("81FF").u32(PROFILE).jump("0F85", "fim")
     a.raw("813D").u32(last).u32(CENTRO_ID).jump("0F85", "fim")
     a.raw("BF").u32(TRAINING).raw("89BEAC010000 C705").u32(last).u32(0)
-    a.label("fim")
+    a.label("fim").raw("893D").u32(last + 4).raw("FF05").u32(last + 8)
     _jmp_to(a, OPEN_AT + len(OPEN_OLD))
     return a.done()
 

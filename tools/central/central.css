@@ -407,3 +407,14 @@ footer { height: 24px; padding: 2px 15px; color: var(--faint); font-size: 8px; l
 .gauge { display: grid; grid-template-columns: 110px 1fr 46px; gap: 8px; align-items: center; margin: 9px 0; }
 .gauge span { color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
 .gauge b { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Legibilidade: o painel da direita cresce com a tela (a lista da esquerda fica como está) */
+@media (min-width: 1100px) { .workspace { zoom: 1.2; } }
+@media (min-width: 1400px) { .workspace { zoom: 1.4; } }
+@media (min-width: 1800px) { .workspace { zoom: 1.55; } }
+.position-map-shell .mini-pitch { width: 100%; max-width: 440px; }
+.position-map-shell .mini-pitch svg { max-height: 420px; }
+.squad-panel .pitch-svg { max-height: 520px; }
+.chart > svg, .radar > svg { max-height: 340px; }
+.pitch-card .mini-pitch svg { max-height: 150px; }
+.pitch-marker text, .squad-sprite text { font-size: 4.4px; }

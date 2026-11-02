@@ -117,11 +117,11 @@ function pitch(j, full=false) {
   const target = j.adjunto?.alvo, suggested = j.adjunto?.nova_posicao;
   const markers = entries.map(([p,familiarity]) => { const [x,y,sector]=PITCH[p]||[]; if(x===undefined)return "";
     const opacity=full ? clamp(familiarity/20,.35,1) : 1;
-    const centre=x>34&&x<66, labelX=centre?x:x+(x>60?-6:6), labelY=centre?y+5.6:y+1.6, anchor=centre?"middle":x>60?"end":"start";
-    return `<g class="pitch-marker" opacity="${opacity}">${pitchSprite(x, y + 2, {sector, uid:j.uid, ring:p===target, w: full ? 7.5 : 9.5})}<text x="${labelX}" y="${labelY}" text-anchor="${anchor}">${esc(p)}${full?` · ${familiarity}`:""}</text></g>`;
+    const centre=x>34&&x<66, labelX=centre?x:x+(x>60?-7.5:7.5), labelY=centre?y+7.2:y+1.8, anchor=centre?"middle":x>60?"end":"start";
+    return `<g class="pitch-marker" opacity="${opacity}">${pitchSprite(x, y + 2, {sector, uid:j.uid, ring:p===target, w: full ? 11 : 12})}<text x="${labelX}" y="${labelY}" text-anchor="${anchor}">${esc(p)}${full?` · ${familiarity}`:""}</text></g>`;
   }).join("");
   const sug = PITCH[suggested];
-  const ghost = sug && !entries.some(([p]) => p === suggested) ? `<g class="pitch-marker suggested">${pitchSprite(sug[0], sug[1] + 2, {sector:sug[2], uid:j.uid, ring:true, arrow:true, w: full ? 7.5 : 9.5})}<text x="${sug[0]}" y="${sug[1] + 7.6}" text-anchor="middle">${esc(suggested)} · sugerida</text></g>` : "";
+  const ghost = sug && !entries.some(([p]) => p === suggested) ? `<g class="pitch-marker suggested">${pitchSprite(sug[0], sug[1] + 2, {sector:sug[2], uid:j.uid, ring:true, arrow:true, w: full ? 11 : 12})}<text x="${sug[0] < 30 ? sug[0] - 5 : sug[0] > 70 ? sug[0] + 5 : sug[0]}" y="${sug[1] + 9}" text-anchor="${sug[0] < 30 ? "start" : sug[0] > 70 ? "end" : "middle"}">${esc(suggested)} · sugerida</text></g>` : "";
   return `<svg class="pitch-svg" viewBox="0 0 100 104" aria-label="Mapa de posições">${pitchBase()}${markers}${ghost}</svg>`;
 }
 let pitchSeq = 0;
@@ -135,9 +135,9 @@ function squadPitch(players) {
   const top = [...players].sort((a,b)=>b.analise.prioridade-a.analise.prioridade)[0];
   const sprites = players.map(j => {
     const pos = j.adjunto?.alvo || j.posicoes[0]; const base = PITCH[pos]; if (!base) return "";
-    const n = (slots[pos] = (slots[pos] || 0) + 1) - 1, dx = [0, -13, 13, -26, 26][n] ?? n * 5;
+    const n = (slots[pos] = (slots[pos] || 0) + 1) - 1, dx = [0, -14, 14, -28, 28][n] ?? n * 5;
     const x = clamp(base[0] + dx, 7, 93), y = base[1] + 3, isTop = top && j.uid === top.uid;
-    return `<g class="squad-sprite" data-open="${j.uid}"><title>${esc(short(j))} · ${esc(pos)} · prioridade ${j.analise.prioridade}</title>${pitchSprite(x, y, {sector:base[2], uid:j.uid, run:isTop, ring:isTop, arrow:isTop, w: 11})}<text x="${x}" y="${y + 5.6 + (n % 2 ? 3.8 : 0)}" text-anchor="middle">${esc(short(j).slice(0, 10))}</text></g>`;
+    return `<g class="squad-sprite" data-open="${j.uid}"><title>${esc(short(j))} · ${esc(pos)} · prioridade ${j.analise.prioridade}</title>${pitchSprite(x, y, {sector:base[2], uid:j.uid, run:isTop, ring:isTop, arrow:isTop, w: 13})}<text x="${x}" y="${y + 6.2 + (n % 2 ? 4.6 : 0)}" text-anchor="middle">${esc(short(j).slice(0, 10))}</text></g>`;
   }).join("");
   return `<svg class="pitch-svg squad" viewBox="0 0 100 104" aria-label="Campo da base">${pitchBase()}${sprites}<svg x="57" y="45" width="3.6" height="3.6" viewBox="0 0 8 8" shape-rendering="crispEdges">${inner(pixelBall(8))}</svg></svg>`;
 }
@@ -291,3 +291,19 @@ document.getElementById("sort").addEventListener("change",renderList);
 document.getElementById("reload").addEventListener("click",load);
 document.getElementById("academy-home").addEventListener("click",()=>{ui.academy=true;renderAll()});
 load();
+
+// Ao entrar na Central de Desenvolvimento do jogo, o servidor avisa: a página relê o jogo, volta
+// para a visão da base e chama a atenção na aba do navegador.
+let centroEntries = null;
+async function watchGame() {
+  try {
+    const {centro} = await (await fetch("/evento")).json();
+    if (centroEntries !== null && centro > centroEntries) {
+      ui.academy = true; await load(); window.focus();
+      const title = document.title; let blink = 0;
+      const timer = setInterval(() => { document.title = blink++ % 2 ? title : "⚽ Central aberta no jogo"; if (blink > 7) { clearInterval(timer); document.title = title; } }, 600);
+    }
+    centroEntries = centro;
+  } catch {}
+}
+setInterval(watchGame, 2000); watchGame();

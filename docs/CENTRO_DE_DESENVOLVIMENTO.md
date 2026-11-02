@@ -602,3 +602,8 @@ Conferido nos XML da Aurora e do jogo:
   de cabeçalhos do alocador (blocos de 16 bytes com marcas 0x8000xx00); o 1098 ali era coincidência.
   Hipótese: a troca fica pendente na tela e o jogo só aplica ao processar o dia. Próximo teste: foto
   antes, trocar, avançar um dia, comparar (incluir R+8 e R+0xC como agulhas).
+- 02/11, **página abre ao entrar na Central do jogo**: o desvio de abertura de tela (`centro.open_code`,
+  `0x4C3DD1`) também grava a seção aberta em `.fm26+0xD7F4` e conta as aberturas em `+0xD7F8`. O
+  servidor (`Watcher`) lê os dois a cada 0,7 s; ao entrar em `tcdv`, abre a página no navegador ou,
+  se ela já estiver aberta (consulta `/evento` a cada 2 s), a página relê o jogo e pisca a aba.
+  Visual: painel da direita com `zoom` 1,2/1,4/1,55 conforme a largura; campos e sprites maiores.

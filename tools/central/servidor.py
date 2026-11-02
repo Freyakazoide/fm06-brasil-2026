@@ -13,6 +13,8 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import threading
+import time
 import webbrowser
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -82,9 +84,45 @@ def background() -> bytes:
     return _BACKGROUND
 
 
+# A Central do jogo avisa a página: o desvio de abertura de tela do exe (patch centro_colunas,
+# centro.open_code) anota a seção aberta em .fm26+0xD7F4 e conta as aberturas em +0xD7F8.
+SECTION_NOW, OPENINGS, CENTRO_SECTION = 0x015C17F4, 0x015C17F8, 0x74636476     # 'tcdv'
+
+
+class Watcher:
+    """Lê a tela aberta no jogo; ao entrar na Central de Desenvolvimento, atualiza a página aberta
+    ou abre uma no navegador."""
+
+    def __init__(self, url: str) -> None:
+        self.url, self.entries, self.last_poll = url, 0, 0.0
+        self.seen, self.opened_at = None, 0.0
+
+    def run(self) -> None:
+        jogo = None
+        while True:
+            time.sleep(0.7)
+            try:
+                jogo = jogo or leitor.Jogo()
+                section, count = jogo.u32(SECTION_NOW), jogo.u32(OPENINGS)
+            except Exception:                                            # jogo fechado ou exe antigo
+                jogo = None
+                continue
+            if self.seen is None:
+                self.seen = count
+                continue
+            if count != self.seen and section == CENTRO_SECTION:
+                self.entries += 1
+                page_open = time.time() - self.last_poll < 5
+                if not page_open and time.time() - self.opened_at > 8:
+                    self.opened_at = time.time()
+                    webbrowser.open(self.url)
+            self.seen = count
+
+
 class Central(BaseHTTPRequestHandler):
     max_age = 19
     demo = False
+    watcher: Watcher | None = None
 
     def do_GET(self) -> None:
         # Alguns navegadores/proxies locais enviam a URL absoluta na linha do GET.
@@ -101,6 +139,13 @@ class Central(BaseHTTPRequestHandler):
                 self.reply(200, body.encode("utf-8"), "application/json; charset=utf-8")
             except Exception as error:                                   # jogo fechado, etc.
                 self.reply(503, json.dumps({"erro": str(error)}).encode("utf-8"), "application/json")
+            return
+        if path == "/evento":
+            watcher = self.watcher
+            if watcher:
+                watcher.last_poll = time.time()
+            body = json.dumps({"centro": watcher.entries if watcher else 0})
+            self.reply(200, body.encode("utf-8"), "application/json")
             return
         if path == "/fundo.jpg":
             self.reply(200, background(), "image/jpeg")
@@ -135,6 +180,10 @@ def main() -> None:
     server = ThreadingHTTPServer(("127.0.0.1", args.porta), Central)
     url = f"http://127.0.0.1:{args.porta}/"
     print(f"Central de Desenvolvimento em {url} (Ctrl+C para fechar)")
+    if not args.demo:
+        Central.watcher = Watcher(url)
+        threading.Thread(target=Central.watcher.run, daemon=True).start()
+        print("Ao entrar na Central de Desenvolvimento do jogo, esta página abre ou se atualiza sozinha.")
     if not args.sem_navegador:
         webbrowser.open(url)
     try:
