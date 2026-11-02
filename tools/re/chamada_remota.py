@@ -159,6 +159,21 @@ def counter_patches(functions: list[int]) -> tuple[list[tuple[int, bytes, bytes]
     return patches, bytes(block)
 
 
+CALLERS_TABLE, CALLERS_TRAMP, CALLERS_SLOTS = COUNTERS_AT + 0x800, COUNTERS_AT + 0xC00, 64
+
+
+def callers_patch(f: int, stolen: bytes) -> tuple[bytes, bytes]:
+    """Trampolim que conta quem chama f (endereço de retorno em [esp]) numa tabela de 64 pares
+    (retorno, contagem); depois executa as instruções roubadas e volta. Devolve (trampolim, jmp)."""
+    code = bytes.fromhex("505152 8B44240C B9") + CALLERS_TABLE.to_bytes(4, "little")
+    code += bytes([0xBA]) + CALLERS_SLOTS.to_bytes(4, "little")
+    code += bytes.fromhex("3901 740F 833900 7408 83C108 4A 75F1 EB05 8901 FF4104 5A5958")
+    code += stolen
+    code += bytes([0xE9]) + ((f + len(stolen)) - (CALLERS_TRAMP + len(code) + 5)).to_bytes(4, "little", signed=True)
+    jump = bytes([0xE9]) + (CALLERS_TRAMP - (f + 5)).to_bytes(4, "little", signed=True) + bytes([0x90]) * (len(stolen) - 5)
+    return code, jump
+
+
 def json_game_dir() -> str:
     import json
     return json.loads((ROOT / "config" / "local.json").read_text(encoding="utf-8"))["game_dir"]
@@ -365,6 +380,10 @@ def main() -> None:
     q = sub.add_parser("contar", help="conta chamadas de funções do jogo (instalar/ler/desfazer)")
     q.add_argument("acao", choices=("instalar", "ler", "desfazer"))
     q.add_argument("funcoes", nargs="+", type=lambda s: int(s, 16))
+    w = sub.add_parser("chamadores", help="quem chama uma função (instalar/ler/desfazer)")
+    w.add_argument("acao", choices=("instalar", "ler", "desfazer"))
+    w.add_argument("funcao", type=lambda s: int(s, 16))
+    w.add_argument("roubados", type=int, help="bytes inteiros de instrução copiados (>= 5)")
     r = sub.add_parser("ler")
     r.add_argument("addr", type=lambda s: int(s, 0))
     r.add_argument("size", type=lambda s: int(s, 0))
@@ -380,6 +399,25 @@ def main() -> None:
         result = run(handle, youth_code(a.clube, a.nacao, PROFILES.get(a.perfil)), timeout_ms=30_000)
         print({1: "nação não achada", 2: "clube não achado", 3: "alocação falhou",
                4: "criação falhou"}.get(result, f"garoto criado: 0x{result:08X}"))
+        return
+    if a.cmd == "chamadores":
+        saved = ROOT / "workspace" / f"chamadores_{a.funcao:08X}.bin"
+        if a.acao == "instalar":
+            stolen = read_memory(handle, a.funcao, a.roubados)
+            code, jump = callers_patch(a.funcao, stolen)
+            saved.write_bytes(stolen)
+            poke(handle, CALLERS_TABLE, bytes(8 * CALLERS_SLOTS))
+            poke(handle, CALLERS_TRAMP, code)
+            poke(handle, a.funcao, jump)
+            print(f"instalado; roubados {stolen.hex()}")
+        elif a.acao == "ler":
+            raw = read_memory(handle, CALLERS_TABLE, 8 * CALLERS_SLOTS)
+            rows = [struct.unpack_from("<II", raw, 8 * i) for i in range(CALLERS_SLOTS)]
+            for ret, n in sorted((r for r in rows if r[0]), key=lambda r: -r[1]):
+                print(f"retorno 0x{ret:08X}: {n}")
+        else:
+            poke(handle, a.funcao, saved.read_bytes())
+            print("original de volta")
         return
     if a.cmd == "contar":
         patches, block = counter_patches(a.funcoes)
