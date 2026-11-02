@@ -498,3 +498,27 @@ Resumos dos prompts:
 
 São fontes de trabalho em alta resolução. Antes da distribuição final, criar derivados otimizados e
 testá-los dentro do FM06.
+
+## 14. Revisão técnica (02/11)
+
+Conferido nos XML da Aurora e do jogo:
+
+- **Os widgets são preenchidos pelo código do painel, pelo `id`.** Não há ligação genérica
+  "mostre a propriedade X do jogador" num widget solto. Um rótulo novo em `player training.xml`
+  fica vazio, a menos que o executável o preencha.
+- **Há uma exceção útil: `get_global_attachment`.** Ele lê uma propriedade global da interface e a
+  grava no widget: `set_property="text"` num rótulo, `set_property="file"` numa imagem. O jogo já
+  usa isso para `titl` (título), `Tnam` (time) e `scpc` (imagem da tela). Caminho proposto para a
+  camisa de costas: criar globais novas no getter de globais do executável (nome curto, número
+  `Psnu` e arquivo da camisa do clube do jogador da tela) e montar no XML uma `picture` com dois
+  `label` por cima. Ainda é hipótese: falta achar o getter de globais no exe.
+- **Sobrepor widgets funciona.** Filhos com `stick_to_sides_attachment` `alignment="all"` se
+  sobrepõem, como a linha pontilhada atrás do gráfico em `player training.xml`.
+- **Imagem fixa é só XML:** `<widget class="picture" file="pasta/arquivo">`, relativo a
+  `skins/<skin>/graphics`, sem a extensão.
+- **Fundo por tela:** `global panels.xml` usa a global `bgnd`. `graphics/backgrounds/config.xml` só
+  associa fundo a jogador, time ou competição (1024 × 768, jpg). Um fundo próprio da Central
+  depende de `bgnd` ou de uma `picture` grande no painel.
+- **Colisões de código:** `Pcon` já existe (coluna da lista). Número da camisa já existe: `Psnu`,
+  sem precisar de `Pdno`.
+- **`kit_picture`** só é preenchido pelos painéis do time (`T_hk`/`T_ak`...), não por jogador.
