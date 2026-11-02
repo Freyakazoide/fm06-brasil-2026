@@ -43,6 +43,12 @@ HUMAN_VT, PLAYER_VT = 0x010F6F8C, 0x010F1034
 TODAY_DAY, TODAY_YEAR = 0x014EAB38, 0x014EAB3A
 JUDGES = 0x015C15F0                       # .fm26+0xD5F0
 TEAM_KIND = {0: "Principal", 3: "B", 18: "Sub-20"}   # byte em time+0x3C
+# Contrato (conferido em 02/11 no save do Figueirense): [R+0x98] é um bloco de 8 bytes com o
+# ponteiro do contrato C. C+0x08 clube; C+0x10 salário bruto (semanal); C+0x18/0x1A início (dia,
+# ano do motor); C+0x20/0x22 fim (ano 1900 = sem data); byte C+0x31 número da camisa (igual ao Psnu
+# do jogo em 14 de 14 jogadores; 255 = sem número).
+CONTRACT_PTR = 0x98
+WAGE_TO_MONTH_BRL = 750 / 38              # calibrado: Otacílio, bruto 38 = "R$750 por mês" na ficha
 YEAR_SHIFT = 20                           # ano do motor + 20 = ano mostrado (ano_exibido)
 POSITIONS = {                             # posição exibida -> atributo DIRECT (1..20)
     "GR": "Goalkeeper", "DD": "Right Def.", "DC": "Center Def.", "DE": "Left Def.",
@@ -74,6 +80,11 @@ class Jovem:
     ritmo_raw: int = 0
     cansaco_raw: int = 0
     valor_pedido_raw: int = 0
+    numero: int | None = None                                 # número da camisa no time
+    salario_raw: int = 0
+    salario_mes: int = 0                                      # ≈ R$ por mês (calibrado)
+    contrato_inicio: str | None = None
+    contrato_fim: str | None = None                           # None: sem data de fim
     reputacao: dict[str, int] = field(default_factory=dict)
     internacional: dict[str, int] = field(default_factory=dict)
     pe_preferido: str = ""
@@ -150,6 +161,25 @@ def stars(uid: int, value: int, judge: int, salt: int) -> int:
     return (tenths + 5) // 10
 
 
+def contract(jogo: Jogo, r: int) -> dict:
+    """Número, salário e datas do contrato do jogador (vazio se não houver)."""
+    try:
+        c = jogo.u32(jogo.u32(r + CONTRACT_PTR))
+        if not c:
+            return {}
+        def date(at: int) -> str | None:
+            day, year = jogo.u16(c + at), jogo.u16(c + at + 2)
+            if year < 1950:
+                return None
+            return (dt.date(year + YEAR_SHIFT, 1, 1) + dt.timedelta(days=day)).isoformat()
+        number, wage = jogo.raw(c + 0x31, 1)[0], jogo.u32(c + 0x10)
+        return {"numero": None if number == 255 else number, "salario_raw": wage,
+                "salario_mes": int(round(wage * WAGE_TO_MONTH_BRL, -1)),
+                "contrato_inicio": date(0x18), "contrato_fim": date(0x20)}
+    except OSError:
+        return {}
+
+
 def preferred_moves(jogo: Jogo, uid_at: int) -> list[str]:
     """Movimentos preferidos do bitset já mapeado em reverse/fmm."""
     raw = jogo.raw(uid_at - 48, 6)
@@ -211,7 +241,7 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             ca=ca, pa=pa, hab=stars(uid, ca, ability_judge, 0x2545F491), pot=pot,
             altura=jogo.u16(uid_at - 76), peso=jogo.u16(uid_at - 78), moral=moral,
             condicao_raw=jogo.u16(uid_at - 216), ritmo_raw=jogo.u16(uid_at - 214),
-            cansaco_raw=jogo.u16(uid_at - 212), valor_pedido_raw=jogo.u32(uid_at - 192),
+            cansaco_raw=jogo.u16(uid_at - 212), valor_pedido_raw=jogo.u32(uid_at - 192), **contract(jogo, r),
             reputacao={"local": jogo.u16(uid_at - 210), "atual": jogo.u16(uid_at - 208),
                        "mundial": jogo.u16(uid_at - 206)},
             internacional={"jogos": jogo.raw(uid_at + 72, 1)[0], "gols": jogo.raw(uid_at + 74, 1)[0],

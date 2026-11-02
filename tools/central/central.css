@@ -440,3 +440,9 @@ footer { height: 24px; padding: 2px 15px; color: var(--faint); font-size: 8px; l
 .diagnosis-kpis span, .ranking-head, .training-head small, .decision > strong small { font-size: 8.5px; color: #b0c7e0; }
 .readiness-parts small, .diagnosis-kpis b small { font-size: 9px; color: #b0c7e0; }
 .metric small, .kpi small, .raw-note { color: #b0c7e0; }
+
+/* contrato e número */
+.shirt .shirt-number { font: 900 58px "Arial Narrow","Segoe UI",sans-serif; fill: #fff; stroke: #050505; stroke-width: 5px; paint-order: stroke; letter-spacing: -2px; }
+.contract-line { display: flex; justify-content: space-between; padding: 6px 2px; border-bottom: 1px solid var(--border-soft); }
+.contract-line span { color: var(--muted); text-transform: uppercase; font-size: 10px; font-weight: 700; }
+.contract-track { margin-top: 10px; }

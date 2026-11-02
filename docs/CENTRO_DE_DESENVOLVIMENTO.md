@@ -607,3 +607,9 @@ Conferido nos XML da Aurora e do jogo:
   servidor (`Watcher`) lê os dois a cada 0,7 s; ao entrar em `tcdv`, abre a página no navegador ou,
   se ela já estiver aberta (consulta `/evento` a cada 2 s), a página relê o jogo e pisca a aba.
   Visual: painel da direita com `zoom` 1,2/1,4/1,55 conforme a largura; campos e sprites maiores.
+- 02/11, **contrato e número (conferido no jogo)**: `[R+0x98]` -> bloco de 8 bytes com o ponteiro do
+  contrato C (vtable `0xEB3954`). C+0x08 clube; C+0x10 salário bruto semanal; C+0x18/+0x1A início e
+  C+0x20/+0x22 fim (dia, ano do motor; 1900 = sem data); byte **C+0x31 = número da camisa** (igual ao
+  `Psnu` do jogo em 14 de 14 jogadores; 255 = sem número). Salário em R$/mês ≈ bruto × 750/38
+  (calibrado na ficha do Otacílio: bruto 38 = "R$750 por mês"). A camisa da página mostra nome e
+  número.
