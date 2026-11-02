@@ -591,3 +591,10 @@ Conferido nos XML da Aurora e do jogo:
   pelas categorias de treino do FM06 (Força, Aeróbico, Goleiro, Tático, Controlo Bola, Defensivo,
   Ofensivo, Finalização, Bolas Paradas). Exemplos no save: Afonso Guedes (canhoto, MD/M C/MA C) ->
   ala esquerdo; Toninho (M C) -> meia atacante.
+- 02/11, **Nova Posição (para o botão da Central): em investigação** (`tools/central/sonda_posicao.py`,
+  foto antes/depois em volta de tudo que aponta para o jogador). Guedes (UID 132005, índice 1098):
+  Nenhuma -> AE mudou `R-0x80` (29 -> 33), mas AE -> Defesa Esquerdo e -> Nenhuma não mudaram nada
+  (o jogo mostrava a troca): `R-0x80` não é o campo. Com índice e ponteiros do jogador como agulhas
+  (230 janelas), Nenhuma -> Ala Esquerdo mudou só `0x01920970..90` (70->10, 8C->80, C8->F8) e dois
+  ponteiros em `0x02956B24`/`0x02956F24` (objetos novos?). Inconclusivo; próximo: olhar esses dois
+  lugares e o tratador do popup `nwps` (position_training_popup).
