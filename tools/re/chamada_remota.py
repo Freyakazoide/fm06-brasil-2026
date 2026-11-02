@@ -85,6 +85,36 @@ def cell_test_code() -> bytes:
     return bytes(c)
 
 
+# o jogador responde as propriedades das colunas por ACTUAL_PLAYER::propriedade(código, saída)
+# (0x00A40D20, ret 8), chamada pela interface em jogador+4: vtable 0x010F1020, método 1 =
+# 0x00A47530 (ajusta o this e salta). Desviar esse ponteiro vale para todos os jogadores.
+PLAYER_PROPERTY_SLOT, PLAYER_PROPERTY = 0x010F1024, 0x00A47530
+VALUE_FROM_INT, VALUE_COPY, VALUE_FREE = 0x00C74B10, 0x00C72670, 0x00C72650
+PROPERTY_HOOK_AT = 0x015C1200                          # .fm26 + 0xD200 (livre)
+
+
+def property_hook_code() -> bytes:
+    """PCAB/PPAB: CA/PA do jogador (ecx = jogador + 4: CA em ecx − 0xBC, PA em ecx − 0xBA)."""
+    from_here = lambda target, at: (target - (at + 5)).to_bytes(4, "little", signed=True)
+    c = bytearray()
+    c += b"\x8B\x44\x24\x04"                                             # mov eax, [esp+4] (código)
+    c += b"\x3D" + CA_CODE.to_bytes(4, "little") + b"\x74\x0C"           # je ca
+    c += b"\x3D" + PA_CODE.to_bytes(4, "little") + b"\x74\x0E"           # je pa
+    c += b"\xE9" + from_here(PLAYER_PROPERTY, PROPERTY_HOOK_AT + len(c))  # os outros: original
+    c += b"\x0F\xB7\x81" + (-0xBC & 0xFFFFFFFF).to_bytes(4, "little")    # ca: movzx eax, word [ecx-0xBC]
+    c += b"\xEB\x07"                                                     # jmp grava
+    c += b"\x0F\xB7\x81" + (-0xBA & 0xFFFFFFFF).to_bytes(4, "little")    # pa: movzx eax, word [ecx-0xBA]
+    c += b"\x83\xEC\x10"                                                 # grava: sub esp,0x10 (valor em [esp])
+    c += b"\x50\x8D\x4C\x24\x04"                                         # push eax; lea ecx,[esp+4]
+    c += b"\xE8" + from_here(VALUE_FROM_INT, PROPERTY_HOOK_AT + len(c))  # valor(int)
+    c += b"\x8B\x4C\x24\x18\x8D\x04\x24\x50"                             # ecx = saída ([esp+0x18]); push &valor
+    c += b"\xE8" + from_here(VALUE_COPY, PROPERTY_HOOK_AT + len(c))      # saída = valor
+    c += b"\x8D\x0C\x24"                                                 # lea ecx, [esp]
+    c += b"\xE8" + from_here(VALUE_FREE, PROPERTY_HOOK_AT + len(c))
+    c += b"\x83\xC4\x10\xB0\x01\xC2\x08\x00"                             # add esp,0x10; mov al,1; ret 8
+    return bytes(c)
+
+
 def game() -> tuple[int, int]:
     for name in ("fm_brasil.exe", "fm.exe"):
         try:
@@ -282,7 +312,7 @@ def main() -> None:
     n.add_argument("--quantos", type=int, default=2)
     n.add_argument("--nacao", type=int, default=1651)
     k = sub.add_parser("colunas", help="teste das colunas C.A/P.A na memória do jogo (ficha T1)")
-    k.add_argument("acao", choices=("instalar", "desfazer", "ler"))
+    k.add_argument("acao", choices=("instalar", "desfazer", "ler", "jogador", "jogador-desfazer"))
     r = sub.add_parser("ler")
     r.add_argument("addr", type=lambda s: int(s, 0))
     r.add_argument("size", type=lambda s: int(s, 0))
@@ -303,6 +333,18 @@ def main() -> None:
         original = bytes.fromhex("8B368B5604")                   # mov esi,[esi]; mov edx,[esi+4]
         jump = b"\xE9" + (CELL_HOOK_AT - (CELL_DEFAULT + 5)).to_bytes(4, "little", signed=True)
         here = read_memory(handle, CELL_DEFAULT, 5)
+        if a.acao in ("jogador", "jogador-desfazer"):
+            slot = struct.unpack("<I", read_memory(handle, PLAYER_PROPERTY_SLOT, 4))[0]
+            if slot not in (PLAYER_PROPERTY, PROPERTY_HOOK_AT):
+                raise SystemExit(f"vtable inesperada: 0x{slot:08X}")
+            if a.acao == "jogador":
+                poke(handle, PROPERTY_HOOK_AT, property_hook_code())
+                poke(handle, PLAYER_PROPERTY_SLOT, PROPERTY_HOOK_AT.to_bytes(4, "little"))
+                print("desvio na vtable do jogador: C.A e P.A devem mostrar os números reais")
+            else:
+                poke(handle, PLAYER_PROPERTY_SLOT, PLAYER_PROPERTY.to_bytes(4, "little"))
+                print("vtable original de volta")
+            return
         if a.acao == "instalar":
             if here not in (original, jump):
                 raise SystemExit(f"bytes inesperados em 0x{CELL_DEFAULT:08X}: {here.hex()}")
