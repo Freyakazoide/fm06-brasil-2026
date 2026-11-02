@@ -23,6 +23,7 @@ TEXT_FROM_INT = 0x00C53B10        # TEXT(int)
 YEAR_STUB = SECTION_VA + 0x4100
 INT_STUB = SECTION_VA + 0x4130
 INT2_STUB = SECTION_VA + 0x4140
+YEAR4_STUB = SECTION_VA + 0x4160
 
 # formatadores de data: (endereço, original, novo) — movsx do ano + add 20
 DATE_LOADS = (
@@ -92,7 +93,12 @@ YEAR_CALLS = (
     0x006976D2,  # CLIENT_COMP "<comp> <year> Qualification"
     0x0069EDF4,  # MLS past drafts title year
     0x00CE2A4A,  # DATE_DIALOG year popup item text
-    0x00C9B2D7,  # SEASON_SELECTION_LIST item text (widget, see note)
+)
+# texto do item de lista 0x00C9B210: método virtual de várias listas (temporadas, mas também
+# os números do filtro da busca: idade, atributos). Só ano de 4 dígitos ganha 20; com o desvio
+# de cima, a idade 16 virava (16 + 20) % 100 = 36 (01/11, ficha C14)
+YEAR4_CALLS = (
+    0x00C9B2D7,  # SEASON_SELECTION_LIST item text (widget compartilhado)
 )
 # chamadas de 0x00C53B90 (TEXT = ano)
 INT_CALLS = (
@@ -120,6 +126,15 @@ def _year_stub() -> bytes:
     return bytes(a.code)
 
 
+def _year4_stub() -> bytes:
+    a = Asm(YEAR4_STUB)
+    a.raw(bytes.fromhex("8B442408"))                 # mov eax, [esp+8] (valor)
+    a.raw(bytes.fromhex("3DE8030000" "7C07"))        # cmp eax, 1000 ; jl fora
+    a.raw(bytes.fromhex("83C014" "89442408"))        # add eax, 20 ; mov [esp+8], eax
+    a.jmp(SET_NUMBER)                                # fora
+    return bytes(a.code)
+
+
 def _int_stub(base: int, target: int) -> bytes:
     a = Asm(base)
     a.raw(bytes.fromhex("8344240414"))               # add dword [esp+4], 20
@@ -132,12 +147,12 @@ def build(data: bytes):
 
     swaps = list(section_swaps(data))
     for base, code in ((YEAR_STUB, _year_stub()), (INT_STUB, _int_stub(INT_STUB, TEXT_INT)),
-                       (INT2_STUB, _int_stub(INT2_STUB, TEXT_FROM_INT))):
+                       (INT2_STUB, _int_stub(INT2_STUB, TEXT_FROM_INT)), (YEAR4_STUB, _year4_stub())):
         swaps.append(Swap(sec_off(base), bytes(len(code)), code))
     for va, old, new in DATE_LOADS:
         swaps.append(Swap(off(va), bytes.fromhex(old), bytes.fromhex(new)))
     for calls, expect, stub in ((YEAR_CALLS, SET_NUMBER, YEAR_STUB), (INT_CALLS, TEXT_INT, INT_STUB),
-                                (INT2_CALLS, TEXT_FROM_INT, INT2_STUB)):
+                                (INT2_CALLS, TEXT_FROM_INT, INT2_STUB), (YEAR4_CALLS, SET_NUMBER, YEAR4_STUB)):
         for va in calls:
             old = b"\xE8" + u32(expect - (va + 5))
             swaps.append(Swap(off(va), old, b"\xE8" + u32(stub - (va + 5))))

@@ -59,3 +59,13 @@ desviadas para stubs em `SECTION_VA+0x4100..0x4150`. Conferido por emulação
 "2026"). O nome do save com data passa a mostrar 2026 (só cosmético). Anos
 históricos vindos do banco (campeões, títulos) também aparecem +20.
 Injetor: `year_shift` padrão −20 (nascimento 2000 = 1980 no motor).
+
+## Filtro de idade da busca (01/11/2026)
+
+O patch `ano_exibido_mais_20` desviava a chamada `0x00C9B2D7` (texto do item de lista,
+método virtual `0x00C9B210`, presente em pelo menos 6 vtables) para o desvio de ano, que trata
+número abaixo de 100 como ano de 2 dígitos: `(n + 20) % 100`. O método é compartilhado: além
+das temporadas, monta os números do filtro da busca de jogadores. Na tela, "Idade No Máximo 15"
+com "+" mostrava 36 (16 + 20). Agora a chamada vai para um desvio próprio (`.fm26+0x4160`) que só
+soma 20 a número de 4 dígitos (≥ 1000). A instalação completa difere do `fm_brasil.exe` anterior
+em 22 bytes (a chamada e o desvio). Teste: `tests/test_ano_exibido.py`.
