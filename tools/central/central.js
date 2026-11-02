@@ -15,7 +15,28 @@ const AXES_GK = [["Reflexos",["Reflexes","One on one"]],["Mãos",["Handling","Pu
 const PITCH = {"GR":[50,92,"gk"],"DE":[16,74,"def"],"DC":[50,76,"def"],"DD":[84,74,"def"],"AE":[12,60,"def"],"AD":[88,60,"def"],"MD":[50,62,"mid"],"M E":[16,46,"mid"],"M C":[50,48,"mid"],"M D":[84,46,"mid"],"MA E":[18,30,"att"],"MA C":[50,32,"att"],"MA D":[82,30,"att"],"PL":[50,16,"att"]};
 const LINE_COLOR = {gk:"var(--gk)",def:"var(--def)",mid:"var(--mid-line)",att:"var(--att)"};
 const LINE_NAME = {gk:"GR",def:"DEF",mid:"MEI",att:"ATA"};
-const TABS = [["overview","Visão geral"],["development","Desenvolvimento"],["performance","Desempenho"],["position","Posição e função"],["health","Saúde"],["contract","Contrato e carreira"],["staff","Comissão"]];
+const TABS = [["overview","Visão geral","dashboard"],["development","Desenvolvimento","trend"],["performance","Desempenho","chart"],["position","Posição e função","pitch"],["health","Saúde","pulse"],["contract","Contrato e carreira","briefcase"],["staff","Comissão","users"]];
+const ICONS = {
+  dashboard: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="4"/><rect x="14" y="11" width="7" height="10"/><rect x="3" y="14" width="7" height="7"/>',
+  trend: '<path d="M3 18l5-5 4 3 8-10"/><path d="M15 6h5v5"/>',
+  chart: '<path d="M4 20V10m6 10V4m6 16v-7m5 7H2"/>',
+  pitch: '<rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 12h18M12 3v18"/><circle cx="12" cy="12" r="3"/>',
+  pulse: '<path d="M2 12h5l2-5 4 10 2-5h7"/>',
+  briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18M10 12v2h4v-2"/>',
+  users: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20v-2c0-3 2.5-5 6-5s6 2 6 5v2M15 14c3 0 5 1.5 5 4v2"/>',
+  search: '<circle cx="10" cy="10" r="6"/><path d="M15 15l6 6"/>',
+  player: '<circle cx="12" cy="7" r="3"/><path d="M7 21v-3c0-3 2-6 5-6s5 3 5 6v3M8 14l-3 3m11-3 3 3"/>',
+  target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/>',
+  star: '<path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  flag: '<path d="M5 22V3m0 2h12l-2 4 2 4H5"/>',
+  bolt: '<path d="M13 2L5 14h7l-1 8 8-12h-7z"/>',
+  shield: '<path d="M12 2l8 3v6c0 5-3.4 9-8 11-4.6-2-8-6-8-11V5z"/><path d="M9 12l2 2 4-5"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 10h18"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/>',
+  foot: '<path d="M8 4c2 1 3 4 3 7 0 2 2 3 5 4 3 1 4 3 3 5-2 3-9 1-12-2-3-3-3-7-1-10 1-2 2-1 2 3z"/>',
+  refresh: '<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 8a8 8 0 0113 3M18 16A8 8 0 015 13"/>'
+};
+const METRIC_ICON = {"Fase":"flag","Função-alvo":"target","Nota na função":"star","Prioridade":"bolt","Valor pedido":"briefcase","Time atual":"shield","Número":"player","Fim do vínculo":"calendar","Moral":"pulse","Condição":"shield","Ritmo de jogo":"bolt","Cansaço":"pulse","Seleção":"flag","Gols seleção":"target","Sub-21":"users","Gols Sub-21":"target","Confiança habilidade":"shield","Confiança potencial":"shield","Habilidade":"star","Potencial":"star"};
 
 let data = null;
 const saved = JSON.parse(localStorage.getItem("central.ui") || "{}");
@@ -29,23 +50,32 @@ const roleRow = j => (j.adjunto?.mapa_posicoes || j.adjunto?.posicoes || []).fin
 const line = j => (PITCH[j.adjunto?.alvo || j.posicoes[0]] || [0,0,"mid"])[2];
 const persist = () => localStorage.setItem("central.ui", JSON.stringify(ui));
 
+function icon(name, size=16) {
+  const body=ICONS[name]||ICONS.info;
+  return `<svg class="ui-icon" width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`;
+}
+function heading(label, iconName="info", level=2) {
+  return `<h${level} class="panel-title">${icon(iconName,15)}<span>${esc(label)}</span></h${level}>`;
+}
+
 function stars(value, big=false) {
   let out = "";
   for (let i=1; i<=5; i++) { const n=value-(i-1)*2; out += n>=2 ? "★" : n===1 ? '<span class="half">★</span>' : '<span class="off">★</span>'; }
   return `<span class="stars ${big?"big":""}" title="${value}/10">${out}</span>`;
 }
 function bar(value, max=100, colour="var(--positive)") { return `<div class="bar"><i style="width:${clamp(value/max*100,0,100)}%;background:${colour}"></i></div>`; }
-function metric(label, value, note="") { return `<div class="metric"><span>${esc(label)}</span><b>${value}</b>${note?`<small>${esc(note)}</small>`:""}</div>`; }
-function positionTag(pos) { const sector=(PITCH[pos]||[0,0,"mid"])[2]; return `<span class="tag position" style="background:${LINE_COLOR[sector]}">${esc(pos)}</span>`; }
+function metric(label, value, note="") { return `<div class="metric"><span class="metric-label">${icon(METRIC_ICON[label]||"info",13)}${esc(label)}</span><b>${value}</b>${note?`<small>${esc(note)}</small>`:""}</div>`; }
+function positionTag(pos) { const sector=(PITCH[pos]||[0,0,"mid"])[2]; return `<span class="tag position" style="--sector:${LINE_COLOR[sector]}"><i></i>${esc(pos)}</span>`; }
 
 function pitch(j, full=false) {
   const entries = full ? Object.entries(j.familiaridades || {}).filter(([,v]) => v >= 5) : j.posicoes.map((p,i)=>[p,i?15:20]);
   const dots = entries.map(([p,familiarity]) => { const [x,y,sector]=PITCH[p]||[]; if(x===undefined)return "";
-    const opacity=full ? clamp(familiarity/20,.3,1) : 1; const radius=full ? 4+familiarity/5 : 6;
-    return `<circle cx="${x}" cy="${y}" r="${radius}" fill="${LINE_COLOR[sector]}" stroke="#071016" stroke-width="1.3" opacity="${opacity}"/><text x="${x+(x>60?-8:8)}" y="${y+2.3}" text-anchor="${x>60?"end":"start"}" font-size="6" fill="#eef4f2">${esc(p)}${full?` ${familiarity}`:""}</text>`;
+    const opacity=full ? clamp(familiarity/20,.35,1) : 1; const radius=full ? 2.5+familiarity/20 : 3.2;
+    const labelX=x+(x>60?-6:6), anchor=x>60?"end":"start";
+    return `<g class="pitch-marker" opacity="${opacity}"><circle class="marker-ring" cx="${x}" cy="${y}" r="${radius+1.7}"/><circle cx="${x}" cy="${y}" r="${radius}" fill="${LINE_COLOR[sector]}" stroke="#061525" stroke-width="1"/><circle cx="${x-1}" cy="${y-1}" r=".65" fill="#fff" opacity=".75"/><text x="${labelX}" y="${y+1.8}" text-anchor="${anchor}">${esc(p)}${full?` · ${familiarity}`:""}</text></g>`;
   }).join("");
   const suggested=PITCH[j.adjunto?.nova_posicao];
-  return `<svg viewBox="0 0 100 104" aria-label="Mapa de posições"><rect x="2" y="2" width="96" height="100" rx="3" fill="#164127" stroke="#6c9c78" stroke-width=".8"/>${suggested?`<circle cx="${suggested[0]}" cy="${suggested[1]}" r="9" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-dasharray="2 2"/>`:""}<g stroke="#6c9c78" stroke-width=".7" fill="none"><line x1="2" y1="52" x2="98" y2="52"/><circle cx="50" cy="52" r="10"/><rect x="28" y="84" width="44" height="18"/><rect x="38" y="95" width="24" height="7"/><rect x="28" y="2" width="44" height="18"/></g>${dots}</svg>`;
+  return `<svg class="pitch-svg" viewBox="0 0 100 104" aria-label="Mapa de posições"><defs><pattern id="pitch-grid" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M4 0H0V4" fill="none" stroke="#fff" stroke-opacity=".035" stroke-width=".35"/></pattern></defs><rect x="2" y="2" width="96" height="100" rx="2" fill="#15482f" stroke="#4a8e67" stroke-width="1"/><rect x="3" y="3" width="94" height="98" fill="url(#pitch-grid)"/>${suggested?`<circle class="suggested-ring" cx="${suggested[0]}" cy="${suggested[1]}" r="6.3"/>`:""}<g class="pitch-lines" fill="none"><line x1="2" y1="52" x2="98" y2="52"/><circle cx="50" cy="52" r="10"/><circle cx="50" cy="52" r=".8" fill="currentColor"/><rect x="28" y="84" width="44" height="18"/><rect x="38" y="95" width="24" height="7"/><rect x="28" y="2" width="44" height="18"/></g>${dots}</svg>`;
 }
 function radar(j) {
   const axes=j.posicoes.includes("GR")?AXES_GK:AXES, n=axes.length, R=78, C=105;
@@ -77,37 +107,37 @@ function renderList() {
   const teams=["Todos",...new Set(data.jovens.map(j=>j.time))];
   document.getElementById("filters").innerHTML=teams.map(t=>`<button class="chip ${t===ui.team?"on":""}" data-team="${esc(t)}">${esc(t)} · ${t==="Todos"?data.jovens.length:data.jovens.filter(j=>j.time===t).length}</button>`).join("");
   const list=visiblePlayers(); document.getElementById("result-count").textContent=`${list.length} jogador${list.length===1?"":"es"}`;
-  document.getElementById("cards").innerHTML=list.length?list.map(j=>{const sector=line(j);return `<button class="player-card ${!ui.academy&&ui.selectedUid===j.uid?"selected":""}" data-uid="${j.uid}"><span class="sector" style="background:${LINE_COLOR[sector]}">${LINE_NAME[sector]}</span><span class="card-name">${esc(short(j))}</span><span class="card-meta">${j.idade} anos · ${esc(j.analise.fase)} · ${esc(j.adjunto?.alvo||"—")}</span><span class="card-score"><b>${j.analise.prioridade}</b><small>prioridade</small></span></button>`}).join(""):'<div class="empty">Nenhum jovem neste filtro.</div>';
+  document.getElementById("cards").innerHTML=list.length?list.map(j=>{const sector=line(j);return `<button class="player-card ${!ui.academy&&ui.selectedUid===j.uid?"selected":""}" data-uid="${j.uid}"><span class="sector" style="--sector:${LINE_COLOR[sector]}">${icon("player",12)}<b>${LINE_NAME[sector]}</b></span><span class="card-name">${esc(short(j))}</span><span class="card-meta">${j.idade} anos · ${esc(j.analise.fase)} · ${esc(j.adjunto?.alvo||"—")}</span><span class="card-score"><b>${j.analise.prioridade}</b><small>PRIO</small></span></button>`}).join(""):'<div class="empty">Nenhum jovem neste filtro.</div>';
 }
 function renderHeaderSummary() {
   const priority=data.jovens.filter(j=>j.analise.fase==="Prioridade"||j.analise.prioridade>=60).length;
   const ready=data.jovens.filter(j=>j.analise.fase==="Pronto para minutos"||j.analise.prontidao>=70).length;
-  document.getElementById("header-summary").innerHTML=`<div class="header-kpi"><b>${data.jovens.length}</b><span>jovens</span></div><div class="header-kpi"><b>${priority}</b><span>prioridades</span></div><div class="header-kpi"><b>${ready}</b><span>prontos</span></div>`;
+  document.getElementById("header-summary").innerHTML=`<div class="header-kpi">${icon("users",15)}<b>${data.jovens.length}</b><span>jovens</span></div><div class="header-kpi warn">${icon("bolt",15)}<b>${priority}</b><span>prioridades</span></div><div class="header-kpi good">${icon("shield",15)}<b>${ready}</b><span>prontos</span></div>`;
 }
 function academyScatter(players) {
   const W=500,H=235,L=34,B=25,x=v=>L+(W-L-12)*v/10,y=v=>8+(H-B-8)*(1-v/10);
   const grid=[0,2,4,6,8,10].map(v=>`<line class="axis" x1="${x(v)}" x2="${x(v)}" y1="8" y2="${H-B}"/><line class="axis" x1="${L}" x2="${W-12}" y1="${y(v)}" y2="${y(v)}"/><text x="${x(v)}" y="${H-7}" text-anchor="middle">${v}</text><text x="4" y="${y(v)+3}">${v}</text>`).join("");
-  const dots=players.map(j=>`<circle cx="${x(j.hab)}" cy="${y(j.pot)}" r="${3+(20-j.idade)}" fill="${LINE_COLOR[line(j)]}" opacity=".82"><title>${esc(short(j))}: hab. ${j.hab}, pot. ${j.pot}</title></circle>`).join("");
-  return `<svg viewBox="0 0 ${W} ${H}">${grid}${dots}<text x="${W/2}" y="${H-1}" text-anchor="middle">Habilidade da comissão</text><text x="12" y="12">Potencial</text></svg>`;
+  const dots=players.map(j=>{const r=3.1+clamp((19-j.idade)*.28,0,1.4),cx=x(j.hab),cy=y(j.pot);return `<g class="scatter-point"><circle class="scatter-halo" cx="${cx}" cy="${cy}" r="${(r+2).toFixed(1)}"/><circle cx="${cx}" cy="${cy}" r="${r.toFixed(1)}" fill="${LINE_COLOR[line(j)]}"/><circle cx="${cx-1}" cy="${cy-1}" r=".8" fill="#fff" opacity=".8"/><title>${esc(short(j))}: hab. ${j.hab}, pot. ${j.pot}</title></g>`}).join("");
+  return `<svg class="talent-map" viewBox="0 0 ${W} ${H}"><rect class="plot-bg" x="${L}" y="8" width="${W-L-12}" height="${H-B-8}" rx="2"/>${grid}${dots}<text class="axis-label" x="${W/2}" y="${H-1}" text-anchor="middle">HABILIDADE DA COMISSÃO</text><text class="axis-label" x="${L+5}" y="20">POTENCIAL</text></svg>`;
 }
 function renderAcademy() {
   const players=[...data.jovens], phases={}; players.forEach(j=>phases[j.analise.fase]=(phases[j.analise.fase]||0)+1);
   const avg=Math.round(players.reduce((s,j)=>s+j.analise.prontidao,0)/(players.length||1)); const top=[...players].sort((a,b)=>b.analise.prioridade-a.analise.prioridade).slice(0,6);
   const maxPhase=Math.max(1,...Object.values(phases));
-  document.getElementById("workspace").innerHTML=`<div class="academy"><div class="academy-hero"><div><h1>Visão da base</h1><p>O que exige decisão e como está o caminho até o time principal.</p></div><span class="tag">Atualizado em ${dateBR(data.info.data)}</span></div>
-    <div class="kpi-grid"><div class="kpi"><b>${players.length}</b><span>jovens monitorados</span><small>Principal, B e Sub-20</small></div><div class="kpi"><b>${players.filter(j=>j.pot>=7).length}</b><span>potencial alto</span><small>7/10 ou mais na comissão</small></div><div class="kpi"><b>${avg}</b><span>prontidão média</span><small>indicador interno da Central</small></div><div class="kpi"><b>${players.filter(j=>j.adjunto?.nova_posicao).length}</b><span>mudanças sugeridas</span><small>nova posição a avaliar</small></div></div>
-    <div class="grid-2"><section class="panel"><h2>Fila de decisões</h2><div class="decision-list">${top.map(j=>`<button class="decision" data-open="${j.uid}" style="background:none;border:0;color:inherit;text-align:left;cursor:pointer"><b>${esc(short(j))}</b><span>${esc(j.analise.fase)} · ${esc(j.analise.funcao_alvo)}</span><strong>${j.analise.prioridade}</strong></button>`).join("")}</div></section>
-    <section class="panel chart"><h2>Mapa de talento</h2>${academyScatter(players)}<div class="legend"><span>Tamanho = juventude</span><span>Cor = setor</span></div></section></div>
-    <div class="grid-2"><section class="panel"><h2>Pipeline de desenvolvimento</h2>${Object.entries(phases).sort((a,b)=>b[1]-a[1]).map(([name,count])=>`<div class="phase-row"><span>${esc(name)}</span>${bar(count,maxPhase,name==="Pronto para minutos"?"var(--positive)":"var(--accent)")}<b>${count}</b></div>`).join("")}</section>
-    <section class="panel"><h2>Leitura rápida</h2><div class="alerts"><div class="alert oportunidade"><small>Oportunidade</small>${players.filter(j=>j.pot-j.hab>=3).length} jovens têm grande distância entre habilidade e potencial percebido.</div><div class="alert"><small>Decisão</small>${players.filter(j=>j.idade>=18&&j.time!=="Principal"&&j.analise.prontidao>=60).length} jogadores mais velhos estão perto de precisar de nível competitivo maior.</div><div class="alert risco"><small>Atenção</small>${players.filter(j=>j.moral<=8).length} jogadores aparecem com moral baixa.</div></div></section></div></div>`;
+  document.getElementById("workspace").innerHTML=`<div class="academy"><div class="academy-hero"><div><span class="screen-kicker">YOUTH ANALYTICS / CLUB PIPELINE</span><h1>Visão da base</h1><p>Decisões prioritárias e o caminho até o time principal.</p></div><span class="status-badge">${icon("calendar",12)} ATUALIZADO ${dateBR(data.info.data)}</span></div>
+    <div class="kpi-grid"><div class="kpi"><span class="kpi-icon">${icon("users",19)}</span><div><b>${players.length}</b><span>jovens monitorados</span><small>Principal, B e Sub-20</small></div></div><div class="kpi"><span class="kpi-icon">${icon("star",19)}</span><div><b>${players.filter(j=>j.pot>=7).length}</b><span>potencial alto</span><small>7/10 ou mais na comissão</small></div></div><div class="kpi"><span class="kpi-icon">${icon("shield",19)}</span><div><b>${avg}</b><span>prontidão média</span><small>indicador interno da Central</small></div></div><div class="kpi"><span class="kpi-icon">${icon("target",19)}</span><div><b>${players.filter(j=>j.adjunto?.nova_posicao).length}</b><span>mudanças sugeridas</span><small>nova posição a avaliar</small></div></div></div>
+    <div class="grid-2"><section class="panel">${heading("Fila de decisões","bolt")}<div class="decision-list">${top.map(j=>`<button class="decision" data-open="${j.uid}"><span class="decision-rank">${String(top.indexOf(j)+1).padStart(2,"0")}</span><b>${esc(short(j))}</b><span>${esc(j.analise.fase)} · ${esc(j.analise.funcao_alvo)}</span><strong>${j.analise.prioridade}<small>PRIO</small></strong></button>`).join("")}</div></section>
+    <section class="panel chart">${heading("Mapa de talento","target")}${academyScatter(players)}<div class="legend"><span>${icon("info",11)} marcador menor = jogador mais velho</span><span class="sector-key"><i style="--key:var(--def)"></i> setor por cor</span></div></section></div>
+    <div class="grid-2"><section class="panel">${heading("Pipeline de desenvolvimento","trend")}${Object.entries(phases).sort((a,b)=>b[1]-a[1]).map(([name,count])=>`<div class="phase-row"><span>${esc(name)}</span>${bar(count,maxPhase,name==="Pronto para minutos"?"var(--positive)":"var(--accent)")}<b>${count}</b></div>`).join("")}</section>
+    <section class="panel">${heading("Leitura rápida","info")}<div class="alerts"><div class="alert oportunidade">${icon("trend",16)}<div><small>Oportunidade</small>${players.filter(j=>j.pot-j.hab>=3).length} jovens têm grande distância entre habilidade e potencial percebido.</div></div><div class="alert">${icon("bolt",16)}<div><small>Decisão</small>${players.filter(j=>j.idade>=18&&j.time!=="Principal"&&j.analise.prontidao>=60).length} jogadores mais velhos estão perto de precisar de nível competitivo maior.</div></div><div class="alert risco">${icon("flag",16)}<div><small>Atenção</small>${players.filter(j=>j.moral<=8).length} jogadores aparecem com moral baixa.</div></div></div></section></div></div>`;
 }
 
 function playerHeader(j) {
   const name=short(j).toUpperCase();
-  return `<header class="player-header"><div class="shirt"><img src="/camisa.png" alt=""><svg viewBox="0 0 210 210"><path id="name-arc" d="M 48 72 Q 105 55 162 72" fill="none"/><text><textPath href="#name-arc" startOffset="50%" text-anchor="middle">${esc(name)}</textPath></text></svg></div><div class="identity"><h1>${esc(short(j))}</h1><div class="bio">${esc(j.nome)} · ${j.idade} anos · ${esc(j.time)} · ${j.altura} cm · ${j.peso} kg</div><div class="tag-row">${j.posicoes.map(positionTag).join("")}<span class="tag">pé ${esc(j.pe_preferido)}</span><span class="tag">${esc(j.analise.fase)}</span></div><div class="headline-metrics"><div><b>${stars(j.hab)}</b><span>habilidade</span></div><div><b>${stars(j.pot)}</b><span>potencial</span></div><div><b>${j.analise.prontidao}/100</b><span>prontidão</span></div></div></div><div class="mini-pitch">${pitch(j)}</div></header>`;
+  return `<header class="player-header"><div class="shirt"><span class="shirt-frame"></span><img src="/camisa.png" alt=""><svg viewBox="0 0 210 210"><path id="name-arc" d="M 48 72 Q 105 55 162 72" fill="none"/><text><textPath href="#name-arc" startOffset="50%" text-anchor="middle">${esc(name)}</textPath></text></svg></div><div class="identity"><span class="screen-kicker">PLAYER DEVELOPMENT / UID ${j.uid}</span><h1>${esc(short(j))}</h1><div class="bio">${esc(j.nome)} <i></i> ${j.idade} anos <i></i> ${esc(j.time)} <i></i> ${j.altura} cm · ${j.peso} kg</div><div class="tag-row">${j.posicoes.map(positionTag).join("")}<span class="tag">${icon("foot",11)} pé ${esc(j.pe_preferido)}</span><span class="tag phase-tag">${icon("flag",11)} ${esc(j.analise.fase)}</span></div><div class="headline-metrics"><div>${icon("star",15)}<b>${stars(j.hab)}</b><span>habilidade</span></div><div>${icon("star",15)}<b>${stars(j.pot)}</b><span>potencial</span></div><div>${icon("shield",15)}<b>${j.analise.prontidao}<small>/100</small></b><span>prontidão</span></div></div></div><div class="pitch-card"><span class="pitch-card-title">${icon("pitch",12)} MAPA POSICIONAL</span><div class="mini-pitch">${pitch(j)}</div></div></header>`;
 }
 function renderTabs(j) {
-  const nav=`<nav class="tabs" role="tablist">${TABS.map(([id,label])=>`<button class="tab ${ui.tab===id?"active":""}" data-tab="${id}" role="tab" aria-selected="${ui.tab===id}">${label}</button>`).join("")}</nav>`;
+  const nav=`<nav class="tabs" role="tablist">${TABS.map(([id,label,tabIcon])=>`<button class="tab ${ui.tab===id?"active":""}" data-tab="${id}" role="tab" aria-selected="${ui.tab===id}">${icon(tabIcon,14)}<span>${label}</span></button>`).join("")}</nav>`;
   return `${playerHeader(j)}${nav}<div class="tab-content">${renderTab(j)}</div>`;
 }
 function verdict(j) {
