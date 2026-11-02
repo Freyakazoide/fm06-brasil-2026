@@ -39,6 +39,50 @@ kernel32.CreateRemoteThread.argtypes = [wintypes.HANDLE, ctypes.c_void_p, ctypes
                                         ctypes.c_void_p, wintypes.DWORD, ctypes.c_void_p]
 kernel32.CreateRemoteThread.restype = wintypes.HANDLE
 kernel32.GetExitCodeThread.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
+kernel32.VirtualProtectEx.argtypes = [wintypes.HANDLE, ctypes.c_void_p, ctypes.c_size_t, wintypes.DWORD,
+                                      ctypes.POINTER(wintypes.DWORD)]
+
+
+def poke(handle, address: int, data: bytes) -> None:
+    """Grava na memória do jogo, inclusive em código (troca a proteção da página na hora)."""
+    old = wintypes.DWORD()
+    if not kernel32.VirtualProtectEx(handle, ctypes.c_void_p(address), len(data), PAGE_EXECUTE_READWRITE,
+                                     ctypes.byref(old)):
+        raise OSError(ctypes.get_last_error(), f"VirtualProtectEx falhou em 0x{address:08X}")
+    written = ctypes.c_size_t()
+    buf = ctypes.create_string_buffer(data, len(data))
+    ok = kernel32.WriteProcessMemory(handle, ctypes.c_void_p(address), buf, len(data), ctypes.byref(written))
+    kernel32.VirtualProtectEx(handle, ctypes.c_void_p(address), len(data), old.value, ctypes.byref(old))
+    if not ok:
+        raise OSError(ctypes.get_last_error(), f"WriteProcessMemory falhou em 0x{address:08X}")
+
+
+# colunas da lista de pessoas (ficha T1): 0x008D0780 preenche cada célula por código; código que
+# ela não conhece vai, em 0x008D0FE0, para a pessoa ([esi], interface em +4, método 1), que dá "-".
+CELL_DEFAULT, CELL_NUMBER = 0x008D0FE0, 0x008D0804      # "número em eax -> texto na célula"
+CELL_HOOK_AT = 0x015C1100                               # .fm26 + 0xD100 (livre)
+CELL_DEBUG = 0x015C11F0                                 # ponteiros guardados pelo teste
+CA_CODE, PA_CODE = 0x50434142, 0x50504142               # 'PCAB', 'PPAB'
+
+
+def cell_test_code() -> bytes:
+    """Teste: C.A mostra 42 e P.A 77, e guarda [esi] e esi em CELL_DEBUG."""
+    from_here = lambda target, at: (target - (at + 5)).to_bytes(4, "little", signed=True)
+    c = bytearray()
+    c += b"\x3D" + CA_CODE.to_bytes(4, "little") + b"\x74\x11"           # cmp eax,'PCAB'; je ca (+0x18)
+    c += b"\x3D" + PA_CODE.to_bytes(4, "little") + b"\x74\x22"           # cmp eax,'PPAB'; je pa (+0x30)
+    c += b"\x8B\x36\x8B\x56\x04"                                         # original: mov esi,[esi]; mov edx,[esi+4]
+    c += b"\xE9" + from_here(CELL_DEFAULT + 5, CELL_HOOK_AT + len(c))
+    # ca:
+    c += b"\x8B\x0E\x89\x0D" + CELL_DEBUG.to_bytes(4, "little")          # [debug] = [esi]
+    c += b"\x89\x35" + (CELL_DEBUG + 8).to_bytes(4, "little")            # [debug+8] = esi
+    c += b"\xB8\x2A\x00\x00\x00"                                         # eax = 42
+    c += b"\xE9" + from_here(CELL_NUMBER, CELL_HOOK_AT + len(c))
+    # pa:
+    c += b"\x8B\x0E\x89\x0D" + (CELL_DEBUG + 4).to_bytes(4, "little")    # [debug+4] = [esi]
+    c += b"\xB8\x4D\x00\x00\x00"                                         # eax = 77
+    c += b"\xE9" + from_here(CELL_NUMBER, CELL_HOOK_AT + len(c))
+    return bytes(c)
 
 
 def game() -> tuple[int, int]:
@@ -237,6 +281,8 @@ def main() -> None:
     n.add_argument("clube", type=int)
     n.add_argument("--quantos", type=int, default=2)
     n.add_argument("--nacao", type=int, default=1651)
+    k = sub.add_parser("colunas", help="teste das colunas C.A/P.A na memória do jogo (ficha T1)")
+    k.add_argument("acao", choices=("instalar", "desfazer", "ler"))
     r = sub.add_parser("ler")
     r.add_argument("addr", type=lambda s: int(s, 0))
     r.add_argument("size", type=lambda s: int(s, 0))
@@ -252,6 +298,31 @@ def main() -> None:
         result = run(handle, youth_code(a.clube, a.nacao, PROFILES.get(a.perfil)), timeout_ms=30_000)
         print({1: "nação não achada", 2: "clube não achado", 3: "alocação falhou",
                4: "criação falhou"}.get(result, f"garoto criado: 0x{result:08X}"))
+        return
+    if a.cmd == "colunas":
+        original = bytes.fromhex("8B368B5604")                   # mov esi,[esi]; mov edx,[esi+4]
+        jump = b"\xE9" + (CELL_HOOK_AT - (CELL_DEFAULT + 5)).to_bytes(4, "little", signed=True)
+        here = read_memory(handle, CELL_DEFAULT, 5)
+        if a.acao == "instalar":
+            if here not in (original, jump):
+                raise SystemExit(f"bytes inesperados em 0x{CELL_DEFAULT:08X}: {here.hex()}")
+            free = read_memory(handle, CELL_HOOK_AT, 0x100)
+            if any(free) and here == original:
+                raise SystemExit(f"0x{CELL_HOOK_AT:08X} não está livre")
+            poke(handle, CELL_HOOK_AT, cell_test_code())
+            poke(handle, CELL_DEBUG, bytes(12))
+            poke(handle, CELL_DEFAULT, jump)
+            print("teste instalado: C.A deve mostrar 42 e P.A 77")
+        elif a.acao == "desfazer":
+            poke(handle, CELL_DEFAULT, original)
+            print("original de volta")
+        else:
+            person, person_pa, this = struct.unpack("<III", read_memory(handle, CELL_DEBUG, 12))
+            print(f"[esi] na coluna C.A: 0x{person:08X}; na P.A: 0x{person_pa:08X}; esi: 0x{this:08X}")
+            for name, at in (("[esi]", person), ("[esi]-0xD0", person - 0xD0)):
+                head = read_memory(handle, at, 0x18) if at else None
+                if head:
+                    print(f"  {name}: dwords {[hex(x) for x in struct.unpack('<6I', head)]}")
         return
     if a.cmd == "noticia":
         result = run(handle, lambda page: news_test_code(page, a.clube, a.nacao, a.quantos), timeout_ms=60_000)
