@@ -598,3 +598,7 @@ Conferido nos XML da Aurora e do jogo:
   (230 janelas), Nenhuma -> Ala Esquerdo mudou só `0x01920970..90` (70->10, 8C->80, C8->F8) e dois
   ponteiros em `0x02956B24`/`0x02956F24` (objetos novos?). Inconclusivo; próximo: olhar esses dois
   lugares e o tratador do popup `nwps` (position_training_popup).
+- 02/11, Nova Posição, teste 3 (Meia Atacante (E) -> Defesa (E)): só mudou `0x0192098F..91`, numa área
+  de cabeçalhos do alocador (blocos de 16 bytes com marcas 0x8000xx00); o 1098 ali era coincidência.
+  Hipótese: a troca fica pendente na tela e o jogo só aplica ao processar o dia. Próximo teste: foto
+  antes, trocar, avançar um dia, comparar (incluir R+8 e R+0xC como agulhas).
