@@ -55,9 +55,27 @@
              border-radius: 0 8px 8px 0; color: #f3e6b8; }
   .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 18px; }
   .group h3 { margin: 0 0 8px; font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: .6px; }
-  .attr { display: grid; grid-template-columns: 1fr 90px 22px; gap: 8px; align-items: center; font-size: 13px; padding: 1px 0; }
+  .attr { display: grid; gap: 8px; align-items: center; font-size: 13px; padding: 1px 0; }
   .bar { height: 6px; background: #2b332b; border-radius: 3px; overflow: hidden; }
-  .bar i { display: block; height: 100%; border-radius: 3px; }
+  .bar { position: relative; }
+  .bar i { position: absolute; left: 0; top: 0; display: block; height: 100%; border-radius: 3px; }
+  .bar i.fut { opacity: .28; }
+  .attr { grid-template-columns: 1fr 90px 44px; }
+  .attr em { color: var(--muted); font-style: normal; font-size: 11px; }
+  .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 16px; }
+  .legend i { display: inline-block; width: 18px; height: 6px; border-radius: 3px; background: var(--high); vertical-align: middle; margin-right: 5px; }
+  .legend i.fut { opacity: .28; }
+  .future { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .future { grid-template-columns: 1fr; } }
+  .box { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .box h3 { margin: 0 0 6px; font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: .6px; }
+  .box .big { font-size: 18px; font-weight: 600; }
+  .box ul { margin: 6px 0 0; padding-left: 18px; color: var(--text); }
+  .chart svg { width: 100%; height: 170px; }
+  .chart .axis { stroke: #3a463a; stroke-width: 1; }
+  .chart text { fill: var(--muted); font-size: 10px; }
+  .keys { display: flex; gap: 12px; font-size: 12px; color: var(--muted); margin-top: 4px; flex-wrap: wrap; }
+  .keys b { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: -1px; }
   .attr b { text-align: right; font-variant-numeric: tabular-nums; }
   .empty, .error { color: var(--muted); padding: 40px; text-align: center; }
   .error { color: #f0a090; }
@@ -124,6 +142,25 @@ function verdict(j) {
   return "A comissão não vê futuro no clube por enquanto.";
 }
 
+function best(j) {                       // os atributos que mais vão crescer
+  const names = Object.fromEntries([...GROUPS["Técnicos"], ...GROUPS["Mentais"], ...GROUPS["Físicos"], ...KEEPER]);
+  return Object.entries(j.futuro).filter(([k]) => names[k])
+    .map(([k, f]) => [names[k], j.atributos[k] ?? 0, f]).sort((a, b) => (b[2] - b[1]) - (a[2] - a[1])).slice(0, 4);
+}
+
+function chart(points) {
+  if (points.length < 2)
+    return '<div class="empty" style="padding:20px">Primeira foto guardada. Avance o jogo e clique em Atualizar para ver a evolução.</div>';
+  const W = 320, H = 150, L = 24, B = 18, n = points.length;
+  const x = i => L + (W - L - 8) * i / (n - 1), y = v => 8 + (H - B - 8) * (1 - v / 20);
+  const line = (key, col, scale = 1) => `<polyline fill="none" stroke="${col}" stroke-width="2" points="${
+    points.map((p, i) => `${x(i)},${y(p[key] * scale)}`).join(" ")}"/>`;
+  const ticks = [0, 5, 10, 15, 20].map(v => `<line class="axis" x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}"/><text x="2" y="${y(v) + 3}">${v}</text>`).join("");
+  const dates = [0, n - 1].map(i => `<text x="${x(i) - (i ? 40 : 0)}" y="${H - 4}">${points[i].data.split("-").reverse().join("/")}</text>`).join("");
+  return `<svg viewBox="0 0 ${W} ${H}">${ticks}${dates}${line("tec", "#59b86b")}${line("men", "#5aa0d8")}${line("fis", "#d9a33a")}${line("hab", "#f2c230", 2)}</svg>
+    <div class="keys"><span><b style="background:#59b86b"></b>técnicos</span><span><b style="background:#5aa0d8"></b>mentais</span><span><b style="background:#d9a33a"></b>físicos</span><span><b style="background:#f2c230"></b>habilidade (comissão)</span></div>`;
+}
+
 function renderList() {
   const teams = ["Todos", ...new Set(data.jovens.map(j => j.time))];
   document.getElementById("filters").innerHTML = teams.map(t =>
@@ -161,10 +198,17 @@ function renderDetail() {
         <div class="verdict">${verdict(j)}</div>
       </div>
     </div>
+    <div class="future">
+      <div class="box"><h3>Futuro potencial (olheiro)</h3>
+        <div>Se treinar bem, pode chegar a</div><div class="big">${esc(j.nivel)}</div>
+        <ul>${best(j).map(([label, v, f]) => `<li>${label}: ${v} → <b>${f}</b></li>`).join("")}</ul></div>
+      <div class="box chart"><h3>Evolução</h3>${chart(data.historico[String(j.uid)] || [])}</div>
+    </div>
+    <div class="legend"><span><i></i>agora</span><span><i class="fut"></i>futuro na visão do olheiro</span></div>
     <div class="groups">${Object.entries(groups).map(([title, attrs]) => `
       <div class="group"><h3>${title}</h3>${attrs.map(([key, label]) => {
-        const v = j.atributos[key] ?? 0;
-        return `<div class="attr"><span>${label}</span><div class="bar"><i style="width:${v * 5}%;background:${color(v)}"></i></div><b>${v}</b></div>`;
+        const v = j.atributos[key] ?? 0, f = j.futuro[key] ?? v;
+        return `<div class="attr"><span>${label}</span><div class="bar"><i class="fut" style="width:${f * 5}%;background:${color(f)}"></i><i style="width:${v * 5}%;background:${color(v)}"></i></div><b>${v}${f > v ? ` <em>→ ${f}</em>` : ""}</b></div>`;
       }).join("")}</div>`).join("")}
     </div>`;
 }

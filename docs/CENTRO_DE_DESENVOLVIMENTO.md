@@ -571,3 +571,16 @@ Conferido nos XML da Aurora e do jogo:
   tela, `Pnam`/`Psnu` do jogador -> `Bnom`/`Bnum`): gravou 4 vezes, a camisa ficou vazia. Teste 2
   (copiar `titl` com `vfunc 0x20` da tela = `0xC6E170`): **TRAVOU**; esse método não é
   `(código, &valor)` (o 1º argumento é tratado como objeto).
+
+## 16. Central externa (fora do jogo) — 02/11
+
+`tools/central/`: programa ao lado do jogo, só leitura da memória (`PROCESS_VM_READ`).
+- `leitor.py`: jovens do clube do humano pelas tabelas de pessoas e PLAYING_DATA; atributos pelo
+  ponteiro `[R-32]`; time pelo tipo em `time+0x3C` (0 Principal, 3 B, 18 Sub-20); estrelas pela mesma
+  conta do patch, com as notas da comissão do cache `.fm26+0xD5F0`.
+- Futuro potencial (olheiro): PA visto = Pot × 20 (já com o erro do avaliador). Atributos RELATIVE
+  recalculados com o CA no PA visto (conta do próprio jogo); ABSOLUTE com ganho estimado de treino.
+  Nível: 170+ seleção/Europa, 150 titular grande Série A, 130 Série A, 110 Série B, 90 C/D.
+- `servidor.py` + `pagina.html`: página local em http://127.0.0.1:8626 (lista, camisa com nome em
+  arco, estrelas, atributos agora/futuro, gráfico de evolução). Histórico local em
+  `workspace/central/historico_<UID do time>.json`, uma foto por data do jogo a cada leitura.

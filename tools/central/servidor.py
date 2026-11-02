@@ -29,6 +29,32 @@ FILES = {
     "/emblema.png": (ASSETS / "emblema-centro-desenvolvimento.png", "image/png"),
 }
 PORT = 8626
+HISTORY = ROOT / "workspace" / "central"                    # uma foto por data do jogo (só local)
+GROUPS = {
+    "tec": ("Heading", "Corner", "Long Shots", "Crossing", "Tackling", "Finishing", "Dribbling", "Throwing",
+            "Set Pieces", "Marking", "Penalty", "Passing", "First Touch", "Technique"),
+    "men": ("Aggression", "Anticipation", "Bravery", "Composure", "Concentration", "Creativity", "Decision",
+            "Determination", "Influence", "Flair", "Positioning", "Off the ball", "Team work", "Work rate"),
+    "fis": ("Acceleration", "Agility", "Balance", "Natural fit.", "Strength", "Jumping", "Stamina", "Pace"),
+}
+
+
+def remember(lista, info) -> dict[str, list[dict]]:
+    """Guarda a foto de hoje (substitui a do mesmo dia) e devolve a série de cada jovem por UID."""
+    HISTORY.mkdir(parents=True, exist_ok=True)
+    file = HISTORY / f"historico_{info['time_uid']}.json"
+    days = json.loads(file.read_text(encoding="utf-8")) if file.exists() else {}
+    days[info["data"]] = {
+        str(j.uid): {"hab": j.hab, "pot": j.pot,
+                     **{g: round(sum(j.atributos.get(a, 0) for a in names) / len(names), 1)
+                        for g, names in GROUPS.items()}}
+        for j in lista}
+    file.write_text(json.dumps(days, ensure_ascii=False, indent=0), encoding="utf-8")
+    series: dict[str, list[dict]] = {}
+    for day in sorted(days):
+        for uid, point in days[day].items():
+            series.setdefault(uid, []).append({"data": day, **point})
+    return series
 
 
 class Central(BaseHTTPRequestHandler):
@@ -39,7 +65,8 @@ class Central(BaseHTTPRequestHandler):
         if path == "/dados":
             try:
                 lista, info = leitor.jovens(self.max_age)
-                body = json.dumps({"info": info, "jovens": [asdict(j) for j in lista]}, ensure_ascii=False)
+                body = json.dumps({"info": info, "jovens": [asdict(j) for j in lista],
+                                   "historico": remember(lista, info)}, ensure_ascii=False)
                 self.reply(200, body.encode("utf-8"), "application/json; charset=utf-8")
             except Exception as error:                                   # jogo fechado, etc.
                 self.reply(503, json.dumps({"erro": str(error)}).encode("utf-8"), "application/json")

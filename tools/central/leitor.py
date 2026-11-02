@@ -62,6 +62,32 @@ class Jovem:
     pot: int
     posicoes: list[str] = field(default_factory=list)
     atributos: dict[str, int] = field(default_factory=dict)
+    futuro: dict[str, int] = field(default_factory=dict)      # projeção do olheiro no auge
+    nivel: str = ""                                           # onde pode chegar
+
+
+# Futuro potencial (opinião do olheiro): o PA que ele enxerga é o das estrelas (pot × 20, com o erro
+# do avaliador). Os atributos RELATIVE são guardados em relação ao CA (live_player.relative_base):
+# com o CA no PA visto, o próprio jogo daria esses valores. Os ABSOLUTE não acompanham o CA: ganho
+# estimado de treino, proporcional ao que falta (PA visto − CA), maior nos físicos.
+GROWTH = {"Acceleration": .35, "Pace": .35, "Agility": .4, "Balance": .4, "Jumping": .45, "Strength": .55,
+          "Stamina": .55, "Natural fit.": .3, "Penalty": .7, "Corner": .7, "Set Pieces": .7, "Throwing": .7}
+LEVELS = ((170, "nível de seleção e de clube grande da Europa"), (150, "titular de time grande da Série A"),
+          (130, "jogador de Série A"), (110, "titular de Série B"), (90, "jogador de Série C e D"),
+          (0, "jogador de estaduais"))
+
+
+def future(raw: bytes, attributes, ca: int, seen_pa: int) -> dict[str, int]:
+    out = {}
+    for a in attributes:
+        now = lp.decode_attribute(a, raw[0x14 + a.rel], ca)
+        if a.kind == "RELATIVE":
+            out[a.name] = max(now, lp.decode_attribute(a, raw[0x14 + a.rel], seen_pa))
+        elif a.kind == "ABSOLUTE":
+            out[a.name] = min(20, now + round((seen_pa - ca) / 10 * GROWTH.get(a.name, .3)))
+        else:
+            out[a.name] = now
+    return out
 
 
 class Jogo:
@@ -128,11 +154,15 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             continue
         ca, pa = jogo.u16(r + 0x14 - 204), jogo.u16(r + 0x14 - 202)
         values: dict[str, int] = {}
+        projected: dict[str, int] = {}
+        pot = stars(uid, pa, potential_judge, 0x9E3779B9)
+        seen_pa = max(ca, min(200, pot * 20))
         block = jogo.u32(r - 32)                                    # PLAYING_DATA do jogador
         if block:
             raw = jogo.raw(block, 0x70)
             for a in attributes.values():
                 values[a.name] = lp.decode_attribute(a, raw[0x14 + a.rel], ca)
+            projected = future(raw, attributes.values(), ca, seen_pa)
         positions = [short for short, name in POSITIONS.items() if values.get(name, 0) >= 15]
         kind = jogo.raw(team + 0x3C, 1)[0]
         teams.setdefault(team, TEAM_KIND.get(kind, f"time tipo {kind}"))
@@ -141,8 +171,10 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             apelido=jogo.text(jogo.u32(r + 52)), idade=age,
             nascimento=born.replace(year=born.year + YEAR_SHIFT).isoformat(), time=teams[team],
             ca=ca, pa=pa, hab=stars(uid, ca, ability_judge, 0x2545F491),
-            pot=stars(uid, pa, potential_judge, 0x9E3779B9), posicoes=positions, atributos=values))
-    info = {"data": today.replace(year=today.year + YEAR_SHIFT).isoformat(), "time_humano": f"0x{my_team:08X}",
+            pot=pot, posicoes=positions, atributos=values, futuro=projected,
+            nivel=next(text for floor, text in LEVELS if seen_pa >= floor)))
+    info = {"data": today.replace(year=today.year + YEAR_SHIFT).isoformat(), "time_uid": jogo.u32(my_team + 0x14),
+            "time_humano": f"0x{my_team:08X}",
             "clube": f"0x{my_club:08X}", "avaliador_hab": ability_judge, "avaliador_pot": potential_judge}
     return sorted(out, key=lambda j: (-j.pot, -j.hab, j.nome)), info
 
