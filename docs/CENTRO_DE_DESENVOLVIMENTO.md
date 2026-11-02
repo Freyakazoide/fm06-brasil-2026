@@ -564,3 +564,10 @@ Conferido nos XML da Aurora e do jogo:
   uma lista (cabeçalho +0x5C, dados +0x60, quantidade +0x64 = 75); trocar só o ponteiro dos dados por
   nulo deixou a lista com 75 itens e sem dados. Desfeito (era só na memória; o jogo fechou).
   Próximo, se retomado: entender a lista de 75 itens (o filtro de cada tipo de busca?) antes de mexer.
+- 02/11, **nome e número na camisa: em teste.** A ficha (tela de pessoa, vtable `0xEAC244`) guarda o
+  jogador em `[tela+0x210]` (conferido: Otacílio, UID 102012923). Ela é também o "gerente" de
+  `0x4C99B0`: `vfunc 0x4C` devolve ela mesma, e `0xC6DF60(código, &valor)` grava na lista de
+  propriedades dela (`+0x10`), marca `[+0x154] |= 0x10` e avisa `[+0x158]`. Teste 1 (na abertura de
+  tela, `Pnam`/`Psnu` do jogador -> `Bnom`/`Bnum`): gravou 4 vezes, a camisa ficou vazia. Teste 2
+  (copiar `titl` com `vfunc 0x20` da tela = `0xC6E170`): **TRAVOU**; esse método não é
+  `(código, &valor)` (o 1º argumento é tratado como objeto).
