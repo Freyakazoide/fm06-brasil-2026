@@ -69,6 +69,7 @@ def code_bytes() -> bytes:
 
 def main() -> None:
     seconds = float(sys.argv[1]) if len(sys.argv) > 1 else 20
+    watch = [int(x, 16) for x in sys.argv[2:]]                  # retornos a mostrar sempre
     exe, off = code_bytes()
 
     def after_call(ret: int) -> bool:
@@ -126,6 +127,8 @@ def main() -> None:
         print("  funções (EIP):")
         for f, n in eips[tid].most_common(20):
             print(f"    {'DLL via ' if f < 0 else ''}0x{abs(f):08X}: {n}")
+        for r in watch:
+            print(f"  vigiado 0x{r:08X}: {rets[tid][r]}")
         print("  retornos na pilha (inclusivo):")
         for r, n in rets[tid].most_common(40):
             print(f"    0x{r:08X}: {n}")

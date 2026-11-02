@@ -51,8 +51,9 @@ IS_ATTRIBUTE = 0x00A23A70
 IS_ATTRIBUTE_OLD = bytes.fromhex("8B442404 3D63656450")
 MY_CLUB_YES, MY_CLUB_NO = 20, 1
 # pré-filtro da Central: a busca de jogadores lê os ~18 mil conhecidos em 0xA6B1B0 e entrega cada
-# um à tabela, que calcula todas as colunas. Um método do painel de busca que roda a cada abertura
-# (0x8451C0; a montagem 0x8439C0 só roda uma vez por sessão) marca se a tela é a Central (id do
+# um à tabela, que calcula todas as colunas. FORA DO PATCH: a busca leva ~0,01 s e a demora está na
+# interface (suspeita: ndrq="true" no sections.xml; ver T1). Código guardado como referência.
+# Um método do painel de busca que roda a cada abertura (0x8451C0; a montagem 0x8439C0 só roda uma vez por sessão) marca se a tela é a Central (id do
 # painel em ecx+0x24, conferido na memória); no laço, com a marca, só passa quem é do clube do humano.
 PANEL_SETUP, PANEL_SETUP_OLD, PANEL_ID = 0x008451C0, bytes.fromhex("6AFF684032DD00"), 0x24
 CENTRO_ID = code("tcdv")
@@ -227,7 +228,6 @@ def exe_swaps(data: bytes):
     cache_at = SECTION_VA + 0xD5F0                                      # cache: 4 dwords zerados
     label_at, menu_at, text_at = SECTION_VA + 0xD600, SECTION_VA + 0xD640, SECTION_VA + 0xD6C0
     attribute_at = SECTION_VA + 0xD6E0
-    panel_at, prefilter_at, flag_at = SECTION_VA + 0xD700, SECTION_VA + 0xD740, SECTION_VA + 0xD7F0
     parts = build(hook_at, judges_at, helper_at, cache_at)
     for (start, code_bytes), end in zip(parts, (judges_at, helper_at, cache_at)):
         if start + len(code_bytes) > end:
@@ -249,11 +249,4 @@ def exe_swaps(data: bytes):
         raise ValueError("centro: desvio de atributo passa de 0xD700")
     swaps.append(Swap(sec_off(attribute_at), bytes(len(attribute)), attribute))
     swaps.append(Swap(off(IS_ATTRIBUTE), IS_ATTRIBUTE_OLD, jump(IS_ATTRIBUTE, attribute_at) + bytes([0x90] * 4)))
-    panel, prefilter = panel_code(panel_at, flag_at), prefilter_code(prefilter_at, flag_at, judges_at, cache_at)
-    if panel_at + len(panel) > prefilter_at or prefilter_at + len(prefilter) > flag_at:
-        raise ValueError("centro: pré-filtro invade o vizinho")
-    swaps += [Swap(sec_off(panel_at), bytes(len(panel)), panel),
-              Swap(sec_off(prefilter_at), bytes(len(prefilter)), prefilter)]
-    swaps.append(Swap(off(PANEL_SETUP), PANEL_SETUP_OLD, jump(PANEL_SETUP, panel_at) + bytes([0x90] * 2)))
-    swaps.append(Swap(off(KNOWN_TEST), KNOWN_TEST_OLD, jump(KNOWN_TEST, prefilter_at) + bytes([0x90])))
     return tuple(swaps)

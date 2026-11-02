@@ -71,7 +71,8 @@ SKIN_XML = f"""<?xml version="1.0" encoding="UTF-8"?>
 SECTION = "tcdv"
 TITLE = "Centro de Desenvolvimento"
 MENU_AFTER = '<record id="tcip" section="tcip" text="Information" ndrq="false" help_page="club_info"/>'
-MENU_ITEM = f'\n                <record id="{SECTION}" section="{SECTION}" text="{TITLE}" ndrq="true"/>'
+# ndrq="false" como a busca do jogo (srpl); com "true" a Central ficava ~30 s trabalhando ao abrir
+MENU_ITEM = f'\n                <record id="{SECTION}" section="{SECTION}" text="{TITLE}" ndrq="false"/>'
 SCREEN_AFTER = '<widget class="team_information_panel" id="tcip" title="Information" late_loading="true" />'
 SCREEN_ITEM = (f'\n\t<widget class="person_search_panel" id="{SECTION}" title="{TITLE}" '
                f'person_list_view_menu="play" type="1" late_loading="true"/>')
