@@ -127,6 +127,43 @@ def property_code(person: int, code: int) -> bytes:
     return bytes(c)
 
 
+COUNTERS_AT = 0x015C2000                              # .fm26 + 0xE000: contadores e trampolins
+
+
+def counter_patches(functions: list[int]) -> tuple[list[tuple[int, bytes, bytes]], bytes]:
+    """Para cada função: trampolim (inc contador; instruções roubadas; jmp de volta) e o jmp na
+    entrada. Devolve ([(endereço, original, novo)], bloco da .fm26 com contadores e trampolins)."""
+    sys.path.insert(0, str(ROOT / "workspace" / "pydeps"))
+    from capstone import CS_ARCH_X86, CS_MODE_32, Cs
+    sys.path.insert(0, str(ROOT / "src"))
+    from fm06patch.exe_cave import off
+
+    exe = (Path(json_game_dir()) / "fm.exe").read_bytes()
+    cs = Cs(CS_ARCH_X86, CS_MODE_32)
+    block = bytearray(4 * len(functions))
+    patches = []
+    for n, f in enumerate(functions):
+        stolen = b""
+        for ins in cs.disasm(exe[off(f):off(f) + 32], f):
+            if ins.mnemonic in ("call", "jmp") or ins.mnemonic.startswith("j") or "rip" in ins.op_str:
+                raise SystemExit(f"0x{f:08X}: salto nos primeiros bytes ({ins.mnemonic}); escolha outra")
+            stolen += bytes(ins.bytes)
+            if len(stolen) >= 5:
+                break
+        tramp = COUNTERS_AT + len(block)
+        code = b"\xFF\x05" + (COUNTERS_AT + 4 * n).to_bytes(4, "little") + stolen
+        code += b"\xE9" + ((f + len(stolen)) - (tramp + len(code) + 5)).to_bytes(4, "little", signed=True)
+        block += code
+        new = b"\xE9" + (tramp - (f + 5)).to_bytes(4, "little", signed=True) + b"\x90" * (len(stolen) - 5)
+        patches.append((f, stolen, new))
+    return patches, bytes(block)
+
+
+def json_game_dir() -> str:
+    import json
+    return json.loads((ROOT / "config" / "local.json").read_text(encoding="utf-8"))["game_dir"]
+
+
 def game() -> tuple[int, int]:
     for name in ("fm_brasil.exe", "fm.exe"):
         try:
@@ -325,6 +362,9 @@ def main() -> None:
     n.add_argument("--nacao", type=int, default=1651)
     k = sub.add_parser("colunas", help="teste das colunas C.A/P.A na memória do jogo (ficha T1)")
     k.add_argument("acao", choices=("instalar", "desfazer", "ler", "jogador", "jogador-desfazer"))
+    q = sub.add_parser("contar", help="conta chamadas de funções do jogo (instalar/ler/desfazer)")
+    q.add_argument("acao", choices=("instalar", "ler", "desfazer"))
+    q.add_argument("funcoes", nargs="+", type=lambda s: int(s, 16))
     r = sub.add_parser("ler")
     r.add_argument("addr", type=lambda s: int(s, 0))
     r.add_argument("size", type=lambda s: int(s, 0))
@@ -340,6 +380,26 @@ def main() -> None:
         result = run(handle, youth_code(a.clube, a.nacao, PROFILES.get(a.perfil)), timeout_ms=30_000)
         print({1: "nação não achada", 2: "clube não achado", 3: "alocação falhou",
                4: "criação falhou"}.get(result, f"garoto criado: 0x{result:08X}"))
+        return
+    if a.cmd == "contar":
+        patches, block = counter_patches(a.funcoes)
+        if a.acao == "instalar":
+            for f, old, new in patches:
+                here = read_memory(handle, f, len(old))
+                if here != old:
+                    raise SystemExit(f"0x{f:08X} já mudado: {here.hex()}")
+            poke(handle, COUNTERS_AT, block)
+            for f, old, new in patches:
+                poke(handle, f, new)
+            print(f"{len(patches)} contadores instalados")
+        elif a.acao == "ler":
+            counts = struct.unpack(f"<{len(patches)}I", read_memory(handle, COUNTERS_AT, 4 * len(patches)))
+            for (f, _, _), n in zip(patches, counts):
+                print(f"0x{f:08X}: {n}")
+        else:
+            for f, old, new in patches:
+                poke(handle, f, old)
+            print("originais de volta")
         return
     if a.cmd == "colunas":
         original = bytes.fromhex("8B368B5604")                   # mov esi,[esi]; mov edx,[esi+4]
