@@ -518,3 +518,4 @@ button.ghost:disabled { opacity: .4; cursor: not-allowed; }
 .vs-row b.up { color: var(--positive); } .vs-row b.down { color: #ffb0a8; }
 .vs-stat { display: grid; grid-template-columns: 1fr 90px 90px; padding: 5px 0; border-bottom: 1px solid var(--border-soft); }
 .vs-stat span { color: var(--muted); } .vs-stat b { text-align: right; } .vs-stat.head b { color: var(--accent); font-size: 12px; }
+.position-map-shell { height: auto; overflow: visible; padding: 10px 12px; }
