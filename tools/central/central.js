@@ -60,11 +60,47 @@ function heading(label, iconName="info", level=2) {
 function readinessLabel(value) {
   return value >= 72 ? "pronto para minutos" : value >= 60 ? "perto da transição" : value >= 45 ? "em desenvolvimento" : "base em formação";
 }
-function playerSprite(sector, uid=0) {
-  const shirt=LINE_COLOR[sector], shorts=sector==="gk"?"#17334a":"#f1f4f7";
-  const skin=["#efb27e","#c98252","#7c4a30"][Math.abs(uid)%3];
-  const hair=["#26160f","#54321f","#171719"][Math.abs(uid>>2)%3];
-  return `<svg class="pixel-player" viewBox="0 0 16 22" shape-rendering="crispEdges" aria-hidden="true"><ellipse cx="8" cy="20" rx="5" ry="1.5" fill="#010810" opacity=".7"/><rect x="6" y="2" width="5" height="4" fill="${hair}"/><rect x="5" y="4" width="6" height="4" fill="${skin}"/><rect x="4" y="8" width="8" height="6" fill="${shirt}"/><rect x="3" y="9" width="1" height="5" fill="${skin}"/><rect x="12" y="9" width="1" height="5" fill="${skin}"/><rect x="5" y="14" width="6" height="3" fill="${shorts}"/><rect x="5" y="17" width="2" height="3" fill="${shirt}"/><rect x="9" y="17" width="2" height="3" fill="${shirt}"/><rect x="4" y="20" width="3" height="1" fill="#d9e5ee"/><rect x="9" y="20" width="3" height="1" fill="#d9e5ee"/><rect x="5" y="9" width="6" height="1" fill="#fff" opacity=".35"/><path d="M4 8h8v6H4z" fill="none" stroke="#020a12" stroke-width=".65"/></svg>`;
+// Sprites de pixel no estilo do mockup do motor 2D: quadro 16x20, âncora no centro do pé, sombra à
+// parte, uniforme do clube recolorido em tempo de execução (camisa listrada, calção, meião) e o setor
+// num anel no chão. Três quadros: parado e dois de corrida (animados por CSS no selecionado).
+const KITS = {
+  club: {p:"#f4f6f8", q:"#15171b", t:"#2fa04f", o:"#15171b", k:"#f4f6f8", stripes:true},
+  keeper: {p:"#2f9a4a", q:"#2f9a4a", t:"#0f5d2a", o:"#1c3a26", k:"#2f9a4a", stripes:false},
+};
+const SKINS = ["#efb27e","#d79a6a","#b9774a","#8d5634","#6a3d26"], HAIRS = ["#1d140f","#3b2416","#5a3a22","#171719","#7a5530"];
+const BODY = ["......hhhh......",".....hhhhhh.....",".....hssssh.....",".....seases.....",".....ssssss.....","......ssss......",
+              "....KKKttKKK....","...KKKKKKKKKK...","...sKKKKKKKKs...","...sKKKKKKKKs...","...sKKKKKKKKs...","....KKKKKKKK....",
+              ".....oooooo.....",".....oooooo....."];
+const LEGS = [
+  [".....ss..ss.....",".....kk..kk.....",".....kk..kk.....",".....kk..kk.....","....bbb..bbb...."],
+  ["....ss....ss....","....kk....kk....","...kk......kk...","...kk......kk...","..bbb......bbb.."],
+  ["......ssss......","......kkkk......","......kk.kk.....",".....kk...kk....",".....bb....bb..."],
+];
+function spriteFrame(rows, kit, skin, hair) {
+  const colour = (c, x) => ({h:hair, s:skin, e:"#1b1410", a:"#1b1410", t:kit.t, o:kit.o, k:kit.k, b:"#0b0d10",
+    K: kit.stripes && Math.floor(x / 2) % 2 ? kit.q : kit.p})[c];
+  let out = "";
+  rows.forEach((row, y) => { for (let x = 0; x < row.length; x++) { const c = row[x]; if (c !== ".") out += `<rect x="${x}" y="${y}" width="1" height="1" fill="${colour(c, x)}"/>`; } });
+  return out;
+}
+function spriteSVG({sector="mid", uid=0, run=false, ring=false, arrow=false, size=null} = {}) {
+  const kit = sector === "gk" ? KITS.keeper : KITS.club;
+  const skin = SKINS[Math.abs(uid) % SKINS.length], hair = HAIRS[Math.abs(uid >> 3) % HAIRS.length];
+  const frames = LEGS.map((legs, i) => `<g class="fr fr${i}">${spriteFrame([...BODY, ...legs], kit, skin, hair)}</g>`).join("");
+  const ringSvg = `<ellipse cx="8" cy="19.6" rx="6.4" ry="2.1" fill="none" stroke="${ring ? "#ffda3d" : LINE_COLOR[sector]}" stroke-width=".9" ${ring ? 'class="sel-ring" stroke-dasharray="1.6 1"' : 'opacity=".9"'}/>`;
+  const arrowSvg = arrow ? `<g class="indicator"><polygon points="5,-6 11,-6 8,-2" fill="#e8322b" stroke="#3a0605" stroke-width=".5"/></g>` : "";
+  const dims = size ? `width="${size}" height="${size * 1.3}"` : "";
+  return `<svg class="pixel-player ${run ? "run" : ""}" ${dims} viewBox="-1 -7 18 29" shape-rendering="crispEdges" aria-hidden="true"><ellipse cx="8" cy="19.6" rx="5" ry="1.4" fill="#010810" opacity=".55"/>${ringSvg}${frames}${arrowSvg}</svg>`;
+}
+function playerSprite(sector, uid=0, run=false) { return spriteSVG({sector, uid, run}); }
+function pixelBall(size=14) {
+  return `<svg class="pixel-ball" width="${size}" height="${size}" viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true"><rect x="2" y="0" width="4" height="1" fill="#e9eef3"/><rect x="1" y="1" width="6" height="6" fill="#f6f9fb"/><rect x="0" y="2" width="8" height="4" fill="#f6f9fb"/><rect x="2" y="7" width="4" height="1" fill="#cfd8e0"/><rect x="3" y="3" width="2" height="2" fill="#15181c"/><rect x="1" y="1" width="1" height="1" fill="#15181c"/><rect x="6" y="1" width="1" height="1" fill="#15181c"/><rect x="1" y="6" width="1" height="1" fill="#15181c"/><rect x="6" y="6" width="1" height="1" fill="#15181c"/></svg>`;
+}
+const inner = svg => svg.replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
+// sprite dentro de um SVG de campo (viewBox 0..100): x, y são o ponto do pé
+function pitchSprite(x, y, opts) {
+  const w = opts.w || 9, h = w * 29 / 18;
+  return `<svg class="pixel-player ${opts.run ? "run" : ""}" x="${(x - w / 2).toFixed(2)}" y="${(y - h * 26.6 / 29).toFixed(2)}" width="${w}" height="${h.toFixed(2)}" viewBox="-1 -7 18 29" overflow="visible" shape-rendering="crispEdges">${inner(spriteSVG(opts))}</svg>`;
 }
 
 function stars(value, big=false) {
@@ -78,13 +114,32 @@ function positionTag(pos) { const sector=(PITCH[pos]||[0,0,"mid"])[2]; return `<
 
 function pitch(j, full=false) {
   const entries = full ? Object.entries(j.familiaridades || {}).filter(([,v]) => v >= 5) : j.posicoes.map((p,i)=>[p,i?15:20]);
-  const dots = entries.map(([p,familiarity]) => { const [x,y,sector]=PITCH[p]||[]; if(x===undefined)return "";
-    const opacity=full ? clamp(familiarity/20,.35,1) : 1; const radius=full ? 2.5+familiarity/20 : 3.2;
-    const centre=x>34&&x<66, labelX=centre?x:x+(x>60?-6:6), labelY=centre?y-5.7:y+1.8, anchor=centre?"middle":x>60?"end":"start";
-    return `<g class="pitch-marker" opacity="${opacity}"><circle class="marker-ring" cx="${x}" cy="${y}" r="${radius+1.7}"/><circle cx="${x}" cy="${y}" r="${radius}" fill="${LINE_COLOR[sector]}" stroke="#061525" stroke-width="1"/><circle cx="${x-1}" cy="${y-1}" r=".65" fill="#fff" opacity=".75"/><text x="${labelX}" y="${labelY}" text-anchor="${anchor}">${esc(p)}${full?` · ${familiarity}`:""}</text></g>`;
+  const target = j.adjunto?.alvo, suggested = j.adjunto?.nova_posicao;
+  const markers = entries.map(([p,familiarity]) => { const [x,y,sector]=PITCH[p]||[]; if(x===undefined)return "";
+    const opacity=full ? clamp(familiarity/20,.35,1) : 1;
+    const centre=x>34&&x<66, labelX=centre?x:x+(x>60?-6:6), labelY=centre?y+5.6:y+1.6, anchor=centre?"middle":x>60?"end":"start";
+    return `<g class="pitch-marker" opacity="${opacity}">${pitchSprite(x, y + 2, {sector, uid:j.uid, ring:p===target, w: full ? 7.5 : 9.5})}<text x="${labelX}" y="${labelY}" text-anchor="${anchor}">${esc(p)}${full?` · ${familiarity}`:""}</text></g>`;
   }).join("");
-  const suggested=PITCH[j.adjunto?.nova_posicao];
-  return `<svg class="pitch-svg" viewBox="0 0 100 104" aria-label="Mapa de posições"><defs><pattern id="pitch-grid" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M4 0H0V4" fill="none" stroke="#fff" stroke-opacity=".035" stroke-width=".35"/></pattern></defs><rect x="2" y="2" width="96" height="100" rx="2" fill="#15482f" stroke="#4a8e67" stroke-width="1"/><rect x="3" y="3" width="94" height="98" fill="url(#pitch-grid)"/>${suggested?`<circle class="suggested-ring" cx="${suggested[0]}" cy="${suggested[1]}" r="6.3"/>`:""}<g class="pitch-lines" fill="none"><line x1="2" y1="52" x2="98" y2="52"/><circle cx="50" cy="52" r="10"/><circle cx="50" cy="52" r=".8" fill="currentColor"/><rect x="28" y="84" width="44" height="18"/><rect x="38" y="95" width="24" height="7"/><rect x="28" y="2" width="44" height="18"/></g>${dots}</svg>`;
+  const sug = PITCH[suggested];
+  const ghost = sug && !entries.some(([p]) => p === suggested) ? `<g class="pitch-marker suggested">${pitchSprite(sug[0], sug[1] + 2, {sector:sug[2], uid:j.uid, ring:true, arrow:true, w: full ? 7.5 : 9.5})}<text x="${sug[0]}" y="${sug[1] + 7.6}" text-anchor="middle">${esc(suggested)} · sugerida</text></g>` : "";
+  return `<svg class="pitch-svg" viewBox="0 0 100 104" aria-label="Mapa de posições">${pitchBase()}${markers}${ghost}</svg>`;
+}
+let pitchSeq = 0;
+function pitchBase() {
+  const id = `pitch-stripes-${++pitchSeq}`;
+  return `<defs><pattern id="${id}" width="100" height="13" patternUnits="userSpaceOnUse"><rect width="100" height="6.5" fill="#1d6a37"/><rect y="6.5" width="100" height="6.5" fill="#22773e"/></pattern></defs><rect x="2" y="2" width="96" height="100" rx="1.5" fill="url(#${id})" stroke="#0d3a1e" stroke-width="1"/><g class="pitch-lines" fill="none"><rect x="4" y="4" width="92" height="96"/><line x1="4" y1="52" x2="96" y2="52"/><circle cx="50" cy="52" r="10"/><circle cx="50" cy="52" r=".8" fill="currentColor"/><rect x="28" y="84" width="44" height="16"/><rect x="38" y="94" width="24" height="6"/><rect x="28" y="4" width="44" height="16"/><rect x="38" y="4" width="24" height="6"/></g>`;
+}
+// campo com os jovens: cada um na posição-alvo do adjunto (escala do mockup "on-pitch preview")
+function squadPitch(players) {
+  const slots = {};
+  const top = [...players].sort((a,b)=>b.analise.prioridade-a.analise.prioridade)[0];
+  const sprites = players.map(j => {
+    const pos = j.adjunto?.alvo || j.posicoes[0]; const base = PITCH[pos]; if (!base) return "";
+    const n = (slots[pos] = (slots[pos] || 0) + 1) - 1, dx = [0, -10, 10, -20, 20][n] ?? n * 4;
+    const x = clamp(base[0] + dx, 7, 93), y = base[1] + 3, isTop = top && j.uid === top.uid;
+    return `<g class="squad-sprite" data-open="${j.uid}"><title>${esc(short(j))} · ${esc(pos)} · prioridade ${j.analise.prioridade}</title>${pitchSprite(x, y, {sector:base[2], uid:j.uid, run:isTop, ring:isTop, arrow:isTop, w: 11})}<text x="${x}" y="${y + 5.6}" text-anchor="middle">${esc(short(j).slice(0, 10))}</text></g>`;
+  }).join("");
+  return `<svg class="pitch-svg squad" viewBox="0 0 100 104" aria-label="Campo da base">${pitchBase()}${sprites}<svg x="57" y="45" width="3.6" height="3.6" viewBox="0 0 8 8" shape-rendering="crispEdges">${inner(pixelBall(8))}</svg></svg>`;
 }
 function radar(j) {
   const axes=j.posicoes.includes("GR")?AXES_GK:AXES, n=axes.length, R=78, C=105;
@@ -116,9 +171,11 @@ function renderList() {
   const teams=["Todos",...new Set(data.jovens.map(j=>j.time))];
   document.getElementById("filters").innerHTML=teams.map(t=>`<button class="chip ${t===ui.team?"on":""}" data-team="${esc(t)}">${esc(t)} · ${t==="Todos"?data.jovens.length:data.jovens.filter(j=>j.time===t).length}</button>`).join("");
   const list=visiblePlayers(); document.getElementById("result-count").textContent=`${list.length} jogador${list.length===1?"":"es"}`;
-  document.getElementById("cards").innerHTML=list.length?list.map(j=>{const sector=line(j),ready=j.analise.prontidao;return `<button class="player-card ${!ui.academy&&ui.selectedUid===j.uid?"selected":""}" data-uid="${j.uid}" style="--sector:${LINE_COLOR[sector]}"><span class="player-sprite">${playerSprite(sector,j.uid)}</span><span class="card-name">${esc(short(j))}</span><span class="card-age">${j.idade} ANOS</span><span class="card-role"><i></i>${esc(j.analise.funcao_alvo||j.adjunto?.alvo||LINE_NAME[sector])}</span><span class="card-score"><b>${j.analise.prioridade}</b><small>PRIO</small></span><span class="card-progress"><small>${esc(readinessLabel(ready))}</small><span><i style="width:${ready}%"></i></span><b>${ready}%</b></span></button>`}).join(""):'<div class="empty">Nenhum jovem neste filtro.</div>';
+  document.getElementById("cards").innerHTML=list.length?list.map(j=>{const sector=line(j),ready=j.analise.prontidao;return `<button class="player-card ${!ui.academy&&ui.selectedUid===j.uid?"selected":""}" data-uid="${j.uid}" style="--sector:${LINE_COLOR[sector]}"><span class="player-sprite">${playerSprite(sector,j.uid,!ui.academy&&ui.selectedUid===j.uid)}</span><span class="card-name">${esc(short(j))}</span><span class="card-age">${j.idade} ANOS</span><span class="card-role"><i></i>${esc(j.analise.funcao_alvo||j.adjunto?.alvo||LINE_NAME[sector])}</span><span class="card-score"><b>${j.analise.prioridade}</b><small>PRIO</small></span><span class="card-progress"><small>${esc(readinessLabel(ready))}</small><span><i style="width:${ready}%"></i></span><b>${ready}%</b></span></button>`}).join(""):'<div class="empty">Nenhum jovem neste filtro.</div>';
 }
+function renderBrandBall() { const mark=document.querySelector(".fm-mark"); if(mark&&!mark.querySelector(".pixel-ball"))mark.insertAdjacentHTML("beforeend",pixelBall(18)); }
 function renderHeaderSummary() {
+  renderBrandBall();
   const priority=data.jovens.filter(j=>j.analise.fase==="Prioridade"||j.analise.prioridade>=60).length;
   const ready=data.jovens.filter(j=>j.analise.fase==="Pronto para minutos"||j.analise.prontidao>=70).length;
   document.getElementById("header-summary").innerHTML=`<div class="header-kpi">${icon("users",15)}<b>${data.jovens.length}</b><span>jovens</span></div><div class="header-kpi warn">${icon("bolt",15)}<b>${priority}</b><span>prioridades</span></div><div class="header-kpi good">${icon("shield",15)}<b>${ready}</b><span>prontos</span></div>`;
@@ -135,7 +192,7 @@ function renderAcademy() {
   const maxPhase=Math.max(1,...Object.values(phases));
   document.getElementById("workspace").innerHTML=`<div class="academy"><div class="academy-hero"><div><span class="screen-kicker">YOUTH ANALYTICS / CLUB PIPELINE</span><h1>Visão da base</h1><p>Decisões prioritárias e o caminho até o time principal.</p></div><span class="status-badge">${icon("calendar",12)} ATUALIZADO ${dateBR(data.info.data)}</span></div>
     <div class="kpi-grid"><div class="kpi"><span class="kpi-icon">${icon("users",19)}</span><div><b>${players.length}</b><span>jovens monitorados</span><small>Principal, B e Sub-20</small></div></div><div class="kpi"><span class="kpi-icon">${icon("star",19)}</span><div><b>${players.filter(j=>j.pot>=7).length}</b><span>potencial alto</span><small>7/10 ou mais na comissão</small></div></div><div class="kpi"><span class="kpi-icon">${icon("shield",19)}</span><div><b>${avg}</b><span>prontidão média</span><small>indicador interno da Central</small></div></div><div class="kpi"><span class="kpi-icon">${icon("target",19)}</span><div><b>${players.filter(j=>j.adjunto?.nova_posicao).length}</b><span>mudanças sugeridas</span><small>nova posição a avaliar</small></div></div></div>
-    <div class="grid-2"><section class="panel">${heading("Fila de decisões","bolt")}<div class="decision-list">${top.map(j=>`<button class="decision" data-open="${j.uid}"><span class="decision-rank">${String(top.indexOf(j)+1).padStart(2,"0")}</span><b>${esc(short(j))}</b><span>${esc(j.analise.fase)} · ${esc(j.analise.funcao_alvo)}</span><strong>${j.analise.prioridade}<small>PRIO</small></strong></button>`).join("")}</div></section>
+    <div class="grid-3 academy-top"><section class="panel squad-panel">${heading("Campo da base","pitch")}${squadPitch(players)}<div class="legend"><span><i class="legend-ring"></i>maior prioridade</span><span>clique para abrir</span></div></section><section class="panel">${heading("Fila de decisões","bolt")}<div class="decision-list">${top.map(j=>`<button class="decision" data-open="${j.uid}"><span class="decision-sprite">${playerSprite(line(j), j.uid)}</span><span class="decision-rank">${String(top.indexOf(j)+1).padStart(2,"0")}</span><b>${esc(short(j))}</b><span>${esc(j.analise.fase)} · ${esc(j.analise.funcao_alvo)}</span><strong>${j.analise.prioridade}<small>PRIO</small></strong></button>`).join("")}</div></section>
     <section class="panel chart">${heading("Mapa de talento","target")}${academyScatter(players)}<div class="legend"><span>${icon("info",11)} marcador menor = jogador mais velho</span><span class="sector-key"><i style="--key:var(--def)"></i> setor por cor</span></div></section></div>
     <div class="grid-2"><section class="panel">${heading("Pipeline de desenvolvimento","trend")}${Object.entries(phases).sort((a,b)=>b[1]-a[1]).map(([name,count])=>`<div class="phase-row"><span>${esc(name)}</span>${bar(count,maxPhase,name==="Pronto para minutos"?"var(--positive)":"var(--accent)")}<b>${count}</b></div>`).join("")}</section>
     <section class="panel">${heading("Leitura rápida","info")}<div class="alerts"><div class="alert oportunidade">${icon("trend",16)}<div><small>Oportunidade</small>${players.filter(j=>j.pot-j.hab>=3).length} jovens têm grande distância entre habilidade e potencial percebido.</div></div><div class="alert">${icon("bolt",16)}<div><small>Decisão</small>${players.filter(j=>j.idade>=18&&j.time!=="Principal"&&j.analise.prontidao>=60).length} jogadores mais velhos estão perto de precisar de nível competitivo maior.</div></div><div class="alert risco">${icon("flag",16)}<div><small>Atenção</small>${players.filter(j=>j.moral<=8).length} jogadores aparecem com moral baixa.</div></div></div></section></div></div>`;
@@ -196,9 +253,12 @@ function positionTab(j) {
   const target=rows.find(r=>r.pos===j.adjunto?.alvo)||rows[0]||{}, strengths=j.adjunto?.pontos_fortes||[], gaps=j.adjunto?.pontos_fracos||[];
   return `<div class="position-layout"><section class="panel position-map-panel">${heading("Mapa completo de posições","pitch")}<div class="position-map-shell"><div class="mini-pitch">${pitch(j,true)}</div></div><div class="position-legend"><span><i class="natural"></i>15–20 natural</span><span><i class="competent"></i>12–14 competente</span><span><i class="familiar"></i>8–11 familiar</span><span><i class="learning"></i>5–7 aprendendo</span></div></section><section class="panel diagnosis-panel">${heading("Diagnóstico da posição","target")}<div class="diagnosis-kpis"><div>${icon("target",14)}<span>FUNÇÃO-ALVO</span><b>${esc(target.nome||"—")}</b><small>${esc(target.pos||"—")}</small></div><div>${icon("foot",14)}<span>PÉ PREFERIDO</span><b>${esc(j.pe_preferido)}</b><small>perfil técnico</small></div><div>${icon("chart",14)}<span>ENCAIXE ATUAL</span><b>${target.nota?.toFixed(1)??"—"}<small>/20</small></b><small>${familiarityLabel(target.familiaridade||0)}</small></div><div>${icon("trend",14)}<span>PROJEÇÃO</span><b>${target.futuro?.toFixed(1)??"—"}<small>/20</small></b><small>${target.futuro&&target.nota?`+${(target.futuro-target.nota).toFixed(1)} de margem`:"—"}</small></div></div><div class="diagnosis-verdict">${icon("info",17)}<span>${esc(j.adjunto?.sugestao||"Sem parecer.")}</span></div><div class="diagnosis-traits"><div><h4>${icon("shield",13)} PONTOS FORTES</h4>${strengths.map(([name,value])=>`<span><b>${esc(name)}</b><i style="width:${value*5}%"></i><strong>${value}</strong></span>`).join("")||"—"}</div><div class="gaps"><h4>${icon("bolt",13)} LACUNAS PRIORITÁRIAS</h4>${gaps.map(([name,value])=>`<span><b>${esc(name)}</b><i style="width:${value*5}%"></i><strong>${value}</strong></span>`).join("")||"—"}</div></div></section></div><section class="panel role-ranking-panel">${heading("Ranking de encaixe","chart")}<div class="ranking-head"><span>#</span><span>POSIÇÃO E PERFIL</span><span>FAMILIARIDADE</span><span>ENCAIXE ATUAL → PROJEÇÃO</span><span>NOTA</span></div><div class="role-ranking">${rows.map((r,index)=>{const sector=(PITCH[r.pos]||[0,0,"mid"])[2],fit=clamp(r.nota/20*100,0,100),future=clamp(r.futuro/20*100,0,100);return `<div class="role-rank-row ${r.pos===j.adjunto?.alvo?"target":""}"><span class="rank-number">${String(index+1).padStart(2,"0")}</span><div class="rank-role"><span class="rank-pos" style="--sector:${LINE_COLOR[sector]}"><i></i>${esc(r.pos)}</span><div><b>${esc(r.nome)}</b>${r.pos===j.adjunto?.nova_posicao?'<small class="suggested-badge">SUGERIDA</small>':""}</div></div><div class="rank-familiarity"><b>${r.familiaridade}</b><span>${familiarityLabel(r.familiaridade)}</span></div><div class="rank-track"><i class="future" style="width:${future}%"></i><i style="width:${fit}%"></i></div><div class="rank-score"><span>${r.nota.toFixed(1)}</span><b>→ ${r.futuro.toFixed(1)}</b></div></div>`}).join("")}</div></section>`;
 }
+function pct(raw) { return raw > 0 && raw <= 10000 ? Math.round(raw / 100) : null; }
+function signed16(raw) { return raw > 32767 ? raw - 65536 : raw; }
 function healthTab(j) {
-  const moral=clamp(j.moral,0,20);
-  return `<div class="metric-grid">${metric("Moral",`${moral}/20`,moral>=15?"alta":moral>=10?"estável":"baixa")}${metric("Condição",j.condicao_raw,"valor interno confirmado")}${metric("Ritmo de jogo",j.ritmo_raw,"valor interno confirmado")}${metric("Cansaço",j.cansaco_raw,"valor interno confirmado")}</div><div class="grid-2"><section class="panel"><h2>Moral</h2>${bar(moral,20,moral>=10?"var(--positive)":"var(--danger)")}<p class="raw-note">A moral usa a escala nativa de 0 a 20.</p></section><section class="panel"><h2>Disponibilidade</h2><div class="unavailable"><b>Leitura física sem falsa porcentagem</b>Os offsets de condição, ritmo e cansaço estão confirmados, mas a conversão dos valores internos para a porcentagem visual do jogo ainda não. Por isso a Central mostra o bruto e não inventa 0–100%.</div></section></div>`;
+  const moral=clamp(j.moral,0,20), cond=pct(j.condicao_raw), sharp=pct(j.ritmo_raw), tired=signed16(j.cansaco_raw);
+  const gauge=(label,value,colour)=>`<div class="gauge"><span>${label}</span>${bar(value??0,100,colour)}<b>${value===null?"—":`${value}%`}</b></div>`;
+  return `<div class="metric-grid">${metric("Moral",`${moral}/20`,moral>=15?"alta":moral>=10?"estável":"baixa")}${metric("Condição",cond===null?j.condicao_raw:`≈ ${cond}%`,"0–10000 no jogo ÷ 100")}${metric("Ritmo de jogo",sharp===null?j.ritmo_raw:`≈ ${sharp}%`,"0–10000 no jogo ÷ 100")}${metric("Cansaço",tired,tired<0?"descansado":"acumulado")}</div><div class="grid-2"><section class="panel">${heading("Disponibilidade","pulse",3)}${gauge("Condição física",cond,cond>=85?"var(--positive)":cond>=70?"var(--warning)":"var(--danger)")}${gauge("Ritmo de jogo",sharp,"var(--info)")}${gauge("Moral",moral*5,moral>=10?"var(--positive)":"var(--danger)")}<p class="raw-note">Condição e ritmo usam a escala interna 0–10000 do FM (10000 = 100%). A conversão ÷100 ainda será conferida contra a tela do jogo.</p></section><section class="panel">${heading("Leitura da comissão","info",3)}<div class="callout" style="margin-top:0">${cond===null?"Sem leitura física nesta atualização.":cond>=90?"Fisicamente inteiro: pode treinar forte e jogar.":cond>=75?"Condição boa, mas vale controlar a carga desta semana.":"Condição baixa: priorize recuperação antes de minutos."}</div></section></div>`;
 }
 function contractTab(j) {
   return `<div class="metric-grid">${metric("Valor pedido",j.valor_pedido_raw.toLocaleString("pt-BR"),"unidade monetária interna")}${metric("Time atual",esc(j.time),"equipe do clube")}${metric("Número", "—", "contrato ainda não ligado")}${metric("Fim do vínculo","—","contrato ainda não ligado")}</div><div class="unavailable" style="margin-top:12px"><b>Contrato vivo preparado, mas não ativado nesta versão</b>Salário, datas, status e empréstimo têm offsets conhecidos. A ligação atual exige uma varredura completa de memória; ela será integrada quando puder ser indexada sem deixar cada atualização lenta.</div><div class="callout">O valor mostrado é o campo <b>Ask Value</b> confirmado, mantido na unidade interna do jogo. Ele não é rotulado como valor de mercado nem convertido para reais.</div>`;
