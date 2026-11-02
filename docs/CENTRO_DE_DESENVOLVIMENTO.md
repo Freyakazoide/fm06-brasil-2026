@@ -584,3 +584,10 @@ Conferido nos XML da Aurora e do jogo:
 - `servidor.py` + `pagina.html`: página local em http://127.0.0.1:8626 (lista, camisa com nome em
   arco, estrelas, atributos agora/futuro, gráfico de evolução). Histórico local em
   `workspace/central/historico_<UID do time>.json`, uma foto por data do jogo a cada leitura.
+- 02/11, **treinador adjunto** (`tools/central/adjunto.py`, só leitura): perfis de posição com pesos
+  1–3 (estilo FM); nota = média ponderada agora e no futuro do olheiro; nos lados, o pé daquele lado
+  pesa (pé fraco perde até 15%). Sugere nova posição quando uma não natural rende mais que a melhor
+  natural (+0,5). Foco de treino: lacuna até max(12, futuro) nos atributos da posição-alvo, somada
+  pelas categorias de treino do FM06 (Força, Aeróbico, Goleiro, Tático, Controlo Bola, Defensivo,
+  Ofensivo, Finalização, Bolas Paradas). Exemplos no save: Afonso Guedes (canhoto, MD/M C/MA C) ->
+  ala esquerdo; Toninho (M C) -> meia atacante.

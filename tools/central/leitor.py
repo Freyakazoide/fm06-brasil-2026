@@ -34,6 +34,9 @@ sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "src")]
 from live_player_memory import find_process_id, open_process, read_memory  # noqa: E402
 from fm06patch import live_player as lp  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import adjunto  # noqa: E402
+
 PEOPLE, PLAYING = 0x014EAA54, 0x014EAA6C
 HUMAN_VT, PLAYER_VT = 0x010F6F8C, 0x010F1034
 TODAY_DAY, TODAY_YEAR = 0x014EAB38, 0x014EAB3A
@@ -64,6 +67,7 @@ class Jovem:
     atributos: dict[str, int] = field(default_factory=dict)
     futuro: dict[str, int] = field(default_factory=dict)      # projeção do olheiro no auge
     nivel: str = ""                                           # onde pode chegar
+    adjunto: dict = field(default_factory=dict)               # melhor posição e foco de treino
 
 
 # Futuro potencial (opinião do olheiro): o PA que ele enxerga é o das estrelas (pot × 20, com o erro
@@ -172,7 +176,8 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             nascimento=born.replace(year=born.year + YEAR_SHIFT).isoformat(), time=teams[team],
             ca=ca, pa=pa, hab=stars(uid, ca, ability_judge, 0x2545F491),
             pot=pot, posicoes=positions, atributos=values, futuro=projected,
-            nivel=next(text for floor, text in LEVELS if seen_pa >= floor)))
+            nivel=next(text for floor, text in LEVELS if seen_pa >= floor),
+            adjunto=adjunto.analyse(values, projected) if values else {}))
     info = {"data": today.replace(year=today.year + YEAR_SHIFT).isoformat(), "time_uid": jogo.u32(my_team + 0x14),
             "time_humano": f"0x{my_team:08X}",
             "clube": f"0x{my_club:08X}", "avaliador_hab": ability_judge, "avaliador_pot": potential_judge}

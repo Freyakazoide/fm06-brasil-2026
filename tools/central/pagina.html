@@ -96,6 +96,23 @@
   .legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; margin-top: 14px; }
   .legend i { display: inline-block; width: 18px; height: 7px; border-radius: 4px; background: var(--high); vertical-align: middle; margin-right: 5px; }
   .legend i.fut { opacity: .3; }
+  .coach { margin-top: 18px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; }
+  @media (max-width: 1000px) { .coach { grid-template-columns: 1fr; } }
+  .coach .say { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; }
+  .coach .say .ico { flex: none; width: 38px; height: 38px; border-radius: 50%; background: var(--gold); color: #17140a;
+                     display: grid; place-items: center; font-weight: 800; }
+  .coach .new { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 6px; background: rgba(242,194,48,.15);
+                border: 1px solid var(--gold); color: var(--gold2); font-size: 12px; font-weight: 600; }
+  .ptable { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+  .ptable td { padding: 4px 6px; border-top: 1px solid var(--line); }
+  .ptable td:first-child { font-weight: 700; width: 46px; }
+  .ptable .tag { font-size: 10px; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; margin-left: 6px; }
+  .ptable .bar { width: 110px; display: inline-block; vertical-align: middle; margin-right: 6px; }
+  .focus { display: grid; gap: 8px; }
+  .focus .cat { padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,.03); border: 1px solid var(--line); }
+  .focus .cat b { color: var(--gold2); }
+  .focus .cat div { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .pitch .newpos { fill: none; stroke: var(--gold); stroke-width: 1.4; stroke-dasharray: 2 1.5; }
   .empty, .error { color: var(--muted); padding: 40px; text-align: center; }
   .error { color: #f0a090; }
   .foot { color: var(--muted); font-size: 12px; padding: 0 24px 18px; }
@@ -219,8 +236,25 @@ function pitch(j) {
     return x === undefined ? "" : `<circle cx="${x}" cy="${y}" r="${i ? 5.5 : 7}" fill="${LINE_COLOR[l]}" stroke="#08100a" stroke-width="1.5" opacity="${i ? .8 : 1}"/>
       <text x="${x + (x > 60 ? -9 : 9)}" y="${y + 2.5}" text-anchor="${x > 60 ? "end" : "start"}" font-size="6.5" fill="#e8f0e6">${esc(p)}</text>`; }).join("");
   return `<svg viewBox="0 0 100 104"><rect x="2" y="2" width="96" height="100" rx="3" fill="#1d4a28" stroke="#6fa77a" stroke-width=".8"/>
+    ${(() => { const p = PITCH[j.adjunto?.nova_posicao]; return p ? `<circle class="newpos" cx="${p[0]}" cy="${p[1]}" r="8.5"/>` : ""; })()}
     <g stroke="#6fa77a" stroke-width=".7" fill="none"><line x1="2" y1="52" x2="98" y2="52"/><circle cx="50" cy="52" r="10"/>
     <rect x="28" y="84" width="44" height="18"/><rect x="38" y="95" width="24" height="7"/><rect x="28" y="2" width="44" height="18"/></g>${dots}</svg>`;
+}
+
+function coach(j) {
+  const a = j.adjunto; if (!a || !a.posicoes) return "";
+  const rows = a.posicoes.map(r => `<tr><td>${esc(r.pos)}</td><td>${esc(r.nome)}${r.natural ? '<span class="tag">natural</span>' : ""}${r.pos === a.nova_posicao ? '<span class="tag" style="color:var(--gold);border-color:var(--gold)">sugerida</span>' : ""}</td>
+      <td><span class="bar"><i class="fut" style="width:${r.futuro * 5}%;background:${color(r.futuro)}"></i><i style="width:${r.nota * 5}%;background:${color(r.nota)}"></i></span>${r.nota.toFixed(1)} <em style="color:var(--gold2);font-style:normal;font-size:11px">→ ${r.futuro.toFixed(1)}</em></td></tr>`).join("");
+  const focus = a.treino.map(t => `<div class="cat"><b>${esc(t.categoria)}</b><div>${t.atributos.map(([n, v, g]) => `${esc(n)} ${v} → ${g}`).join(" · ")}</div></div>`).join("");
+  return `<div class="coach">
+    <div class="box"><h3>Treinador adjunto</h3>
+      <div class="say"><div class="ico">AT</div><div>${esc(a.sugestao)}
+        ${a.nova_posicao ? `<div class="new">Sugestão: treinar nova posição ${esc(a.nova_posicao)} (Treino → Geral → Nova Posição)</div>` : ""}</div></div>
+      <table class="ptable">${rows}</table></div>
+    <div class="box"><h3>Foco de treino sugerido</h3>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:8px">Categorias do plano de treino que mais ajudam ${esc(short(j))} como ${esc((a.posicoes.find(r => r.pos === a.alvo) || {}).nome || a.alvo)}:</div>
+      <div class="focus">${focus || '<div class="cat">Nada urgente: está no alvo para a posição.</div>'}</div></div>
+  </div>`;
 }
 
 function chart(points) {
@@ -281,6 +315,7 @@ function renderDetail() {
       </div>
       <div class="pitch">${pitch(j)}</div>
     </div>
+    ${coach(j)}
     <div class="row2">
       <div class="box"><h3>Futuro potencial (olheiro)</h3>
         <div style="color:var(--muted)">Se treinar bem, pode chegar a</div><div class="big">${esc(j.nivel)}</div>
