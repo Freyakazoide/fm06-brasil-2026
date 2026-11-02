@@ -135,9 +135,9 @@ function squadPitch(players) {
   const top = [...players].sort((a,b)=>b.analise.prioridade-a.analise.prioridade)[0];
   const sprites = players.map(j => {
     const pos = j.adjunto?.alvo || j.posicoes[0]; const base = PITCH[pos]; if (!base) return "";
-    const n = (slots[pos] = (slots[pos] || 0) + 1) - 1, dx = [0, -10, 10, -20, 20][n] ?? n * 4;
+    const n = (slots[pos] = (slots[pos] || 0) + 1) - 1, dx = [0, -13, 13, -26, 26][n] ?? n * 5;
     const x = clamp(base[0] + dx, 7, 93), y = base[1] + 3, isTop = top && j.uid === top.uid;
-    return `<g class="squad-sprite" data-open="${j.uid}"><title>${esc(short(j))} · ${esc(pos)} · prioridade ${j.analise.prioridade}</title>${pitchSprite(x, y, {sector:base[2], uid:j.uid, run:isTop, ring:isTop, arrow:isTop, w: 11})}<text x="${x}" y="${y + 5.6}" text-anchor="middle">${esc(short(j).slice(0, 10))}</text></g>`;
+    return `<g class="squad-sprite" data-open="${j.uid}"><title>${esc(short(j))} · ${esc(pos)} · prioridade ${j.analise.prioridade}</title>${pitchSprite(x, y, {sector:base[2], uid:j.uid, run:isTop, ring:isTop, arrow:isTop, w: 11})}<text x="${x}" y="${y + 5.6 + (n % 2 ? 3.8 : 0)}" text-anchor="middle">${esc(short(j).slice(0, 10))}</text></g>`;
   }).join("");
   return `<svg class="pitch-svg squad" viewBox="0 0 100 104" aria-label="Campo da base">${pitchBase()}${sprites}<svg x="57" y="45" width="3.6" height="3.6" viewBox="0 0 8 8" shape-rendering="crispEdges">${inner(pixelBall(8))}</svg></svg>`;
 }
