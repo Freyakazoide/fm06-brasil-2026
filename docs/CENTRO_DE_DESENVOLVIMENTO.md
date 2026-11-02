@@ -557,3 +557,10 @@ Conferido nos XML da Aurora e do jogo:
   O filtro fica do lado do jogo, nos conjuntos de dados de busca do humano escolhidos por tipo e
   nome (`0x54AA10`: tipo em `+5` do conjunto, nome comparado em `+0xDC`). Para a Central ter filtro
   próprio, o pedido dela precisa de outra chave (tipo ou nome).
+- 02/11, **filtro separado: teste na memória TRAVOU o jogo** ao abrir Pesquisar (dump: acesso nulo
+  em `0x7F7096`, leitor de lista; `ebx` = dono+0x5C). Sonda: os 6 conjuntos de busca do humano
+  (`0x786F32`, esi = conjuntos; tipo 0, 1, 2, 3, 3, 3) apontam para o mesmo dono em `+0x0`; as
+  condições da busca (Page, Pmcl) estão num objeto alcançado por `dono+0x60`. Errado: `dono+0x5C` é
+  uma lista (cabeçalho +0x5C, dados +0x60, quantidade +0x64 = 75); trocar só o ponteiro dos dados por
+  nulo deixou a lista com 75 itens e sem dados. Desfeito (era só na memória; o jogo fechou).
+  Próximo, se retomado: entender a lista de 75 itens (o filtro de cada tipo de busca?) antes de mexer.
