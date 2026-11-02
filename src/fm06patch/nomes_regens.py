@@ -10,7 +10,8 @@ dela, pelo uso.
 from __future__ import annotations
 
 import struct
-from dataclasses import dataclass
+from collections import Counter
+from dataclasses import dataclass, field
 
 # começo do u32 quantidade de cada tabela no server_db 6.0.2 original
 TABLES = {"first": 0x005F7416, "second": 0x0085C9F9, "common": 0x00DE5A49}
@@ -49,8 +50,7 @@ def read_table(data: bytes, start: int) -> tuple[list[Name], int]:
     return names, at
 
 
-NEW_UID = 110_000_000        # acima dos UIDs do banco (máx. ~74 milhões) e dos do histórico (100 milhões)
-NEW_SHARE = 0.7              # parte do "uso" da nação que fica com os nomes novos
+NEW_SHARE = 0.7              # parte do "uso" da nação que fica com os nomes da planilha
 KINDS = {"prenome": "first", "sobrenome": "second", "apelido": "common"}
 # o nome completo do jogador tem no máximo 2 palavras (pedido do usuário, 01/11): prenome e
 # sobrenome de uma palavra só ("Pedro Antônio de Oliveira" não sai mais); apelido de até duas
@@ -75,57 +75,120 @@ def locate(data: bytes, original: bytes) -> dict[str, int]:
     return found
 
 
-def plan(data: bytes, wanted: dict[tuple[str, int], dict[str, int]], starts: dict[str, int] | None = None):
+def cited(people: bytes, server: bytes) -> dict[str, Counter]:
+    """Quantas pessoas do people_db citam cada índice de cada tabela (o "uso" do banco
+    erra em 4%). ``server``: o banco com as tabelas de nomes no lugar (o original)."""
+    from .comissao import NONE, PEOPLE_END, _PERSON_END, _names_before, name_tables
+
+    tables = name_tables(server)
+    out = {kind: Counter() for kind in TABLES}
+    for match in _PERSON_END.finditer(people, 0, PEOPLE_END):
+        index, uid = struct.unpack("<II", match.group(1) + match.group(2))
+        if not (index < 2_000_000 and 0 < uid < 100_000_000):
+            continue
+        at = _names_before(people, match.start() + 5, tables, back=0x300)
+        if at is None:
+            continue
+        first, second, common = struct.unpack_from("<III", people, at)
+        out["first"][first] += 1
+        out["second"][second] += 1
+        if common != NONE:
+            out["common"][common] += 1
+    return out
+
+
+@dataclass
+class Plan:
+    edits: dict[str, list[tuple[int, int, bytes]]] = field(default_factory=dict)  # (posição, tamanho, registro)
+    placed: int = 0             # nomes novos no lugar de um nome que ninguém cita
+    boosted: int = 0            # nomes da planilha que a nação já tinha
+    dropped: list[str] = field(default_factory=list)   # novos sem vaga no bloco da nação
+
+
+def plan(data: bytes, wanted: dict[tuple[str, int], dict[str, int]], starts: dict[str, int] | None = None,
+         citations: dict[str, Counter] | None = None) -> Plan:
     """wanted: (tabela, nação) -> {nome: peso 1..100}.
 
-    Nome que a nação já tem: o "uso" sobe para o peso novo (se for maior). Nome novo: entra
-    no fim da tabela (índice = posição, como o jogo exige) com o peso. O peso é escalado
-    para os nomes novos somarem NEW_SHARE do uso da nação. Devolve
-    {tabela: (mudanças de uso [(posição do u16, valor)], registros novos [bytes])}."""
+    Cada nação é um bloco seguido na tabela, e o jogo sorteia dentro do bloco: nome posto no
+    fim da tabela (como até 01/11) deixava o bloco do Brasil "comprido" e os regens saíam com
+    nomes do Chile (a nação seguinte) e com o nome de índice 0 (Mohamed Alamosi). Agora:
+
+    - nome novo ocupa, dentro do bloco, o lugar de um nome da nação que nenhuma pessoa cita
+      (``citations``; os compostos primeiro, depois os de menor uso). Índice e UID ficam;
+      sem vaga, o nome não entra (vai em ``dropped``, os de menor peso primeiro);
+    - a soma do "uso" da nação fica a do original: os nomes da planilha somam NEW_SHARE dela
+      (pelo peso), os compostos ficam com 0 e os outros dividem o resto na proporção de hoje
+      (os de uso pequeno podem ir a 0: continuam no banco para quem tem o nome).
+    """
     starts = starts or TABLES
-    result = {}
-    uid = NEW_UID
+    citations = citations or {}
+    result = Plan()
     for kind in ("first", "second", "common"):
         names, _ = read_table(data, starts[kind])
-        uses_at, appended = [], []
-        index = len(names)
+        cites = citations.get(kind, Counter())
+        uses = {n.index: n.uses for n in names}
+        texts: dict[int, str] = {}
         for (table, nation), weights in sorted(wanted.items()):
             if table != kind or not weights:
                 continue
-            mine = {n.text.casefold(): n for n in names if n.nation == nation}
-            for n in mine.values():                       # compostos que o banco já tinha: uso 0
-                if len(n.text.split()) > MAX_WORDS[kind] and n.uses:
-                    uses_at.append((n.at + 5 + 2 * len(n.text) + 2, 0))
+            block = [n for n in names if n.nation == nation]
+            total = sum(n.uses for n in block)
+            by_text = {n.text.casefold(): n for n in block}
             listed = {text.casefold() for text in weights}
-            old_total = sum(n.uses for key, n in mine.items() if key not in listed)
-            scale = (old_total * NEW_SHARE / (1 - NEW_SHARE) / sum(weights.values())) if old_total else 1.0
-            for text, weight in sorted(weights.items()):
-                value = min(65535, max(1, round(weight * scale)))
-                existing = mine.get(text.casefold())
-                if existing:
-                    if value > existing.uses:
-                        uses_at.append((existing.at + 5 + 2 * len(existing.text) + 2, value))
-                    continue
-                appended.append(_record(text, value, nation, index, uid))
-                index += 1
-                uid += 1
-        result[kind] = (uses_at, appended)
+            compound = {n.index for n in block if len(n.text.split()) > MAX_WORDS[kind]}
+            free = sorted((n for n in block if n.text.casefold() not in listed and not cites[n.index]),
+                          key=lambda n: (n.index not in compound, n.uses, -n.index))
+            new = sorted((t for t in weights if t.casefold() not in by_text), key=lambda t: (-weights[t], t))
+            result.dropped += [f"{t} ({kind}, nação {nation})" for t in new[len(free):]]
+            chosen: dict[int, str] = {}                 # índice -> nome da planilha
+            for text in weights:
+                if text.casefold() in by_text:
+                    chosen[by_text[text.casefold()].index] = text
+                    result.boosted += 1
+            for slot, text in zip(free, new):
+                chosen[slot.index] = text
+                texts[slot.index] = text
+                result.placed += 1
+            if not total or not chosen:
+                continue
+            share = round(total * NEW_SHARE)
+            scale = share / sum(weights[t] for t in chosen.values())
+            for index, text in chosen.items():
+                uses[index] = min(65535, max(1, round(weights[text] * scale)))
+            rest = [n for n in block if n.index not in chosen]
+            for n in rest:
+                if n.index in compound:
+                    uses[n.index] = 0
+            others = [n for n in rest if n.index not in compound]
+            left = total - sum(uses[i] for i in chosen)
+            base = sum(n.uses for n in others)
+            if others and base:
+                for n in others:
+                    uses[n.index] = min(65535, round(n.uses * left / base))   # pode ir a 0: fica, mas não é sorteado
+            extra = sum(uses[n.index] for n in block) - total      # o arredondamento fecha a soma
+            ranked = sorted(block, key=lambda n: -uses[n.index])
+            if extra < 0:
+                uses[ranked[0].index] = min(65535, uses[ranked[0].index] - extra)
+            while extra > 0 and any(uses[n.index] > 1 for n in ranked):   # tira 1 dos mais usados
+                for n in ranked:
+                    if extra and uses[n.index] > 1:
+                        uses[n.index] -= 1
+                        extra -= 1
+        edits = []
+        for n in names:
+            text = texts.get(n.index, n.text)
+            if text != n.text or uses[n.index] != n.uses:
+                edits.append((n.at, n.size, _record(text, uses[n.index], n.nation, n.index, n.uid)))
+        result.edits[kind] = edits
     return result
 
 
-def apply(data: bytes, changes, starts: dict[str, int] | None = None) -> bytes:
-    starts = starts or TABLES
+def apply(data: bytes, changes: Plan, starts: dict[str, int] | None = None) -> bytes:
+    """Troca os registros no lugar (o tamanho do nome muda; a quantidade e os índices não)."""
     out = bytearray(data)
-    for kind in ("common", "second", "first"):           # de trás para frente: as posições não mudam
-        uses_at, appended = changes[kind]
-        for at, value in uses_at:
-            struct.pack_into("<H", out, at, value)
-        if appended:
-            start = starts[kind]
-            _, end = read_table(bytes(out), start)
-            count = struct.unpack_from("<I", out, start)[0]
-            struct.pack_into("<I", out, start, count + len(appended))
-            out[end:end] = b"".join(appended)
+    edits = sorted((e for kind in changes.edits.values() for e in kind), reverse=True)
+    for at, size, record in edits:                      # de trás para frente: as posições não mudam
+        out[at:at + size] = record
     return bytes(out)
 
 

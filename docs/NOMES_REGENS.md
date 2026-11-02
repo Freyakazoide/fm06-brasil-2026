@@ -20,28 +20,40 @@ quantidade e, para cada nome:
 
 ## O que o script faz
 
-- Nome que a nação já tem ("Gabriel", "Pedro"): o uso sobe para o peso novo, se for maior.
-- Nome novo ("Enzo", "Kauã", "Endrick"): entra no fim da tabela, com índice = posição, a
-  nação certa e UID a partir de 110.000.000.
-- O peso da planilha é escalado para os nomes da planilha somarem 70% do uso da nação
-  (`NEW_SHARE`): se o jogo sorteia pelo uso, 7 em cada 10 regens saem com nome de hoje.
-- O resto do banco não muda (só anda para frente: o tamanho do arquivo cresce, como no
-  histórico de campeões).
+Cada nação é um bloco seguido na tabela, e o jogo sorteia dentro do bloco. Até 01/11 os
+nomes novos entravam no fim da tabela, e os regens que o jogo cria (reservas, juniores)
+saíam com o nome de índice 0 (primeiro nome "Mohamed", sobrenome "Alamosi") e com nomes do
+Chile, a nação seguinte ao Brasil (Zúñiga, Vidal, Riquelme). **Hipótese** que bate com o que
+se viu: o jogo guarda, para cada nação, onde o bloco começa e quantos nomes tem. Com 40
+nomes brasileiros no fim, o intervalo do Brasil entra no bloco do Chile e, quando o sorteio
+passa da soma, cai no índice 0. Agora:
 
-Resultado no banco original: 614 nomes novos (Brasil 365 primeiros nomes, 178
-sobrenomes e 71 apelidos, mais Argentina, Uruguai, Colômbia e Paraguai) e 971 que já
-existiam com peso maior.
+- **Nome novo** ("Enzo", "Kauã") ocupa, dentro do bloco da nação, o lugar de um nome que
+  nenhuma pessoa do people_db cita (`nomes_regens.cited`: 270.696 pessoas lidas). Os
+  compostos vão primeiro, depois os de menor uso. Índice e UID ficam, e nada entra no fim.
+  Sem vaga, o nome não entra; os de menor peso ficam de fora primeiro.
+- **Nome que a nação já tem** ("Gabriel", "Pedro"): o uso vai para o peso novo.
+- **A soma do "uso" da nação fica a do original.** Os nomes da planilha somam 70% dela
+  (`NEW_SHARE`), os compostos ficam com 0 ("Pedro Antônio" não sai) e os outros dividem o
+  resto na proporção de hoje. Os de uso pequeno podem ir a 0: continuam no banco para quem
+  tem o nome, mas não são sorteados.
 
-A aba Regras_apelido (Gabriel → Gabrielzinho...) não entra: o jogo não monta apelido,
-só sorteia da tabela de nomes comuns.
+Resultado no banco original:
+- **Brasil:** os 40 primeiros nomes e os 19 sobrenomes novos entram; dos 111 apelidos novos,
+  entram 66.
+- **Argentina, Colômbia, Paraguai e Uruguai:** entram só os nomes que cabem.
+- No total: 152 nomes novos, 982 que já existiam e 228 sem vaga. Nenhum nome citado por
+  alguém muda.
+
+A aba Regras_apelido (Gabriel → Gabrielzinho...) não entra no banco: o jogo não monta
+apelido, só sorteia da tabela de nomes comuns. Os fictícios (`gerar_ficticios.py`) usam a
+planilha direto, com todos os nomes e as regras.
 
 ## A conferir no jogo
 
-Não se sabe ainda como o FM06 sorteia: pelo uso, por igual entre os nomes da nação, ou
-pela posição na tabela (os nomes novos estão fora do bloco da nação). Os regens da base
-(a cada temporada, e os jovens que o jogo cria quando um clube fica sem jogadores)
-mostram: se aparecerem Enzo, Kauã, Davi, funcionou. Se o New Game travar,
-rode o `aplicar_brasil_2026.py --apply --sem-nomes-regens` e mande o dump.
+Os reservas e juniores que o jogo cria (Marília Res., Portuguesa Res.) devem sair com
+nomes brasileiros, sem "Alamosi" nem "Mohamed". Se ainda aparecerem, a hipótese do bloco
+está errada.
 
 ## Quem sobra nos clubes de 2026
 
