@@ -51,6 +51,15 @@ class CentroTest(unittest.TestCase):
         panel = centro.panel_code(0x015C1700, flag)
         self.assertIn(bytes([0x81, 0x79, centro.PANEL_ID]) + centro.CENTRO_ID.to_bytes(4, "little"), panel)
 
+    def test_back_button_treats_centro_like_search(self) -> None:
+        base = 0x015C1700
+        code = centro.section_list_code(base)
+        self.assertTrue(code.startswith(bytes([0x3D]) + centro.CENTRO_ID.to_bytes(4, "little")))
+        hit = base + 11 + int.from_bytes(code[7:11], "little", signed=True)
+        self.assertEqual(hit, centro.SECTION_LIST_HIT)
+        self.assertEqual(base + len(code) + int.from_bytes(code[-4:], "little", signed=True),
+                         centro.SECTION_LIST_AT + 5)
+
 
 if __name__ == "__main__":
     unittest.main()

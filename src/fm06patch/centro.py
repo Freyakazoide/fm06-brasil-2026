@@ -57,6 +57,10 @@ MY_CLUB_YES, MY_CLUB_NO = 20, 1
 # painel em ecx+0x24, conferido na memória); no laço, com a marca, só passa quem é do clube do humano.
 PANEL_SETUP, PANEL_SETUP_OLD, PANEL_ID = 0x008451C0, bytes.fromhex("6AFF684032DD00"), 0x24
 CENTRO_ID = code("tcdv")
+# 0x5247A9: lista de seções que o jogo trata à parte (tcdp, tcip e as da busca: srpl, srst, srsc,
+# srsh) e que vão para 0x5247D7 (call 0xC6E3B0). Fora dela, voltar à Central com "Retornar" refazia
+# a tela inteira (dezenas de segundos). Desvio: tcdv entra na lista (conferido na memória).
+SECTION_LIST_AT, SECTION_LIST_OLD, SECTION_LIST_HIT = 0x005247A9, bytes.fromhex("3D70646374"), 0x005247D7
 KNOWN_TEST, KNOWN_TEST_OLD = 0x00A6B2C4, bytes.fromhex("F6460C01757F")   # test [esi+0xC],1; jne próximo
 KNOWN_KEEP, KNOWN_NEXT = 0x00A6B2CA, 0x00A6B349
 MY_CLUB_LABEL = b"Meu clube\0"
@@ -214,6 +218,16 @@ def prefilter_code(base: int, flag: int, judges: int, cache: int) -> bytes:
     return a.done()
 
 
+def section_list_code(base: int) -> bytes:
+    """Em 0x5247A9 (eax = seção): tcdv vai para o caminho das seções da busca; os outros seguem."""
+    a = _Code(base)
+    a.raw("3D").u32(CENTRO_ID)
+    a.raw(bytes.fromhex("0F84") + (SECTION_LIST_HIT - (base + len(a.code) + 6)).to_bytes(4, "little", signed=True))
+    a.raw(SECTION_LIST_OLD)
+    _jmp_to(a, SECTION_LIST_AT + len(SECTION_LIST_OLD))
+    return a.done()
+
+
 def build(hook_at: int, judges_at: int, helper_at: int, cache_at: int) -> list[tuple[int, bytes]]:
     return [(hook_at, hook_code(hook_at, judges_at, cache_at)),
             (judges_at, judges_code(judges_at, helper_at, cache_at)),
@@ -228,6 +242,7 @@ def exe_swaps(data: bytes):
     cache_at = SECTION_VA + 0xD5F0                                      # cache: 4 dwords zerados
     label_at, menu_at, text_at = SECTION_VA + 0xD600, SECTION_VA + 0xD640, SECTION_VA + 0xD6C0
     attribute_at = SECTION_VA + 0xD6E0
+    section_list_at = SECTION_VA + 0xD700
     parts = build(hook_at, judges_at, helper_at, cache_at)
     for (start, code_bytes), end in zip(parts, (judges_at, helper_at, cache_at)):
         if start + len(code_bytes) > end:
@@ -249,4 +264,9 @@ def exe_swaps(data: bytes):
         raise ValueError("centro: desvio de atributo passa de 0xD700")
     swaps.append(Swap(sec_off(attribute_at), bytes(len(attribute)), attribute))
     swaps.append(Swap(off(IS_ATTRIBUTE), IS_ATTRIBUTE_OLD, jump(IS_ATTRIBUTE, attribute_at) + bytes([0x90] * 4)))
+    section_list = section_list_code(section_list_at)
+    if section_list_at + len(section_list) > SECTION_VA + 0xD740:
+        raise ValueError("centro: desvio da lista de seções passa de 0xD740")
+    swaps.append(Swap(sec_off(section_list_at), bytes(len(section_list)), section_list))
+    swaps.append(Swap(off(SECTION_LIST_AT), SECTION_LIST_OLD, jump(SECTION_LIST_AT, section_list_at)))
     return tuple(swaps)
