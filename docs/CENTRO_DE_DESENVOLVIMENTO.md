@@ -534,3 +534,8 @@ Conferido nos XML da Aurora e do jogo:
   de um jogador, gravar globais novas: nome curto, número (`Psnu`) e arquivo da camisa do clube.
   Falta saber se a tela de jogador responde a códigos de pessoa (`Pnam`, `Psnu`) por `vfunc 0x20`,
   ou como chegar da tela à pessoa.
+- 02/11, teste com o jogo aberto (`tools/re/tela_viva.py`), na ficha do Otacílio: o objeto em
+  `[gerente+0x1B0]` (vtable `0xE916D0`) não respondeu a `scpc`, `bgnd`, `Pnam` nem `Psnu`, nem com
+  um valor criado pelo construtor do jogo (`0xC74A80`). O `vfunc 0x20` dele (`0x6AB770`) busca numa
+  lista de registros (`0xC60E00`), não é o getter de pessoa. **Sem efeito**: ainda falta achar de
+  onde a tela de jogador tira a pessoa.
