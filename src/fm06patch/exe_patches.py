@@ -135,6 +135,12 @@ def _banco_12_2026_swaps(data: bytes):
     return bench_swaps(data)
 
 
+def _fornada_swaps(data: bytes):
+    from .fornada import exe_swaps
+
+    return exe_swaps(data)
+
+
 def _orcamento_salarial_swaps(data: bytes):
     from .orcamentos import wage_swaps
 
@@ -551,6 +557,16 @@ PATCHES = {
             "orçamento e diretoria não mudam (eles usam o League Standard 2, que fica). Ver "
             "docs/analise/C7.md, rodadas 3 e 4.",
             (Swap(0x77C398 - 0x400000, bytes.fromhex("DC2D9817E300"), bytes.fromhex("DC2D68130A01")),),
+        ),
+        Patch(
+            "fornada_base",
+            "Fornada de base com data marcada (ficha C14): o método diário do REGENERATION_MANAGER "
+            "(0x007813B9, call 0x775950) passa por um desvio na .fm26 que, no dia de "
+            "data/modelos/fornada_config.csv e uma vez por ano, cria N garotos em cada clube de país "
+            "jogável com time de juniores e elenco até 100. Cada garoto recebe um dos 256 modelos de "
+            "data/modelos/fornada_tipos.csv (posições, pés, perfil e movimentos preferidos). Ver "
+            "src/fm06patch/fornada.py.",
+            build=_fornada_swaps,
         ),
         Patch(
             "exp_regra_rebaixa_a",

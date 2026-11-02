@@ -51,5 +51,27 @@ class FornadaTest(unittest.TestCase):
         self.assertEqual((a.playing, a.moves), (b.playing, b.moves))
 
 
+    def test_config_is_day_of_year_base_0(self) -> None:
+        day, per_club = fornada.load_config()
+        self.assertEqual((day, per_club), (5, 10))                 # 6/1, 10 por clube
+
+    def test_template_table_layout(self) -> None:
+        table = fornada.template_table(count=8)
+        self.assertEqual(len(table), 8 * fornada.RECORD)
+        first = table[:fornada.RECORD]
+        positions = first[:fornada.PLAYING_LAST - fornada.PLAYING_FIRST + 1][:25]   # 8..32
+        self.assertTrue(all(1 <= b <= 20 for b in positions))
+        self.assertEqual(first[79], 0)                             # livre entre o bloco e os movimentos
+
+    def test_hook_calls_original_and_checks_the_day(self) -> None:
+        base = 0x015BB000
+        code = fornada.hook_code(base, base + 0x80, base + 0x300, 5)
+        self.assertEqual(code[:7], bytes.fromhex("56 8BF1 FF742408"))
+        target = base + 7 + 5 + int.from_bytes(code[8:12], "little", signed=True)
+        self.assertEqual(target, fornada.DAILY_TARGET)             # a rotina original continua
+        self.assertIn(bytes.fromhex("3D05000000"), code)           # cmp eax, 5
+        self.assertTrue(code.endswith(bytes.fromhex("5E C20400")))
+
+
 if __name__ == "__main__":
     unittest.main()
