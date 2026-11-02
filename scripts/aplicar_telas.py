@@ -136,9 +136,9 @@ REPORT_HEADER = f"""
 				<layout class="stick_to_sides_attachment" alignment="top" inset="10"/>
 			</widget>
 			<!-- nome nas costas: o titulo da ficha (global titl, gravada pelo proprio jogo) -->
-			<widget class="text" id="cdnm" standard_spec="title, large" style="none" alignment="centre" width="140" height="30">
+			<widget class="text" id="cdnm" standard_spec="text" style="shadowed" alignment="centre" width="140" height="18">
 				<layout class="stick_to_sides_attachment" alignment="right" inset="30"/>
-				<layout class="stick_to_sides_attachment" alignment="top" inset="40"/>
+				<layout class="stick_to_sides_attachment" alignment="top" inset="30"/>
 				<attachment class="get_global_attachment" get_property="titl" set_property="text"/>
 			</widget>
 		</container>"""
