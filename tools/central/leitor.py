@@ -292,7 +292,7 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
     ability_judge, potential_judge = jogo.u32(JUDGES + 4), jogo.u32(JUDGES + 8)
     attributes = {a.fmm_index: a for a in lp.load_attributes().values()}
     teams: dict[int, str] = {}
-    out = []
+    out, principal = [], []                                     # principal: elenco do time de cima
     for r in people:
         if not r or jogo.u32(r) != PLAYER_VT:
             continue
@@ -304,7 +304,9 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
         day, year = struct.unpack("<HH", jogo.raw(r + 0x14 + lp.BORN_REL, 4))
         born = dt.date(year, 1, 1) + dt.timedelta(days=day)
         age = today.year - born.year - ((today.month, today.day) < (born.month, born.day))
-        if age > max_age:
+        kind = jogo.raw(team + 0x3C, 1)[0]
+        senior = age > max_age
+        if senior and kind != 0:
             continue
         ca, pa = jogo.u16(uid_at - 204), jogo.u16(uid_at - 202)
         values: dict[str, int] = {}
@@ -319,11 +321,18 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             projected = future(raw, attributes.values(), ca, seen_pa)
         familiarities = {short: values.get(name, 0) for short, name in POSITIONS.items()}
         positions = [short for short, value in familiarities.items() if value >= 15]
+        if kind == 0:
+            principal.append({"uid": uid, "nome": f"{jogo.text(jogo.u32(r + 44))} {jogo.text(jogo.u32(r + 48))}".strip(),
+                              "apelido": jogo.text(jogo.u32(r + 52)), "idade": age,
+                              "numero": contract(jogo, r).get("numero"), "hab": stars(uid, ca, ability_judge, 0x2545F491),
+                              "atributos": values, "familiaridades": familiarities, "posicoes": positions,
+                              "estatisticas": stats_or_empty(jogo, r)})
+        if senior:
+            continue
         left, right = values.get("Left foot", 0), values.get("Right foot", 0)
         foot = "ambos" if min(left, right) >= 15 else "esquerdo" if left > right else "direito"
         moral = jogo.raw(uid_at - 184, 1)[0]
         assistant = adjunto.analyse(values, projected) if values else {}
-        kind = jogo.raw(team + 0x3C, 1)[0]
         team_name = teams.setdefault(team, TEAM_KIND.get(kind, f"time tipo {kind}"))
         analysis = analitica.analyse_player(
             age=age, team=team_name,
@@ -347,7 +356,8 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             adjunto=assistant, analise=analysis))
     info = {"data": today.replace(year=today.year + YEAR_SHIFT).isoformat(), "time_uid": jogo.u32(my_team + 0x14),
             "time_humano": f"0x{my_team:08X}",
-            "clube": f"0x{my_club:08X}", "avaliador_hab": ability_judge, "avaliador_pot": potential_judge}
+            "clube": f"0x{my_club:08X}", "avaliador_hab": ability_judge, "avaliador_pot": potential_judge,
+            "principal": principal}
     return sorted(out, key=lambda j: (-j.pot, -j.hab, j.nome)), info
 
 

@@ -34,6 +34,11 @@ def _player(uid: int, name: str, age: int, team: str, position: str, hab: int, p
         "movimentos": ["Vem para dentro", "Tenta fazer passes longos"], "movimentos_idx": [39, 43],
         "atributos": values, "futuro": future, "nivel": "jogador de Série A",
         "adjunto": assistant, "analise": analysis,
+        "comparacao": adjunto.compare({"uid": uid, "adjunto": assistant, "atributos": values, "futuro": future},
+                                      [{"uid": 99, "nome": "Breno Lima", "apelido": "Breno", "idade": 27, "numero": 5, "hab": 5,
+                                        "atributos": {k: v + 2 for k, v in values.items()},
+                                        "familiaridades": {short: 18 for short in POSITIONS},
+                                        "estatisticas": {"jogos": 15, "gols": 3, "assistencias": 2, "nota": 6.67, "passes_pct": 76.8}}]),
     }
 
 

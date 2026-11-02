@@ -144,3 +144,33 @@ def analyse(atributos: dict[str, int], futuro: dict[str, int]) -> dict:
         "treino": [{"categoria": c, "atributos": [(n, v, g) for n, v, g, _ in sorted(items, key=lambda i: -i[3])[:3]]}
                    for c, items in focus],
     }
+
+
+def compare(young: dict, principal: list[dict]) -> dict | None:
+    """O jovem contra o dono da posição-alvo dele no time principal: entre os que têm a posição como
+    natural (15+), o que mais jogou (desempate: nota na posição)."""
+    target = (young.get("adjunto") or {}).get("alvo")
+    if target not in PROFILES:
+        return None
+    name, direct, weights = PROFILES[target]
+    rivals = [p for p in principal if p["uid"] != young["uid"] and p["familiaridades"].get(target, 0) >= 15]
+    if not rivals:
+        return {"pos": target, "funcao": name, "titular": None}
+    rival = max(rivals, key=lambda p: ((p.get("estatisticas") or {}).get("jogos", 0), score(p["atributos"], weights, target)))
+    keys = sorted(weights, key=lambda a: -weights[a])[:8]
+    rows = [{"nome": PT[a], "peso": weights[a], "jovem": young["atributos"].get(a, 0),
+             "futuro": young["futuro"].get(a, young["atributos"].get(a, 0)), "titular": rival["atributos"].get(a, 0)}
+            for a in keys]
+    now, future, theirs = (score(young["atributos"], weights, target), score(young["futuro"], weights, target),
+                           score(rival["atributos"], weights, target))
+    gap = round(theirs - now, 1)
+    if now >= theirs:
+        verdict = f"Já rende tanto quanto o titular como {name}. Merece minutos no principal."
+    elif future >= theirs:
+        verdict = f"Hoje está {gap} pontos abaixo, mas a projeção passa o titular ({future} contra {theirs})."
+    else:
+        verdict = f"Está {gap} pontos abaixo do titular e a projeção não alcança ({future} contra {theirs})."
+    return {"pos": target, "funcao": name, "nota_jovem": now, "nota_futuro": future, "nota_titular": theirs,
+            "veredito": verdict, "atributos": rows,
+            "titular": {k: rival.get(k) for k in ("uid", "nome", "apelido", "idade", "numero", "hab")}
+            | {"estatisticas": rival.get("estatisticas") or {}}}

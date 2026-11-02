@@ -26,6 +26,7 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 import leitor  # noqa: E402
 import habilidades  # noqa: E402
+import adjunto as adjunto_mod  # noqa: E402
 import demo  # noqa: E402
 
 ASSETS = ROOT / "data" / "brasil" / "telas" / "centro_desenvolvimento" / "assets"
@@ -183,6 +184,9 @@ class Central(BaseHTTPRequestHandler):
                     payload = {"schema_version": 2, "info": info, "jovens": [asdict(j) for j in lista],
                                "historico": remember(lista, info)}
                 payload = attach_skills(payload, self.demo)
+                principal = payload["info"].pop("principal", [])
+                for j in payload["jovens"] if principal else []:
+                    j["comparacao"] = adjunto_mod.compare(j, principal)
                 body = json.dumps(payload, ensure_ascii=False)
                 self.reply(200, body.encode("utf-8"), "application/json; charset=utf-8")
             except Exception as error:                                   # jogo fechado, etc.

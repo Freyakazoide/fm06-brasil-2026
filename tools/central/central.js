@@ -15,7 +15,7 @@ const AXES_GK = [["Reflexos",["Reflexes","One on one"]],["Mãos",["Handling","Pu
 const PITCH = {"GR":[50,92,"gk"],"DE":[16,74,"def"],"DC":[50,76,"def"],"DD":[84,74,"def"],"AE":[12,60,"def"],"AD":[88,60,"def"],"MD":[50,62,"mid"],"M E":[16,46,"mid"],"M C":[50,48,"mid"],"M D":[84,46,"mid"],"MA E":[18,30,"att"],"MA C":[50,32,"att"],"MA D":[82,30,"att"],"PL":[50,16,"att"]};
 const LINE_COLOR = {gk:"var(--gk)",def:"var(--def)",mid:"var(--mid-line)",att:"var(--att)"};
 const LINE_NAME = {gk:"GR",def:"DEF",mid:"MEI",att:"ATA"};
-const TABS = [["overview","Visão geral","dashboard"],["development","Desenvolvimento","trend"],["performance","Desempenho","chart"],["position","Posição e função","pitch"],["health","Saúde","pulse"],["contract","Contrato e carreira","briefcase"],["skills","Habilidades","bolt"],["staff","Comissão","users"]];
+const TABS = [["overview","Visão geral","dashboard"],["development","Desenvolvimento","trend"],["performance","Desempenho","chart"],["position","Posição e função","pitch"],["compare","Comparação","users"],["health","Saúde","pulse"],["contract","Contrato e carreira","briefcase"],["skills","Habilidades","bolt"],["staff","Comissão","users"]];
 const ICONS = {
   dashboard: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="4"/><rect x="14" y="11" width="7" height="10"/><rect x="3" y="14" width="7" height="7"/>',
   trend: '<path d="M3 18l5-5 4 3 8-10"/><path d="M15 6h5v5"/>',
@@ -249,11 +249,11 @@ function performanceTab(j) {
   if (!Object.keys(st).length) return `<div class="unavailable"><b>Sem estatísticas nesta atualização</b>Abra o jogo e clique em Atualizar do jogo.</div>`;
   const rating = st.nota, ratingNote = rating === null ? "sem jogos" : rating >= 7 ? "muito bem" : rating >= 6.5 ? "bem" : rating >= 6 ? "regular" : "abaixo";
   const per90 = st.jogos ? ` · ${(st.gols / Math.max(1, st.jogos)).toFixed(2)} por jogo` : "";
-  return `<div class="metric-grid">${metric("Jogos", `${st.jogos}<small> (${st.banco})</small>`, "titular (entrou do banco)")}${metric("Gols", st.gols, `na temporada${per90}`)}${metric("Assistências", st.assistencias, "na temporada")}${metric("Nota média", rating === null ? "—" : rating.toFixed(2).replace(".", ","), ratingNote)}</div>
+  return `<div class="metric-grid">${metric("Jogos", `${st.jogos}<small> (${st.banco})</small>`, "oficiais · titular (banco)")}${metric("Gols", st.gols, `na temporada${per90}`)}${metric("Assistências", st.assistencias, "na temporada")}${metric("Nota média", rating === null ? "—" : rating.toFixed(2).replace(".", ","), ratingNote)}</div>
   <div class="grid-2"><section class="panel">${heading("Rendimento","chart",3)}${pctBar("Passes certos", st.passes_pct, "var(--info)")}${pctBar("Chutes no alvo", st.chutes_alvo_pct, "var(--accent)")}${pctBar("Desarmes por jogo", st.desarmes_jogo, "var(--positive)", "")}
     <div class="perf-badges"><span>${icon("star",13)} Melhor em campo <b>${st.melhor_em_campo}</b></span><span class="card-y">Amarelos <b>${st.amarelos}</b></span><span class="card-r">Vermelhos <b>${st.vermelhos}</b></span></div>
-    <p class="raw-note">Temporada atual, todas as competições (mesmos números das listas do jogo).</p></section>
-  <section class="panel">${heading("Leitura da comissão","info",3)}<div class="callout" style="margin-top:0">${!games ? `${esc(short(j))} ainda não jogou nesta temporada. Para evoluir, ele precisa de minutos — Sub-20, time B ou empréstimo.` : rating >= 7 ? `Está rendendo acima do esperado: ${games} jogos com nota ${rating.toFixed(2).replace(".", ",")}. Vale ganhar mais espaço.` : rating >= 6.5 ? `Rendimento sólido nos ${games} jogos. Continue dando minutos.` : `Rendimento ainda irregular (${rating.toFixed(2).replace(".", ",")}). Mais treino e jogos em nível menor podem ajudar.`}</div>
+    <p class="raw-note">Temporada atual, só jogos <b>oficiais</b> (liga, copa, continental). Jogos de Sub-20 e amistosos são "não oficiais" no FM06 e ainda não entram aqui.</p></section>
+  <section class="panel">${heading("Leitura da comissão","info",3)}<div class="callout" style="margin-top:0">${!games && j.time !== "Principal" ? `${esc(short(j))} não tem jogos <b>oficiais</b> nesta temporada. Os jogos do ${esc(j.time)} contam como <b>não oficiais</b> no FM06 e ainda não são lidos pela Central — veja em Estatísticas, na ficha do jogo.` : !games ? `${esc(short(j))} ainda não jogou nesta temporada. Para evoluir, ele precisa de minutos — Sub-20, time B ou empréstimo.` : rating >= 7 ? `Está rendendo acima do esperado: ${games} jogos com nota ${rating.toFixed(2).replace(".", ",")}. Vale ganhar mais espaço.` : rating >= 6.5 ? `Rendimento sólido nos ${games} jogos. Continue dando minutos.` : `Rendimento ainda irregular (${rating.toFixed(2).replace(".", ",")}). Mais treino e jogos em nível menor podem ajudar.`}</div>
     <div class="metric-grid compact" style="margin-top:10px">${metric("Seleção", intl.jogos ?? 0, `${intl.gols ?? 0} gols`)}${metric("Sub-21", intl.sub21_jogos ?? 0, `${intl.sub21_gols ?? 0} gols`)}</div></section></div>`;
 }
 function familiarityLabel(v){return v>=15?"Natural":v>=12?"Competente":v>=8?"Familiar":v>=5?"Aprendendo":"Inadequado"}
@@ -264,6 +264,24 @@ function positionTab(j) {
 }
 function pct(raw) { return raw > 0 && raw <= 10000 ? Math.round(raw / 100) : null; }
 function signed16(raw) { return raw > 32767 ? raw - 65536 : raw; }
+function compareTab(j) {
+  const c = j.comparacao;
+  if (!c) return `<div class="unavailable"><b>Sem comparação</b>Não há posição-alvo definida para ${esc(short(j))}.</div>`;
+  if (!c.titular) return `<div class="callout">Ninguém do time principal joga naturalmente como ${esc(c.funcao)} (${esc(c.pos)}). A vaga está aberta para ${esc(short(j))}.</div>`;
+  const t = c.titular, ts = t.estatisticas || {}, ys = j.estatisticas || {}, tName = t.apelido || t.nome.split(" ").pop();
+  const sector = (PITCH[c.pos] || [0, 0, "mid"])[2];
+  const side = (who, name, num, sub) => `<div class="vs-side">${spriteSVG({sector, uid: who, run: false, ring: who === j.uid, size: 44})}<b>${esc(name)}${num ? ` <small>nº ${num}</small>` : ""}</b><small>${sub}</small></div>`;
+  const scoreBar = (label, value, colour) => `<div class="gauge"><span>${label}</span>${bar(value, 20, colour)}<b>${value.toFixed(1).replace(".", ",")}</b></div>`;
+  const rows = c.atributos.map(a => `<div class="vs-row"><span>${esc(a.nome)}${a.peso >= 3 ? ' <i class="key">chave</i>' : ""}</span>
+      <div class="vs-track"><i class="fut" style="width:${a.futuro * 5}%"></i><i class="now" style="width:${a.jovem * 5}%"></i><em style="left:calc(${a.titular * 5}% - 1px)"></em></div>
+      <b class="${a.jovem >= a.titular ? "up" : "down"}">${a.jovem}<small> × ${a.titular}</small></b></div>`).join("");
+  const stat = (label, a, b) => `<div class="vs-stat"><span>${label}</span><b>${a ?? "—"}</b><b>${b ?? "—"}</b></div>`;
+  const fmt = v => v === null || v === undefined ? "—" : Number(v).toFixed(2).replace(".", ",");
+  return `<section class="panel vs-head">${side(j.uid, short(j), j.numero, `${j.idade} anos · ${esc(j.time)}`)}<div class="vs-mid"><span class="vs-badge">VS</span><small>${esc(c.funcao)} · ${esc(c.pos)}</small></div>${side(t.uid, tName, t.numero, `${t.idade} anos · titular do Principal`)}</section>
+    <div class="grid-2"><section class="panel">${heading("Nota na posição","star",3)}${scoreBar(`${esc(short(j))} hoje`, c.nota_jovem, "var(--info)")}${scoreBar(`${esc(short(j))} no futuro`, c.nota_futuro, "var(--accent)")}${scoreBar(`${esc(tName)} (titular)`, c.nota_titular, "var(--positive)")}<div class="callout" style="margin-top:10px">${esc(c.veredito)}</div></section>
+    <section class="panel">${heading("Temporada (jogos oficiais)","chart",3)}<div class="vs-stat head"><span></span><b>${esc(short(j))}</b><b>${esc(tName)}</b></div>${stat("Jogos", ys.jogos, ts.jogos)}${stat("Gols", ys.gols, ts.gols)}${stat("Assistências", ys.assistencias, ts.assistencias)}${stat("Nota média", fmt(ys.nota), fmt(ts.nota))}${stat("Passes certos", ys.passes_pct === null || ys.passes_pct === undefined ? "—" : `${Math.round(ys.passes_pct)}%`, ts.passes_pct === null || ts.passes_pct === undefined ? "—" : `${Math.round(ts.passes_pct)}%`)}</section></div>
+    <section class="panel" style="margin-top:9px">${heading("Atributos que decidem a posição","target",3)}<div class="legend" style="margin:0 0 8px"><span><i style="background:var(--info)"></i>${esc(short(j))} hoje</span><span><i style="background:var(--accent);opacity:.45"></i>futuro</span><span><i style="background:#fff;width:2px"></i>${esc(tName)}</span></div>${rows}</section>`;
+}
 function healthTab(j) {
   const moral=clamp(j.moral,0,20), cond=pct(j.condicao_raw), sharp=pct(j.ritmo_raw), tired=signed16(j.cansaco_raw);
   const gauge=(label,value,colour)=>`<div class="gauge"><span>${label}</span>${bar(value??0,100,colour)}<b>${value===null?"—":`${value}%`}</b></div>`;
@@ -329,7 +347,7 @@ function staffTab(j) {
   const ah=j.analise.confianca_habilidade, ap=j.analise.confianca_potencial;
   return `<div class="metric-grid">${metric("Confiança habilidade",esc(ah.nivel),`avaliador ${ah.avaliador}/20`)}${metric("Confiança potencial",esc(ap.nivel),`avaliador ${ap.avaliador}/20`)}${metric("Habilidade",stars(j.hab),"opinião da comissão")}${metric("Potencial",stars(j.pot),"opinião da comissão")}</div><div class="grid-2"><section class="panel"><h2>Parecer do adjunto</h2><div class="callout" style="margin-top:0">${esc(j.adjunto?.sugestao||"Sem parecer disponível.")}</div><p class="raw-note">${esc(j.analise.metodologia)}</p></section><section class="panel"><h2>Movimentos preferidos</h2>${j.movimentos.length?`<div class="tag-row">${j.movimentos.map(m=>`<span class="tag">${esc(m)}</span>`).join("")}</div>`:'<div class="empty">Nenhum movimento preferido registrado.</div>'}</section></div>`;
 }
-function renderTab(j) { return ({overview:overviewTab,development:developmentTab,performance:performanceTab,position:positionTab,health:healthTab,contract:contractTab,skills:skillsTab,staff:staffTab}[ui.tab]||overviewTab)(j); }
+function renderTab(j) { return ({overview:overviewTab,development:developmentTab,performance:performanceTab,position:positionTab,compare:compareTab,health:healthTab,contract:contractTab,skills:skillsTab,staff:staffTab}[ui.tab]||overviewTab)(j); }
 function renderWorkspace() {
   if(ui.academy)return renderAcademy();
   const j=data.jovens.find(p=>p.uid===ui.selectedUid); if(!j){ui.academy=true;return renderAcademy()}

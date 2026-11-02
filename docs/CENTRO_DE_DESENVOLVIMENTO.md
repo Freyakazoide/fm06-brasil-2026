@@ -632,3 +632,13 @@ Conferido nos XML da Aurora e do jogo:
   de 28 u16 (jogos, gols, pênaltis, assist., vitórias, MoM, cartões, passes, fintas, cabeceios, faltas,
   chutes, minutos 1119, soma das notas 94 e jogos com nota) só apareceu em cópias da tela.
   Treinador adjunto: `leitor.assistant()` (Pcjo = 20, maior Npja+Npjp): Henrique Pacheco 12/13.
+- 02/11, **pendente: jogos não oficiais** (Sub-20, amistosos). As propriedades `Po*` só contam
+  oficiais (Geraldo: 0, mas a ficha mostra "Não Oficiais 15 (7), 1 gol, nota 6,23"). Testados sem
+  sucesso: famílias `P?sa/P?su/P?ap/P?gl/P?av/P?mo/P?as`; `Ppsa` é uma lista de 15 valores genéricos.
+  Registros crus de 28 u16 de vários jogadores existem em pares no heap (ex.: 0x1151f33c), mas nenhum
+  bateu com o Geraldo e não se achou o dono. A página avisa que esses jogos ainda não são lidos.
+- 02/11, **comparação com o titular** (`adjunto.compare`): o leitor junta o elenco do Principal
+  (`info["principal"]`, 36 jogadores no save); o titular da posição-alvo é quem a tem como natural e
+  mais jogou. Nota na posição agora/futuro/titular, veredito, 8 atributos-chave e temporada lado a lado.
+  Ex.: Otacílio, Geraldo e Diogo (volantes) contra Breno (nº 5); Guedes (ala esquerdo) contra Arthur
+  Henrique (nº 6).
