@@ -94,12 +94,13 @@ def call_code(func: int, ecx: str | None, args: list[int]) -> bytes:
     return bytes(code)
 
 
-def youth_code(club_uid: int, nation_uid: int) -> bytes:
+def youth_code(club_uid: int, nation_uid: int, playing: dict[int, int] | None = None) -> bytes:
     """Um garoto novo no clube, como o REGENERATION_MANAGER faz (ficha C14): molde na pilha
     (0xA47930), bloco de atributos novo (PLAYING_DATA, 0x70 bytes, 0x7B9670) acrescentado à
     tabela do banco ([0x14EAA6C]) com o índice em +0x18, molde+0xAC = bloco (0xA3EF40), criação
     0x77BEF0(molde, 0, nação) e contrato 0x779B40(garoto+0x278(), clube). Devolve o garoto, ou
-    1/2/3/4 se a nação, o clube, a alocação ou a criação falhar."""
+    1/2/3/4 se a nação, o clube, a alocação ou a criação falhar. ``playing``: {deslocamento a
+    partir do UID do bloco: byte} gravados no bloco antes da criação (posições, pés)."""
     def mov_eax_call(target: int) -> bytes:
         return b"\xB8" + struct.pack("<I", target) + b"\xFF\xD0"
 
@@ -119,6 +120,8 @@ def youth_code(club_uid: int, nation_uid: int) -> bytes:
     c += b"\x6A\x70" + mov_eax_call(0xA3BB00) + b"\x83\xC4\x04\x8B\xF0"          # esi = new(0x70)
     c += b"\x85\xF6\x0F\x84" + b"\0\0\0\0"; checks.append((len(c) - 4, 3))
     c += b"\x8B\xCE" + mov_eax_call(0x7B9670)                                    # PLAYING_DATA()
+    for rel, value in sorted((playing or {}).items()):                          # mov byte [esi+d], v
+        c += b"\xC6\x46" + bytes([0x14 + rel, value & 0xFF])
     c += b"\x8B\x15" + struct.pack("<I", 0x14EAA6C) + bytes.fromhex("8B4A04 8B01 56 FF10 894618")
     c += b"\x56\x8D\x8D\x00\xFC\xFF\xFF" + mov_eax_call(0xA3EF40)                # molde+0xAC = bloco
     c += b"\x53\x6A\x00\x8D\x85\x00\xFC\xFF\xFF\x50\xB9" + struct.pack("<I", 0x132C108)
@@ -142,6 +145,26 @@ def youth_code(club_uid: int, nation_uid: int) -> bytes:
     return bytes(c)
 
 
+# deslocamentos no bloco PLAYING_DATA a partir do UID (reverse/fmm/playing_attributes_layout.json):
+# posições gerais 8–16, lados 17–19, detalhadas 20–32 (1 a 20, direto); pés 57/58 (5 × nota + 2)
+POSITIONS = range(8, 33)
+LEFT_FOOT, RIGHT_FOOT = 57, 58
+
+
+def _profile(ratings: dict[int, int], left: int, right: int) -> dict[int, int]:
+    out = {rel: 1 for rel in POSITIONS}
+    out.update(ratings)
+    out[LEFT_FOOT], out[RIGHT_FOOT] = 5 * left + 2, 5 * right + 2
+    return out
+
+
+PROFILES = {
+    # ponta direita: MO 20, atacante 14, meia 13; direita 20, esquerda 15; MOD 20, MOE 15, AC 14, MD 13
+    "ponta": _profile({13: 20, 14: 14, 12: 13, 17: 20, 18: 15, 19: 10, 29: 20, 27: 15, 30: 14, 26: 13},
+                      left=10, right=18),
+}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -153,6 +176,7 @@ def main() -> None:
     g.add_argument("clube", type=int)
     g.add_argument("--nacao", type=int, default=1651)
     g.add_argument("--mostrar", action="store_true", help="só mostra o código")
+    g.add_argument("--perfil", choices=sorted(PROFILES), help="posições e pés antes da criação")
     r = sub.add_parser("ler")
     r.add_argument("addr", type=lambda s: int(s, 0))
     r.add_argument("size", type=lambda s: int(s, 0))
@@ -160,12 +184,12 @@ def main() -> None:
     if a.cmd == "garoto" and a.mostrar:
         sys.path.insert(0, str(ROOT / "workspace" / "pydeps"))
         from capstone import CS_ARCH_X86, CS_MODE_32, Cs
-        for i in Cs(CS_ARCH_X86, CS_MODE_32).disasm(youth_code(a.clube, a.nacao), 0):
+        for i in Cs(CS_ARCH_X86, CS_MODE_32).disasm(youth_code(a.clube, a.nacao, PROFILES.get(a.perfil)), 0):
             print(f"{i.address:04x}  {i.mnemonic} {i.op_str}")
         return
     _, handle = game()
     if a.cmd == "garoto":
-        result = run(handle, youth_code(a.clube, a.nacao), timeout_ms=30_000)
+        result = run(handle, youth_code(a.clube, a.nacao, PROFILES.get(a.perfil)), timeout_ms=30_000)
         print({1: "nação não achada", 2: "clube não achado", 3: "alocação falhou",
                4: "criação falhou"}.get(result, f"garoto criado: 0x{result:08X}"))
         return
