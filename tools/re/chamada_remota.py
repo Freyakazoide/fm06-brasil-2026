@@ -94,13 +94,15 @@ def call_code(func: int, ecx: str | None, args: list[int]) -> bytes:
     return bytes(code)
 
 
-def youth_code(club_uid: int, nation_uid: int, playing: dict[int, int] | None = None) -> bytes:
+def youth_code(club_uid: int, nation_uid: int, playing: dict[int, int] | None = None,
+               moves: bytes = b"") -> bytes:
     """Um garoto novo no clube, como o REGENERATION_MANAGER faz (ficha C14): molde na pilha
     (0xA47930), bloco de atributos novo (PLAYING_DATA, 0x70 bytes, 0x7B9670) acrescentado à
     tabela do banco ([0x14EAA6C]) com o índice em +0x18, molde+0xAC = bloco (0xA3EF40), criação
     0x77BEF0(molde, 0, nação) e contrato 0x779B40(garoto+0x278(), clube). Devolve o garoto, ou
     1/2/3/4 se a nação, o clube, a alocação ou a criação falhar. ``playing``: {deslocamento a
-    partir do UID do bloco: byte} gravados no bloco antes da criação (posições, pés)."""
+    partir do UID do bloco: byte} gravados no bloco antes da criação (posições, pés, perfil);
+    ``moves``: os 48 bits de movimentos preferidos, somados ao jogador depois (UID − 48)."""
     def mov_eax_call(target: int) -> bytes:
         return b"\xB8" + struct.pack("<I", target) + b"\xFF\xD0"
 
@@ -127,6 +129,9 @@ def youth_code(club_uid: int, nation_uid: int, playing: dict[int, int] | None = 
     c += b"\x53\x6A\x00\x8D\x85\x00\xFC\xFF\xFF\x50\xB9" + struct.pack("<I", 0x132C108)
     c += mov_eax_call(0x77BEF0) + b"\x8B\xF0"                                    # esi = garoto
     c += b"\x85\xF6\x0F\x84" + b"\0\0\0\0"; checks.append((len(c) - 4, 4))
+    for i, bits in enumerate(moves):                                             # or byte [esi+d], b
+        if bits:
+            c += b"\x80\x4E" + bytes([(0x14 - 48 + i) & 0xFF, bits])
     c += b"\x57\x8B\x16\x8B\xCE\xFF\x92" + struct.pack("<I", 0x278)              # push clube ; +0x278()
     c += b"\x50\xB9" + struct.pack("<I", 0x132C108) + mov_eax_call(0x779B40)     # contrato
     c += b"\x8B\xC6\xEB\x00"; ok_jump = len(c) - 1                               # eax = garoto
@@ -165,6 +170,21 @@ PROFILES = {
 }
 
 
+def describe(handle, player: int) -> str:
+    """Nome, UID, CA e PA do jogador (ACTUAL_PLAYER; mapa na ficha C14)."""
+    u = lambda at: struct.unpack("<I", read_memory(handle, at, 4))[0]
+
+    def text(person_name: int) -> str:
+        if not person_name:
+            return ""
+        raw = read_memory(handle, u(u(person_name + 0x24) + 8), 64) or b""
+        return raw.decode("utf-16-le", "replace").split("\x00")[0]
+
+    ca, pa = struct.unpack("<HH", read_memory(handle, player + 0x14 - 204, 4))
+    return (f"{text(u(player + 44))} {text(u(player + 48))} (\"{text(u(player + 52))}\"), "
+            f"UID {u(player + 0x14)}, CA {ca}, PA {pa}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -177,6 +197,15 @@ def main() -> None:
     g.add_argument("--nacao", type=int, default=1651)
     g.add_argument("--mostrar", action="store_true", help="só mostra o código")
     g.add_argument("--perfil", choices=sorted(PROFILES), help="posições e pés antes da criação")
+    t = sub.add_parser("tipo", help="garoto de um tipo da data/modelos/fornada_tipos.csv")
+    t.add_argument("clube", type=int)
+    t.add_argument("tipo", nargs="?", help="nome do tipo (sem: sorteado pelo peso)")
+    t.add_argument("--semente", type=int, default=None)
+    t.add_argument("--nacao", type=int, default=1651)
+    v = sub.add_parser("vitrine", help="um garoto de cada tipo no clube")
+    v.add_argument("clube", type=int)
+    v.add_argument("--semente", type=int, default=1)
+    v.add_argument("--nacao", type=int, default=1651)
     r = sub.add_parser("ler")
     r.add_argument("addr", type=lambda s: int(s, 0))
     r.add_argument("size", type=lambda s: int(s, 0))
@@ -192,6 +221,27 @@ def main() -> None:
         result = run(handle, youth_code(a.clube, a.nacao, PROFILES.get(a.perfil)), timeout_ms=30_000)
         print({1: "nação não achada", 2: "clube não achado", 3: "alocação falhou",
                4: "criação falhou"}.get(result, f"garoto criado: 0x{result:08X}"))
+        return
+    if a.cmd in ("tipo", "vitrine"):
+        import random
+        sys.path.insert(0, str(ROOT / "src"))
+        from fm06patch import fornada
+        types = fornada.load_types()
+        rng = random.Random(a.semente)
+        if a.cmd == "vitrine":
+            chosen = types
+        elif a.tipo:
+            chosen = [next(k for k in types if fornada._norm(k.name) == fornada._norm(a.tipo))]
+        else:
+            chosen = [fornada.pick(types, rng)]
+        for kind in chosen:
+            model = fornada.build(kind, rng)
+            result = run(handle, youth_code(a.clube, a.nacao, model.playing, model.moves), timeout_ms=30_000)
+            if result < 16:
+                print(f"{kind.name}: falhou ({result})")
+                continue
+            print(f"{kind.name:26} pé {model.foot}  traits: {', '.join(model.traits) or '-':60} "
+                  f"-> {describe(handle, result)}")
         return
     if a.cmd == "ler":
         data = read_memory(handle, a.addr, a.size)
