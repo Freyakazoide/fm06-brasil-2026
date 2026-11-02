@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Centro de Desenvolvimento</title>
+<style>
+  :root {
+    --bg: #101410; --panel: #1a201a; --panel2: #222a22; --line: #2f3a2f;
+    --text: #e8ece6; --muted: #9aa69a; --accent: #f2c230; --green: #3fae5a;
+    --low: #c0533f; --mid: #d9a33a; --high: #59b86b; --top: #8fd18a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: radial-gradient(ellipse at top, #1c2a1c, var(--bg) 60%); color: var(--text);
+         font: 14px/1.4 "Segoe UI", Tahoma, sans-serif; min-height: 100vh; }
+  header { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+  header img { width: 52px; height: 52px; object-fit: contain; }
+  header h1 { margin: 0; font-size: 22px; letter-spacing: .3px; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  header .right { margin-left: auto; text-align: right; color: var(--muted); font-size: 12px; }
+  button { background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 6px;
+           padding: 6px 12px; cursor: pointer; font: inherit; }
+  button:hover { border-color: var(--accent); }
+  main { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 16px; padding: 16px 20px; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+  .list { display: flex; flex-direction: column; gap: 6px; }
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+  .chip { padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); cursor: pointer; font-size: 12px; }
+  .chip.on { color: #111; background: var(--accent); border-color: var(--accent); }
+  .card { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 9px 12px; border-radius: 8px;
+          background: var(--panel); border: 1px solid transparent; cursor: pointer; }
+  .card:hover { border-color: var(--line); }
+  .card.sel { border-color: var(--accent); background: var(--panel2); }
+  .card .nm { font-weight: 600; }
+  .card .meta { color: var(--muted); font-size: 12px; }
+  .stars { color: var(--accent); letter-spacing: 1px; white-space: nowrap; }
+  .stars .off { color: #4a554a; }
+  .stars .half { background: linear-gradient(90deg, var(--accent) 50%, #4a554a 50%); -webkit-background-clip: text;
+                 background-clip: text; color: transparent; }
+  .detail { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; min-height: 400px; }
+  .top { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: center; }
+  @media (max-width: 600px) { .top { grid-template-columns: 1fr; } }
+  .shirt { position: relative; width: 220px; height: 220px; }
+  .shirt img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(0,0,0,.5)); }
+  .shirt svg { position: absolute; inset: 0; }
+  .shirt text { font: 800 17px "Segoe UI", sans-serif; letter-spacing: 1.5px; fill: #fff; stroke: #000; stroke-width: 3px;
+                paint-order: stroke; text-transform: uppercase; }
+  .who h2 { margin: 0 0 2px; font-size: 26px; }
+  .who .meta { color: var(--muted); }
+  .pos { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
+  .pos span { background: #24402a; color: #bfe8c6; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .grades { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; align-items: center; margin-top: 8px; }
+  .grades .big { font-size: 22px; }
+  .verdict { margin-top: 12px; padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--panel2);
+             border-radius: 0 8px 8px 0; color: #f3e6b8; }
+  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 18px; }
+  .group h3 { margin: 0 0 8px; font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: .6px; }
+  .attr { display: grid; grid-template-columns: 1fr 90px 22px; gap: 8px; align-items: center; font-size: 13px; padding: 1px 0; }
+  .bar { height: 6px; background: #2b332b; border-radius: 3px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 3px; }
+  .attr b { text-align: right; font-variant-numeric: tabular-nums; }
+  .empty, .error { color: var(--muted); padding: 40px; text-align: center; }
+  .error { color: #f0a090; }
+  .foot { color: var(--muted); font-size: 12px; padding: 0 20px 16px; }
+</style>
+</head>
+<body>
+<header>
+  <img src="/emblema.png" alt="">
+  <div>
+    <h1>Centro de Desenvolvimento</h1>
+    <div class="sub">Relatório da comissão técnica sobre os jovens do clube</div>
+  </div>
+  <div class="right">
+    <div id="when">—</div>
+    <button id="reload">Atualizar do jogo</button>
+  </div>
+</header>
+<main>
+  <section class="list">
+    <div class="filters" id="filters"></div>
+    <div id="cards"></div>
+  </section>
+  <section class="detail" id="detail"><div class="empty">Escolha um jogador.</div></section>
+</main>
+<div class="foot">Lido ao vivo da memória do jogo (só leitura). As estrelas são a opinião da comissão:
+quanto melhor o avaliador, menor o erro.</div>
+
+<script>
+const GROUPS = {
+  "Técnicos": [["Heading","Cabeceio"],["Corner","Cantos"],["Long Shots","Chutes Longe"],["Crossing","Cruzamentos"],
+    ["Tackling","Desarme"],["Finishing","Finalização"],["Dribbling","Finta"],["Throwing","Lançam. Longos"],
+    ["Set Pieces","Livres"],["Marking","Marcação"],["Penalty","Penáltis"],["Passing","Passe"],
+    ["First Touch","Primeiro Toque"],["Technique","Técnica"]],
+  "Mentais": [["Aggression","Agressividade"],["Anticipation","Antecipação"],["Bravery","Bravura"],
+    ["Composure","Compostura"],["Concentration","Concentração"],["Creativity","Criatividade"],["Decision","Decisões"],
+    ["Determination","Determinação"],["Influence","Influência"],["Flair","Instinto"],["Positioning","Posicionamento"],
+    ["Off the ball","Sem Bola"],["Team work","Trabalho Equipe"],["Work rate","Índice Trabalho"]],
+  "Físicos": [["Acceleration","Aceleração"],["Agility","Agilidade"],["Balance","Balance"],["Natural fit.","Cond. Fís. Natural"],
+    ["Strength","Força"],["Jumping","Impulsão"],["Stamina","Resistência"],["Pace","Velocidade"]],
+};
+const KEEPER = [["Handling","Jogo de Mãos"],["Reflexes","Reflexos"],["One on one","Um contra Um"],["Aer ability","Alcance Aéreo"],
+  ["Cmd of area","Comando de Área"],["Communiction","Comunicação"],["Kicking","Pontapé"],["Rushing out","Saídas"],
+  ["Punch","Socar"],["Eccentricity","Excentricidade"],["Long throws","Lançamentos"]];
+
+let data = null, selected = null, team = "Todos";
+
+function stars(v) {                       // 0..10 -> 5 estrelas com meias
+  let s = "";
+  for (let i = 1; i <= 5; i++) {
+    const n = v - (i - 1) * 2;
+    s += n >= 2 ? "★" : n === 1 ? '<span class="half">★</span>' : '<span class="off">★</span>';
+  }
+  return `<span class="stars" title="${v}/10">${s}</span>`;
+}
+const color = v => v >= 16 ? "var(--top)" : v >= 12 ? "var(--high)" : v >= 8 ? "var(--mid)" : "var(--low)";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function verdict(j) {
+  if (j.pot >= 9) return "Joia da base: a comissão vê nível de seleção. Prioridade total no desenvolvimento.";
+  if (j.pot >= 7) return "Potencial claro para o time principal. Precisa de treino e minutos no Sub-20.";
+  if (j.pot >= 5) return "Pode virar jogador útil de elenco. Acompanhar a evolução nos próximos meses.";
+  if (j.pot >= 3) return "Potencial limitado na visão da comissão. Pode servir em divisões menores.";
+  return "A comissão não vê futuro no clube por enquanto.";
+}
+
+function renderList() {
+  const teams = ["Todos", ...new Set(data.jovens.map(j => j.time))];
+  document.getElementById("filters").innerHTML = teams.map(t =>
+    `<span class="chip ${t === team ? "on" : ""}" data-t="${esc(t)}">${esc(t)}</span>`).join("");
+  const list = data.jovens.filter(j => team === "Todos" || j.time === team);
+  document.getElementById("cards").innerHTML = list.length ? list.map(j => `
+    <div class="card ${selected === j.uid ? "sel" : ""}" data-uid="${j.uid}">
+      <div class="nm">${esc(j.apelido || j.nome)}</div><div>${stars(j.pot)}</div>
+      <div class="meta">${j.idade} anos · ${esc(j.time)} · ${esc(j.posicoes.join(", ") || "—")}</div>
+      <div class="meta">Hab. ${j.hab} · Pot. ${j.pot}</div>
+    </div>`).join("") : '<div class="empty">Nenhum jovem.</div>';
+}
+
+function renderDetail() {
+  const j = data.jovens.find(x => x.uid === selected);
+  if (!j) { document.getElementById("detail").innerHTML = '<div class="empty">Escolha um jogador.</div>'; return; }
+  const keeper = j.posicoes.includes("GR");
+  const groups = keeper ? {"Goleiro": KEEPER, "Mentais": GROUPS["Mentais"], "Físicos": GROUPS["Físicos"]} : GROUPS;
+  const name = (j.apelido || j.nome.split(" ").pop()).toUpperCase();
+  document.getElementById("detail").innerHTML = `
+    <div class="top">
+      <div class="shirt">
+        <img src="/camisa.png" alt="">
+        <svg viewBox="0 0 220 220"><path id="arc" d="M 52 74 Q 110 58 168 74" fill="none"/>
+          <text><textPath href="#arc" startOffset="50%" text-anchor="middle">${esc(name)}</textPath></text></svg>
+      </div>
+      <div class="who">
+        <h2>${esc(j.apelido || j.nome)}</h2>
+        <div class="meta">${esc(j.nome)} · ${j.idade} anos (${j.nascimento.split("-").reverse().join("/")}) · ${esc(j.time)}</div>
+        <div class="pos">${j.posicoes.map(p => `<span>${esc(p)}</span>`).join("") || "<span>sem posição</span>"}</div>
+        <div class="grades">
+          <span>Habilidade atual</span><span class="big">${stars(j.hab)}</span>
+          <span>Potencial</span><span class="big">${stars(j.pot)}</span>
+        </div>
+        <div class="verdict">${verdict(j)}</div>
+      </div>
+    </div>
+    <div class="groups">${Object.entries(groups).map(([title, attrs]) => `
+      <div class="group"><h3>${title}</h3>${attrs.map(([key, label]) => {
+        const v = j.atributos[key] ?? 0;
+        return `<div class="attr"><span>${label}</span><div class="bar"><i style="width:${v * 5}%;background:${color(v)}"></i></div><b>${v}</b></div>`;
+      }).join("")}</div>`).join("")}
+    </div>`;
+}
+
+async function load() {
+  document.getElementById("when").textContent = "lendo o jogo…";
+  try {
+    const r = await fetch("/dados");
+    const body = await r.json();
+    if (!r.ok) throw new Error(body.erro || r.status);
+    data = body;
+    if (!data.jovens.some(j => j.uid === selected)) selected = data.jovens[0]?.uid ?? null;
+    const i = data.info;
+    document.getElementById("when").textContent =
+      `${i.data.split("-").reverse().join("/")} · avaliadores ${i.avaliador_hab}/${i.avaliador_pot}`;
+    renderList(); renderDetail();
+  } catch (e) {
+    document.getElementById("when").textContent = "sem conexão com o jogo";
+    document.getElementById("detail").innerHTML =
+      `<div class="error">Não consegui ler o jogo: ${esc(e.message)}.<br>Abra o fm_brasil.exe e clique em Atualizar.</div>`;
+  }
+}
+
+document.getElementById("cards").addEventListener("click", e => {
+  const c = e.target.closest(".card"); if (!c) return;
+  selected = Number(c.dataset.uid); renderList(); renderDetail();
+});
+document.getElementById("filters").addEventListener("click", e => {
+  const c = e.target.closest(".chip"); if (!c) return;
+  team = c.dataset.t; renderList();
+});
+document.getElementById("reload").addEventListener("click", load);
+load();
+</script>
+</body>
+</html>
