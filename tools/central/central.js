@@ -36,7 +36,7 @@ const ICONS = {
   foot: '<path d="M8 4c2 1 3 4 3 7 0 2 2 3 5 4 3 1 4 3 3 5-2 3-9 1-12-2-3-3-3-7-1-10 1-2 2-1 2 3z"/>',
   refresh: '<path d="M20 7v5h-5M4 17v-5h5"/><path d="M6 8a8 8 0 0113 3M18 16A8 8 0 015 13"/>'
 };
-const METRIC_ICON = {"Fase":"flag","Função-alvo":"target","Nota na função":"star","Prioridade":"bolt","Valor pedido":"briefcase","Time atual":"shield","Número":"player","Fim do vínculo":"calendar","Moral":"pulse","Condição":"shield","Ritmo de jogo":"bolt","Cansaço":"pulse","Seleção":"flag","Gols seleção":"target","Sub-21":"users","Gols Sub-21":"target","Confiança habilidade":"shield","Confiança potencial":"shield","Habilidade":"star","Potencial":"star"};
+const METRIC_ICON = {"Jogos":"player","Gols":"target","Assistências":"trend","Nota média":"star","Salário":"briefcase","Fase":"flag","Função-alvo":"target","Nota na função":"star","Prioridade":"bolt","Valor pedido":"briefcase","Time atual":"shield","Número":"player","Fim do vínculo":"calendar","Moral":"pulse","Condição":"shield","Ritmo de jogo":"bolt","Cansaço":"pulse","Seleção":"flag","Gols seleção":"target","Sub-21":"users","Gols Sub-21":"target","Confiança habilidade":"shield","Confiança potencial":"shield","Habilidade":"star","Potencial":"star"};
 
 let data = null;
 const saved = JSON.parse(localStorage.getItem("central.ui") || "{}");
@@ -244,8 +244,17 @@ function developmentTab(j) {
   return `<div class="grid-2" style="margin-top:0"><section class="panel chart"><h2>Linha de evolução</h2>${historyChart(points)}</section><section class="panel"><h2>Foco dos próximos 90 dias</h2><div class="focus-list">${(j.adjunto?.treino||[]).map(t=>`<div class="focus-item"><b>${esc(t.categoria)}</b><p>${t.atributos.map(([n,v,g])=>`${esc(n)} ${v} → ${g}`).join(" · ")}</p></div>`).join("")}</div></section></div><div class="callout">A área sombreada nos atributos é projeção da comissão, não garantia de evolução.</div><div style="margin-top:12px">${attributes(j)}</div>`;
 }
 function performanceTab(j) {
-  const international=j.internacional||{};
-  return `<div class="metric-grid">${metric("Seleção",international.jogos??0,"jogos")}${metric("Gols seleção",international.gols??0,"carreira internacional")}${metric("Sub-21",international.sub21_jogos??0,"jogos")}${metric("Gols Sub-21",international.sub21_gols??0,"carreira internacional")}</div><div class="unavailable" style="margin-top:12px"><b>Estatísticas da temporada ainda não são lidas com segurança</b>Partidas, minutos, gols pelo clube, assistências, nota e xG não aparecem como zero: permanecem indisponíveis até o bloco vivo de estatísticas ser mapeado.</div>`;
+  const st = j.estatisticas || {}, intl = j.internacional || {}, games = (st.jogos || 0) + (st.banco || 0);
+  const pctBar = (label, value, colour, suffix = "%") => `<div class="gauge"><span>${label}</span>${bar(value ?? 0, suffix === "%" ? 100 : 5, colour)}<b>${value === null || value === undefined ? "—" : `${value.toLocaleString("pt-BR")}${suffix}`}</b></div>`;
+  if (!Object.keys(st).length) return `<div class="unavailable"><b>Sem estatísticas nesta atualização</b>Abra o jogo e clique em Atualizar do jogo.</div>`;
+  const rating = st.nota, ratingNote = rating === null ? "sem jogos" : rating >= 7 ? "muito bem" : rating >= 6.5 ? "bem" : rating >= 6 ? "regular" : "abaixo";
+  const per90 = st.jogos ? ` · ${(st.gols / Math.max(1, st.jogos)).toFixed(2)} por jogo` : "";
+  return `<div class="metric-grid">${metric("Jogos", `${st.jogos}<small> (${st.banco})</small>`, "titular (entrou do banco)")}${metric("Gols", st.gols, `na temporada${per90}`)}${metric("Assistências", st.assistencias, "na temporada")}${metric("Nota média", rating === null ? "—" : rating.toFixed(2).replace(".", ","), ratingNote)}</div>
+  <div class="grid-2"><section class="panel">${heading("Rendimento","chart",3)}${pctBar("Passes certos", st.passes_pct, "var(--info)")}${pctBar("Chutes no alvo", st.chutes_alvo_pct, "var(--accent)")}${pctBar("Desarmes por jogo", st.desarmes_jogo, "var(--positive)", "")}
+    <div class="perf-badges"><span>${icon("star",13)} Melhor em campo <b>${st.melhor_em_campo}</b></span><span class="card-y">Amarelos <b>${st.amarelos}</b></span><span class="card-r">Vermelhos <b>${st.vermelhos}</b></span></div>
+    <p class="raw-note">Temporada atual, todas as competições (mesmos números das listas do jogo).</p></section>
+  <section class="panel">${heading("Leitura da comissão","info",3)}<div class="callout" style="margin-top:0">${!games ? `${esc(short(j))} ainda não jogou nesta temporada. Para evoluir, ele precisa de minutos — Sub-20, time B ou empréstimo.` : rating >= 7 ? `Está rendendo acima do esperado: ${games} jogos com nota ${rating.toFixed(2).replace(".", ",")}. Vale ganhar mais espaço.` : rating >= 6.5 ? `Rendimento sólido nos ${games} jogos. Continue dando minutos.` : `Rendimento ainda irregular (${rating.toFixed(2).replace(".", ",")}). Mais treino e jogos em nível menor podem ajudar.`}</div>
+    <div class="metric-grid compact" style="margin-top:10px">${metric("Seleção", intl.jogos ?? 0, `${intl.gols ?? 0} gols`)}${metric("Sub-21", intl.sub21_jogos ?? 0, `${intl.sub21_gols ?? 0} gols`)}</div></section></div>`;
 }
 function familiarityLabel(v){return v>=15?"Natural":v>=12?"Competente":v>=8?"Familiar":v>=5?"Aprendendo":"Inadequado"}
 function positionTab(j) {

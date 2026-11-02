@@ -624,3 +624,11 @@ Conferido nos XML da Aurora e do jogo:
   (tradução errada do layout); nomes corrigidos com os do jogo (32 "Sai jogando sob pressão",
   37 "Dá carrinho", 38 "Não dá carrinho") e requisitos do 38 trocados por Desarme, Posicionamento e
   Decisões.
+- 02/11, **estatísticas da temporada** pelas propriedades do jogo (as mesmas das colunas das listas),
+  perguntadas por chamada remota de leitura (`leitor.season_stats`, 55 jogadores em 0,7 s). Conferidas
+  no Jorginho (24/07/2026): `Posa` 14 / `Posu` 0 jogos, `Pogl` 5 gols, `Poas` 2 assist., `Pomo` 1,
+  `Poyc` 1 / `Porc` 0 cartões; ponteiro para double: `Poav` 6,714 nota, `Popa` 74,7 % passes,
+  `Pota` 1,046 desarmes/jogo, `Post` 62,5 % chutes no alvo. (`Pigl` é outra contagem: 9.) O bloco cru
+  de 28 u16 (jogos, gols, pênaltis, assist., vitórias, MoM, cartões, passes, fintas, cabeceios, faltas,
+  chutes, minutos 1119, soma das notas 94 e jogos com nota) só apareceu em cópias da tela.
+  Treinador adjunto: `leitor.assistant()` (Pcjo = 20, maior Npja+Npjp): Henrique Pacheco 12/13.

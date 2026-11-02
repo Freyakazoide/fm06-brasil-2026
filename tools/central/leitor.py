@@ -85,6 +85,7 @@ class Jovem:
     salario_mes: int = 0                                      # ≈ R$ por mês (calibrado)
     contrato_inicio: str | None = None
     contrato_fim: str | None = None                           # None: sem data de fim
+    estatisticas: dict = field(default_factory=dict)          # temporada (todas as competições)
     reputacao: dict[str, int] = field(default_factory=dict)
     internacional: dict[str, int] = field(default_factory=dict)
     pe_preferido: str = ""
@@ -206,6 +207,26 @@ def learn(uid: int, index: int, opposite: tuple[int, ...] = ()) -> list[int]:
 
 
 STAFF_VT, JOB_ASSISTANT = 0x010F851C, 20
+# Estatísticas da temporada pelas propriedades do jogo (as mesmas das colunas das listas; conferidas
+# no Jorginho em 24/07/2026: 14 jogos, 5 gols, 2 assist., nota 6,71, passes 74%, desarmes 1,05).
+# Inteiros vêm direto; Poav/Popa/Pota/Post vêm como ponteiro para um double.
+STAT_INTS = {"jogos": "Posa", "banco": "Posu", "gols": "Pogl", "assistencias": "Poas", "melhor_em_campo": "Pomo",
+             "amarelos": "Poyc", "vermelhos": "Porc"}
+STAT_DOUBLES = {"nota": "Poav", "passes_pct": "Popa", "desarmes_jogo": "Pota", "chutes_alvo_pct": "Post"}
+
+
+def season_stats(jogo: Jogo, handle, r: int) -> dict:
+    sys.path.insert(0, str(ROOT / "tools" / "re"))
+    import chamada_remota as cr
+    ask = lambda text: cr.run(handle, cr.property_code(r, int.from_bytes(text.encode(), "big")))
+    out = {name: ask(code) for name, code in STAT_INTS.items()}
+    for name, code in STAT_DOUBLES.items():
+        pointer = ask(code)
+        out[name] = round(struct.unpack("<d", jogo.raw(pointer, 8))[0], 2) if pointer > 0x10000 else None
+    if not out["jogos"] and not out["banco"]:
+        for name in STAT_DOUBLES:
+            out[name] = None                                  # sem jogos: médias não fazem sentido
+    return out
 
 
 def assistant() -> dict:
@@ -242,6 +263,23 @@ def preferred_moves(jogo: Jogo, uid_at: int) -> list[str]:
 def adjunto_names(index: int, fallback: str) -> str:
     import habilidades
     return habilidades.move_name(index, fallback)
+
+
+_STATS_HANDLE = None
+
+
+def stats_or_empty(jogo: Jogo, r: int) -> dict:
+    """Estatísticas por chamada remota de leitura; vazio se o jogo não deixar chamar."""
+    global _STATS_HANDLE
+    try:
+        if _STATS_HANDLE is None:
+            sys.path.insert(0, str(ROOT / "tools" / "re"))
+            import chamada_remota as cr
+            _STATS_HANDLE = cr.game()[1]
+        return season_stats(jogo, _STATS_HANDLE, r)
+    except Exception:
+        _STATS_HANDLE = None
+        return {}
 
 
 def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
@@ -298,7 +336,7 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             ca=ca, pa=pa, hab=stars(uid, ca, ability_judge, 0x2545F491), pot=pot,
             altura=jogo.u16(uid_at - 76), peso=jogo.u16(uid_at - 78), moral=moral,
             condicao_raw=jogo.u16(uid_at - 216), ritmo_raw=jogo.u16(uid_at - 214),
-            cansaco_raw=jogo.u16(uid_at - 212), valor_pedido_raw=jogo.u32(uid_at - 192), **contract(jogo, r),
+            cansaco_raw=jogo.u16(uid_at - 212), valor_pedido_raw=jogo.u32(uid_at - 192), **contract(jogo, r), estatisticas=stats_or_empty(jogo, r),
             reputacao={"local": jogo.u16(uid_at - 210), "atual": jogo.u16(uid_at - 208),
                        "mundial": jogo.u16(uid_at - 206)},
             internacional={"jogos": jogo.raw(uid_at + 72, 1)[0], "gols": jogo.raw(uid_at + 74, 1)[0],
