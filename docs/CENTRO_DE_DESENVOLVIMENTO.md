@@ -522,3 +522,15 @@ Conferido nos XML da Aurora e do jogo:
 - **Colisões de código:** `Pcon` já existe (coluna da lista). Número da camisa já existe: `Psnu`,
   sem precisar de `Pdno`.
 - **`kit_picture`** só é preenchido pelos painéis do time (`T_hk`/`T_ak`...), não por jogador.
+
+## 15. Globais da interface (para a camisa de costas) — achados de 02/11
+
+- Os widgets com `get_global_attachment` leem o armazém de globais da interface. O jogo grava nele
+  com `0xC6DF60(código, &valor)` (ecx = armazém), por exemplo `Tnam` em `0x4C294C`.
+- `0x4C99B0` (a cada troca de tela; this = gerente de telas) pega a tela atual em `[this+0x1B0]`
+  (criada por `vfunc 0x14C`) e copia propriedades dela para as globais: `bmcb`, ..., `scpc` (imagem
+  da tela, `0x4C9DDE`) e `bgnd` (fundo, `0x4C9E2E`). Cada uma é lida com `[[tela]+0x20](código, &valor)`.
+- Caminho proposto (hipótese, a conferir com o jogo aberto): no fim de `0x4C99B0`, quando a tela é
+  de um jogador, gravar globais novas: nome curto, número (`Psnu`) e arquivo da camisa do clube.
+  Falta saber se a tela de jogador responde a códigos de pessoa (`Pnam`, `Psnu`) por `vfunc 0x20`,
+  ou como chegar da tela à pessoa.
