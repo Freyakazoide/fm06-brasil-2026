@@ -539,3 +539,8 @@ Conferido nos XML da Aurora e do jogo:
   um valor criado pelo construtor do jogo (`0xC74A80`). O `vfunc 0x20` dele (`0x6AB770`) busca numa
   lista de registros (`0xC60E00`), não é o getter de pessoa. **Sem efeito**: ainda falta achar de
   onde a tela de jogador tira a pessoa.
+- 02/11, **Etapa A conferida no jogo** (Otacílio, Treino > Geral, skin Brasil 2026): título
+  "Relatorio de Desenvolvimento", cabeçalho com emblema, "Centro de Desenvolvimento" + subtítulo e a
+  camisa de costas (fixa, Figueirense); o resto do painel original funciona. Aprendido: `picture` e
+  `label` soltos precisam de `stick_to_sides_attachment` próprio (o `arrange_horizontal_attachment`
+  não os desenha); o widget `text` não mostra texto fixo (é preenchido pelo código).
