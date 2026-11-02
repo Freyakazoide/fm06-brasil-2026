@@ -24,6 +24,10 @@ STOLEN = bytes.fromhex("558BEC83E4F8")              # push ebp; mov ebp,esp; and
 SLOT = cr.COUNTERS_AT + 0x700                      # onde o desvio grava o gerente
 STUB = cr.COUNTERS_AT + 0x710
 CURRENT = 0x1B0
+# ficha de pessoa: 0x4FFFB0 recebe os dados da tela (this = tela); 0x9F9190 lê do pedido as
+# referências do banco em [tela+0x360] e [tela+0x364] (a pessoa?)
+SHEET, SHEET_STOLEN = 0x004FFFCC, bytes.fromhex("8B7C2430 8B472C")
+SHEET_SLOT, SHEET_STUB = cr.COUNTERS_AT + 0x780, cr.COUNTERS_AT + 0x790
 VALUE_NEW = 0x00C74A80                             # construtor do valor (ecx = valor)
 
 
@@ -47,6 +51,31 @@ def main() -> None:
     _, h = cr.game()
     u = lambda at: struct.unpack("<I", read_memory(h, at, 4))[0]
     action = sys.argv[1]
+    if action == "ficha-instalar":
+        assert read_memory(h, SHEET, len(SHEET_STOLEN)) == SHEET_STOLEN
+        stub = b"" + SHEET_SLOT.to_bytes(4, "little") + SHEET_STOLEN
+        stub += b"é" + (SHEET + len(SHEET_STOLEN) - (SHEET_STUB + len(stub) + 5)).to_bytes(4, "little", signed=True)
+        cr.poke(h, SHEET_SLOT, bytes(4))
+        cr.poke(h, SHEET_STUB, stub)
+        cr.poke(h, SHEET, b"é" + (SHEET_STUB - (SHEET + 5)).to_bytes(4, "little", signed=True) + b"")
+        print("gravador da ficha instalado: abra a ficha de um jogador")
+        return
+    if action == "ficha-desfazer":
+        cr.poke(h, SHEET, SHEET_STOLEN)
+        print("original de volta")
+        return
+    if action == "ficha":
+        sheet = u(SHEET_SLOT)
+        print(f"tela da ficha 0x{sheet:08X}, vtable 0x{u(sheet):08X}, seção {read_memory(h, sheet + 0x1AC, 4)[::-1]}")
+        for off in (0x360, 0x364):
+            obj = u(sheet + off)
+            print(f"  +0x{off:X}: 0x{obj:08X}" + (f" vtable 0x{u(obj):08X}" if obj else ""))
+            if obj:
+                try:
+                    print("     ", cr.describe(h, obj))
+                except Exception as e:
+                    print("      (não é jogador:", e, ")")
+        return
     if action == "instalar":
         assert read_memory(h, SCREENS, len(STOLEN)) == STOLEN
         stub = b"\x89\x0D" + SLOT.to_bytes(4, "little") + STOLEN
