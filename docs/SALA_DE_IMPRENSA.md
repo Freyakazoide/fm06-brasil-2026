@@ -546,6 +546,14 @@ Falta, em ordem:
    Hipótese: 995 = 10 é "Dar Injecção".
 3. Página da Central de Notícias com abas por categoria/módulo; a Sala de Imprensa continua para as
    de imprensa.
+   **Feito (03/11):** `http://127.0.0.1:8629/noticias` (mesmo servidor da Sala, `--jogo`).
+   `central.py` junta caixa do jogo + capturadas; módulo pela categoria do jogo: Imprensa → Sala de
+   Imprensa, Lesões → Departamento Médico, Transf./Contratos → Transferências, o resto → Geral.
+   Marca "pede resposta" (+0x20 = -2/-3/-4), "respondida" (>= 0) e "só na Central". O observador
+   lê os textos com o jogo parado (caixa sem mudar há 2 s), 8 por volta, e guarda em
+   `workspace/imprensa/<carreira>/textos.json`: 92 notícias lidas sem travar. Texto do jogo traz
+   0x13 no lugar do travessão (trocado por "–"). Conferido no navegador: 96 notícias (92 na caixa +
+   4 capturadas), 1042 Zé Carlos com o texto e a resposta "Carlos será tratado pela fisioterapia".
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
 5. Categoria das 87 classes sem valor fixo.
 

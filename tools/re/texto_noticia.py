@@ -57,7 +57,8 @@ def plain(text: str) -> str:
         depth += -1 if match.group().startswith("</") else 1
         i = match.end()
     out.append(text[i:] if depth == 0 else "")
-    return re.sub(r"[\x01\x02]", "", "".join(out).replace("\\", "")).strip()
+    text = "".join(out).replace("\\", "").replace("\x13", "–")              # 0x13: travessão do jogo
+    return re.sub(r"[\x00-\x09\x0b-\x1f]", "", text).strip()
 
 
 def news_text(jogo: leitor.Jogo, handle, news: int) -> tuple[str, str]:

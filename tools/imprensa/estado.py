@@ -92,6 +92,22 @@ def add_capture(career: str, news: dict, removed: dict | None) -> list[dict]:
     return items
 
 
+def texts(career: str) -> dict[str, dict]:
+    """Manchete e corpo das notícias da caixa, por série (Central de Notícias, §8.9)."""
+    try:
+        return json.loads((folder(career) / "textos.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def add_texts(career: str, new: dict[int, dict]) -> dict[str, dict]:
+    items = {**texts(career), **{str(k): v for k, v in new.items()}}
+    target = folder(career)
+    target.mkdir(parents=True, exist_ok=True)
+    (target / "textos.json").write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
+    return items
+
+
 def record(career: str, entry: dict) -> dict:
     """Grava uma resposta dada. Uma pauta (chave) só recebe uma resposta."""
     for field in ("key", "situation_id", "answer_id", "player_id", "outlet_id"):

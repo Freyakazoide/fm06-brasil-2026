@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FM06 — Central de Notícias</title>
+  <link rel="stylesheet" href="/imprensa.css">
+  <link rel="stylesheet" href="/noticias.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/noticias" title="Central de Notícias">
+      <span class="fm-mark" aria-hidden="true"><b>FM</b><i>06</i></span>
+      <span class="brand-copy"><small>FOOTBALL MANAGEMENT / NEWS CENTRE</small><strong>Central de Notícias</strong></span>
+    </a>
+    <span class="brand-divider"></span>
+    <div class="header-context">
+      <span class="signal"><i></i> CAIXA DE ENTRADA</span>
+      <b id="club-name">—</b>
+      <small id="current-date">—</small>
+    </div>
+    <div class="header-summary" id="header-summary"></div>
+    <a class="demo-badge news-link" href="/">SALA DE IMPRENSA ›</a>
+  </header>
+
+  <main class="news-shell">
+    <aside class="news-modules panel" id="modules" aria-label="Módulos"></aside>
+
+    <section class="news-list-panel panel">
+      <div class="news-toolbar">
+        <label class="search-box">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6"/></svg>
+          <input id="news-search" type="search" placeholder="Buscar manchete ou assunto…" autocomplete="off">
+        </label>
+        <div class="medium-filters" id="news-filters"></div>
+      </div>
+      <div class="news-list" id="news-list"><div class="loading">Lendo a caixa…</div></div>
+    </section>
+
+    <article class="news-reader panel" id="reader"><div class="loading">Escolha uma notícia.</div></article>
+  </main>
+
+  <footer><span>FM06 BRASIL 2026 · CENTRAL DE NOTÍCIAS</span><span id="footer-stats">—</span><span id="footer-mode">Lê a caixa do FM06 aberto</span></footer>
+  <script src="/noticias.js"></script>
+</body>
+</html>

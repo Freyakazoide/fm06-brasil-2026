@@ -73,6 +73,7 @@ def test_plain_strips_link_marks() -> None:
     import texto_noticia
     raw = "\x01\x02O Figueirense FC\x01 venceu <record id=1><record>x</record></record>por \x01\x022 - 0\x01"
     assert texto_noticia.plain(raw) == "O Figueirense FC venceu por 2 - 0"
+    assert texto_noticia.plain("Botafogo (PB) \x13 resultado\n\nfim\x07") == "Botafogo (PB) – resultado\n\nfim"
 
 
 def test_captured_text_reaches_the_agenda() -> None:

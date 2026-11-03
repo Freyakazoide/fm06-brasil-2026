@@ -23,6 +23,7 @@ HERE = Path(__file__).resolve().parent
 sys.path[:0] = [str(HERE), str(HERE.parent / "re")]
 
 import banco  # noqa: E402
+import central  # noqa: E402
 import demo  # noqa: E402
 import efeitos  # noqa: E402
 import estado  # noqa: E402
@@ -37,7 +38,11 @@ FILES = {
     "/": (HERE / "pagina.html", "text/html; charset=utf-8"),
     "/imprensa.css": (HERE / "imprensa.css", "text/css; charset=utf-8"),
     "/imprensa.js": (HERE / "imprensa.js", "text/javascript; charset=utf-8"),
+    "/noticias": (HERE / "noticias.html", "text/html; charset=utf-8"),
+    "/noticias.js": (HERE / "noticias.js", "text/javascript; charset=utf-8"),
+    "/noticias.css": (HERE / "noticias.css", "text/css; charset=utf-8"),
 }
+TEXTS_PER_TICK = 8                                              # textos lidos por volta, só com o jogo parado
 PORT = 8629
 
 
@@ -52,18 +57,41 @@ class NewsWatcher:
         self.extra = extra
         self.since = None                                       # só notícias chegadas depois de ligar
 
+    def know_squad(self) -> bool:
+        """Elenco e carreira, lidos uma vez por jogo aberto; False se o jogo estiver no meio de uma mudança."""
+        if self.squad is None:
+            import leitor
+            try:
+                jovens, info = leitor.jovens(max_age=99)
+            except Exception:
+                return False
+            self.squad = {j.uid for j in jovens}
+            self.career = estado.save_id(info.get("clube_nome") or PressRoom.live_club, info.get("time_uid"))
+        return True
+
+    def fill_texts(self, jogo, items: list[dict]) -> None:
+        """Central de Notícias: lê manchete e corpo (função do jogo) das notícias que ainda não têm,
+        algumas por volta. Uma falha só adia para a próxima volta."""
+        if not self.know_squad():
+            return
+        known = estado.texts(self.career)
+        missing = [n["serie"] for n in sorted(items, key=lambda n: -n["serie"]) if str(n["serie"]) not in known]
+        new = {}
+        for serial in missing[:TEXTS_PER_TICK]:
+            try:
+                new[serial] = texto_noticia.text_of(jogo, serial)
+            except (Exception, SystemExit) as error:
+                print(f"[imprensa] texto da notícia {serial} não lido: {error}")
+                break
+        if new:
+            estado.add_texts(self.career, new)
+
     def capture(self, jogo, items: list[dict]) -> list[dict]:
         """--exclusivo: guarda a notícia de imprensa do elenco (com manchete e corpo, montados pelo
         próprio jogo) e a tira da caixa do jogo. Sem texto, a notícia não sai. Qualquer falha desliga
         o modo (a caixa do jogo nunca fica pela metade por insistência)."""
-        import leitor
-        if self.squad is None:
-            try:
-                jovens, info = leitor.jovens(max_age=99)
-            except Exception:                                   # jogo no meio de uma mudança: tenta em 2 s
-                return []
-            self.squad = {j.uid for j in jovens}
-            self.career = estado.save_id(info.get("clube_nome") or PressRoom.live_club, info.get("time_uid"))
+        if not self.know_squad():
+            return []
         taken = []
         for item in (n for n in items if n["serie"] > self.since and noticias.exclusive(n, self.squad, self.extra)):
             try:
@@ -105,8 +133,11 @@ class NewsWatcher:
             taken = []
             if self.since is None:
                 self.since = max((n["serie"] for n in items), default=0)
-            if self.exclusive and self.count == len(items):          # caixa parada há 2 s: jogo ocioso
-                taken = self.capture(jogo, items)
+            if self.count == len(items):                            # caixa parada há 2 s: jogo ocioso
+                if self.exclusive:
+                    taken = self.capture(jogo, items)
+                gone = {n["serie"] for n in taken}
+                self.fill_texts(jogo, [n for n in items if n["serie"] not in gone])
             self.count = len(items) - len(taken)
             read_now = {n["serie"] for n in items if n["lida"]}
             if self.read is None:                               # 1ª leitura: só a base
@@ -163,6 +194,9 @@ class PressRoom(BaseHTTPRequestHandler):
             value["info"] = {**value["info"], "mode_effects": bool(self.effects and self.live_club)}
             self._json(200, value)
             return
+        if path == "/central":
+            self._json(200, self.news_center())
+            return
         if path == "/evento":
             watcher = self.watcher
             if watcher:
@@ -207,6 +241,20 @@ class PressRoom(BaseHTTPRequestHandler):
             self._json(200, state)
         except ValueError as error:
             self._json(400, {"erro": str(error)})
+
+    def news_center(self) -> dict:
+        """Central de Notícias: caixa do jogo (lida agora) + capturadas + textos guardados."""
+        info = self.data()["info"]
+        career = info.get("career", "demo")
+        if not self.live_club or career == "demo":
+            return central.payload([], [], {}, {**info, "aviso": "Sem jogo aberto: rode o servidor com --jogo."})
+        try:
+            import leitor
+            inbox = noticias.inbox(leitor.Jogo())
+        except Exception as error:
+            return central.payload([], estado.captures(career), estado.texts(career),
+                                   {**info, "aviso": f"Caixa do jogo não lida ({error}); mostrando só as capturadas."})
+        return central.payload(inbox, estado.captures(career), estado.texts(career), info)
 
     def _repercussion(self, career: str, key: str, state: dict) -> dict:
         """Matéria do veículo sobre a resposta (§8.8); se faltar algum dado, a resposta fica sem ela."""
