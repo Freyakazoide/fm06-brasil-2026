@@ -424,6 +424,17 @@ Depois da resposta, montar uma consequência com:
 - credibilidade do treinador;
 - possível follow-up.
 
+**03/11, repercussão na Sala (feito):** `tools/imprensa/repercussao.py`. Ao gravar a resposta, o
+servidor monta a matéria do veículo que perguntou: manchete (por tom: apoio, cobrança, tensão,
+neutro; escolha fixa pela chave da pauta), trecho da declaração já preenchido, reação do jogador
+(efeito "Jogador" + moral no jogo, se mudou), do elenco, credibilidade com o veículo (soma corrente
+de `credibilidade`), torcida/diretoria quando mexem, e o follow-up (`status: pendente`). Fica em
+`estado.json` (`respostas[chave].repercussao`) e em `eventos.jsonl` (`tipo: repercussao`). Respostas
+anteriores ganham a matéria na 1ª leitura de `/dados` (a credibilidade delas usa a soma do momento).
+Na página, o cartão de jornal substitui a "manchete provável" depois da resposta. Conferido na
+página: Leonan / ESPN Brasil. Testes: `tests/test_imprensa_repercussao.py`. Ainda não: o follow-up
+virar pauta nova (§10: um por assunto comum) e a notícia na caixa de entrada do FM06.
+
 Há código de criação de notícia em `src/fm06patch/fornada.py` que pode servir como referência. Não
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
 de entrada.

@@ -58,6 +58,17 @@ def note_morale(career: str, key: str, player_id: int, date: str, result: dict) 
     return state
 
 
+def note_repercussion(career: str, key: str, story: dict) -> dict:
+    """Guarda a notícia de repercussão (§8.8) na resposta e no histórico."""
+    state = load(career)
+    state["respostas"][key]["repercussao"] = story
+    target = folder(career)
+    with (target / "eventos.jsonl").open("a", encoding="utf-8") as log:
+        log.write(json.dumps({"tipo": "repercussao", "key": key, **story}, ensure_ascii=False) + "\n")
+    (target / "estado.json").write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
+    return state
+
+
 def record(career: str, entry: dict) -> dict:
     """Grava uma resposta dada. Uma pauta (chave) só recebe uma resposta."""
     for field in ("key", "situation_id", "answer_id", "player_id", "outlet_id"):

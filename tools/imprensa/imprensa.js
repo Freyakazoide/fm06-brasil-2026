@@ -191,6 +191,14 @@ function moraleLine(done, player) {
 }
 // resposta já dada nesta carreira (estado.json no servidor; §8.6)
 function given(agenda) { return agenda && data.estado?.respostas?.[agenda.key]; }
+// repercussão gravada pelo servidor depois da resposta (§8.8)
+function repercussionCard(story) {
+  const outlet = outletBy(story.veiculo);
+  return `<article class="repercussion tone-${esc(story.tom)}"><header><img src="${esc(outlet.logo)}" alt=""><span>${esc(story.veiculo_nome)} · repercussão</span></header>
+    <h4>${esc(story.manchete)}</h4><blockquote>“${esc(story.trecho)}”</blockquote>
+    <ul><li><b>Jogador</b>${esc(story.jogador)}</li><li><b>Elenco</b>${esc(story.elenco)}</li><li><b>Imprensa</b>${esc(story.credibilidade)}</li>${story.outros.map(text => `<li><b>Mais</b>${esc(text)}</li>`).join("")}</ul>
+    <div class="follow-up"><b>Próxima pergunta de ${esc(story.veiculo_nome)}:</b> ${esc(story.follow_up.pergunta)}</div></article>`;
+}
 function impactCard(answer, player, situation, compact = false, done = null, live = false) {
   if (!answer) return `<section class="panel context-card"><h3 class="section-title"><i></i> Leitura da situação</h3><p class="impact-lead">Escolha uma intenção para visualizar uma reação simulada. Os números não são enviados ao FM06.</p></section>`;
   const effects = impactFor(answer, player, situation);
@@ -198,7 +206,7 @@ function impactCard(answer, player, situation, compact = false, done = null, liv
   const headline = answer.risk === "alto" ? `${data.info.club}: resposta forte aumenta a tensão na coletiva` : `${data.info.club} define posição sobre ${situation.title.toLocaleLowerCase("pt-BR")}`;
   return `<section class="panel impact-card ${compact ? "compact" : ""}"><h3 class="section-title"><i></i> Reação simulada</h3><p class="impact-lead"><b>${esc(playerPhrase)}</b> A personalidade do jogador alterou o resultado-base desta resposta.</p>
     ${impactRow("Jogador", effects.player)}${impactRow("Elenco", effects.squad)}${impactRow("Torcida", effects.fans)}${impactRow("Diretoria", effects.board)}${impactRow("Imprensa", effects.media)}${impactRow("Resposta ao treino", effects.training)}
-    <div class="impact-headline">MANCHETE PROVÁVEL · ${esc(headline)}</div><div class="follow-up"><b>Follow-up:</b> ${esc(fill(answer.follow_up, contextFor(player)))}</div>
+    ${done?.repercussao ? repercussionCard(done.repercussao) : `<div class="impact-headline">MANCHETE PROVÁVEL · ${esc(headline)}</div><div class="follow-up"><b>Follow-up:</b> ${esc(fill(answer.follow_up, contextFor(player)))}</div>`}
     ${done ? `<div class="answer-given">✓ Resposta dada${done.data_jogo ? ` em ${new Date(`${done.data_jogo}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}. ${moraleLine(done, player)}</div>`
       : `${live ? `<button class="give-answer" data-give-answer type="button">Dar esta resposta${moralePreview(effects, player)}</button>` : ""}<button class="reset-answer" data-reset-answer type="button">Testar outra resposta</button>`}</section>`;
 }

@@ -1,8 +1,8 @@
-r"""Servidor local da Sala de Imprensa — no modo demo, independente do save; com --jogo, só leitura.
+r"""Servidor local da Sala de Imprensa — no modo demo, independente do save; com --jogo, lê o jogo e grava só a moral.
 
 Uso:
     python tools\imprensa\servidor.py
-    python tools\imprensa\servidor.py --jogo        (elenco e agenda do FM06 aberto, só leitura)
+    python tools\imprensa\servidor.py --jogo        (elenco e agenda do FM06 aberto; a resposta mexe na moral)
     python tools\imprensa\servidor.py --porta 8629 --sem-navegador
 """
 
@@ -28,6 +28,7 @@ import efeitos  # noqa: E402
 import estado  # noqa: E402
 import noticias  # noqa: E402
 import ponte  # noqa: E402
+import repercussao  # noqa: E402
 import veiculos  # noqa: E402
 
 
@@ -105,7 +106,11 @@ class PressRoom(BaseHTTPRequestHandler):
         path = unquote(urlsplit(self.path).path)
         if path == "/dados":
             value = dict(self.data())                           # a resposta gravada não espera o cache
-            value["estado"] = estado.load(value["info"].get("career", "demo"))
+            career = value["info"].get("career", "demo")
+            value["estado"] = estado.load(career)
+            for key, answer in list(value["estado"]["respostas"].items()):   # respostas de antes do §8.8
+                if "repercussao" not in answer:
+                    value["estado"] = self._repercussion(career, key, value["estado"])
             value["info"] = {**value["info"], "mode_effects": bool(self.effects and self.live_club)}
             self._json(200, value)
             return
@@ -149,9 +154,23 @@ class PressRoom(BaseHTTPRequestHandler):
                 state = estado.note_morale(career, str(body["key"]), player, date, result)
                 with PressRoom.lock:
                     PressRoom.cache = None                      # a moral nova aparece no próximo /dados
+            state = self._repercussion(career, str(body["key"]), state)
             self._json(200, state)
         except ValueError as error:
             self._json(400, {"erro": str(error)})
+
+    def _repercussion(self, career: str, key: str, state: dict) -> dict:
+        """Matéria do veículo sobre a resposta (§8.8); se faltar algum dado, a resposta fica sem ela."""
+        answer = state["respostas"][key]
+        data = self.data()
+        situation = next((s for s in data["situations"] if s["id"] == answer["situation_id"]), None)
+        intention = situation and next((i for i in situation["intentions"] if i["id"] == answer["answer_id"]), None)
+        player = next((p for p in data["players"] if str(p["id"]) == str(answer["player_id"])), {})
+        outlet = next((o for o in data["outlets"] if o["id"] == answer["outlet_id"]), None)
+        if not (intention and outlet):
+            return state
+        story = repercussao.build(key, answer, intention, situation, player, outlet, data["info"], state)
+        return estado.note_repercussion(career, key, story)
 
     def _json(self, status: int, value: object) -> None:
         body = json.dumps(value, ensure_ascii=False).encode("utf-8")
@@ -195,7 +214,7 @@ def main() -> None:
         PressRoom.effects = not args.sem_efeitos
         PressRoom.watcher = NewsWatcher(url)
         threading.Thread(target=PressRoom.watcher.run, daemon=True).start()
-        print(f"Modo jogo: lê o elenco do {args.clube} no FM06 aberto, sem gravar nada.")
+        print(f"Modo jogo: lê o elenco do {args.clube} no FM06 aberto; a resposta mexe só na moral do jogador (--sem-efeitos desliga).")
         print("Ao abrir uma notícia na caixa de entrada do jogo, a pauta dela aparece aqui.")
     else:
         print("Modo demonstração: não lê nem escreve no save.")

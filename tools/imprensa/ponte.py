@@ -189,7 +189,7 @@ def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 10, n
         "schema_version": 1, "mode": "jogo",
         "info": {"date": today.isoformat(), "club": club, "career": career, "rival": "o próximo adversário",
                  "competition": "a temporada", "manager": "Seu treinador", "fact": "nada foi oficializado",
-                 "notice": "Dados lidos do FM06 aberto (só leitura): nenhuma escolha é gravada no jogo."},
+                 "notice": "Dados lidos do FM06 aberto. Ao dar a resposta, só a moral do jogador muda no jogo (salve o jogo para manter)."},
         "players": roster, "outlets": outlets, "situations": list(situations.values()), "agenda": agenda,
         "bank_stats": banco.stats(),
     }
