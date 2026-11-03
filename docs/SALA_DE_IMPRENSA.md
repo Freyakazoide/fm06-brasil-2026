@@ -216,6 +216,9 @@ entra à frente da agenda como pauta "agora" (motivo "notícia lida no jogo (dd/
 `/evento` conta essas notícias e a página se atualiza sozinha (ou o observador abre o navegador).
 Notícia de jogador de outro clube não vira pauta. As §8.2 e §8.3 (telemetria no exe) deixam de ser
 necessárias para isso.
+**Conferido pelo usuário (03/11):** ao abrir "Gustagol informa sobre Mailson" no jogo, a Sala trocou
+sozinha para a pauta "Nova lesão" (SporTV, agora), com Mailson e o motivo "notícia lida no jogo
+(22/07): relatório do fisioterapeuta".
 
 ### 8.2 Criar telemetria reservada
 
