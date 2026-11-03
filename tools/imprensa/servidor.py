@@ -139,7 +139,7 @@ class PressRoom(BaseHTTPRequestHandler):
             info = self.data()["info"]
             career = info.get("career", "demo")
             state = estado.record(career, body)
-            if self.effects and self.live_club and info.get("mode_effects"):
+            if self.effects and self.live_club and info.get("career", "demo") != "demo":
                 player, date = int(body["player_id"]), body.get("date") or info["date"]
                 delta = efeitos.allowed(state["respostas"][str(body["key"])]["effects"]["player"], player, date, state["moral"])
                 try:
