@@ -195,6 +195,16 @@ gerenciador `0x0132AAD0`, que percorre a lista do clube (`+0x64`, quantidade `+0
 `0x753C10` por destinatário. Próximo: achar na memória o texto de uma manchete conhecida e subir pelos
 ponteiros até a lista e o campo "lida".
 
+**03/11, caixa de entrada mapeada (memória, só leitura):** as notícias são classes com RTTI
+`..._NEWS`/`..._NEWS_ITEM` (272 no exe, lista em `workspace/news_vtables.json`). A caixa do humano é o
+único `NEWS_ITEM_ARRAY` (vtable `0x010F6DD4`) e fica em `[humano - 0x1E0]`: `+4` dados, `+8` quantidade
+(75 no save). Cada notícia: `+0x14` data (u16 dia, u16 ano do motor; `0x07D600CB` = 23/07), `+0x18`
+marcas (byte), `+0x1C` número de série crescente, e a pessoa num campo próprio da classe (Jhonnathan em
+`MEDIA_PLAYER_FORM_NEWS+0x34`, Leonan em `RED_CARD_BAN_NEWS+0x5C`, João Ferro e Mailson em
+`PHYSIO_REPORT_NEWS_ITEM+0x2C`). Manchetes conferidas com a tela: "Jhonnathan acusado de displicência",
+"Leonan suspenso por um jogo", "Gustagol informa sobre Mailson/João Ferro". Ferramenta:
+`tools/re/caixa_entrada.py` (foto/diff) para achar o bit de "lida".
+
 ### 8.2 Criar telemetria reservada
 
 Reservar no bloco `.fm26` campos equivalentes a:
