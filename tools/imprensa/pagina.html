@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FM06 — Sala de Imprensa</title>
+  <link rel="stylesheet" href="/imprensa.css">
+</head>
+<body>
+  <header class="app-header">
+    <button class="brand" id="press-home" type="button" title="Voltar à coletiva">
+      <span class="fm-mark" aria-hidden="true"><b>FM</b><i>06</i></span>
+      <span class="brand-copy"><small>FOOTBALL MANAGEMENT / MEDIA CENTRE</small><strong>Sala de Imprensa</strong></span>
+    </button>
+    <span class="brand-divider"></span>
+    <div class="header-context">
+      <span class="signal"><i></i> CENTRAL DE MÍDIA</span>
+      <b id="club-name">Figueirense</b>
+      <small id="current-date">—</small>
+    </div>
+    <div class="header-summary" id="header-summary"></div>
+    <span class="demo-badge">MODO DEMO · SEM SAVE</span>
+  </header>
+
+  <main class="app-shell">
+    <aside class="press-sidebar">
+      <div class="sidebar-heading">
+        <div><small>PAUTA DO DIA</small><strong>Agenda da imprensa</strong></div>
+        <span id="agenda-count">—</span>
+      </div>
+      <label class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6"/></svg>
+        <input id="agenda-search" type="search" placeholder="Buscar pauta ou veículo…" autocomplete="off">
+      </label>
+      <div class="medium-filters" id="medium-filters"></div>
+      <div class="agenda-list" id="agenda-list"><div class="loading">Montando agenda…</div></div>
+      <div class="sidebar-foot"><i></i><span>As escolhas desta demonstração ficam apenas nesta página.</span></div>
+    </aside>
+
+    <section class="workspace">
+      <nav class="tabs" id="tabs" aria-label="Áreas da Sala de Imprensa">
+        <button class="tab active" data-tab="live" type="button"><span>◉</span> Coletiva</button>
+        <button class="tab" data-tab="private" type="button"><span>◆</span> Conversa individual</button>
+        <button class="tab" data-tab="bank" type="button"><span>▦</span> Banco editorial</button>
+        <button class="tab" data-tab="outlets" type="button"><span>▤</span> Veículos</button>
+      </nav>
+      <div class="view" id="view"><div class="loading big">Preparando a sala…</div></div>
+    </section>
+  </main>
+
+  <footer><span>FM06 BRASIL 2026 · SALA DE IMPRENSA</span><span id="footer-stats">Banco editorial local</span><span>Nenhuma conexão com o save nesta versão</span></footer>
+  <script src="/imprensa.js"></script>
+</body>
+</html>
+
