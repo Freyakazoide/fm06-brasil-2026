@@ -463,6 +463,15 @@ remoção (`eventos.jsonl`, `tipo: captura`). Qualquer falha desliga o modo. As 
 agenda com o status "só na Sala". Limite: o texto da notícia é montado pelo jogo na hora de mostrar;
 a Sala mostra o tipo, o jogador e a data. Teste: `--exclusivo-classes MOM_SUMMARY_NEWS` acrescenta
 "melhor em campo" (chega a cada jogo). Notícias que já estavam na caixa nunca são tiradas.
+**Conferido no jogo (03/11, save de teste, com `--exclusivo-classes MOM_SUMMARY_NEWS`):** duas
+capturas sozinhas, sem travar. 993 MEDIA_PLAYER_FORM_NEWS "Espindula acusado de displicência"
+(29/07, não lida; o usuário chegou a vê-la na caixa antes de a quantidade parar, depois sumiu) e
+1017 MOM_SUMMARY_NEWS de Leonardo Renz (02/08, vitória do Figueirense; sumiu entre 1018 e 1016).
+"Paiva exibe-se com grande classe pelo Anápolis" (melhor em campo do adversário) ficou no jogo, como
+devia. Contador de não lidas = não lidas da lista (1 = 1). A caixa cresceu de 100 para 200 de
+capacidade sozinha (o jogo realocou; `box()` relê a cada vez). A tela diz "100 de 102" de novo (o
+total da sessão). Agenda: 1017 "em andamento", 993 "só na Sala". Falta: salvar, recarregar e
+conferir que as duas continuam fora e que a tela volta a "100 mensagens".
 
 Há código de criação de notícia em `src/fm06patch/fornada.py` que pode servir como referência. Não
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
