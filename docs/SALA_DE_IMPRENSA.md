@@ -479,6 +479,21 @@ do próprio jogo (o save original da carreira também tinha exatamente 75), não
 Consequência: notícia que a Sala não captura some do jogo sozinha depois de ~75 mais novas; as
 capturadas ficam para sempre em `capturadas.json`.
 
+**03/11, texto da notícia lido pelo Python (conferido):** `tools/re/texto_noticia.py`. A notícia
+não guarda texto (só referências: clubes, jogador...). Cada classe tem a função de texto no slot 5
+da 1ª vtable (`vtable[5]`, ex. TEAM_FORM 0x5EF4C0, MATCH_SUMMARY 0x5A8DF0, juniores 0x5EBAD0),
+`ret 0xC`: (arg, &string, 0 = manchete / 1 = corpo). Quem chama: a tela de Notícias, 0x4DA130
+(sonda "chamadores" em 0x5EF4C0: retornos 0x4DA309 manchete, 0x4DA3D9 corpo, 0x4DA879 x6; só
+dispara ao reabrir a tela: ela monta os textos ao abrir). Sequência repetida numa thread remota:
+string vazia 0xC50A00 (0xC bytes: 2 vtables 0x1161280/0x1161274 + nó), arg = 0x886840(ecx =
+0x4BD400(1)), `vtable[5]`, e a string já tem o texto final em UTF-16 (nó: u16, u16, u16 tamanho,
+u16 capacidade, ponteiro), com os links como `<record>...</record>` (aninhados; `dref` = objeto do
+jogo) antes da palavra clicável; destrói com 0xC50B30. (A tela ainda passa por 0xC74DC0, texto
+rico: não é preciso.) Conferido em 6 tipos, idêntico à tela: TEAM_FORM ("Figueirense com vitória
+gorda"), MATCH_SUMMARY, TRANSFER_COMPLETED, PHYSIO_REPORT (com escolhas "Recuperação em casa /
+Fisioterapia": notícia com ação), MEDIA_PLAYER_FORM. Sem travar. As capturadas antes disso (993,
+1017) perderam o texto: a captura precisa ler o texto antes de tirar a notícia.
+
 Há código de criação de notícia em `src/fm06patch/fornada.py` que pode servir como referência. Não
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
 de entrada.
