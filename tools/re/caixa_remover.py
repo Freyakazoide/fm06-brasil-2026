@@ -1,8 +1,9 @@
 r"""Teste: tirar uma notícia da caixa de entrada do FM06 aberto (só a lista; o objeto fica na memória).
 
 A caixa é o NEWS_ITEM_ARRAY em [humano - 0x1E0]: +4 dados, +8 quantidade, +0xC capacidade (75/100
-em 03/11). Remover = deslocar os ponteiros seguintes uma posição e baixar a quantidade. O ponteiro e
-a posição ficam em workspace/imprensa/caixa_removidas.json para desfazer.
+em 03/11); o u32 logo antes (`caixa - 4`, humano-0x1E4) conta as não lidas (conferido: abrir uma
+notícia nova mudou 7 -> 6 junto com o bit de lida). Remover = deslocar os ponteiros seguintes uma
+posição e baixar a quantidade (e as não lidas, se for o caso). O ponteiro e a posição ficam em workspace/imprensa/caixa_removidas.json para desfazer.
 
     python tools\re\caixa_remover.py remover 963
     python tools\re\caixa_remover.py desfazer 963
@@ -22,7 +23,7 @@ sys.path[:0] = [str(ROOT / "tools" / "central"), str(ROOT / "tools" / "re")]
 import chamada_remota as cr  # noqa: E402
 import leitor  # noqa: E402
 
-ARRAY_VT, ARRAY_REL, SERIAL = 0x010F6DD4, -0x1E0, 0x1C
+ARRAY_VT, ARRAY_REL, SERIAL, STATUS, UNREAD = 0x010F6DD4, -0x1E0, 0x1C, 0x22, -4
 LOG = ROOT / "workspace" / "imprensa" / "caixa_removidas.json"
 
 
@@ -51,7 +52,7 @@ def main() -> None:
     jogo = leitor.Jogo()
     at, data, count, capacity, items = array(jogo)
     if action == "estado":
-        print(f"caixa {at:#x}: {count}/{capacity} notícias, dados {data:#x}; removidas: {sorted(load())}")
+        print(f"caixa {at:#x}: {count}/{capacity} notícias, {jogo.u32(at + UNREAD)} não lidas, dados {data:#x}; removidas: {sorted(load())}")
         return
     wanted = int(sys.argv[2])
     _, handle = cr.game()
@@ -67,6 +68,8 @@ def main() -> None:
         rest = items[:index] + items[index + 1:]
         cr.poke(handle, at + 8, struct.pack("<I", count - 1))           # quantidade primeiro: sem duplicata
         cr.poke(handle, data, struct.pack(f"<{count}I", *rest, 0))
+        if not jogo.raw(item + STATUS, 1)[0] & 1:                       # não lida: baixa o contador
+            cr.poke(handle, at + UNREAD, struct.pack("<I", max(0, jogo.u32(at + UNREAD) - 1)))
         print(f"removida {wanted} (posição {index}, objeto {item:#x}); caixa {count} -> {array(jogo)[2]}")
     elif action == "desfazer":
         entry = log.get(str(wanted))
@@ -78,6 +81,8 @@ def main() -> None:
         new = items[:index] + [entry["ponteiro"]] + items[index:]
         cr.poke(handle, data, struct.pack(f"<{count + 1}I", *new))      # lista primeiro, quantidade depois
         cr.poke(handle, at + 8, struct.pack("<I", count + 1))
+        if not jogo.raw(entry["ponteiro"] + STATUS, 1)[0] & 1:
+            cr.poke(handle, at + UNREAD, struct.pack("<I", jogo.u32(at + UNREAD) + 1))
         del log[str(wanted)]
         LOG.write_text(json.dumps(log, indent=1), encoding="utf-8")
         print(f"reinserida {wanted} na posição {index}; caixa {count} -> {count + 1}")

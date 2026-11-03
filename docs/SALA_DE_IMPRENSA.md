@@ -445,6 +445,13 @@ save novo, fechado, reaberto: continua fora** (lista relida: 74, sem a 963). Em 
 humano é a própria quantidade (`humano-0x1D8`). Hipótese: o 75º/41º é uma mensagem de outra lista
 (não um contador velho). Conferir no save original da carreira (que ainda tem a 963): se ele mostrar
 "75 de 76", é outra lista.
+**Conferido depois (03/11):** o save original mostra "75 mensagens exibidas" (sem "de"): não há outra
+lista; o "de 75" deve ser a tela daquela sessão lembrando o total antigo (perto do humano não há outro
+75). Achado: **`humano-0x1E4` (caixa - 4) é o contador de não lidas** — com 83 notícias e 7 não lidas
+valia 7; o usuário abriu "Figueirense enfrenta Ituano" (975, PRE_MATCH_ODDS_NEWS) e foi a 6, junto
+com o bit de lida. `caixa_remover.py` agora baixa/sobe esse contador ao tirar/devolver notícia não
+lida. 8 notícias de 25-26/07 (odds, transferência, resumo, melhor em campo, fase das equipes x2,
+diretoria): nenhuma MEDIA_* nem do elenco do Figueirense; as de imprensa são raras (3 em duas semanas).
 
 Há código de criação de notícia em `src/fm06patch/fornada.py` que pode servir como referência. Não
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
