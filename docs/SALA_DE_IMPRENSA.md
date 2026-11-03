@@ -345,6 +345,7 @@ aberta no jogo fica como "agora"; o resto vai da mais nova à mais velha, com a 
 status "lida no jogo"/"não lida no jogo". A chave da pauta é a série da notícia, então a resposta dada
 continua marcada depois de reiniciar o servidor. Os gatilhos pelos números só entram se não houver
 nenhuma notícia ("sugestão da assessoria").
+Conferido pelo usuário (03/11): a agenda mostra só notícias reais do jogo.
 
 ### 8.7 Aplicar efeitos
 
