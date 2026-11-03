@@ -19,7 +19,9 @@ def _player(uid: int, name: str, age: int, team: str, position: str, hab: int, p
     assistant = adjunto.analyse(values, future)
     analysis = analitica.analyse_player(age=age, team=team, hab=hab, pot=pot, moral=moral,
                                         adjunto=assistant, ability_judge=14, potential_judge=17)
+    loan = {"para": "Joinville", "ate": "2026-12-15"} if team == "Emprestado" else {}
     return {
+        "emprestimo": loan,
         "uid": uid, "nome": name, "apelido": name.split()[-1], "idade": age,
         "nascimento": f"{2026-age}-03-12", "time": team, "ca": 0, "pa": 0,
         "hab": hab, "pot": pot, "altura": 178, "peso": 72, "moral": moral,
@@ -56,7 +58,7 @@ def payload() -> dict:
                 {"Passing": 15, "Creativity": 15, "Decision": 13, "Technique": 14}),
         _player(2, "Rafael Venâncio", 17, "Sub-20", "GR", 5, 7, 12,
                 {"Goalkeeper": 18, "Handling": 15, "Reflexes": 16, "One on one": 14}),
-        _player(3, "Diego Rodrigues", 18, "B", "DC", 6, 8, 9,
+        _player(3, "Diego Rodrigues", 18, "Emprestado", "DC", 6, 8, 9,
                 {"Tackling": 15, "Marking": 14, "Heading": 16, "Strength": 15}),
         _player(4, "Toninho Silva", 18, "Principal", "MA C", 7, 8, 17,
                 {"Passing": 16, "Creativity": 16, "Technique": 15, "First Touch": 14}),

@@ -100,6 +100,7 @@ class Jovem:
     nivel: str = ""                                           # onde pode chegar
     adjunto: dict = field(default_factory=dict)               # melhor posição e foco de treino
     analise: dict = field(default_factory=dict)                # indicadores explicáveis da Central
+    emprestimo: dict = field(default_factory=dict)             # {"para": clube} ou {"de": clube}
 
 
 # Futuro potencial (opinião do olheiro): o PA que ele enxerga é o das estrelas (pot × 20, com o erro
@@ -153,6 +154,15 @@ class Jogo:
         raw = read_memory(self.handle, self.u32(self.u32(person_name + 0x24) + 8), 80) or b""
         return raw.decode("utf-16-le", "replace").split("\x00")[0]
 
+    def club_name(self, club: int) -> str:
+        """Nome curto do clube: texto UTF-16 em [[clube+0x38]+8] (o longo fica em +0x28). Conferido
+        em 03/11: Figueirense, Grêmio (longos Figueirense FC, Grêmio FBPA)."""
+        try:
+            raw = read_memory(self.handle, self.u32(self.u32(club + 0x38) + 8), 80) or b""
+        except OSError:
+            return ""
+        return raw.decode("utf-16-le", "replace").split("\x00")[0]
+
     def today(self) -> dt.date:
         return dt.date(self.u16(TODAY_YEAR), 1, 1) + dt.timedelta(days=self.u16(TODAY_DAY))
 
@@ -182,6 +192,33 @@ def contract(jogo: Jogo, r: int) -> dict:
                 "contrato_inicio": date(0x18), "contrato_fim": date(0x20)}
     except OSError:
         return {}
+
+
+def loan(jogo: Jogo, r: int, my_club: int, team_club: int) -> dict:
+    """Empréstimo pelos dois ponteiros do bloco de contrato ([R+0x98]): o 1º é o contrato com o dono,
+    o 2º com o clube que recebeu (0 se não houver). Conferido em 03/11: Breno Arruda e Lucas Lócio,
+    do Figueirense, emprestados ao Grêmio (2º contrato = clube do time atual)."""
+    try:
+        block = jogo.u32(r + CONTRACT_PTR)
+        first, second = (jogo.u32(block), jogo.u32(block + 4)) if block else (0, 0)
+        if not second:
+            return {}
+        owner, holder = jogo.u32(first + 8), jogo.u32(second + 8)
+    except OSError:
+        return {}
+    def until() -> str | None:                                   # fim do contrato de empréstimo
+        day, year = jogo.u16(second + 0x20), jogo.u16(second + 0x22)
+        if not 1950 <= year <= 2100 or day > 366:
+            return None
+        return (dt.date(year + YEAR_SHIFT, 1, 1) + dt.timedelta(days=day)).isoformat()
+    try:
+        if owner == my_club and holder == team_club != my_club:
+            return {"para": jogo.club_name(holder), "ate": until()}
+        if holder == my_club and owner and owner != my_club and holder == team_club:
+            return {"de": jogo.club_name(owner), "ate": until()}
+    except OSError:
+        pass
+    return {}
 
 
 def move_bits(jogo: Jogo, uid_at: int) -> list[int]:
@@ -354,7 +391,11 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
         if not r or jogo.u32(r) != PLAYER_VT:
             continue
         team = jogo.u32(r + 0x74)
-        if not team or jogo.u32(team + 0x38) != my_club:
+        team_club = jogo.u32(team + 0x38) if team else 0
+        if not team or (team_club != my_club and jogo.u32(r + CONTRACT_PTR) == 0):
+            continue
+        lend = loan(jogo, r, my_club, team_club)
+        if team_club != my_club and "para" not in lend:            # de outro clube, sem vínculo conosco
             continue
         uid_at = r + 0x14
         uid = jogo.u32(uid_at)
@@ -378,7 +419,9 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             projected = future(raw, attributes.values(), ca, seen_pa)
         familiarities = {short: values.get(name, 0) for short, name in POSITIONS.items()}
         positions = [short for short, value in familiarities.items() if value >= 15]
-        if kind == 0:
+        if senior and "para" in lend:                               # emprestado já adulto: fora da Central
+            continue
+        if kind == 0 and "para" not in lend:
             principal.append({"uid": uid, "nome": f"{jogo.text(jogo.u32(r + 44))} {jogo.text(jogo.u32(r + 48))}".strip(),
                               "apelido": jogo.text(jogo.u32(r + 52)), "idade": age,
                               "numero": contract(jogo, r).get("numero"), "hab": stars(uid, ca, ability_judge, 0x2545F491),
@@ -390,7 +433,7 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
         foot = "ambos" if min(left, right) >= 15 else "esquerdo" if left > right else "direito"
         moral = jogo.raw(uid_at - 184, 1)[0]
         assistant = adjunto.analyse(values, projected) if values else {}
-        team_name = teams.setdefault(team, TEAM_KIND.get(kind, f"time tipo {kind}"))
+        team_name = "Emprestado" if "para" in lend else teams.setdefault(team, TEAM_KIND.get(kind, f"time tipo {kind}"))
         analysis = analitica.analyse_player(
             age=age, team=team_name,
             hab=stars(uid, ca, ability_judge, 0x2545F491), pot=pot, moral=moral,
@@ -411,10 +454,10 @@ def jovens(max_age: int = 19) -> tuple[list[Jovem], dict]:
             pe_preferido=foot, posicoes=positions, familiaridades=familiarities,
             movimentos=preferred_moves(jogo, uid_at), movimentos_idx=move_bits(jogo, uid_at), atributos=values, futuro=projected,
             nivel=next(text for floor, text in LEVELS if seen_pa >= floor),
-            adjunto=assistant, analise=analysis))
+            adjunto=assistant, analise=analysis, emprestimo=lend))
     info = {"data": today.replace(year=today.year + YEAR_SHIFT).isoformat(), "time_uid": jogo.u32(my_team + 0x14),
             "time_humano": f"0x{my_team:08X}",
-            "clube": f"0x{my_club:08X}", "avaliador_hab": ability_judge, "avaliador_pot": potential_judge,
+            "clube": f"0x{my_club:08X}", "clube_nome": jogo.club_name(my_club), "avaliador_hab": ability_judge, "avaliador_pot": potential_judge,
             "principal": principal}
     return sorted(out, key=lambda j: (-j.pot, -j.hab, j.nome)), info
 

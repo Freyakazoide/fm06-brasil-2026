@@ -551,3 +551,6 @@ button.ghost:disabled { opacity: .4; cursor: not-allowed; }
 .comp-table td { padding: 6px; text-align: right; border-top: 1px solid #1d3d5c; }
 .comp-table td:first-child, .comp-table th:first-child { text-align: left; font-weight: 700; }
 .comp-table small { color: var(--muted); }
+
+/* jovem emprestado */
+.loan-callout { margin: 0 0 9px; border-left-color: var(--info); background: linear-gradient(90deg,rgba(99,180,237,.14),rgba(8,39,67,.35)); }

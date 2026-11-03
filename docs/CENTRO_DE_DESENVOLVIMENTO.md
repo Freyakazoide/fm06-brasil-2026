@@ -678,3 +678,12 @@ Conferido nos XML da Aurora e do jogo:
   o jogo deixa fora do Global (ex.: Erik Hagen, Liga 15 jogos + Seleção 5, Global 15). Ex. de clube:
   Marcos Antônio Cipriano, Liga 23 jogos/13 gols + Copa 6/4 = Global 29/17. A aba Desempenho mostra a
   tabela "Por competição" quando o jovem jogou mais de uma (no Figueirense, até 02/11, só Liga).
+- 03/11, **jovens emprestados e nome do clube**: o bloco de contrato `[R+0x98]` tem dois ponteiros; o
+  1º é o contrato com o dono e o 2º, quando há empréstimo, o contrato com o clube que recebeu (+0x08
+  clube, +0x20/+0x22 fim). No save: Breno Arruda (28) ao Grêmio até 31/12/2026 e Lucas Lócio (18) ao
+  Flamengo até 31/12/2027 (a conferir no jogo: é a mesma data do contrato com o Figueirense). O 2º
+  ponteiro pode ter lixo em quem não está emprestado: a data só é lida depois de os clubes baterem.
+  Nome do clube: UTF-16 em `[[clube+0x38]+8]` (curto: Figueirense, Grêmio, Flamengo) e
+  `[[clube+0x28]+8]` (longo: Figueirense FC, Grêmio FBPA). A Central agora lista os jovens
+  emprestados (filtro "Emprestado", aviso na Visão geral, data de volta no Contrato); adultos
+  emprestados ficam de fora, como os adultos do B e do Sub-20.
