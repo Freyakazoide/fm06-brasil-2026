@@ -70,13 +70,41 @@ def main() -> None:
                     if child:
                         children[f"{k:#x}"] = [p, child.hex()]
             shot["itens"].append({"end": s, "tipo": body[5], "corpo": body.hex(), "filhos": children})
+        # o dono comum dos conjuntos ([conjunto+0]): corpo, filhos e a lista em +0x5C (dados +0x60, qtd +0x64)
+        owner = u(u(data))
+        body = raw(owner, 0x200)
+        children = {}
+        for k in range(0, len(body), 4):
+            p = struct.unpack_from("<I", body, k)[0]
+            if 0x01000000 < p < 0x7FFF0000 and p != owner:
+                child = raw(p, 0x100)
+                if child:
+                    children[f"{k:#x}"] = [p, child.hex()]
+        items, n = u(owner + 0x60), u(owner + 0x64)
+        listed = {}
+        for i in range(min(n, 200)):
+            p = u(items + 4 * i)
+            child = raw(p, 0x80) if p else b""
+            if child:
+                listed[f"{i}"] = [p, child.hex()]
+        shot["dono"] = {"end": owner, "tipo": -1, "corpo": body.hex(), "filhos": children, "lista": listed, "qtd": n}
         OUT.mkdir(parents=True, exist_ok=True)
         (OUT / f"{sys.argv[2]}.json").write_text(json.dumps(shot, indent=1), encoding="utf-8")
         print(f"pedidos {calls}, escolhido {shot['escolhido']}, tipos {[x['tipo'] for x in shot['itens']]}")
     elif action == "diff":
         a, b = (json.loads((OUT / f"{name}.json").read_text(encoding="utf-8")) for name in sys.argv[2:4])
         print(f"escolhido: {a['escolhido']} -> {b['escolhido']}")
-        for x, y in zip(a["itens"], b["itens"]):
+        pairs = list(zip(a["itens"], b["itens"]))
+        if "dono" in a and "dono" in b:
+            pairs.append((a["dono"], b["dono"]))
+            print(f"dono 0x{a['dono']['end']:08X} -> 0x{b['dono']['end']:08X}, lista {a['dono']['qtd']} -> {b['dono']['qtd']}")
+            for key in sorted(set(a["dono"]["lista"]) | set(b["dono"]["lista"]), key=int):
+                pa, da = a["dono"]["lista"].get(key, [0, ""]); pb, db = b["dono"]["lista"].get(key, [0, ""])
+                if (pa, da) != (pb, db):
+                    da, db = bytes.fromhex(da), bytes.fromhex(db)
+                    diffs = [f"+{k:#x}: {da[k:k+4].hex()}->{db[k:k+4].hex()}" for k in range(0, min(len(da), len(db)), 4) if da[k:k+4] != db[k:k+4]]
+                    print(f"  lista[{key}] 0x{pa:08X}->0x{pb:08X}: " + "; ".join(diffs[:8]))
+        for x, y in pairs:
             ca, cb = bytes.fromhex(x["corpo"]), bytes.fromhex(y["corpo"])
             for k in range(0, len(ca), 4):
                 if ca[k:k + 4] != cb[k:k + 4]:

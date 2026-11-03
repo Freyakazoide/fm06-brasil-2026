@@ -694,3 +694,14 @@ Conferido nos XML da Aurora e do jogo:
   índice (`0x54AE50`). Sonda `tools/re/filtro_busca.py` (desvio em `0x786F32` que grava os conjuntos
   na `.fm26+0xDC00`) para fotografar os conjuntos antes/depois de mudar um filtro e achar onde ele
   fica, antes de qualquer escrita.
+- 03/11, **onde fica o filtro (conferido)**: a foto antes/depois de mudar a idade no Pesquisar mostrou
+  só o contêiner dos conjuntos mudando em `+0x34` (13 -> 21): é a **quantidade de resultados** (lista
+  em `+0x30`), não a idade. O filtro é `[conjunto escolhido + 0x124]`: `0x6AF1A0` o devolve para
+  `0x6AFD10` (resposta do pedido de busca); `0xA6BCF0` grava um filtro novo vindo da tela apagando o
+  velho (`if (velho) delete`) e aceita nulo; `0xA6AEE8` clona; `0xA6B82B` lê do save. Cada um dos 6
+  conjuntos tem o seu (vtable `0x10BD09C`, staff `0xE93CDC`); o de jogadores (tipo 1) é o que a
+  Central e o Pesquisar dividem. A seção atual gravada pelo patch (`.fm26+0xD7F4`) mostrou `srpl` no
+  Pesquisar. Teste na memória `tools/re/filtro_separado.py`: em `0x786F32`, se o conjunto escolhido é
+  do tipo 1, troca o ponteiro `+0x124` conforme a tela (`tcdv` -> filtro da Central; outra -> o
+  outro), guardando o que sai na `.fm26+0xDCC4`. O lado sem filtro começa vazio (nulo). O filtro do
+  save é tratado como da Central. Resultado: a conferir.
