@@ -147,6 +147,8 @@ class PressRoom(BaseHTTPRequestHandler):
                 except Exception as error:                      # jogo fechado no meio do caminho
                     result = {"erro": f"jogo não respondeu: {error}"}
                 state = estado.note_morale(career, str(body["key"]), player, date, result)
+                with PressRoom.lock:
+                    PressRoom.cache = None                      # a moral nova aparece no próximo /dados
             self._json(200, state)
         except ValueError as error:
             self._json(400, {"erro": str(error)})

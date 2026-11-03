@@ -399,6 +399,11 @@ logo antes de gravar, releitura depois. Cada mudança vai para `eventos.jsonl` (
 depois) e para `estado.json` (`moral`). O botão mostra a prévia ("moral 9 → 11 no jogo") e o
 cartão mostra o resultado. `--sem-efeitos` desliga. Ainda não: resposta ao treino no jogo, relação
 treinador-jogador do FM06.
+**Conferido (03/11):** 1ª tentativa sem efeito (bug: a condição do servidor lia uma marca que só
+existe na resposta à página; corrigido). 2ª: resposta "Ouvir antes de julgar" ao Leonan (suspensão,
+Jogador +2) gravou a moral **9 -> 11** no jogo (relida na memória depois: 11). Na ficha a palavra
+continuou "OK": a escala tem faixas por palavra, e 12 é o valor de 18.475 dos ~35 mil jogadores (o
+neutro). Falta mapear as faixas das palavras (Ruim/OK/Boa...) para a página mostrar a palavra.
 
 ### 8.8 Gerar notícia de repercussão
 
