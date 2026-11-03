@@ -103,6 +103,8 @@ function riskClass(risk) { return risk === "alto" ? "high" : risk === "médio" ?
 
 function renderHeader() {
   $("#club-name").textContent = data.info.club;
+  $("#mode-badge").textContent = data.mode === "jogo" ? "FM06 ABERTO · SÓ LEITURA" : "MODO DEMO · SEM SAVE";
+  $("#mode-badge").title = data.info.notice || "";
   $("#current-date").textContent = new Date(`${data.info.date}T12:00:00`).toLocaleDateString("pt-BR");
   const s = data.bank_stats;
   $("#header-summary").innerHTML = `<div class="header-kpi"><b>${data.agenda.length}</b><span>pautas</span></div><div class="header-kpi"><b>${data.outlets.length}</b><span>veículos</span></div><div class="header-kpi"><b>${s.situations}</b><span>situações</span></div><div class="header-kpi"><b>${s.response_combinations}</b><span>respostas</span></div>`;

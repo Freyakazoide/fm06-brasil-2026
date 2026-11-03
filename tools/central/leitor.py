@@ -242,6 +242,7 @@ def season_stats(jogo: Jogo, handle, r: int) -> dict:
             out[name] = None                                  # sem jogos: médias não fazem sentido
     out["forma"] = recent_form(jogo, ask("Pfrm"))
     out["nao_oficiais"] = stat_record(jogo, r, NON_COMPETITIVE)
+    out["minutos"] = stat_record(jogo, r, GLOBAL).get("minutos", 0)     # oficiais (Posa e cia. não têm minutos)
     out["por_competicao"] = {name: rec for cat, name in COMPETITIONS.items() if (rec := stat_record(jogo, r, cat))
                              and rec["jogos"] + rec["banco"]}
     return out
@@ -253,7 +254,7 @@ def season_stats(jogo: Jogo, handle, r: int) -> dict:
 # 5 Global); o registro tem 3 vtables e 28 u16 a partir de +0x0C. Conferido no Geraldo (Sub-20): não
 # oficiais 15 (7), 1 gol, nota 137/22 = 6,23, igual à aba Estatísticas do jogo. [27] não é o número de
 # jogos com nota: no goleiro Eric vale 1 (hipótese: jogos sem sofrer gol; [3] = gols sofridos).
-STATS_OBJECT, NON_COMPETITIVE = 0x90, 0
+STATS_OBJECT, NON_COMPETITIVE, GLOBAL = 0x90, 0, 5
 COMPETITIONS = {1: "Liga", 2: "Copa", 3: "Continental", 4: "Seleção"}  # 5 = Global = 1+2+3 (sem Seleção)
 
 

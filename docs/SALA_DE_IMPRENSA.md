@@ -249,6 +249,28 @@ O leitor da Sala de Imprensa deve importar uma camada estável, não duplicar of
 um módulo comum, por exemplo `tools/fm06_runtime/jogadores.py`, usado tanto pela Central quanto pela
 Imprensa.
 
+**Estado em 03/11 — feito (só leitura):** `tools/imprensa/ponte.py` monta o contrato da §7 a partir do
+leitor da Central (`leitor.jovens(max_age=99)`, elenco inteiro do clube humano), sem repetir offsets.
+`python tools\imprensa\servidor.py --jogo` usa o FM06 aberto (guarda a leitura por 2 minutos; com o
+jogo fechado, volta à demonstração e avisa no selo do topo). Mapeamento:
+
+- `stats`: jogos oficiais da temporada; sem nenhum, os **não oficiais** (Sub-20, amistosos), com
+  `unofficial: true`. Minutos oficiais vêm do registro Global do objeto de estatísticas.
+- `form`: as 5 últimas notas inteiras do jogo (`Pfrm`). Hipótese: a primeira é a mais recente.
+- `personality`: os traços do PData (1 a 20); `position`: nome da função do adjunto.
+
+Gatilhos reais (um assunto por jogador, até 7, ordenados por peso): `match_star` (nota ≥ 8 no último
+jogo), `senior_debut` (≤ 19 anos, 1 a 3 jogos oficiais), `poor_streak` (3 notas < 6,5 e média < 6,3 em
+5), `renewal` (contrato acaba em até 180 dias), `poor_match` (nota ≤ 5), `mental_pressure` (moral ≤ 7),
+`youth_comparison` (≤ 19 anos, potencial ≥ 4 estrelas), `loan` (≥ 18 anos, sem jogos oficiais, fora do
+Principal), `red_card` (vermelho na temporada), `stagnation` (≤ 21 anos e personalidade com chance
+baixa). Sem fonte ainda: clássico, lesão, vestiário, mercado, treino e próximo adversário.
+
+Veículo (§8.4): o que cobre o clube; se não houver (Florianópolis não tem veículo na planilha), um
+nacional do meio preferido da situação. Jornalista e veículo são escolhidos por hash da data, situação
+e jogador: a mesma pauta no mesmo dia sempre traz o mesmo repórter. Testes em
+`tests/test_imprensa_ponte.py`.
+
 ### 8.6 Persistir o estado externo
 
 Antes de qualquer escrita no jogo, guardar em arquivo local por carreira:
