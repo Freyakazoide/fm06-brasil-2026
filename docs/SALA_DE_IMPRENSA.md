@@ -537,6 +537,13 @@ Falta, em ordem:
    Proteção já no modo exclusivo: só sai notícia com +0x20 == -1. Falta conferir no jogo com uma
    notícia pendente de verdade (proposta, contrato) e o filtro "Apenas Não-Lidas e Pendentes".
    Detalhe visto junto: +0x22 bit 0x10 é ligado ao carregar a notícia do save (0x4DAFC0).
+   **Conferido no jogo (03/11, save de teste): deu certo.** 1042 PHYSIO_REPORT (Zé Carlos, botões
+   "Dar Injecção" / "Entregar à Fisioterapia"): lida e sem resposta = -3; depois de "Entregar à
+   Fisioterapia" + "Sim" = 9 (o corpo ganhou "Carlos será tratado pela fisioterapia"). 1043
+   PHYSIO_REPORT (Ezequiel, sem botões) = -1: a classe sozinha não diz se pede resposta, o campo diz.
+   A Sala (modo exclusivo ligado) não tirou a 1042. O filtro "Apenas Não-Lidas e Pendentes" mostrou
+   "0 de 94" mesmo com 5 não lidas e a 1042 pendente: não serve de prova (comportamento do jogo).
+   Hipótese: 995 = 10 é "Dar Injecção".
 3. Página da Central de Notícias com abas por categoria/módulo; a Sala de Imprensa continua para as
    de imprensa.
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
