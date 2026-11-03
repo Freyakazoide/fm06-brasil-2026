@@ -48,7 +48,8 @@ def read_string(jogo: leitor.Jogo, string: int) -> str:
 
 
 def plain(text: str) -> str:
-    """Tira os registros de link (aninhados) e deixa só o texto que a tela mostra."""
+    """Tira os registros de link (aninhados) e as marcas de trecho clicável (caracteres 01 e 02) e
+    deixa só o texto que a tela mostra."""
     out, depth, i = [], 0, 0
     for match in re.finditer(r"<record[^>]*>|</record>", text):
         if depth == 0:
@@ -56,7 +57,7 @@ def plain(text: str) -> str:
         depth += -1 if match.group().startswith("</") else 1
         i = match.end()
     out.append(text[i:] if depth == 0 else "")
-    return "".join(out).replace("\\", "").strip()
+    return re.sub(r"[\x01\x02]", "", "".join(out).replace("\\", "")).strip()
 
 
 def news_text(jogo: leitor.Jogo, handle, news: int) -> tuple[str, str]:
@@ -73,6 +74,21 @@ def news_text(jogo: leitor.Jogo, handle, news: int) -> tuple[str, str]:
         return texts[0], texts[1]
     finally:
         cr.kernel32.VirtualFreeEx(handle, page, 0, 0x8000)
+
+
+def text_of(jogo: leitor.Jogo, serial: int) -> dict:
+    """Manchete e corpo (texto da tela, sem os links) da notícia de série `serial` da caixa."""
+    _, data, count, _ = noticias.box(jogo)
+    items = struct.unpack(f"<{count}I", jogo.raw(data, 4 * count)) if count else ()
+    news = next((p for p in items if jogo.u32(p + noticias.SERIAL) == serial), None)
+    if not news:
+        raise LookupError(f"notícia {serial} não está na caixa")
+    _, handle = cr.game()
+    try:
+        headline, body = news_text(jogo, handle, news)
+    finally:
+        cr.kernel32.CloseHandle(handle)
+    return {"manchete": plain(headline), "corpo": plain(body)}
 
 
 def main() -> None:

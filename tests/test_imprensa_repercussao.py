@@ -63,3 +63,22 @@ def test_exclusive_only_press_news_of_the_squad() -> None:
     assert not noticias.exclusive({**news, "classe": "MEDIA_COMMENT_NEWS_ITEM"}, {7})   # sem pauta
     assert not noticias.exclusive({**news, "classe": "RED_CARD_BAN_NEWS"}, {7})   # não é da imprensa
     assert noticias.exclusive({**news, "classe": "MOM_SUMMARY_NEWS"}, {7}, frozenset({"MOM_SUMMARY_NEWS"}))
+
+
+def test_plain_strips_link_marks() -> None:
+    sys.path.insert(0, str(ROOT / "tools" / "re"))
+    import texto_noticia
+    raw = "\x01\x02O Figueirense FC\x01 venceu <record id=1><record>x</record></record>por \x01\x022 - 0\x01"
+    assert texto_noticia.plain(raw) == "O Figueirense FC venceu por 2 - 0"
+
+
+def test_captured_text_reaches_the_agenda() -> None:
+    import datetime as dt
+    import ponte
+    news = {"serie": 9, "classe": "MEDIA_PLAYER_FORM_NEWS", "data": "2026-03-01", "lida": False, "jogador": 8833546,
+            "exclusiva": True, "manchete": "Imprensa questiona Leonan", "corpo": "Linha 1\n\nLinha 2"}
+    players = [{"id": 8833546, "name": "Leonan"}]
+    situations = {item["id"]: item for item in banco.bank()}
+    out = ponte.news_candidates([news], set(), players, situations, dt.date(2026, 3, 2))
+    assert out and out[0][4]["news_headline"] == "Imprensa questiona Leonan"
+    assert out[0][4]["news_body"] == "Linha 1\n\nLinha 2"

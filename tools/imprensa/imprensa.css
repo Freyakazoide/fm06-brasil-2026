@@ -65,6 +65,9 @@ footer{height:23px;display:flex;align-items:center;justify-content:space-between
 /* motivo real da pauta (ponte com o jogo) */
 .agenda-reason{grid-column:2/4;grid-row:4;color:#ffe48a;font-size:11px;line-height:1.3}
 .why-card{border-color:#8e7624;background:linear-gradient(180deg,#1f2a1a,#0a2135)}.why-card .section-title i{background:var(--accent)}
+.news-text{margin:8px 0 10px;padding:10px 12px;background:#f4efe1;color:#1d1a14;border-left:4px solid #c9a227;font:14px/1.4 Georgia,serif}
+.news-text b{display:block;margin-bottom:4px;font:700 16px/1.25 Georgia,serif}
+.news-text p{margin:4px 0 0}
 .why-fact{margin:9px 0 6px;color:#fff1ae;font:700 16px/1.3 "Arial Narrow","Segoe UI",sans-serif}
 .why-rule{margin:4px 0 0;color:var(--muted);font-size:11px}.why-rule b{color:#cfe2f3}
 

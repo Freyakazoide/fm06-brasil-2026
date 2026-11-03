@@ -513,6 +513,11 @@ categoria fixa, BASIC_* etc., a ler de um campo).
 Falta, em ordem:
 
 1. Capturar com texto: ler manchete e corpo antes de tirar a notícia (as 993/1017 perderam o texto).
+   **Feito no código (03/11), falta conferir no jogo:** `NewsWatcher.capture` chama
+   `texto_noticia.text_of` antes de `noticias.remove`; sem manchete a notícia não sai e o modo
+   desliga. O texto vai para `capturadas.json` (`manchete`, `corpo`) e aparece em "Por que esta
+   pauta". O texto do jogo traz marcas de trecho clicável (caracteres 01 02 ... 01), tiradas em
+   `plain()`. Conferido em memória (só leitura): 1016 MATCH_SUMMARY sai limpo.
 2. Notícias com ação ficam no jogo até o módulo saber responder: o relatório do fisioterapeuta
    (escolha de recuperação), proposta de transferência, decisão de contrato, pedidos da diretoria.
    Como reconhecer: o filtro "Apenas Não-Lidas e Pendentes" do jogo sabe quais estão pendentes;

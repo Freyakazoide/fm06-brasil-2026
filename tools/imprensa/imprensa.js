@@ -225,7 +225,8 @@ function contextCards(player) {
 function whyCard(agenda, player, situation) {
   const source = player.stats.unofficial ? `Números de jogos <b>não oficiais</b> (${esc(player.team || "base")}): ${player.stats.matches} jogos, nota ${String(player.stats.rating).replace(".", ",")}.` : "";
   return `<section class="panel context-card why-card"><h3 class="section-title"><i></i> Por que esta pauta</h3>
-    <p class="why-fact">${esc(agenda.reason || situation.trigger)}</p>
+    <p class="why-fact">${esc(agenda.reason || situation.trigger)}</p>${agenda.news_headline ? `
+    <article class="news-text"><b>${esc(agenda.news_headline)}</b>${(agenda.news_body || "").split(/\n+/).filter(Boolean).map(line => `<p>${esc(line)}</p>`).join("")}</article>` : ""}
     <p class="why-rule"><b>Regra:</b> ${esc(situation.trigger)} · urgência ${esc(situation.urgency)}</p>${source ? `<p class="why-rule">${source}</p>` : ""}</section>`;
 }
 function renderLive() {

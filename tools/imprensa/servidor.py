@@ -20,7 +20,7 @@ from urllib.parse import unquote, urlsplit
 
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
+sys.path[:0] = [str(HERE), str(HERE.parent / "re")]
 
 import banco  # noqa: E402
 import demo  # noqa: E402
@@ -29,6 +29,7 @@ import estado  # noqa: E402
 import noticias  # noqa: E402
 import ponte  # noqa: E402
 import repercussao  # noqa: E402
+import texto_noticia  # noqa: E402
 import veiculos  # noqa: E402
 
 
@@ -52,8 +53,9 @@ class NewsWatcher:
         self.since = None                                       # só notícias chegadas depois de ligar
 
     def capture(self, jogo, items: list[dict]) -> list[dict]:
-        """--exclusivo: guarda a notícia de imprensa do elenco e a tira da caixa do jogo. Qualquer
-        falha desliga o modo (a caixa do jogo nunca fica pela metade por insistência)."""
+        """--exclusivo: guarda a notícia de imprensa do elenco (com manchete e corpo, montados pelo
+        próprio jogo) e a tira da caixa do jogo. Sem texto, a notícia não sai. Qualquer falha desliga
+        o modo (a caixa do jogo nunca fica pela metade por insistência)."""
         import leitor
         if self.squad is None:
             jovens, info = leitor.jovens(max_age=99)
@@ -62,11 +64,14 @@ class NewsWatcher:
         taken = []
         for item in (n for n in items if n["serie"] > self.since and noticias.exclusive(n, self.squad, self.extra)):
             try:
+                item = {**item, **texto_noticia.text_of(jogo, item["serie"])}
+                if not item["manchete"]:
+                    raise RuntimeError("manchete vazia")
                 estado.add_capture(self.career, item, None)                # guardada antes de sair do jogo
                 removed = noticias.remove(jogo, item["serie"])
                 if any(n["serie"] == item["serie"] for n in noticias.inbox(jogo)):
                     raise RuntimeError("continua na caixa depois da remoção")
-            except Exception as error:
+            except (Exception, SystemExit) as error:
                 self.exclusive = False
                 print(f"[imprensa] modo exclusivo desligado: notícia {item['serie']}: {error}")
                 break

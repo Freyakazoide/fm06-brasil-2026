@@ -149,7 +149,8 @@ def news_candidates(inbox: list[dict], just_read: set[int], players: list[dict],
         weight = (1_000_000 if item["serie"] in just_read else 0) + item["serie"]
         out.append((weight, sid, p, reason, {"news_serial": item["serie"], "news_class": item["classe"],
                                              "news_read": bool(item.get("lida")), "news_day": day,
-                                             "news_exclusive": bool(item.get("exclusiva"))}))
+                                             "news_exclusive": bool(item.get("exclusiva")),
+                                             "news_headline": item.get("manchete"), "news_body": item.get("corpo")}))
     return out
 
 
