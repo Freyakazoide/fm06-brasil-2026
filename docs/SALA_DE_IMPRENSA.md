@@ -435,6 +435,17 @@ Na página, o cartão de jornal substitui a "manchete provável" depois da respo
 página: Leonan / ESPN Brasil. Testes: `tests/test_imprensa_repercussao.py`. Ainda não: o follow-up
 virar pauta nova (§10: um por assunto comum) e a notícia na caixa de entrada do FM06.
 
+**03/11, tirar notícia da caixa do jogo (deu certo):** `tools/re/caixa_remover.py`. O
+NEWS_ITEM_ARRAY é uma lista comum: `+0` vtable, `+4` dados, `+8` quantidade, `+0xC` capacidade
+(75/100). Teste: remover a 963 (MEDIA_COMMENT_NEWS_ITEM, 23/07, lida; posição 72, objeto 0x107AFD48)
+= deslocar os ponteiros seguintes e baixar a quantidade (75 -> 74); o objeto não é liberado.
+Resultado (conferido pelo usuário): sumiu da caixa (23/07 com 2 notícias), jogo normal, **salvo em
+save novo, fechado, reaberto: continua fora** (lista relida: 74, sem a 963). Em aberto: a tela diz
+"74 de 75 mensagens exibidas, 41 não lidas", mas a lista tem 74 e 40 não lidas; o único 74 perto do
+humano é a própria quantidade (`humano-0x1D8`). Hipótese: o 75º/41º é uma mensagem de outra lista
+(não um contador velho). Conferir no save original da carreira (que ainda tem a 963): se ele mostrar
+"75 de 76", é outra lista.
+
 Há código de criação de notícia em `src/fm06patch/fornada.py` que pode servir como referência. Não
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
 de entrada.
