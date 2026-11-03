@@ -704,4 +704,9 @@ Conferido nos XML da Aurora e do jogo:
   Pesquisar. Teste na memória `tools/re/filtro_separado.py`: em `0x786F32`, se o conjunto escolhido é
   do tipo 1, troca o ponteiro `+0x124` conforme a tela (`tcdv` -> filtro da Central; outra -> o
   outro), guardando o que sai na `.fm26+0xDCC4`. O lado sem filtro começa vazio (nulo). O filtro do
-  save é tratado como da Central. Resultado: a conferir.
+  save é tratado como da Central. **Resultado: TRAVOU** ao voltar ao Pesquisar (dump 07:49:32:
+  acesso nulo em `0xCC4C45`, chamado de `0x6AFD84`): o serializador da resposta não aceita filtro nulo
+  (o teste de nulo vale só em `0xA6BCF6`/`0x783171`). Correção: o lado sem filtro recebe uma cópia
+  feita pelo clone do próprio jogo (`0xA6AEC4`: fábrica = `(f+4)->vfunc 8`, novo = `0xCC47F0(fábrica)
+  - 4`, `novo->vfunc 0x58(f)` copia). O Pesquisar começa com uma cópia do filtro da Central e fica
+  independente dali em diante. Nada foi gravado no exe nem no save.
