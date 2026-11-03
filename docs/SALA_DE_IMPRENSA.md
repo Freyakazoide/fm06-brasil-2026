@@ -186,6 +186,15 @@ capturar, no mínimo:
 A Central já prova um padrão útil: um patch nativo registra a seção aberta e um servidor externo
 observa a telemetria. A Sala de Imprensa pode seguir o mesmo desenho, mas com uma estrutura própria.
 
+**Estado em 03/11 (investigação):** a notícia não abre tela nova. A caixa de entrada é a seção `Pnws`
+(`data/screens/news.xml`: tabela `indx` com seleção de linhas e o texto embaixo), então o desvio de
+abertura da Central (que anota a seção de cada tela) não diz qual notícia foi lida. Caminho escolhido,
+sem patch: mapear a caixa de entrada do humano na memória e o observador externo notar quando uma
+notícia passa de não lida para lida. Pistas no exe: entrega `0x753E10(notícia, clube, 0)` ao
+gerenciador `0x0132AAD0`, que percorre a lista do clube (`+0x64`, quantidade `+0x6C`) e chama
+`0x753C10` por destinatário. Próximo: achar na memória o texto de uma manchete conhecida e subir pelos
+ponteiros até a lista e o campo "lida".
+
 ### 8.2 Criar telemetria reservada
 
 Reservar no bloco `.fm26` campos equivalentes a:
