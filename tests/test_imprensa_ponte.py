@@ -70,3 +70,16 @@ def test_form_news_reads_the_last_game() -> None:
     assert noticias.situation_for(item, {"form": [5.0, 6.0, 6.0, 7.0, 8.0]}) == "match_star"
     assert noticias.situation_for({"classe": "RED_CARD_BAN_NEWS"}, None) == "red_card"
     assert noticias.situation_for({"classe": "TESTE_DESCONHECIDO"}, None) is None
+
+
+def test_agenda_uses_only_real_news_when_there_are_any() -> None:
+    players = central_players()
+    a, b = players[0]["uid"], players[1]["uid"]
+    inbox = [{"serie": 10, "classe": "RED_CARD_BAN_NEWS", "data": "2026-08-01", "lida": False, "jogador": a},
+             {"serie": 11, "classe": "INJURY_INJURED_NEWS", "data": "2026-08-02", "lida": True, "jogador": b},
+             {"serie": 3, "classe": "RED_CARD_BAN_NEWS", "data": "2026-06-01", "lida": True, "jogador": b}]   # velha
+    data = ponte.payload(players, today=dt.date(2026, 8, 4), club="Figueirense", inbox=inbox, news=[inbox[0]])
+    assert [x["key"] for x in data["agenda"]] == ["noticia-10", "noticia-11"]     # a recém-lida primeiro
+    assert data["agenda"][0]["when"] == "agora" and data["agenda"][1]["status"] == "lida no jogo"
+    assert "ainda não aberta" in data["agenda"][0]["reason"]
+    assert not any(x["key"].startswith("2026") for x in data["agenda"])          # sem gatilho inventado

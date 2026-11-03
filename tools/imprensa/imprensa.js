@@ -105,6 +105,7 @@ function renderHeader() {
   $("#club-name").textContent = data.info.club;
   $("#mode-badge").textContent = data.mode === "jogo" ? "FM06 ABERTO · SÓ LEITURA" : "MODO DEMO · SEM SAVE";
   $("#mode-badge").title = data.info.notice || "";
+  $("#agenda-foot").textContent = data.mode === "jogo" ? "Pautas tiradas da caixa de entrada do jogo (últimos 14 dias). As respostas ficam no histórico da carreira." : "As escolhas desta demonstração ficam apenas nesta página.";
   $("#current-date").textContent = new Date(`${data.info.date}T12:00:00`).toLocaleDateString("pt-BR");
   const s = data.bank_stats;
   $("#header-summary").innerHTML = `<div class="header-kpi"><b>${data.agenda.length}</b><span>pautas</span></div><div class="header-kpi"><b>${data.outlets.length}</b><span>veículos</span></div><div class="header-kpi"><b>${s.situations}</b><span>situações</span></div><div class="header-kpi"><b>${s.response_combinations}</b><span>respostas</span></div>`;

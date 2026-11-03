@@ -337,6 +337,15 @@ credibilidade por veículo, elenco, torcida e diretoria). Efeitos limitados a ±
 resposta por pauta. A pauta respondida fica marcada ("✓ respondida") e travada mesmo depois de
 recarregar. Testes em `tests/test_imprensa_estado.py`. Ainda não: promessas, contradições, cooldown.
 
+**03/11, agenda só com notícias reais (pedido do usuário):** as pautas inventadas pelos números
+("Estreia no profissional", "Renovação"...) não eram notícias do jogo. No `--jogo`, a agenda agora é a
+caixa de entrada: notícias dos últimos 14 dias que viram situação e são de jogador do clube (até 10,
+uma por jogador), **lidas ou não** (as lidas antes de a Sala ligar também entram). A que acabou de ser
+aberta no jogo fica como "agora"; o resto vai da mais nova à mais velha, com a data da notícia e o
+status "lida no jogo"/"não lida no jogo". A chave da pauta é a série da notícia, então a resposta dada
+continua marcada depois de reiniciar o servidor. Os gatilhos pelos números só entram se não houver
+nenhuma notícia ("sugestão da assessoria").
+
 ### 8.7 Aplicar efeitos
 
 Separar os efeitos em duas categorias.

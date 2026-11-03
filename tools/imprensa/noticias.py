@@ -44,10 +44,24 @@ SITUATION = {
     "MANAGER_VOTE_OF_CONFIDENCE_NEWS": "manager_pressure", "BASIC_MANAGER_UNDER_PRESSURE_NEWS": "manager_pressure",
     "MANAGER_ULTIMATUM_NEWS": "manager_pressure", "SUPPORTER_PROTEST_NEWS": "fan_protest",
 }
-LABEL = {"MEDIA_PLAYER_FORM_NEWS": "imprensa comenta a forma", "MOM_SUMMARY_NEWS": "melhor em campo",
-         "RED_CARD_BAN_NEWS": "suspensão", "PHYSIO_REPORT_NEWS_ITEM": "relatório do fisioterapeuta",
-         "INJURY_INJURED_NEWS": "lesão", "CONTRACT_EXPIRES_SOON_NEWS": "contrato perto do fim",
-         "MEDIA_TRANSFER_SPECULATION_NEWS": "especulação de transferência"}
+LABEL = {
+    "MEDIA_PLAYER_FORM_NEWS": "imprensa comenta a forma", "MOM_SUMMARY_NEWS": "melhor em campo",
+    "MOM_FORM_NEWS": "melhor em campo seguidas vezes", "RED_CARD_BAN_NEWS": "suspensão",
+    "ACCUMULATIVE_BAN_NEWS": "suspensão por cartões", "INJURY_INJURED_NEWS": "lesão",
+    "PHYSIO_REPORT_NEWS_ITEM": "relatório do fisioterapeuta", "MEDIA_INJURY_NEWS": "imprensa comenta a lesão",
+    "BASIC_INJURY_NEWS": "lesão", "QUIRKY_PLAYER_INJURY_NEWS": "lesão curiosa",
+    "INJURY_FULL_TRAINING_NEWS": "liberado para treinar", "INJURY_LIGHT_TRAINING_NEWS": "treino leve após lesão",
+    "MEDIA_INJURY_CRISIS_NEWS": "crise de lesões", "CONTRACT_EXPIRES_SOON_NEWS": "contrato perto do fim",
+    "BASIC_CONTRACT_EXPIRING_NEWS": "contrato perto do fim", "LOAN_CONTRACT_EXPIRES_SOON_NEWS": "empréstimo perto do fim",
+    "MEDIA_TRANSFER_SPECULATION_NEWS": "especulação de transferência", "TRANSFER_OFFER_NEWS": "proposta de transferência",
+    "TRANSFER_OFFER_REJECTED_NEWS": "proposta recusada", "BASIC_PLAYER_REQUESTS_LISTING_NEWS": "pede para ser negociado",
+    "MEDIA_PLAYER_MORALE_NEWS": "imprensa comenta a moral", "BASIC_MORALE_NEWS": "moral do jogador",
+    "PLAYER_DISPUTE_NEWS": "desentendimento", "PLAYER_MISSED_TRAINING_NEWS_ITEM": "faltou ao treino",
+    "PLAYER_AWOL_NEWS_ITEM": "sumiu do clube", "MEDIA_PENALTY_MISS_NEWS": "pênalti perdido",
+    "PLAYER_FIRST_CAP_NEWS": "primeira convocação", "PLAYER_SCORES_FIRST_INTERNATIONAL_GOAL_NEWS": "primeiro gol pela seleção",
+    "MANAGER_VOTE_OF_CONFIDENCE_NEWS": "voto de confiança da diretoria", "BASIC_MANAGER_UNDER_PRESSURE_NEWS": "técnico pressionado",
+    "MANAGER_ULTIMATUM_NEWS": "ultimato ao técnico", "SUPPORTER_PROTEST_NEWS": "protesto da torcida",
+}
 
 
 def inbox(jogo: leitor.Jogo) -> list[dict]:
