@@ -1,0 +1,2050 @@
+{
+ "ACCUMULATIVE_BAN_NEWS": {
+  "vtable": "0x10b02c4",
+  "tipo": 800,
+  "categoria": 6,
+  "categoria_nome": "Disciplina",
+  "texto": "0x00590B80",
+  "slot11_proprio": false
+ },
+ "ADMINISTRATOR_RELEASES_PLAYERS_NEWS": {
+  "vtable": "0x10a15c4",
+  "tipo": 223,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057B4F0",
+  "slot11_proprio": false
+ },
+ "ADVERT_CREATED_NEWS": {
+  "vtable": "0x10a70ec",
+  "tipo": 1500,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00598E30",
+  "slot11_proprio": true
+ },
+ "ADVERT_REMOVED_NEWS": {
+  "vtable": "0x10a7174",
+  "tipo": 1501,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005990F0",
+  "slot11_proprio": true
+ },
+ "ADVERT_RESPOND_NEWS": {
+  "vtable": "0x10a727c",
+  "tipo": 1502,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00599480",
+  "slot11_proprio": false
+ },
+ "AGENT_VIDEO_NEWS": {
+  "vtable": "0x10ad14c",
+  "tipo": 441,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005B8570",
+  "slot11_proprio": false
+ },
+ "ASSISTANT_MANAGER_ANALYSIS_OF_MATCH_NEWS": {
+  "vtable": "0x10ad404",
+  "tipo": 444,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005DDDC0",
+  "slot11_proprio": false
+ },
+ "ASSISTANT_MANAGER_ANALYSIS_OF_PLAYER_MOOD_NEWS": {
+  "vtable": "0x10ad48c",
+  "tipo": 447,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005DE0F0",
+  "slot11_proprio": false
+ },
+ "AWAITING_WORK_PERMIT_NEWS": {
+  "vtable": "0x10ae5d4",
+  "tipo": 208,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FD400",
+  "slot11_proprio": false
+ },
+ "AWARD_NEWS": {
+  "vtable": "0xe3245c",
+  "tipo": 1400,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00572820",
+  "slot11_proprio": false
+ },
+ "AWARD_PRAISE_FIRST_CAP_NEWS": {
+  "vtable": "0x10af7e4",
+  "tipo": 437,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005DAC50",
+  "slot11_proprio": true
+ },
+ "AWARD_PRAISE_MANAGER_NEWS": {
+  "vtable": "0x10af75c",
+  "tipo": 436,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005DA610",
+  "slot11_proprio": true
+ },
+ "BANKRUPTCY_NEWS": {
+  "vtable": "0x10a0ebc",
+  "tipo": 607,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057A030",
+  "slot11_proprio": true
+ },
+ "BAN_APPEAL_NEWS": {
+  "vtable": "0x10af184",
+  "tipo": 802,
+  "categoria": 6,
+  "categoria_nome": "Disciplina",
+  "texto": "0x00591BD0",
+  "slot11_proprio": false
+ },
+ "BASIC_COMP_NEWS": {
+  "vtable": "0xebc5d0",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BASIC_CONTRACT_EXPIRING_NEWS": {
+  "vtable": "0xebc5e4",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BASIC_CONTRACT_NEWS": {
+  "vtable": "0xebc580",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00574980",
+  "slot11_proprio": true
+ },
+ "BASIC_INJURY_NEWS": {
+  "vtable": "0xebc5bc",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BASIC_MANAGER_LEAVES_NEWS": {
+  "vtable": "0xe6c804",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x01195440",
+  "slot11_proprio": true
+ },
+ "BASIC_MANAGER_UNDER_PRESSURE_NEWS": {
+  "vtable": "0xebc60c",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00574AE0",
+  "slot11_proprio": true
+ },
+ "BASIC_MESSAGE_NEWS": {
+  "vtable": "0xe7a438",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00006E61",
+  "slot11_proprio": true
+ },
+ "BASIC_MONTHLY_AWARD_NEWS": {
+  "vtable": "0xe314b0",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BASIC_MORALE_NEWS": {
+  "vtable": "0xebc5f8",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BASIC_NEWS_ITEM": {
+  "vtable": "0xe3149c",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004019B0",
+  "slot11_proprio": true
+ },
+ "BASIC_PLAYER_REQUESTS_LISTING_NEWS": {
+  "vtable": "0xebc5a8",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BASIC_RETIREMENT_NEWS": {
+  "vtable": "0xebc594",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BASIC_SCORELINE_NEWS": {
+  "vtable": "0xebc620",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BASIC_SEASON_AWARD_NEWS": {
+  "vtable": "0xe314c4",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004035F0",
+  "slot11_proprio": true
+ },
+ "BASIC_SILLY_NEWS": {
+  "vtable": "0xebc634",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x52545F43",
+  "slot11_proprio": true
+ },
+ "BASIC_TRANSFER_NEWS": {
+  "vtable": "0xe6c7f0",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004378C0",
+  "slot11_proprio": true
+ },
+ "BOARD_COMP_PROMOTION_NEWS": {
+  "vtable": "0x10abba4",
+  "tipo": 455,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005F4DB0",
+  "slot11_proprio": false
+ },
+ "BOARD_COMP_WIN_NEWS": {
+  "vtable": "0x10aba94",
+  "tipo": 452,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005F4340",
+  "slot11_proprio": false
+ },
+ "BOARD_REEVENT_TO_FINE_NEWS": {
+  "vtable": "0x10a1894",
+  "tipo": 1302,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00592FE0",
+  "slot11_proprio": false
+ },
+ "BOARD_REQUEST_NEWS": {
+  "vtable": "0xe32644",
+  "tipo": 506,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005769D0",
+  "slot11_proprio": false
+ },
+ "BOARD_RESULT_NEWS": {
+  "vtable": "0x10aca9c",
+  "tipo": 523,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00577CC0",
+  "slot11_proprio": false
+ },
+ "BOARD_VETO_FREE_TRANSFER_NEWS": {
+  "vtable": "0xea90ec",
+  "tipo": 616,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059C460",
+  "slot11_proprio": false
+ },
+ "BUILDUP_HYPE_AWARD_NEWS": {
+  "vtable": "0xe324e4",
+  "tipo": 1403,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00571E20",
+  "slot11_proprio": false
+ },
+ "BUST_UP_RESPONSE_NEWS": {
+  "vtable": "0xeb3de4",
+  "tipo": 434,
+  "categoria": 7,
+  "categoria_nome": "Lesões",
+  "texto": "0x005972B0",
+  "slot11_proprio": false
+ },
+ "CLUB_AWARD_NEWS": {
+  "vtable": "0xe3140c",
+  "tipo": 1404,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005715F0",
+  "slot11_proprio": false
+ },
+ "CLUB_BOARD_BUDGET_INCREASE_NEWS": {
+  "vtable": "0x10a0d24",
+  "tipo": 614,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00579300",
+  "slot11_proprio": false
+ },
+ "CLUB_CASH_INJECTION_NEWS": {
+  "vtable": "0x10a0dac",
+  "tipo": 604,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00579780",
+  "slot11_proprio": false
+ },
+ "CLUB_HUMAN_CONTRACT_OFFER_NEWS": {
+  "vtable": "0x10a02ac",
+  "tipo": 313,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x005892B0",
+  "slot11_proprio": false
+ },
+ "CLUB_INSTRUCTIONS_IGNORED_RESPONSE_NEWS": {
+  "vtable": "0xfc97e4",
+  "tipo": 423,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005BFF40",
+  "slot11_proprio": false
+ },
+ "CLUB_MERCHANDISE_INCREASE_NEWS": {
+  "vtable": "0x10aed44",
+  "tipo": 603,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00579600",
+  "slot11_proprio": false
+ },
+ "CLUB_TRANSFER_BUDGET_ANNOUNCEMENT_NEWS": {
+  "vtable": "0xecb18c",
+  "tipo": 602,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00578F40",
+  "slot11_proprio": false
+ },
+ "COACH_FEEDBACK_ON_PLAYER_NEWS_ITEM": {
+  "vtable": "0x10af6d4",
+  "tipo": 1103,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x0057CD20",
+  "slot11_proprio": true
+ },
+ "COACH_REEVENT_TO_FINE_NEWS": {
+  "vtable": "0x10a191c",
+  "tipo": 1303,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005930C0",
+  "slot11_proprio": false
+ },
+ "COACH_REPORT_NEWS_ITEM": {
+  "vtable": "0xe3157c",
+  "tipo": 1102,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x0057CA00",
+  "slot11_proprio": true
+ },
+ "COMMENT_ON_BAN_APPEAL_NEWS": {
+  "vtable": "0x10af20c",
+  "tipo": 803,
+  "categoria": 6,
+  "categoria_nome": "Disciplina",
+  "texto": "0x00591E50",
+  "slot11_proprio": false
+ },
+ "COMP_ODDS_NEWS": {
+  "vtable": "0x10b0754",
+  "tipo": 13,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00580E10",
+  "slot11_proprio": false
+ },
+ "COMP_PRIZE_MONEY_NEWS": {
+  "vtable": "0x10afe4c",
+  "tipo": 14,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057ED40",
+  "slot11_proprio": false
+ },
+ "COMP_PROMOTION_NEWS": {
+  "vtable": "0x10abb1c",
+  "tipo": 454,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005F4BA0",
+  "slot11_proprio": false
+ },
+ "COMP_QUALIFICATION_NEWS": {
+  "vtable": "0xed4b0c",
+  "tipo": 28,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005804F0",
+  "slot11_proprio": false
+ },
+ "COMP_STATS_NEWS": {
+  "vtable": "0x10afd3c",
+  "tipo": 6,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057D2B0",
+  "slot11_proprio": false
+ },
+ "COMP_WIN_NEWS": {
+  "vtable": "0x10aba0c",
+  "tipo": 420,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005F3940",
+  "slot11_proprio": false
+ },
+ "CONTRACT_CLAUSE_ACTIVATED_NEWS": {
+  "vtable": "0x10a079c",
+  "tipo": 306,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x0058BCE0",
+  "slot11_proprio": false
+ },
+ "CONTRACT_DECISION_NEWS": {
+  "vtable": "0x10b0ca4",
+  "tipo": 300,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x0058C9F0",
+  "slot11_proprio": false
+ },
+ "CONTRACT_EXPIRES_NEWS": {
+  "vtable": "0x10a019c",
+  "tipo": 302,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x00587E00",
+  "slot11_proprio": false
+ },
+ "CONTRACT_EXPIRES_SOON_NEWS": {
+  "vtable": "0x10a0714",
+  "tipo": 301,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x0058A820",
+  "slot11_proprio": false
+ },
+ "CONTRACT_RENEWAL_FAILED_NEWS": {
+  "vtable": "0x10aeb24",
+  "tipo": 307,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x00588410",
+  "slot11_proprio": false
+ },
+ "CONTRACT_TERMINATION_OFFER_NEWS": {
+  "vtable": "0xea9064",
+  "tipo": 222,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x005886D0",
+  "slot11_proprio": false
+ },
+ "COOWN_DECISION_NEWS": {
+  "vtable": "0x10ae98c",
+  "tipo": 221,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FF1D0",
+  "slot11_proprio": false
+ },
+ "CUP_DRAW_SUMMARY_NEWS": {
+  "vtable": "0x10b00a4",
+  "tipo": 26,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00580270",
+  "slot11_proprio": false
+ },
+ "CUP_QUALIFICATION_NEWS": {
+  "vtable": "0x10afdc4",
+  "tipo": 5,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00582880",
+  "slot11_proprio": false
+ },
+ "CUP_ROUND_DRAW_NEWS": {
+  "vtable": "0x10afcb4",
+  "tipo": 1,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057E010",
+  "slot11_proprio": false
+ },
+ "DIVIDEND_PAYOUT_NEWS": {
+  "vtable": "0x10a10dc",
+  "tipo": 609,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057A960",
+  "slot11_proprio": false
+ },
+ "DRAFT_PLAYERS_SELECTED_NEWS": {
+  "vtable": "0x10ae194",
+  "tipo": 25,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057FF00",
+  "slot11_proprio": false
+ },
+ "END_OF_SEASON_ASSESSMENT_NEWS": {
+  "vtable": "0x10aec34",
+  "tipo": 509,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005A2300",
+  "slot11_proprio": true
+ },
+ "END_OF_SEASON_HOLIDAY_NEWS": {
+  "vtable": "0x10afa04",
+  "tipo": 1703,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005F7640",
+  "slot11_proprio": false
+ },
+ "END_OF_SEASON_PERFORMANCE_ANALYSIS_NEWS": {
+  "vtable": "0xe6c564",
+  "tipo": 611,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059BB90",
+  "slot11_proprio": true
+ },
+ "EUROPEAN_FAIR_PLAY_NATION_ANNOUNCE_NEWS": {
+  "vtable": "0x10b06cc",
+  "tipo": 29,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00583960",
+  "slot11_proprio": false
+ },
+ "EUROPEAN_FAIR_PLAY_RESULT_NEWS": {
+  "vtable": "0x10adf74",
+  "tipo": 30,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00583C50",
+  "slot11_proprio": false
+ },
+ "FA_EXPECTATION_NEWS": {
+  "vtable": "0xe6c5ec",
+  "tipo": 510,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005A0250",
+  "slot11_proprio": false
+ },
+ "FINAL_WARNING_NEWS": {
+  "vtable": "0x10a7564",
+  "tipo": 508,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059BED0",
+  "slot11_proprio": true
+ },
+ "FINANCIAL_RECOVERY_NEWS": {
+  "vtable": "0x10a140c",
+  "tipo": 606,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00579F60",
+  "slot11_proprio": true
+ },
+ "FIND_NEWS_BY_ID": {
+  "vtable": "0x109d808",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x65636552",
+  "slot11_proprio": true
+ },
+ "FINE_NEWS": {
+  "vtable": "0x10a1ae4",
+  "tipo": 1301,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00592A60",
+  "slot11_proprio": false
+ },
+ "FITNESS_TEST_REPORT_NEWS": {
+  "vtable": "0x10b1414",
+  "tipo": 1702,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005F7480",
+  "slot11_proprio": false
+ },
+ "FIXTURE_REARRANGED_NEWS": {
+  "vtable": "0x10afed4",
+  "tipo": 16,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057F2D0",
+  "slot11_proprio": false
+ },
+ "FORMER_FAVOURITE_COMP_PROMOTION_NEWS": {
+  "vtable": "0x10abc2c",
+  "tipo": 456,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005F4FE0",
+  "slot11_proprio": false
+ },
+ "FORMER_FAVOURITE_COMP_WIN_NEWS": {
+  "vtable": "0x10ac904",
+  "tipo": 453,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005F4820",
+  "slot11_proprio": false
+ },
+ "FREE_TRANSFER_NEWS": {
+  "vtable": "0x10b0d2c",
+  "tipo": 304,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x00587CD0",
+  "slot11_proprio": false
+ },
+ "FRIENDLY_CANCELLATION_NEWS": {
+  "vtable": "0xeb3b74",
+  "tipo": 12,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00593A40",
+  "slot11_proprio": false
+ },
+ "FRIENDLY_INVITATION_DECISION_NEWS": {
+  "vtable": "0x10ae2a4",
+  "tipo": 11,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00593700",
+  "slot11_proprio": false
+ },
+ "FRIENDLY_INVITATION_NEWS": {
+  "vtable": "0x10b149c",
+  "tipo": 10,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00594310",
+  "slot11_proprio": false
+ },
+ "FUTURE_TRANSFER_NEWS": {
+  "vtable": "0x10b0c1c",
+  "tipo": 207,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00603560",
+  "slot11_proprio": false
+ },
+ "GOAL_AWARD_NEWS": {
+  "vtable": "0xe31a9c",
+  "tipo": 1402,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00571350",
+  "slot11_proprio": false
+ },
+ "GROUP_DRAW_NEWS": {
+  "vtable": "0x10b0644",
+  "tipo": 4,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00580A90",
+  "slot11_proprio": false
+ },
+ "GROUP_DRAW_SUMMARY_NEWS": {
+  "vtable": "0x10b08ec",
+  "tipo": 27,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00584DA0",
+  "slot11_proprio": false
+ },
+ "HALL_OF_FAME_NEWS": {
+  "vtable": "0x10a1e84",
+  "tipo": 101,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00594CB0",
+  "slot11_proprio": false
+ },
+ "HUMAN_CONTRACT_CLAUSE_NEWS": {
+  "vtable": "0x10a0334",
+  "tipo": 314,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x00589A30",
+  "slot11_proprio": false
+ },
+ "HUMAN_MESSAGE_NEWS": {
+  "vtable": "0xe7a33c",
+  "tipo": 100,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00594B60",
+  "slot11_proprio": false
+ },
+ "HUMAN_NON_PLAYER_CONTRACT_OFFER_NEWS": {
+  "vtable": "0x10a0114",
+  "tipo": 303,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x0058FA00",
+  "slot11_proprio": false
+ },
+ "INJURY_FULL_TRAINING_NEWS": {
+  "vtable": "0x10a339c",
+  "tipo": 903,
+  "categoria": 7,
+  "categoria_nome": "Lesões",
+  "texto": "0x00596B80",
+  "slot11_proprio": false
+ },
+ "INJURY_INJURED_NEWS": {
+  "vtable": "0x10a328c",
+  "tipo": 901,
+  "categoria": 7,
+  "categoria_nome": "Lesões",
+  "texto": "0x005953B0",
+  "slot11_proprio": false
+ },
+ "INJURY_LIGHT_TRAINING_NEWS": {
+  "vtable": "0x10a3314",
+  "tipo": 902,
+  "categoria": 7,
+  "categoria_nome": "Lesões",
+  "texto": "0x00596690",
+  "slot11_proprio": false
+ },
+ "INJURY_SUMMARY_NEWS": {
+  "vtable": "0x10ad03c",
+  "tipo": 421,
+  "categoria": 7,
+  "categoria_nome": "Lesões",
+  "texto": "0x00597870",
+  "slot11_proprio": false
+ },
+ "INTERNATIONAL_MANAGER_APPOINTED_NEWS": {
+  "vtable": "0xe6c674",
+  "tipo": 511,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059CB70",
+  "slot11_proprio": true
+ },
+ "INTERNATIONAL_MANAGER_ASSESSMENT_NEWS": {
+  "vtable": "0x10a7674",
+  "tipo": 512,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059CFD0",
+  "slot11_proprio": true
+ },
+ "INTERNATIONAL_MANAGER_RESIGNS_NEWS": {
+  "vtable": "0xe6d114",
+  "tipo": 518,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005A0330",
+  "slot11_proprio": true
+ },
+ "INTERNATIONAL_MANAGER_SACKING_NEWS": {
+  "vtable": "0xe6c6fc",
+  "tipo": 513,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059D360",
+  "slot11_proprio": true
+ },
+ "INTERNATIONAL_RETIREMENT_NEWS": {
+  "vtable": "0x10b17bc",
+  "tipo": 1602,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C51E0",
+  "slot11_proprio": false
+ },
+ "LEAGUE_FATE_DECIDED_NEWS": {
+  "vtable": "0x10ade64",
+  "tipo": 2,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057E1E0",
+  "slot11_proprio": false
+ },
+ "LEAGUE_POINTS_DEDUCTED_NEWS": {
+  "vtable": "0x10b001c",
+  "tipo": 23,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057FD40",
+  "slot11_proprio": false
+ },
+ "LEAGUE_QUALIFICATION_NEWS": {
+  "vtable": "0x10adeec",
+  "tipo": 3,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057E4F0",
+  "slot11_proprio": false
+ },
+ "LOAN_COMMENT_NEWS_ITEM": {
+  "vtable": "0x10af86c",
+  "tipo": 440,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00599DE0",
+  "slot11_proprio": false
+ },
+ "LOAN_CONTRACT_EXPIRES_NEWS": {
+  "vtable": "0x10aea9c",
+  "tipo": 305,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x00586BE0",
+  "slot11_proprio": false
+ },
+ "LOAN_CONTRACT_EXPIRES_SOON_NEWS": {
+  "vtable": "0x10a008c",
+  "tipo": 308,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x00586EE0",
+  "slot11_proprio": false
+ },
+ "LOAN_REPAYMENT_NEWS": {
+  "vtable": "0x10a1274",
+  "tipo": 618,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057AC20",
+  "slot11_proprio": false
+ },
+ "LOWER_WAGE_COMPENSATION_WANTED_NEWS": {
+  "vtable": "0x10a03bc",
+  "tipo": 311,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x0058F4A0",
+  "slot11_proprio": false
+ },
+ "MAJOR_COMP_ODDS_NEWS": {
+  "vtable": "0x10b07dc",
+  "tipo": 18,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00581310",
+  "slot11_proprio": false
+ },
+ "MANAGER_APPOINTED_FOUNDED_CLUB_PERSONAL_NEWS": {
+  "vtable": "0xe6c784",
+  "tipo": 524,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059E550",
+  "slot11_proprio": false
+ },
+ "MANAGER_APPOINTED_NEWS": {
+  "vtable": "0xe6c3cc",
+  "tipo": 502,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005A0DD0",
+  "slot11_proprio": true
+ },
+ "MANAGER_APPOINTED_PERSONAL_NEWS": {
+  "vtable": "0xe6c454",
+  "tipo": 519,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005A2B00",
+  "slot11_proprio": false
+ },
+ "MANAGER_JOB_NEWS": {
+  "vtable": "0xeb3a8c",
+  "tipo": 507,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059BD40",
+  "slot11_proprio": true
+ },
+ "MANAGER_MESSAGE_NEWS": {
+  "vtable": "0x10a76fc",
+  "tipo": 520,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005778C0",
+  "slot11_proprio": false
+ },
+ "MANAGER_RESIGNS_NEWS": {
+  "vtable": "0xe6d08c",
+  "tipo": 503,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059F8A0",
+  "slot11_proprio": true
+ },
+ "MANAGER_SABOTAGE_NEWS": {
+  "vtable": "0x10aebac",
+  "tipo": 439,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005B1E90",
+  "slot11_proprio": false
+ },
+ "MANAGER_SACKING_NEWS": {
+  "vtable": "0xe6d004",
+  "tipo": 501,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059EF30",
+  "slot11_proprio": true
+ },
+ "MANAGER_ULTIMATUM_NEWS": {
+  "vtable": "0xe326cc",
+  "tipo": 514,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00577410",
+  "slot11_proprio": false
+ },
+ "MANAGER_VOTE_OF_CONFIDENCE_NEWS": {
+  "vtable": "0x10a74dc",
+  "tipo": 504,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059B550",
+  "slot11_proprio": true
+ },
+ "MATCH_SUMMARY_NEWS": {
+  "vtable": "0x10ab7ec",
+  "tipo": 412,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005A8DF0",
+  "slot11_proprio": false
+ },
+ "MEDIA_AGENT_APPROACH_NEWS": {
+  "vtable": "0x10abd3c",
+  "tipo": 418,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005B7C80",
+  "slot11_proprio": false
+ },
+ "MEDIA_COMMENT_NEWS_ITEM": {
+  "vtable": "0xeb41bc",
+  "tipo": 433,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005AE260",
+  "slot11_proprio": false
+ },
+ "MEDIA_COMMENT_ON_SQUAD_SELECTION_NEWS": {
+  "vtable": "0x10b0ec4",
+  "tipo": 425,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C3DD0",
+  "slot11_proprio": false
+ },
+ "MEDIA_COMMENT_PLAYER_REJECTED_CALLUP_NEWS": {
+  "vtable": "0x10b11f4",
+  "tipo": 1600,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C2D30",
+  "slot11_proprio": false
+ },
+ "MEDIA_INJURY_CRISIS_NEWS": {
+  "vtable": "0x10ab8fc",
+  "tipo": 413,
+  "categoria": 7,
+  "categoria_nome": "Lesões",
+  "texto": "0x00597120",
+  "slot11_proprio": false
+ },
+ "MEDIA_INJURY_NEWS": {
+  "vtable": "0x10ab874",
+  "tipo": 414,
+  "categoria": 7,
+  "categoria_nome": "Lesões",
+  "texto": "0x00596F30",
+  "slot11_proprio": false
+ },
+ "MEDIA_MANAGER_SPECULATION_NEWS": {
+  "vtable": "0x10aecbc",
+  "tipo": 516,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059D890",
+  "slot11_proprio": false
+ },
+ "MEDIA_MANAGER_SPECULATION_RESPONSE_NEWS": {
+  "vtable": "0xf07664",
+  "tipo": 517,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059A980",
+  "slot11_proprio": false
+ },
+ "MEDIA_PENALTY_MISS_NEWS": {
+  "vtable": "0x10abdc4",
+  "tipo": 446,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005DDB40",
+  "slot11_proprio": false
+ },
+ "MEDIA_PLAYER_FORM_NEWS": {
+  "vtable": "0x10ab6dc",
+  "tipo": 402,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005B2440",
+  "slot11_proprio": false
+ },
+ "MEDIA_PLAYER_MORALE_NEWS": {
+  "vtable": "0x10a3424",
+  "tipo": 409,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005BB0B0",
+  "slot11_proprio": false
+ },
+ "MEDIA_PLAYER_REACTION_TO_ACCEPTED_TRANSFER_REASON_NEWS": {
+  "vtable": "0x10babd4",
+  "tipo": 1901,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005BAE70",
+  "slot11_proprio": false
+ },
+ "MEDIA_PLAYER_REACTION_TO_REJECTED_TRANSFER_REASON_NEWS": {
+  "vtable": "0x10ad97c",
+  "tipo": 1900,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005BABB0",
+  "slot11_proprio": false
+ },
+ "MEDIA_POLL_NEWS": {
+  "vtable": "0x10ab764",
+  "tipo": 407,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005AFFE0",
+  "slot11_proprio": false
+ },
+ "MEDIA_POST_MATCH_NEWS": {
+  "vtable": "0x10af4b4",
+  "tipo": 1601,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C2EA0",
+  "slot11_proprio": false
+ },
+ "MEDIA_POST_TRANSFER_NEWS": {
+  "vtable": "0x10abcb4",
+  "tipo": 400,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005B4470",
+  "slot11_proprio": false
+ },
+ "MEDIA_PRE_MATCH_NEWS": {
+  "vtable": "0x10af42c",
+  "tipo": 426,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C0AD0",
+  "slot11_proprio": false
+ },
+ "MEDIA_RELEASE_PRESS_STATEMENT_NEWS": {
+  "vtable": "0x10acea4",
+  "tipo": 417,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005B04D0",
+  "slot11_proprio": false
+ },
+ "MEDIA_REMOVE_PLAYER_MORALE_NEWS": {
+  "vtable": "0x10acf2c",
+  "tipo": 410,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005BDBD0",
+  "slot11_proprio": false
+ },
+ "MEDIA_TRANSFER_SPECULATION_NEWS": {
+  "vtable": "0x10ac98c",
+  "tipo": 408,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005B57C0",
+  "slot11_proprio": false
+ },
+ "MLS_SUPPORTERS_SHIELD_NEWS": {
+  "vtable": "0x10ae21c",
+  "tipo": 32,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00584E80",
+  "slot11_proprio": false
+ },
+ "MOM_FORM_NEWS": {
+  "vtable": "0x10b01b4",
+  "tipo": 450,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005ACD10",
+  "slot11_proprio": false
+ },
+ "MOM_SUMMARY_NEWS": {
+  "vtable": "0x10acfb4",
+  "tipo": 449,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005AD880",
+  "slot11_proprio": false
+ },
+ "MONTHLY_BOARD_CONFIDENCE_UPDATE_NEWS": {
+  "vtable": "0xe6c4dc",
+  "tipo": 505,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005A2030",
+  "slot11_proprio": true
+ },
+ "NATIONAL_TEAM_INJURY_NEWS": {
+  "vtable": "0x10af294",
+  "tipo": 422,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C0120",
+  "slot11_proprio": false
+ },
+ "NATIONAL_TEAM_QUESTIONS_NEWS": {
+  "vtable": "0x10af97c",
+  "tipo": 445,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005CDCB0",
+  "slot11_proprio": false
+ },
+ "NATIONAL_TEAM_REPLACEMENT_NEWS": {
+  "vtable": "0x10b0f4c",
+  "tipo": 438,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C0420",
+  "slot11_proprio": false
+ },
+ "NATIONAL_TEAM_SQUAD_SELECTION_NEWS": {
+  "vtable": "0x10b0e3c",
+  "tipo": 9,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C8520",
+  "slot11_proprio": false
+ },
+ "NATION_CONTINENTAL_QUALIFICATION_NEWS": {
+  "vtable": "0x10b18ec",
+  "tipo": 24,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00584880",
+  "slot11_proprio": false
+ },
+ "NEWS_CATEGORY_FILTER_PANEL": {
+  "vtable": "0x10c8e2c",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00834AD0",
+  "slot11_proprio": true
+ },
+ "NEWS_CATEGORY_FILTER_RULE": {
+  "vtable": "0x10bca2c",
+  "tipo": 1,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x007ED2E0",
+  "slot11_proprio": true
+ },
+ "NEWS_CLUB_FILTER_PANEL": {
+  "vtable": "0x10c8f7c",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00834EB0",
+  "slot11_proprio": true
+ },
+ "NEWS_CLUB_FILTER_RULE": {
+  "vtable": "0x10bca5c",
+  "tipo": 1,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x007ED490",
+  "slot11_proprio": true
+ },
+ "NEWS_CONTENT_FILTER_PANEL": {
+  "vtable": "0x10c90cc",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00835280",
+  "slot11_proprio": true
+ },
+ "NEWS_CONTENT_FILTER_RULE": {
+  "vtable": "0x10bca8c",
+  "tipo": 1,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x007ED6E0",
+  "slot11_proprio": true
+ },
+ "NEWS_EDIT_SESSION": {
+  "vtable": "0xeb3f24",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00415880",
+  "slot11_proprio": true
+ },
+ "NEWS_FILTER": {
+  "vtable": "0x10bcaf4",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004849D0",
+  "slot11_proprio": true
+ },
+ "NEWS_FILTER_CONTEXT": {
+  "vtable": "0xe7a618",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x62616E55",
+  "slot11_proprio": true
+ },
+ "NEWS_FILTER_LIST": {
+  "vtable": "0xe95844",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00654790",
+  "slot11_proprio": true
+ },
+ "NEWS_ITEM": {
+  "vtable": "0x10e56c4",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00D7DE65",
+  "slot11_proprio": false
+ },
+ "NEWS_ITEM_ARRAY": {
+  "vtable": "0x10f6dd4",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0042FFF0",
+  "slot11_proprio": true
+ },
+ "NEWS_ITEM_WITH_NOTE": {
+  "vtable": "0xe314f4",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00D7DE65",
+  "slot11_proprio": false
+ },
+ "NEWS_MANAGER": {
+  "vtable": "0x10b1574",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x007560A0",
+  "slot11_proprio": true
+ },
+ "NEWS_SCREEN": {
+  "vtable": "0xea786c",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004DBA60",
+  "slot11_proprio": true
+ },
+ "NEWS_STATUS_FILTER_PANEL": {
+  "vtable": "0x10c921c",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00835680",
+  "slot11_proprio": true
+ },
+ "NEWS_STATUS_FILTER_RULE": {
+  "vtable": "0x10bcb68",
+  "tipo": 1,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x007EDB70",
+  "slot11_proprio": true
+ },
+ "NEW_LEAGUE_SEASON_NEWS": {
+  "vtable": "0x10b1a1c",
+  "tipo": 31,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005808A0",
+  "slot11_proprio": false
+ },
+ "NEXT_SALE_PERCENTAGE_NEWS": {
+  "vtable": "0x10753dc",
+  "tipo": 219,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FEA40",
+  "slot11_proprio": false
+ },
+ "NON_PLAYER_NATION_JOB_OFFER_DECISION_NEWS": {
+  "vtable": "0x10af3a4",
+  "tipo": 310,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x005C0810",
+  "slot11_proprio": false
+ },
+ "NON_PLAYER_NATION_JOB_OFFER_NEWS": {
+  "vtable": "0x10af31c",
+  "tipo": 309,
+  "categoria": 3,
+  "categoria_nome": "Contratos",
+  "texto": "0x005C6F60",
+  "slot11_proprio": false
+ },
+ "NOTES_NEWS_ITEM": {
+  "vtable": "0x10b03d4",
+  "tipo": 1200,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005CED80",
+  "slot11_proprio": false
+ },
+ "NO_INTEREST_IN_PROPOSAL_NEWS": {
+  "vtable": "0x10ae6e4",
+  "tipo": 225,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FDA30",
+  "slot11_proprio": false
+ },
+ "OWN_PLAYER_MEDIA_COMMENT_NEWS_ITEM": {
+  "vtable": "0x10ab274",
+  "tipo": 460,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005AEB60",
+  "slot11_proprio": false
+ },
+ "PHYSIO_CONCERN_AT_INJECTIONS_NEWS_ITEM": {
+  "vtable": "0x10a236c",
+  "tipo": 1104,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005CF0A0",
+  "slot11_proprio": false
+ },
+ "PHYSIO_REPORT_NEWS_ITEM": {
+  "vtable": "0xea8fdc",
+  "tipo": 1101,
+  "categoria": 7,
+  "categoria_nome": "Lesões",
+  "texto": "0x005D1660",
+  "slot11_proprio": true
+ },
+ "PLAYER_AWOL_NEWS_ITEM": {
+  "vtable": "0x109fd14",
+  "tipo": 214,
+  "categoria": 6,
+  "categoria_nome": "Disciplina",
+  "texto": "0x00573900",
+  "slot11_proprio": true
+ },
+ "PLAYER_BOSMAN_NEWS": {
+  "vtable": "0x10ad8f4",
+  "tipo": 448,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005B2010",
+  "slot11_proprio": false
+ },
+ "PLAYER_COMMENT_ON_NATIONAL_TEAM_NEWS": {
+  "vtable": "0x10b10e4",
+  "tipo": 431,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C1F30",
+  "slot11_proprio": false
+ },
+ "PLAYER_DISPUTE_NEWS": {
+  "vtable": "0x10a09ac",
+  "tipo": 515,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00592700",
+  "slot11_proprio": true
+ },
+ "PLAYER_FIRST_CAP_NEWS": {
+  "vtable": "0x10b0fd4",
+  "tipo": 427,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C14C0",
+  "slot11_proprio": false
+ },
+ "PLAYER_GAINED_NATIONALITY_NEWS": {
+  "vtable": "0x10a0444",
+  "tipo": 1603,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C3130",
+  "slot11_proprio": false
+ },
+ "PLAYER_HOLIDAY_NEWS": {
+  "vtable": "0x106ce0c",
+  "tipo": 1701,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005F7CF0",
+  "slot11_proprio": false
+ },
+ "PLAYER_INVOLVED_IN_INTERNATIONAL_MATCH_NEWS": {
+  "vtable": "0x10a84d4",
+  "tipo": 424,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C9BD0",
+  "slot11_proprio": false
+ },
+ "PLAYER_IN_NATIONAL_SQUAD_NEWS": {
+  "vtable": "0x10ad2cc",
+  "tipo": 416,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C5C60",
+  "slot11_proprio": false
+ },
+ "PLAYER_MISSED_TRAINING_NEWS_ITEM": {
+  "vtable": "0x109fd9c",
+  "tipo": 215,
+  "categoria": 6,
+  "categoria_nome": "Disciplina",
+  "texto": "0x00574040",
+  "slot11_proprio": true
+ },
+ "PLAYER_PRAISES_NATIONAL_TEAM_BOSS_NEWS": {
+  "vtable": "0x10a7d24",
+  "tipo": 430,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C1E00",
+  "slot11_proprio": false
+ },
+ "PLAYER_REJECTING_CALLUP_COMMENT_NEWS": {
+  "vtable": "0x10b116c",
+  "tipo": 432,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C2AA0",
+  "slot11_proprio": false
+ },
+ "PLAYER_REJECTS_CALLUP_NEWS": {
+  "vtable": "0xeaa2ec",
+  "tipo": 428,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C1860",
+  "slot11_proprio": false
+ },
+ "PLAYER_SCORES_FIRST_INTERNATIONAL_GOAL_NEWS": {
+  "vtable": "0x10b105c",
+  "tipo": 429,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005C1A20",
+  "slot11_proprio": false
+ },
+ "POST_MATCH_QUESTION_NEWS": {
+  "vtable": "0x10aca14",
+  "tipo": 443,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005DCB40",
+  "slot11_proprio": false
+ },
+ "POTENTIAL_CUP_DRAW_NEWS": {
+  "vtable": "0x10b0864",
+  "tipo": 19,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x005843A0",
+  "slot11_proprio": false
+ },
+ "PRAISE_MANAGER_NEWS": {
+  "vtable": "0xedd8f4",
+  "tipo": 451,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005DA840",
+  "slot11_proprio": true
+ },
+ "PRESEASON_TRAINING_REPORT_NEWS": {
+  "vtable": "0x10b138c",
+  "tipo": 1700,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005F77E0",
+  "slot11_proprio": false
+ },
+ "PRE_MATCH_CUP_FINAL_NEWS": {
+  "vtable": "0x10ad644",
+  "tipo": 461,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005E41D0",
+  "slot11_proprio": false
+ },
+ "PRE_MATCH_DANGER_MAN_NEWS": {
+  "vtable": "0x10ad7a4",
+  "tipo": 458,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005E79F0",
+  "slot11_proprio": false
+ },
+ "PRE_MATCH_ODDS_NEWS": {
+  "vtable": "0x10ad37c",
+  "tipo": 457,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005E6D30",
+  "slot11_proprio": false
+ },
+ "PRE_MATCH_QUESTION_NEWS": {
+  "vtable": "0x10ad5bc",
+  "tipo": 442,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005E3240",
+  "slot11_proprio": false
+ },
+ "PRE_MATCH_RALLY_TROOPS_MUST_WIN_NEWS": {
+  "vtable": "0x10ad82c",
+  "tipo": 459,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005E8C70",
+  "slot11_proprio": false
+ },
+ "PROMISE_INJURY_NEWS": {
+  "vtable": "0x10a85b4",
+  "tipo": 462,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005AF070",
+  "slot11_proprio": true
+ },
+ "PROMOTION_CASH_CLAUSE_NEWS": {
+  "vtable": "0x10aea14",
+  "tipo": 224,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FF770",
+  "slot11_proprio": false
+ },
+ "QUIRKY_AWARD_NEWS": {
+  "vtable": "0xe31384",
+  "tipo": 1401,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005710B0",
+  "slot11_proprio": false
+ },
+ "QUIRKY_PLAYER_INJURY_NEWS": {
+  "vtable": "0xfca2ac",
+  "tipo": 1105,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005CF2F0",
+  "slot11_proprio": false
+ },
+ "RED_CARD_BAN_NEWS": {
+  "vtable": "0x10b034c",
+  "tipo": 801,
+  "categoria": 6,
+  "categoria_nome": "Disciplina",
+  "texto": "0x00590FD0",
+  "slot11_proprio": false
+ },
+ "REGENERATION_COACH_BADGE_NEWS": {
+  "vtable": "0x10af0fc",
+  "tipo": 706,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005EB820",
+  "slot11_proprio": false
+ },
+ "REGENERATION_CONSIDERATION_NEWS": {
+  "vtable": "0x10aefec",
+  "tipo": 703,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005EA5C0",
+  "slot11_proprio": false
+ },
+ "REGENERATION_CONSIDERING_NEWS": {
+  "vtable": "0x10aef64",
+  "tipo": 704,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005EA3F0",
+  "slot11_proprio": false
+ },
+ "REGENERATION_DESPERATE_NEWS": {
+  "vtable": "0x10aeedc",
+  "tipo": 705,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005EA2A0",
+  "slot11_proprio": false
+ },
+ "REGENERATION_RETIRED_NEWS": {
+  "vtable": "0xe7a3c4",
+  "tipo": 701,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005EB020",
+  "slot11_proprio": false
+ },
+ "REGENERATION_RETIRING_NEWS": {
+  "vtable": "0x10af074",
+  "tipo": 700,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005EA7F0",
+  "slot11_proprio": false
+ },
+ "REGENERATION_YOUTH_PROMOTION_NEWS": {
+  "vtable": "0x10b0db4",
+  "tipo": 702,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005EBAD0",
+  "slot11_proprio": false
+ },
+ "SCOUT_CLUB_REPORT_NEWS": {
+  "vtable": "0x10b1304",
+  "tipo": 1004,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005ED390",
+  "slot11_proprio": false
+ },
+ "SCOUT_PLAYER_REPORT_NEWS": {
+  "vtable": "0x10b127c",
+  "tipo": 1003,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005ED180",
+  "slot11_proprio": false
+ },
+ "SCOUT_SEARCH_END_NEWS": {
+  "vtable": "0x10af64c",
+  "tipo": 1002,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005ECF70",
+  "slot11_proprio": false
+ },
+ "SCOUT_SEARCH_START_NEWS": {
+  "vtable": "0x10af53c",
+  "tipo": 1000,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005ECBD0",
+  "slot11_proprio": false
+ },
+ "SCOUT_SEARCH_UPDATE_NEWS": {
+  "vtable": "0x10af5c4",
+  "tipo": 1001,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005ECE10",
+  "slot11_proprio": false
+ },
+ "SIMPLE_NEWS_FILTER": {
+  "vtable": "0x10bd9d4",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x004849D0",
+  "slot11_proprio": true
+ },
+ "SIMPLE_NEWS_FILTER_PANEL": {
+  "vtable": "0x10d0adc",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x008626F0",
+  "slot11_proprio": true
+ },
+ "SIMPLE_NEWS_FILTER_RULE": {
+  "vtable": "0x10bdaf4",
+  "tipo": 1,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x007560A0",
+  "slot11_proprio": true
+ },
+ "SORT_NEWS_BY_ID": {
+  "vtable": "0x109d830",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00006572",
+  "slot11_proprio": true
+ },
+ "SQUAD_NUMBERS_NEWS": {
+  "vtable": "0x10adffc",
+  "tipo": 15,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057F010",
+  "slot11_proprio": false
+ },
+ "SQUAD_NUMBER_WINDOW_NEWS": {
+  "vtable": "0x10ae084",
+  "tipo": 20,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057F910",
+  "slot11_proprio": false
+ },
+ "SQUAD_SELECTION_NEWS": {
+  "vtable": "0x10b16fc",
+  "tipo": 8,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0057E800",
+  "slot11_proprio": false
+ },
+ "STADIUM_DECAY_NEWS": {
+  "vtable": "0x10a0e34",
+  "tipo": 605,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x00579E40",
+  "slot11_proprio": false
+ },
+ "STADIUM_EXPANSION_CANCELLED_NEWS": {
+  "vtable": "0x10a1164",
+  "tipo": 610,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057AA60",
+  "slot11_proprio": false
+ },
+ "STADIUM_EXPANSION_COMPLETED_NEWS": {
+  "vtable": "0x10a0fcc",
+  "tipo": 613,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057A670",
+  "slot11_proprio": false
+ },
+ "STADIUM_EXPANSION_STARTED_NEWS": {
+  "vtable": "0x10a1054",
+  "tipo": 612,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057A1A0",
+  "slot11_proprio": false
+ },
+ "SUGAR_DADDY_LEAVES_NEWS": {
+  "vtable": "0x10aedcc",
+  "tipo": 619,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057AD10",
+  "slot11_proprio": false
+ },
+ "SUPPORTER_PROTEST_NEWS": {
+  "vtable": "0x10a75ec",
+  "tipo": 615,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0059C190",
+  "slot11_proprio": true
+ },
+ "TC_RECORDS_NEWS": {
+  "vtable": "0x10b012c",
+  "tipo": 7,
+  "categoria": 5,
+  "categoria_nome": "Registos",
+  "texto": "0x005EDEB0",
+  "slot11_proprio": false
+ },
+ "TEAM_FORM_NEWS": {
+  "vtable": "0x10ab984",
+  "tipo": 419,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005EF4C0",
+  "slot11_proprio": false
+ },
+ "TEAM_TALK_FEEDBACK_NEWS": {
+  "vtable": "0x10b045c",
+  "tipo": 1800,
+  "categoria": 4,
+  "categoria_nome": "Imprensa",
+  "texto": "0x005F6040",
+  "slot11_proprio": false
+ },
+ "TELEVISED_FIXTURE_NEWS": {
+  "vtable": "0xed4804",
+  "tipo": 22,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00581B40",
+  "slot11_proprio": false
+ },
+ "TEST_NEWS_ITEM": {
+  "vtable": "0x10a241c",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x006E1270",
+  "slot11_proprio": false
+ },
+ "TRANSFER_APPEARANCE_CLAUSE_NEWS": {
+  "vtable": "0x10afa8c",
+  "tipo": 217,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FE0B0",
+  "slot11_proprio": false
+ },
+ "TRANSFER_COMPLETED_NEWS": {
+  "vtable": "0x10b0b94",
+  "tipo": 203,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00602660",
+  "slot11_proprio": false
+ },
+ "TRANSFER_CONTRACT_DECISION_NEWS": {
+  "vtable": "0x10b0a84",
+  "tipo": 210,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00604AD0",
+  "slot11_proprio": false
+ },
+ "TRANSFER_COOWN_CALL_BACK_NEWS": {
+  "vtable": "0x10ae54c",
+  "tipo": 220,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FEDB0",
+  "slot11_proprio": false
+ },
+ "TRANSFER_DEADLINE_NEWS": {
+  "vtable": "0x10ae76c",
+  "tipo": 211,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FDAF0",
+  "slot11_proprio": false
+ },
+ "TRANSFER_DELAYED_NEWS": {
+  "vtable": "0x10ae904",
+  "tipo": 218,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FE3E0",
+  "slot11_proprio": false
+ },
+ "TRANSFER_DRAFT_DAY_NEWS": {
+  "vtable": "0x10ae87c",
+  "tipo": 213,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FDD40",
+  "slot11_proprio": false
+ },
+ "TRANSFER_EMBAGO_NEWS": {
+  "vtable": "0x10a11ec",
+  "tipo": 617,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057ABA0",
+  "slot11_proprio": false
+ },
+ "TRANSFER_NEGOTIATION_NEWS": {
+  "vtable": "0x10b09fc",
+  "tipo": 206,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00607C20",
+  "slot11_proprio": false
+ },
+ "TRANSFER_OFFER_ACCEPTED_NEWS": {
+  "vtable": "0x10ae32c",
+  "tipo": 201,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00607F30",
+  "slot11_proprio": false
+ },
+ "TRANSFER_OFFER_BLOCKED_BY_DEADLINE_NEWS": {
+  "vtable": "0x10ae7f4",
+  "tipo": 212,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FDC30",
+  "slot11_proprio": false
+ },
+ "TRANSFER_OFFER_CANCELLED_NEWS": {
+  "vtable": "0x10ae43c",
+  "tipo": 216,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FBC00",
+  "slot11_proprio": false
+ },
+ "TRANSFER_OFFER_CONFIRMATION_NEWS": {
+  "vtable": "0x10b0b0c",
+  "tipo": 204,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00605840",
+  "slot11_proprio": false
+ },
+ "TRANSFER_OFFER_CONTRACT_NEWS": {
+  "vtable": "0x10ae4c4",
+  "tipo": 202,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00604500",
+  "slot11_proprio": false
+ },
+ "TRANSFER_OFFER_NEWS": {
+  "vtable": "0x10b0974",
+  "tipo": 200,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00606B80",
+  "slot11_proprio": false
+ },
+ "TRANSFER_OFFER_REJECTED_NEWS": {
+  "vtable": "0x10ae3b4",
+  "tipo": 205,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x00608250",
+  "slot11_proprio": false
+ },
+ "UEFA_COEFFICIENT_POSITION_NEWS": {
+  "vtable": "0x10ae10c",
+  "tipo": 21,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x00584520",
+  "slot11_proprio": false
+ },
+ "UNDERSOIL_HEATING_FAILURE_NEWS": {
+  "vtable": "0x10a0f44",
+  "tipo": 608,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x0057A110",
+  "slot11_proprio": false
+ },
+ "UNREAD_NEWS_PANEL": {
+  "vtable": "0x10d5344",
+  "tipo": null,
+  "categoria": null,
+  "categoria_nome": null,
+  "texto": "0x0087E690",
+  "slot11_proprio": true
+ },
+ "WEEKLY_TRAINING_ROUNDUP_NEWS": {
+  "vtable": "0x10b1994",
+  "tipo": 1106,
+  "categoria": 1,
+  "categoria_nome": "Mensagens",
+  "texto": "0x005F8B70",
+  "slot11_proprio": false
+ },
+ "WORK_PERMIT_DECISION_NEWS": {
+  "vtable": "0x10ae65c",
+  "tipo": 209,
+  "categoria": 2,
+  "categoria_nome": "Transf.",
+  "texto": "0x005FD640",
+  "slot11_proprio": false
+ }
+}

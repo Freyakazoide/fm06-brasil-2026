@@ -498,6 +498,30 @@ Há código de criação de notícia em `src/fm06patch/fornada.py` que pode serv
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
 de entrada.
 
+### 8.9 Central de Notícias (pedido do usuário, 03/11)
+
+Todas as notícias saem da caixa do jogo e vão para o Python; **Técnico → Notícias** abre a página
+(como a Central de Desenvolvimento); cada categoria cai no seu módulo: Imprensa → Sala de Imprensa,
+Lesões → Departamento Médico, Transf. → Transferências (a criar), o resto numa lista geral.
+
+Já conferido: tirar da caixa (lista + contador de não lidas; sobrevive a salvar/recarregar), modo
+exclusivo automático, texto completo pela função do jogo (`texto_noticia.py`), categoria de cada
+classe pelo slot 10 da vtable (`categorias_noticias.py` -> `tools/imprensa/noticias_categorias.json`:
+Mensagens 72, Imprensa 42, Transf. 25, Contratos 15, Lesões 8, Disciplina 6, Registos 1; 87 sem
+categoria fixa, BASIC_* etc., a ler de um campo).
+
+Falta, em ordem:
+
+1. Capturar com texto: ler manchete e corpo antes de tirar a notícia (as 993/1017 perderam o texto).
+2. Notícias com ação ficam no jogo até o módulo saber responder: o relatório do fisioterapeuta
+   (escolha de recuperação), proposta de transferência, decisão de contrato, pedidos da diretoria.
+   Como reconhecer: o filtro "Apenas Não-Lidas e Pendentes" do jogo sabe quais estão pendentes;
+   achar esse campo (o slot 11 da vtable NÃO serve: TRANSFER_OFFER e CONTRACT_DECISION ficam no padrão).
+3. Página da Central de Notícias com abas por categoria/módulo; a Sala de Imprensa continua para as
+   de imprensa.
+4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
+5. Categoria das 87 classes sem valor fixo.
+
 ## 9. Entrevistas dos clubes controlados pela IA
 
 Executar em um tick diário ou semanal, nunca a cada quadro.
