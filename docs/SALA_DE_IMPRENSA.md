@@ -518,6 +518,13 @@ Falta, em ordem:
    desliga. O texto vai para `capturadas.json` (`manchete`, `corpo`) e aparece em "Por que esta
    pauta". O texto do jogo traz marcas de trecho clicável (caracteres 01 02 ... 01), tiradas em
    `plain()`. Conferido em memória (só leitura): 1016 MATCH_SUMMARY sai limpo.
+   **Teste no jogo (03/11, save de teste, `--exclusivo --exclusivo-classes MOM_SUMMARY_NEWS`): deu
+   certo.** 1036 MOM_SUMMARY "Breno em forma na vitória tangencial do Figueirense" capturada com
+   manchete e corpo iguais aos da tela do jogo; na memória a caixa foi de 84 para 83 e a 1036 não
+   está mais. A tela de Notícias que já estava aberta continuou mostrando "84 mensagens" e a
+   notícia: a tela guarda a própria lista até ser montada de novo (sair e voltar). 1º teste falhou
+   sem efeito: o observador morreu ao ler o elenco no meio de uma mudança do jogo (OSError em
+   leitor.jovens); corrigido, um erro não derruba mais o observador.
 2. Notícias com ação ficam no jogo até o módulo saber responder: o relatório do fisioterapeuta
    (escolha de recuperação), proposta de transferência, decisão de contrato, pedidos da diretoria.
    Como reconhecer: o filtro "Apenas Não-Lidas e Pendentes" do jogo sabe quais estão pendentes;
