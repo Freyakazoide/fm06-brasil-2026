@@ -132,6 +132,7 @@ function renderAgenda() {
       <span class="agenda-outlet">${esc(outlet.name)}</span><span class="agenda-time">${esc(item.when)}</span>
       <strong class="agenda-title">${esc(item.headline)}</strong>
       <span class="agenda-meta"><i class="urgency ${esc(item.urgency)}"></i>${esc(player.short_name)} · ${esc(outlet.medium)} · ${esc(item.status)}</span>
+      ${item.reason ? `<span class="agenda-reason">${esc(item.reason)}</span>` : ""}
     </button>`;
   }).join("") : `<div class="loading">Nenhuma pauta encontrada.</div>`;
 }
@@ -186,6 +187,13 @@ function contextCards(player) {
   <section class="panel context-card"><h3 class="section-title"><i></i> Como ele tende a reagir</h3><div class="personality-list">${traits.map(([label,value]) => `<div class="trait"><span>${label}</span><i><i style="width:${value * 5}%"></i></i><b>${value}</b></div>`).join("")}</div></section>`;
 }
 
+// por que a pauta existe: o fato lido do jogo (modo jogo) ou a regra de gatilho (demo)
+function whyCard(agenda, player, situation) {
+  const source = player.stats.unofficial ? `Números de jogos <b>não oficiais</b> (${esc(player.team || "base")}): ${player.stats.matches} jogos, nota ${String(player.stats.rating).replace(".", ",")}.` : "";
+  return `<section class="panel context-card why-card"><h3 class="section-title"><i></i> Por que esta pauta</h3>
+    <p class="why-fact">${esc(agenda.reason || situation.trigger)}</p>
+    <p class="why-rule"><b>Regra:</b> ${esc(situation.trigger)} · urgência ${esc(situation.urgency)}</p>${source ? `<p class="why-rule">${source}</p>` : ""}</section>`;
+}
 function renderLive() {
   const agenda = selectedAgenda(), outlet = outletBy(agenda.outlet_id), journalist = journalistBy(outlet, agenda.journalist_id);
   const player = playerBy(agenda.player_id), situation = situationBy(agenda.situation_id), question = situation.questions[ui.question % situation.questions.length];
@@ -197,7 +205,7 @@ function renderLive() {
       <div class="question-block"><span class="question-label"><i></i> pergunta ${ui.question + 1} de ${situation.questions.length}</span><blockquote class="question-text">${esc(fill(question, contextFor(player)))}</blockquote><div class="question-nav"><div class="question-dots">${situation.questions.map((_, index) => `<button class="question-dot ${index === ui.question ? "active" : ""}" data-question="${index}" aria-label="Pergunta ${index + 1}" type="button"></button>`).join("")}</div><span class="question-context"><b>Gatilho:</b> ${esc(situation.trigger)}</span></div></div>
       <div class="subject-block"><div class="subject-head"><span class="player-token">${playerSprite(player)}</span><div><b>${esc(player.short_name)}</b><small>${player.age} anos · ${esc(player.position)}</small></div></div><span class="subject-status">${esc(player.status)}</span><div class="subject-stats"><div><b>${player.morale}</b><span>moral</span></div><div><b>${String(player.stats.rating).replace(".",",")}</b><span>nota</span></div><div><b>${player.stats.minutes}</b><span>minutos</span></div></div></div>
     </div><div class="answer-zone"><div class="answer-head"><div><strong>Escolha a intenção e o modo de falar</strong><small>O texto muda com o contexto; a consequência não é revelada antes da resposta.</small></div><span>8 caminhos disponíveis</span></div>${answerCards(situation, player, "live", selectedId)}</div>
-  </section><aside class="context-stack">${answer ? impactCard(answer, player, situation) : contextCards(player) + impactCard(null, player, situation)}</aside></div>`;
+  </section><aside class="context-stack">${whyCard(agenda, player, situation)}${answer ? impactCard(answer, player, situation) : contextCards(player) + impactCard(null, player, situation)}</aside></div>`;
 }
 
 const PRIVATE_TOPICS = ["match_star","poor_streak","training_drop","new_position","few_minutes","transfer_interest"];

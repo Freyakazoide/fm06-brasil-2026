@@ -102,7 +102,7 @@ def triggers(j: dict, p: dict, today: dt.date) -> list[tuple[str, int, str]]:
     if growth == "baixa" and j["idade"] <= 21:
         out.append(("stagnation", 35, "personalidade aponta risco de estagnar"))
     if j["idade"] <= 19 and j.get("pot", 0) >= 8:
-        out.append(("youth_comparison", 50, f"potencial {j['pot'] / 2:.1f} estrelas"))
+        out.append(("youth_comparison", 50, "comissão vê potencial de " + f"{j['pot'] / 2:g}".replace(".", ",") + " estrelas"))
     return out
 
 
