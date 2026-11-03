@@ -58,7 +58,10 @@ class NewsWatcher:
         o modo (a caixa do jogo nunca fica pela metade por insistência)."""
         import leitor
         if self.squad is None:
-            jovens, info = leitor.jovens(max_age=99)
+            try:
+                jovens, info = leitor.jovens(max_age=99)
+            except Exception:                                   # jogo no meio de uma mudança: tenta em 2 s
+                return []
             self.squad = {j.uid for j in jovens}
             self.career = estado.save_id(info.get("clube_nome") or PressRoom.live_club, info.get("time_uid"))
         taken = []
@@ -81,6 +84,14 @@ class NewsWatcher:
         return taken
 
     def run(self) -> None:
+        while True:                                             # o observador nunca morre por um erro
+            try:
+                self.watch()
+            except Exception as error:
+                print(f"[imprensa] observador: {error!r}; recomeçando")
+                self.read, self.count, self.squad = None, None, None
+
+    def watch(self) -> None:
         jogo = None
         while True:
             time.sleep(2)
