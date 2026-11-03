@@ -556,6 +556,11 @@ Falta, em ordem:
    4 capturadas), 1042 Zé Carlos com o texto e a resposta "Carlos será tratado pela fisioterapia".
    Visual: usa o `central.css` da Central de Desenvolvimento (o servidor da Sala serve também
    `/central.css`, `/emblema.png` e `/fundo.jpg`); `noticias.css` só tem o que é de notícia.
+   **`--exclusivo-todas` (03/11, falta conferir no jogo):** toda notícia nova com +0x20 = -1 sai
+   da caixa, menos as de tipo cujo nome indica ação (`noticias.ACTION_NAME`, 33 classes) e as de
+   classe desconhecida. Motivo da cautela: CONTRACT_DECISION (927/940/949) e PRE_MATCH_QUESTION
+   (931/954) estão com -1, então nem toda notícia com ação usa o campo. Simulação na caixa de
+   teste (97): sairiam 88, ficariam 9.
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
 5. Categoria das 87 classes sem valor fixo.
 

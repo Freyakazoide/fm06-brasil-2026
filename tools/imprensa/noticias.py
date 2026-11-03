@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import re
 import struct
 import sys
 from pathlib import Path
@@ -28,6 +29,10 @@ UNREAD = -4                                                         # u32 antes 
 # sempre e -3/-4 enquanto não lida (o ícone da linha, 0x4D7500, usa os mesmos valores); >= 0 visto
 # num relatório do fisioterapeuta já respondido (995: 10). Conferido no código, 03/11.
 REPLY, NO_REPLY = 0x20, -1
+# Cautela além do campo (só conferido no relatório do fisioterapeuta): tipo cujo nome indica ação
+# fica no jogo mesmo com +0x20 = -1 (33 classes; algumas só informam, como TRANSFER_OFFER_ACCEPTED).
+ACTION_NAME = re.compile(r"OFFER|DECISION|REQUEST|QUESTION|INVITATION|APPROACH|CONFIRMATION|CLAUSE|"
+                         r"TERMINATION|BID|ENQUIRY|INTEREST|NEGOTIAT|PROPOS|APPEAL|INTERVIEW|MEETING|JOB")
 CLASSES = {int(k, 16): v for k, v in json.loads((HERE / "noticias_classes.json").read_text(encoding="utf-8")).items()}
 
 # classe da notícia -> situação do banco editorial (só as que têm jogador ou assunto claro)
@@ -102,6 +107,13 @@ def inbox(jogo: leitor.Jogo) -> list[dict]:
                     "lida": bool(body[STATUS] & READ_BIT), "jogador": player,
                     "resposta": struct.unpack_from("<h", body, REPLY)[0]})
     return out
+
+
+def exclusive_any(news: dict) -> bool:
+    """--exclusivo-todas: qualquer notícia conhecida sem resposta e cujo tipo não indique ação."""
+    kind = news["classe"]
+    return (news.get("resposta", NO_REPLY) == NO_REPLY and not kind.startswith("0x")
+            and not ACTION_NAME.search(kind))
 
 
 def exclusive(news: dict, squad: set[int], extra: frozenset[str] = frozenset()) -> bool:

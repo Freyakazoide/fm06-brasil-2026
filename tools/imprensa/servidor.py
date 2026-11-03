@@ -71,11 +71,12 @@ class NewsWatcher:
     """--jogo: lê a caixa de entrada a cada 2 s; a notícia que passa a lida vira pauta "agora" e a
     página se atualiza (ou abre no navegador, se não estiver aberta)."""
 
-    def __init__(self, url: str, exclusive: bool = False, extra: frozenset[str] = frozenset()) -> None:
+    def __init__(self, url: str, exclusive: bool = False, extra: frozenset[str] = frozenset(),
+                 every: bool = False) -> None:
         self.url, self.read, self.events = url, None, []
         self.last_poll, self.opened_at = 0.0, 0.0
         self.exclusive, self.count, self.squad, self.career = exclusive, None, None, None
-        self.extra = extra
+        self.extra, self.every = extra, every                   # every: --exclusivo-todas
         self.since = None                                       # só notícias chegadas depois de ligar
 
     def know_squad(self) -> bool:
@@ -114,7 +115,8 @@ class NewsWatcher:
         if not self.know_squad():
             return []
         taken = []
-        for item in (n for n in items if n["serie"] > self.since and noticias.exclusive(n, self.squad, self.extra)):
+        wanted = noticias.exclusive_any if self.every else lambda n: noticias.exclusive(n, self.squad, self.extra)
+        for item in (n for n in items if n["serie"] > self.since and wanted(n)):
             try:
                 item = {**item, **texto_noticia.text_of(jogo, item["serie"])}
                 if not item["manchete"]:
@@ -319,6 +321,8 @@ def main() -> None:
     parser.add_argument("--exclusivo", action="store_true",
                         help="--jogo: notícia de imprensa do elenco sai da caixa do jogo e fica só na Sala")
     parser.add_argument("--exclusivo-classes", default="", help="teste: classes a mais, ex. MOM_SUMMARY_NEWS")
+    parser.add_argument("--exclusivo-todas", action="store_true",
+                        help="--jogo: toda notícia nova sem resposta sai da caixa do jogo e fica só na Central de Notícias")
     args = parser.parse_args()
     problems = banco.validate()
     if problems:
@@ -336,12 +340,15 @@ def main() -> None:
     if args.jogo:
         PressRoom.live_club = args.clube
         PressRoom.effects = not args.sem_efeitos
-        PressRoom.watcher = NewsWatcher(url, exclusive=args.exclusivo,
-                                         extra=frozenset(c for c in args.exclusivo_classes.split(",") if c))
+        PressRoom.watcher = NewsWatcher(url, exclusive=args.exclusivo or args.exclusivo_todas,
+                                         extra=frozenset(c for c in args.exclusivo_classes.split(",") if c),
+                                         every=args.exclusivo_todas)
         threading.Thread(target=PressRoom.watcher.run, daemon=True).start()
         print(f"Modo jogo: lê o elenco do {args.clube} no FM06 aberto; a resposta mexe só na moral do jogador (--sem-efeitos desliga).")
         print("Ao abrir uma notícia na caixa de entrada do jogo, a pauta dela aparece aqui.")
-        if args.exclusivo:
+        if args.exclusivo_todas:
+            print("Modo exclusivo (todas): toda notícia nova sem resposta sai da caixa do jogo e fica só na Central de Notícias (salve o jogo para manter).")
+        elif args.exclusivo:
             print("Modo exclusivo: notícia de imprensa do elenco sai da caixa do jogo e fica só aqui (salve o jogo para manter).")
     else:
         print("Modo demonstração: não lê nem escreve no save.")
