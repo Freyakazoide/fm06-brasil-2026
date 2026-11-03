@@ -472,6 +472,12 @@ devia. Contador de não lidas = não lidas da lista (1 = 1). A caixa cresceu de 
 capacidade sozinha (o jogo realocou; `box()` relê a cada vez). A tela diz "100 de 102" de novo (o
 total da sessão). Agenda: 1017 "em andamento", 993 "só na Sala". Falta: salvar, recarregar e
 conferir que as duas continuam fora e que a tela volta a "100 mensagens".
+**Salvo, fechado, reaberto (03/11): continuam fora** (993 e 1017 ausentes; jogo normal). A tela
+mostra "75 mensagens exibidas": a lista relida tem 75 (capacidade 100), da 907 (08/07) à 1019, e
+antes ia da 882 à 1019 com 100. **O FM06 guarda só as 75 notícias mais novas no save** — comportamento
+do próprio jogo (o save original da carreira também tinha exatamente 75), não efeito da remoção.
+Consequência: notícia que a Sala não captura some do jogo sozinha depois de ~75 mais novas; as
+capturadas ficam para sempre em `capturadas.json`.
 
 Há código de criação de notícia em `src/fm06patch/fornada.py` que pode servir como referência. Não
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
