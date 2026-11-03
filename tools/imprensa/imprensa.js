@@ -110,6 +110,7 @@ function renderHeader() {
   const s = data.bank_stats;
   $("#header-summary").innerHTML = `<div class="header-kpi"><b>${data.agenda.length}</b><span>pautas</span></div><div class="header-kpi"><b>${data.outlets.length}</b><span>veículos</span></div><div class="header-kpi"><b>${s.situations}</b><span>situações</span></div><div class="header-kpi"><b>${s.response_combinations}</b><span>respostas</span></div>`;
   $("#footer-stats").textContent = `${s.situations} situações · ${s.questions} perguntas · ${s.response_combinations} combinações de resposta`;
+  $("#footer-mode").textContent = data.info.mode_effects ? "Conectado ao FM06 · a resposta mexe na moral" : data.info.career && data.info.career !== "demo" ? "Conectado ao FM06 · só leitura" : "Demonstração: sem conexão com o jogo";
 }
 
 function renderFilters() {
