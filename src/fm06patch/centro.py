@@ -69,6 +69,13 @@ SECTION_LIST_AT, SECTION_LIST_OLD, SECTION_LIST_HIT = 0x005247A9, bytes.fromhex(
 LEAVE_AT, LEAVE_OLD = 0x0051A821, bytes.fromhex("8B86AC010000")          # mov eax, [esi+0x1AC]
 OPEN_AT, OPEN_OLD = 0x004C3DD1, bytes.fromhex("8BBEAC010000")            # mov edi, [esi+0x1AC]
 PROFILE, TRAINING = code("Pply"), code("Ptra")
+# Filtro próprio da Central (conferido em 03/11, teste na memória tools/re/filtro_separado.py): a
+# Central e Pesquisar > Jogadores usam o mesmo conjunto de busca (tipo 1), cujo filtro é o objeto em
+# [conjunto+0x124]. Em 0x786F32 (pedido de busca, esi = conjuntos, [esi+8] = escolhido) o desvio
+# troca esse ponteiro conforme a seção atual (tcdv ou outra) e zera [esi+0x41] para a busca ser
+# refeita. Na 1ª troca o outro lado recebe um clone feito pelo jogo (nulo trava 0xCC4C40).
+FILTER_AT, FILTER_OLD = 0x00786F32, bytes.fromhex("807E08FF7E6B")   # cmp byte [esi+8],-1 ; jle
+FILTER_JLE_TO, FILTER_CREATE = 0x00786FA3, 0x00CC47F0
 KNOWN_TEST, KNOWN_TEST_OLD = 0x00A6B2C4, bytes.fromhex("F6460C01757F")   # test [esi+0xC],1; jne próximo
 KNOWN_KEEP, KNOWN_NEXT = 0x00A6B2CA, 0x00A6B349
 MY_CLUB_LABEL = b"Meu clube\0"
@@ -257,6 +264,87 @@ def open_code(base: int, last: int) -> bytes:
     return a.done()
 
 
+def filter_code(base: int, slots: int, section_now: int) -> bytes:
+    """Em 0x786F32: filtro da Central separado do Pesquisar. slots: contêiner, filtro guardado,
+    lado instalado (1 = Central), trocas, clones (5 dwords zerados). section_now: seção atual
+    (gravada pelo desvio de abertura)."""
+    def le(v: int) -> bytes:
+        return (v & 0xFFFFFFFF).to_bytes(4, "little")
+    c = bytearray()
+    def rel(target: int, size: int) -> bytes:
+        return le(target - (base + len(c) + size))
+    c += b"\x60"                                             # pushad
+    c += b"\xA1" + le(slots)                                  # mov eax, [CONT]
+    c += b"\x39\xF0"                                         # cmp eax, esi
+    c += b"\x74\x17"                                         # je mesmo (+23 = 6 + 10 + 7)
+    c += b"\x89\x35" + le(slots)                              # mov [CONT], esi
+    c += b"\xC7\x05" + le(slots + 4) + le(0)                     # mov [SAVED], 0
+    c += b"\xC6\x05" + le(slots + 8) + b"\x01"               # mov byte [INSTALLED], 1 (o do save é da Central)
+    c += b"\x0F\xBE\x46\x08"                                 # mesmo: movsx eax, byte [esi+8]
+    c += b"\x85\xC0"                                         # test eax, eax
+    fim_js = len(c); c += b"\x0F\x88" + le(0)                # js fim
+    c += b"\x3A\x46\x14"                                     # cmp al, [esi+0x14]
+    fim_jae = len(c); c += b"\x0F\x83" + le(0)               # jae fim
+    c += b"\x8B\x4E\x10"                                     # mov ecx, [esi+0x10]  (dados da lista)
+    c += b"\x8B\x1C\x81"                                     # mov ebx, [ecx+eax*4] (conjunto)
+    c += b"\x85\xDB"                                         # test ebx, ebx
+    fim_jz = len(c); c += b"\x0F\x84" + le(0)                # jz fim
+    c += b"\x80\x7B\x05\x01"                                 # cmp byte [ebx+5], 1  (tipo jogadores)
+    fim_jne = len(c); c += b"\x0F\x85" + le(0)               # jne fim
+    c += b"\x31\xD2"                                         # xor edx, edx
+    c += b"\x81\x3D" + le(section_now) + le(CENTRO_ID)            # cmp dword [SECTION_NOW], 'tcdv'
+    c += b"\x0F\x94\xC2"                                     # sete dl
+    c += b"\x3A\x15" + le(slots + 8)                         # cmp dl, [INSTALLED]
+    fim_je = len(c); c += b"\x0F\x84" + le(0)                # je fim
+    # primeira troca: o outro lado ainda não tem filtro. Nulo trava 0xCC4C40 (dump de 03/11), então
+    # clona o atual como o jogo faz em 0xA6AEC4: fábrica = (f+4)->vfunc8; novo = 0xCC47F0(fábrica)-4;
+    # novo->vfunc58(f) copia o conteúdo.
+    c += b"\x83\x3D" + le(slots + 4) + b"\x00"                   # cmp dword [SAVED], 0
+    troca_jne = len(c); c += b"\x0F\x85" + le(0)             # jne troca
+    c += b"\x8B\x8B\x24\x01\x00\x00"                         # mov ecx, [ebx+0x124]   (f)
+    c += b"\x85\xC9"                                         # test ecx, ecx
+    fim_jz2 = len(c); c += b"\x0F\x84" + le(0)               # jz fim
+    c += b"\x51"                                             # push ecx               (guarda f)
+    c += b"\x83\xC1\x04"                                     # add ecx, 4
+    c += b"\x8B\x01"                                         # mov eax, [ecx]
+    c += b"\xFF\x50\x08"                                     # call [eax+8]           (fábrica)
+    c += b"\x50"                                             # push eax
+    c += b"\xE8" + rel(FILTER_CREATE, 5)                            # call 0xCC47F0
+    c += b"\x83\xC4\x04"                                     # add esp, 4
+    c += b"\x5A"                                             # pop edx                (f)
+    c += b"\x85\xC0"                                         # test eax, eax
+    fim_jz3 = len(c); c += b"\x0F\x84" + le(0)               # jz fim
+    c += b"\x83\xE8\x04"                                     # sub eax, 4             (novo)
+    c += b"\xA3" + le(slots + 4)                                 # mov [SAVED], eax
+    c += b"\x52"                                             # push edx               (f)
+    c += b"\x89\xC1"                                         # mov ecx, eax
+    c += b"\x8B\x00"                                         # mov eax, [eax]
+    c += b"\xFF\x50\x58"                                     # call [eax+0x58]        (novo.copia(f))
+    c += b"\xFF\x05" + le(slots + 16)                            # inc dword [CLONES]
+    troca = len(c)
+    c += b"\x31\xD2"                                         # xor edx, edx  (dl de novo: as chamadas o perdem)
+    c += b"\x81\x3D" + le(section_now) + le(CENTRO_ID)            # cmp dword [SECTION_NOW], 'tcdv'
+    c += b"\x0F\x94\xC2"                                     # sete dl
+    c[troca_jne + 2:troca_jne + 6] = le(troca - (troca_jne + 6))
+    c += b"\x8B\x83\x24\x01\x00\x00"                         # mov eax, [ebx+0x124]
+    c += b"\x8B\x0D" + le(slots + 4)                             # mov ecx, [SAVED]
+    c += b"\x89\x8B\x24\x01\x00\x00"                         # mov [ebx+0x124], ecx
+    c += b"\xA3" + le(slots + 4)                                 # mov [SAVED], eax
+    c += b"\x88\x15" + le(slots + 8)                         # mov [INSTALLED], dl
+    c += b"\xFF\x05" + le(slots + 12)                             # inc dword [SWAPS]
+    # os resultados são do contêiner (lista em +0x2C): zera "resultados válidos" para 0x54B0A0 refazer
+    # a busca com o filtro trocado, como o jogo faz ao trocar de conjunto (0x54AE61)
+    c += b"\xC6\x46\x41\x00"                                 # mov byte [esi+0x41], 0
+    fim = len(c)
+    for at in (fim_js, fim_jae, fim_jz, fim_jne, fim_je, fim_jz2, fim_jz3):
+        c[at + 2:at + 6] = le(fim - (at + 6))
+    c += b"\x61"                                             # popad
+    c += b"\x80\x7E\x08\xFF"                                 # cmp byte [esi+8], -1   (original)
+    c += b"\x0F\x8E" + rel(FILTER_JLE_TO, 6)                        # jle 0x786FA3           (original)
+    c += b"\xE9" + rel(FILTER_AT + len(FILTER_OLD), 5)                              # jmp 0x786F38
+    return bytes(c)
+
+
 def build(hook_at: int, judges_at: int, helper_at: int, cache_at: int) -> list[tuple[int, bytes]]:
     return [(hook_at, hook_code(hook_at, judges_at, cache_at)),
             (judges_at, judges_code(judges_at, helper_at, cache_at)),
@@ -305,4 +393,10 @@ def exe_swaps(data: bytes):
     swaps += [Swap(sec_off(leave_at), bytes(len(leave)), leave), Swap(sec_off(open_at), bytes(len(opening)), opening)]
     swaps.append(Swap(off(LEAVE_AT), LEAVE_OLD, jump(LEAVE_AT, leave_at) + bytes([0x90])))
     swaps.append(Swap(off(OPEN_AT), OPEN_OLD, jump(OPEN_AT, open_at) + bytes([0x90])))
+    filter_slots, filter_at = SECTION_VA + 0xDCC0, SECTION_VA + 0xDD00
+    separate = filter_code(filter_at, filter_slots, last_at + 4)
+    if filter_at + len(separate) > SECTION_VA + 0xDE00:
+        raise ValueError("centro: desvio do filtro passa de 0xDE00")
+    swaps.append(Swap(sec_off(filter_at), bytes(len(separate)), separate))
+    swaps.append(Swap(off(FILTER_AT), FILTER_OLD, jump(FILTER_AT, filter_at) + bytes([0x90])))
     return tuple(swaps)
