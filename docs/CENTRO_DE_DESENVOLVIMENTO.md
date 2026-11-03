@@ -717,3 +717,8 @@ Conferido nos XML da Aurora e do jogo:
   `[contêiner+0x41] == 0`. Correção: zerar `+0x41` logo depois da troca, como o jogo faz ao trocar de
   conjunto (`0x54AE61`) ou carregar filtro (`0x54BB3F`). Código atualizado no jogo aberto sem perder os
   filtros guardados.
+- 03/11, **filtro próprio da Central: conferido pelo usuário e gravado no exe.** Com a marca `+0x41`
+  zerada, os resultados também se separaram (Central: até 19 + Meu clube; Pesquisar: até 25). O
+  desvio entrou no patch `centro_colunas` (`centro.filter_code`, código na `.fm26+0xDD00`, estado
+  na `.fm26+0xDCC0`), bytes iguais aos do teste; o `fm_brasil.exe` mudou em 220 bytes. Lembrete:
+  o estado (filtro guardado) vale por sessão; o filtro que vai para o save é o que estiver no conjunto.
