@@ -34,6 +34,7 @@ import texto_noticia  # noqa: E402
 import veiculos  # noqa: E402
 
 
+ASSETS = HERE.parents[1] / "data" / "brasil" / "telas" / "centro_desenvolvimento" / "assets"
 FILES = {
     "/": (HERE / "pagina.html", "text/html; charset=utf-8"),
     "/imprensa.css": (HERE / "imprensa.css", "text/css; charset=utf-8"),
@@ -41,9 +42,29 @@ FILES = {
     "/noticias": (HERE / "noticias.html", "text/html; charset=utf-8"),
     "/noticias.js": (HERE / "noticias.js", "text/javascript; charset=utf-8"),
     "/noticias.css": (HERE / "noticias.css", "text/css; charset=utf-8"),
+    # a Central de Notícias usa o visual da Central de Desenvolvimento
+    "/central.css": (HERE.parent / "central" / "central.css", "text/css; charset=utf-8"),
+    "/emblema.png": (ASSETS / "emblema-centro-desenvolvimento.png", "image/png"),
 }
 TEXTS_PER_TICK = 8                                              # textos lidos por volta, só com o jogo parado
 PORT = 8629
+
+
+_BACKGROUND: bytes | None = None
+
+
+def background() -> bytes:
+    """O campo de treino da Central de Desenvolvimento em JPG leve (feito uma vez)."""
+    global _BACKGROUND
+    if _BACKGROUND is None:
+        import io
+        from PIL import Image
+        image = Image.open(ASSETS / "fundo-centro-treinamento.png").convert("RGB")
+        image.thumbnail((1600, 1600))
+        buffer = io.BytesIO()
+        image.save(buffer, "JPEG", quality=80, optimize=True)
+        _BACKGROUND = buffer.getvalue()
+    return _BACKGROUND
 
 
 class NewsWatcher:
@@ -212,6 +233,9 @@ class PressRoom(BaseHTTPRequestHandler):
             if body is not None:
                 self._reply(200, body, "image/svg+xml; charset=utf-8")
                 return
+        if path == "/fundo.jpg":
+            self._reply(200, background(), "image/jpeg")
+            return
         if path in FILES:
             file, content_type = FILES[path]
             self._reply(200, file.read_bytes(), content_type)

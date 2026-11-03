@@ -554,6 +554,8 @@ Falta, em ordem:
    `workspace/imprensa/<carreira>/textos.json`: 92 notícias lidas sem travar. Texto do jogo traz
    0x13 no lugar do travessão (trocado por "–"). Conferido no navegador: 96 notícias (92 na caixa +
    4 capturadas), 1042 Zé Carlos com o texto e a resposta "Carlos será tratado pela fisioterapia".
+   Visual: usa o `central.css` da Central de Desenvolvimento (o servidor da Sala serve também
+   `/central.css`, `/emblema.png` e `/fundo.jpg`); `noticias.css` só tem o que é de notícia.
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
 5. Categoria das 87 classes sem valor fixo.
 
