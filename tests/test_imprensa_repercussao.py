@@ -63,6 +63,9 @@ def test_exclusive_only_press_news_of_the_squad() -> None:
     assert not noticias.exclusive({**news, "classe": "MEDIA_COMMENT_NEWS_ITEM"}, {7})   # sem pauta
     assert not noticias.exclusive({**news, "classe": "RED_CARD_BAN_NEWS"}, {7})   # não é da imprensa
     assert noticias.exclusive({**news, "classe": "MOM_SUMMARY_NEWS"}, {7}, frozenset({"MOM_SUMMARY_NEWS"}))
+    for reply in (-2, -3, -4, 10):                                                 # pendente ou respondida
+        assert not noticias.exclusive({**news, "resposta": reply}, {7})
+    assert noticias.exclusive({**news, "resposta": -1}, {7})
 
 
 def test_plain_strips_link_marks() -> None:

@@ -529,6 +529,14 @@ Falta, em ordem:
    (escolha de recuperação), proposta de transferência, decisão de contrato, pedidos da diretoria.
    Como reconhecer: o filtro "Apenas Não-Lidas e Pendentes" do jogo sabe quais estão pendentes;
    achar esse campo (o slot 11 da vtable NÃO serve: TRANSFER_OFFER e CONTRACT_DECISION ficam no padrão).
+   **Achado no código (03/11):** i16 em notícia+0x20 = estado da resposta. 0x6A5DF0 (método da
+   caixa, "há pendente?") percorre a caixa e devolve a 1ª com +0x20 == -2 (qualquer leitura) ou
+   -3/-4 (só não lida), desde que +0x22 bit 0x10 (válida) esteja ligado; 0x4D7500 (ícone da linha)
+   usa os mesmos valores. Na caixa de teste: 81 com -1, RED_CARD_BAN 2 e PHYSIO_REPORT 10 (as duas
+   com escolha, já respondidas). **Hipótese:** -2/-3/-4 = esperando resposta, >= 0 = opção escolhida.
+   Proteção já no modo exclusivo: só sai notícia com +0x20 == -1. Falta conferir no jogo com uma
+   notícia pendente de verdade (proposta, contrato) e o filtro "Apenas Não-Lidas e Pendentes".
+   Detalhe visto junto: +0x22 bit 0x10 é ligado ao carregar a notícia do save (0x4DAFC0).
 3. Página da Central de Notícias com abas por categoria/módulo; a Sala de Imprensa continua para as
    de imprensa.
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).

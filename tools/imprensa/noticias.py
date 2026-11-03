@@ -24,6 +24,10 @@ import leitor  # noqa: E402
 ARRAY_VT, ARRAY_REL = 0x010F6DD4, -0x1E0
 DATE, SERIAL, STATUS, READ_BIT = 0x14, 0x1C, 0x22, 0x01
 UNREAD = -4                                                         # u32 antes da caixa: não lidas
+# i16 em +0x20: estado da resposta. -1 = notícia sem resposta. 0x6A5DF0 ("há pendente?") conta -2
+# sempre e -3/-4 enquanto não lida (o ícone da linha, 0x4D7500, usa os mesmos valores); >= 0 visto
+# num relatório do fisioterapeuta já respondido (995: 10). Conferido no código, 03/11.
+REPLY, NO_REPLY = 0x20, -1
 CLASSES = {int(k, 16): v for k, v in json.loads((HERE / "noticias_classes.json").read_text(encoding="utf-8")).items()}
 
 # classe da notícia -> situação do banco editorial (só as que têm jogador ou assunto claro)
@@ -95,15 +99,18 @@ def inbox(jogo: leitor.Jogo) -> list[dict]:
         kind = CLASSES.get(words[0], f"0x{words[0]:08X}")
         date = (dt.date(year + leitor.YEAR_SHIFT, 1, 1) + dt.timedelta(days=day)).isoformat() if 1950 <= year <= 2100 else None
         out.append({"serie": struct.unpack_from("<I", body, SERIAL)[0], "classe": kind, "data": date,
-                    "lida": bool(body[STATUS] & READ_BIT), "jogador": player})
+                    "lida": bool(body[STATUS] & READ_BIT), "jogador": player,
+                    "resposta": struct.unpack_from("<h", body, REPLY)[0]})
     return out
 
 
 def exclusive(news: dict, squad: set[int], extra: frozenset[str] = frozenset()) -> bool:
     """Modo exclusivo: notícia da imprensa (MEDIA_*) com pauta no banco e jogador do elenco. `extra`
-    acrescenta classes (teste: MOM_SUMMARY_NEWS chega a cada jogo)."""
+    acrescenta classes (teste: MOM_SUMMARY_NEWS chega a cada jogo). Notícia com resposta (pendente ou
+    já respondida) nunca sai do jogo."""
     kind = news["classe"]
-    return (kind.startswith("MEDIA_") or kind in extra) and kind in SITUATION and news["jogador"] in squad
+    return (news.get("resposta", NO_REPLY) == NO_REPLY and (kind.startswith("MEDIA_") or kind in extra)
+            and kind in SITUATION and news["jogador"] in squad)
 
 
 def remove(jogo: leitor.Jogo, serial: int) -> dict:
