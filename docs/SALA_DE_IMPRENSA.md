@@ -404,6 +404,12 @@ existe na resposta à página; corrigido). 2ª: resposta "Ouvir antes de julgar"
 Jogador +2) gravou a moral **9 -> 11** no jogo (relida na memória depois: 11). Na ficha a palavra
 continuou "OK": a escala tem faixas por palavra, e 12 é o valor de 18.475 dos ~35 mil jogadores (o
 neutro). Falta mapear as faixas das palavras (Ruim/OK/Boa...) para a página mostrar a palavra.
+**Conferido (03/11), faixas:** jogo reaberto sem salvar depois da resposta -> o save voltou com
+moral 9 (a escrita vale só na memória; **para durar, é preciso salvar no jogo** depois de responder).
+Teste de faixa (fora da Sala, `apply_morale` direto): Leonan 9 -> **15**, a ficha passou de "OK" para
+**"Bom"** (conferido pelo usuário); devolvido para 9 em seguida (relido: 9). Pontos conhecidos:
+9 = OK, 11 = OK, 15 = Bom. Limite exato entre OK e Bom (12, 13 ou 14) e as palavras abaixo de 9 e
+acima de 15 ainda não conferidos.
 
 ### 8.8 Gerar notícia de repercussão
 
