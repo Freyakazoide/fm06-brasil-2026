@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "tools" / "central"))
 
 import adjunto  # noqa: E402
 import banco  # noqa: E402
+import estado  # noqa: E402
 import noticias  # noqa: E402
 import veiculos  # noqa: E402
 
@@ -140,7 +141,8 @@ def news_candidates(news: list[dict], players: list[dict], situations: dict) -> 
     return out
 
 
-def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 7, news: list[dict] = ()) -> dict:
+def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 7, news: list[dict] = (),
+            career: str = "jogo") -> dict:
     situations = {item["id"]: item for item in banco.bank()}
     outlets = veiculos.load_outlets()
     players = [player(j) for j in jovens]
@@ -161,6 +163,7 @@ def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 7, ne
         index = len(agenda)
         agenda.append({
             "id": f"press-{index + 1:03d}", "situation_id": situation_id, "outlet_id": outlet["id"],
+            "key": f"noticia-{extra['news_serial']}" if extra.get("news_serial") else seed,
             "journalist_id": pick(seed, outlet["journalists"])["id"], "player_id": p["id"],
             "when": SLOTS[index % len(SLOTS)], "active": index == 0,
             "status": "em andamento" if index == 0 else "agendada", "headline": situation["title"],
@@ -170,7 +173,7 @@ def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 7, ne
     roster = [p for p in players if p["id"] in shown] + [p for p in players if p["id"] not in shown]
     return {
         "schema_version": 1, "mode": "jogo",
-        "info": {"date": today.isoformat(), "club": club, "rival": "o próximo adversário",
+        "info": {"date": today.isoformat(), "club": club, "career": career, "rival": "o próximo adversário",
                  "competition": "a temporada", "manager": "Seu treinador", "fact": "nada foi oficializado",
                  "notice": "Dados lidos do FM06 aberto (só leitura): nenhuma escolha é gravada no jogo."},
         "players": roster, "outlets": outlets, "situations": list(situations.values()), "agenda": agenda,
@@ -184,5 +187,6 @@ def live_payload(club: str, news: list[dict] = ()) -> dict:
     import leitor
     jovens, info = leitor.jovens(max_age=99)
     year, month, day = (int(x) for x in info["data"].split("-"))
-    return payload([asdict(j) for j in jovens], today=dt.date(year, month, day),
-                   club=info.get("clube_nome") or club, news=news)
+    club = info.get("clube_nome") or club
+    return payload([asdict(j) for j in jovens], today=dt.date(year, month, day), club=club, news=news,
+                   career=estado.save_id(club, info.get("time_uid")))

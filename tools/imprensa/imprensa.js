@@ -131,7 +131,7 @@ function renderAgenda() {
       <img class="agenda-logo" src="${outlet.logo}" alt="${esc(outlet.name)}">
       <span class="agenda-outlet">${esc(outlet.name)}</span><span class="agenda-time">${esc(item.when)}</span>
       <strong class="agenda-title">${esc(item.headline)}</strong>
-      <span class="agenda-meta"><i class="urgency ${esc(item.urgency)}"></i>${esc(player.short_name)} · ${esc(outlet.medium)} · ${esc(item.status)}</span>
+      <span class="agenda-meta"><i class="urgency ${esc(item.urgency)}"></i>${esc(player.short_name)} · ${esc(outlet.medium)} · ${given(item) ? "✓ respondida" : esc(item.status)}</span>
       ${item.reason ? `<span class="agenda-reason">${esc(item.reason)}</span>` : ""}
     </button>`;
   }).join("") : `<div class="loading">Nenhuma pauta encontrada.</div>`;
@@ -167,7 +167,9 @@ function impactRow(label, value) {
   return `<div class="impact-row"><span>${label}</span><div class="impact-track"><i class="${value < 0 ? "neg" : ""}" style="left:${left}%;width:${width}%"></i></div><b>${value === 0 ? "—" : signal}</b></div>`;
 }
 
-function impactCard(answer, player, situation, compact = false) {
+// resposta já dada nesta carreira (estado.json no servidor; §8.6)
+function given(agenda) { return agenda && data.estado?.respostas?.[agenda.key]; }
+function impactCard(answer, player, situation, compact = false, done = null, live = false) {
   if (!answer) return `<section class="panel context-card"><h3 class="section-title"><i></i> Leitura da situação</h3><p class="impact-lead">Escolha uma intenção para visualizar uma reação simulada. Os números não são enviados ao FM06.</p></section>`;
   const effects = impactFor(answer, player, situation);
   const playerPhrase = effects.player >= 2 ? `${player.short_name} se sente respaldado.` : effects.player <= -2 ? `${player.short_name} recebe a fala como exposição pública.` : `${player.short_name} entende a mensagem, sem reação extrema.`;
@@ -175,7 +177,8 @@ function impactCard(answer, player, situation, compact = false) {
   return `<section class="panel impact-card ${compact ? "compact" : ""}"><h3 class="section-title"><i></i> Reação simulada</h3><p class="impact-lead"><b>${esc(playerPhrase)}</b> A personalidade do jogador alterou o resultado-base desta resposta.</p>
     ${impactRow("Jogador", effects.player)}${impactRow("Elenco", effects.squad)}${impactRow("Torcida", effects.fans)}${impactRow("Diretoria", effects.board)}${impactRow("Imprensa", effects.media)}${impactRow("Resposta ao treino", effects.training)}
     <div class="impact-headline">MANCHETE PROVÁVEL · ${esc(headline)}</div><div class="follow-up"><b>Follow-up:</b> ${esc(fill(answer.follow_up, contextFor(player)))}</div>
-    <button class="reset-answer" data-reset-answer type="button">Testar outra resposta</button></section>`;
+    ${done ? `<div class="answer-given">✓ Resposta dada${done.data_jogo ? ` em ${new Date(`${done.data_jogo}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}. Fica no histórico da carreira; nada é gravado no FM06.</div>`
+      : `${live ? `<button class="give-answer" data-give-answer type="button">Dar esta resposta</button>` : ""}<button class="reset-answer" data-reset-answer type="button">Testar outra resposta</button>`}</section>`;
 }
 
 function formClass(value) { return value < 6.3 ? "bad" : value < 7 ? "mid" : ""; }
@@ -197,7 +200,9 @@ function whyCard(agenda, player, situation) {
 function renderLive() {
   const agenda = selectedAgenda(), outlet = outletBy(agenda.outlet_id), journalist = journalistBy(outlet, agenda.journalist_id);
   const player = playerBy(agenda.player_id), situation = situationBy(agenda.situation_id), question = situation.questions[ui.question % situation.questions.length];
-  const answerKey = `${agenda.id}:${ui.question}`, selectedId = ui.answers[answerKey];
+  const done = given(agenda);
+  if (done) ui.question = done.question;
+  const answerKey = `${agenda.id}:${ui.question}`, selectedId = done ? done.answer_id : ui.answers[answerKey];
   const answer = situation.intentions.find(item => item.id === selectedId);
   $("#view").innerHTML = `<div class="live-layout"><section class="panel stage">
     <div class="stage-top"><img src="${outlet.logo}" alt="${esc(outlet.name)}"><div><strong>${esc(outlet.name)}</strong><small>${esc(journalist.role)} · ${esc(outlet.city)} · ${esc(outlet.voice)}</small></div><span class="live-pill">AO VIVO</span></div>
@@ -205,7 +210,7 @@ function renderLive() {
       <div class="question-block"><span class="question-label"><i></i> pergunta ${ui.question + 1} de ${situation.questions.length}</span><blockquote class="question-text">${esc(fill(question, contextFor(player)))}</blockquote><div class="question-nav"><div class="question-dots">${situation.questions.map((_, index) => `<button class="question-dot ${index === ui.question ? "active" : ""}" data-question="${index}" aria-label="Pergunta ${index + 1}" type="button"></button>`).join("")}</div><span class="question-context"><b>Gatilho:</b> ${esc(situation.trigger)}</span></div></div>
       <div class="subject-block"><div class="subject-head"><span class="player-token">${playerSprite(player)}</span><div><b>${esc(player.short_name)}</b><small>${player.age} anos · ${esc(player.position)}</small></div></div><span class="subject-status">${esc(player.status)}</span><div class="subject-stats"><div><b>${player.morale}</b><span>moral</span></div><div><b>${String(player.stats.rating).replace(".",",")}</b><span>nota</span></div><div><b>${player.stats.minutes}</b><span>minutos</span></div></div></div>
     </div><div class="answer-zone"><div class="answer-head"><div><strong>Escolha a intenção e o modo de falar</strong><small>O texto muda com o contexto; a consequência não é revelada antes da resposta.</small></div><span>8 caminhos disponíveis</span></div>${answerCards(situation, player, "live", selectedId)}</div>
-  </section><aside class="context-stack">${whyCard(agenda, player, situation)}${answer ? impactCard(answer, player, situation) : contextCards(player) + impactCard(null, player, situation)}</aside></div>`;
+  </section><aside class="context-stack">${whyCard(agenda, player, situation)}${answer ? impactCard(answer, player, situation, false, done, true) : contextCards(player) + impactCard(null, player, situation)}</aside></div>`;
 }
 
 const PRIVATE_TOPICS = ["match_star","poor_streak","training_drop","new_position","few_minutes","transfer_interest"];
@@ -269,7 +274,9 @@ document.addEventListener("click", event => {
   if (button.dataset.agenda) { ui.agendaId = button.dataset.agenda; ui.question = 0; ui.tab = "live"; renderAgenda(); renderView(); return; }
   if (button.dataset.medium) { ui.medium = button.dataset.medium; renderFilters(); renderAgenda(); return; }
   if (button.dataset.question !== undefined) { ui.question = Number(button.dataset.question); renderView(); return; }
+  if (button.hasAttribute("data-give-answer")) { giveAnswer(); return; }
   if (button.dataset.answer) {
+    if (button.dataset.answerScope === "live" && given(selectedAgenda())) return;     // já respondida
     if (button.dataset.answerScope === "live") ui.answers[`${selectedAgenda().id}:${ui.question}`] = button.dataset.answer;
     else ui.answers[`private:${ui.privatePlayer}:${ui.privateTopic}`] = button.dataset.answer;
     renderView(); return;
@@ -290,6 +297,18 @@ $("#agenda-search").addEventListener("input", event => { ui.agendaSearch = event
 document.addEventListener("input", event => {
   if (event.target.id === "bank-search") { ui.bankSearch = event.target.value; renderBank(); requestAnimationFrame(() => { const input = $("#bank-search"); input?.focus(); input?.setSelectionRange(input.value.length,input.value.length); }); }
 });
+
+async function giveAnswer() {
+  const agenda = selectedAgenda(), player = playerBy(agenda.player_id), situation = situationBy(agenda.situation_id);
+  const answer = situation.intentions.find(item => item.id === ui.answers[`${agenda.id}:${ui.question}`]);
+  if (!answer || given(agenda)) return;
+  const response = await fetch("/resposta", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({
+    key: agenda.key, situation_id: situation.id, answer_id: answer.id, player_id: player.id, outlet_id: agenda.outlet_id,
+    question: ui.question, date: data.info.date, news_serial: agenda.news_serial || null, effects: impactFor(answer, player, situation)})});
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) { alert(result.erro || "Não deu para gravar a resposta."); return; }
+  data.estado = result; renderAll();
+}
 
 // --jogo: a notícia aberta no jogo vira a pauta "agora" (o servidor lê a caixa de entrada)
 let newsSeen = null;

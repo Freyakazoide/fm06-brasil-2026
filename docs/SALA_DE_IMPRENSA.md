@@ -328,6 +328,15 @@ O estado deve conter:
 
 O `eventos.jsonl` deve ser somente anexado e funcionar como auditoria e possibilidade de desfazer.
 
+**03/11, feito (só arquivos externos):** `tools/imprensa/estado.py`. Carreira =
+`<clube>-<uid do time>` (ex.: `figueirense-<uid>`); demo = `demo`. Cada pauta tem uma chave estável
+(`noticia-<série>` para a notícia lida, ou `data:situação:jogador`). Na página, depois de escolher a
+intenção, **Dar esta resposta** grava em `workspace/imprensa/<carreira>/eventos.jsonl` (só anexado) e
+`estado.json` (respostas; somas de relação por jogador, resposta ao treino por jogador,
+credibilidade por veículo, elenco, torcida e diretoria). Efeitos limitados a ±4 por resposta; uma
+resposta por pauta. A pauta respondida fica marcada ("✓ respondida") e travada mesmo depois de
+recarregar. Testes em `tests/test_imprensa_estado.py`. Ainda não: promessas, contradições, cooldown.
+
 ### 8.7 Aplicar efeitos
 
 Separar os efeitos em duas categorias.

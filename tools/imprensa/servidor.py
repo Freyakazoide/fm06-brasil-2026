@@ -24,6 +24,7 @@ sys.path.insert(0, str(HERE))
 
 import banco  # noqa: E402
 import demo  # noqa: E402
+import estado  # noqa: E402
 import noticias  # noqa: E402
 import ponte  # noqa: E402
 import veiculos  # noqa: E402
@@ -101,7 +102,9 @@ class PressRoom(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         path = unquote(urlsplit(self.path).path)
         if path == "/dados":
-            self._json(200, self.data())
+            value = dict(self.data())                           # a resposta gravada não espera o cache
+            value["estado"] = estado.load(value["info"].get("career", "demo"))
+            self._json(200, value)
             return
         if path == "/evento":
             watcher = self.watcher
@@ -123,6 +126,17 @@ class PressRoom(BaseHTTPRequestHandler):
             self._reply(200, file.read_bytes(), content_type)
             return
         self._reply(404, b"nao encontrado", "text/plain; charset=utf-8")
+
+    def do_POST(self) -> None:
+        if urlsplit(self.path).path != "/resposta":
+            self._reply(404, b"nao encontrado", "text/plain; charset=utf-8")
+            return
+        try:
+            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0)) or 0) or b"{}")
+            career = self.data()["info"].get("career", "demo")
+            self._json(200, estado.record(career, body))
+        except ValueError as error:
+            self._json(400, {"erro": str(error)})
 
     def _json(self, status: int, value: object) -> None:
         body = json.dumps(value, ensure_ascii=False).encode("utf-8")

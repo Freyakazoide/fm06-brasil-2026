@@ -71,7 +71,7 @@ def payload() -> dict:
         outlet = outlets.get(outlet_id, next(iter(outlets.values())))
         journalist = outlet["journalists"][index % len(outlet["journalists"])]
         agenda.append({
-            "id": f"press-{index + 1:03d}",
+            "id": f"press-{index + 1:03d}", "key": f"demo-{index + 1:03d}",
             "situation_id": situation_id,
             "outlet_id": outlet["id"],
             "journalist_id": journalist["id"],
@@ -87,7 +87,7 @@ def payload() -> dict:
         "mode": "demo",
         "info": {
             "date": dt.date(2026, 8, 4).isoformat(),
-            "club": "Figueirense",
+            "club": "Figueirense", "career": "demo",
             "rival": "Avaí",
             "competition": "Campeonato Brasileiro",
             "manager": "Seu treinador",

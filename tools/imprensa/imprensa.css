@@ -67,3 +67,8 @@ footer{height:23px;display:flex;align-items:center;justify-content:space-between
 .why-card{border-color:#8e7624;background:linear-gradient(180deg,#1f2a1a,#0a2135)}.why-card .section-title i{background:var(--accent)}
 .why-fact{margin:9px 0 6px;color:#fff1ae;font:700 16px/1.3 "Arial Narrow","Segoe UI",sans-serif}
 .why-rule{margin:4px 0 0;color:var(--muted);font-size:11px}.why-rule b{color:#cfe2f3}
+
+/* resposta dada (estado da carreira, §8.6) */
+.give-answer{width:100%;margin-top:9px;padding:9px;color:#171104;background:linear-gradient(#ffe967,#edbd2e);border:1px solid #fff19a;border-radius:3px;font-size:13px;font-weight:900;text-transform:uppercase;cursor:pointer}
+.give-answer:hover{filter:brightness(1.08)}
+.answer-given{margin-top:9px;padding:8px 10px;color:#c9f5d9;background:rgba(85,213,139,.12);border:1px solid rgba(85,213,139,.45);border-left:3px solid var(--positive);font-size:12px}
