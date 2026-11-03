@@ -710,3 +710,10 @@ Conferido nos XML da Aurora e do jogo:
   feita pelo clone do próprio jogo (`0xA6AEC4`: fábrica = `(f+4)->vfunc 8`, novo = `0xCC47F0(fábrica)
   - 4`, `novo->vfunc 0x58(f)` copia). O Pesquisar começa com uma cópia do filtro da Central e fica
   independente dali em diante. Nada foi gravado no exe nem no save.
+  2º teste (clone): **filtros separados, conferido pelo usuário** (Pesquisar com Idade até 25 e Meu
+  clube; Central com Idade até 19 e Meu clube; 3 trocas, 1 clone, sem travar). Mas os **resultados**
+  ficaram iguais nas duas telas: a lista de resultados é do contêiner (`+0x2C`/`+0x30`/`+0x34`), e
+  `0x54B0A0` (1ª chamada da resposta `0x6AFD10`) só refaz a busca (`0xA6B1B0`) quando
+  `[contêiner+0x41] == 0`. Correção: zerar `+0x41` logo depois da troca, como o jogo faz ao trocar de
+  conjunto (`0x54AE61`) ou carregar filtro (`0x54BB3F`). Código atualizado no jogo aberto sem perder os
+  filtros guardados.

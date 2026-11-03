@@ -97,6 +97,9 @@ def stub_code() -> bytes:
     c += b"\xA3" + le(SAVED)                                 # mov [SAVED], eax
     c += b"\x88\x15" + le(INSTALLED)                         # mov [INSTALLED], dl
     c += b"\xFF\x05" + le(SWAPS)                             # inc dword [SWAPS]
+    # os resultados são do contêiner (lista em +0x2C): zera "resultados válidos" para 0x54B0A0 refazer
+    # a busca com o filtro trocado, como o jogo faz ao trocar de conjunto (0x54AE61)
+    c += b"\xC6\x46\x41\x00"                                 # mov byte [esi+0x41], 0
     fim = len(c)
     for at in (fim_js, fim_jae, fim_jz, fim_jne, fim_je, fim_jz2, fim_jz3):
         c[at + 2:at + 6] = le(fim - (at + 6))
@@ -122,6 +125,11 @@ def main() -> None:
         cr.poke(h, STUB, stub_code())
         cr.poke(h, SITE, jump)
         print(f"filtro separado instalado ({len(stub_code())} bytes em 0x{STUB:08X})")
+    elif action == "atualizar":                              # troca só o código, mantém os filtros guardados
+        cr.poke(h, SITE, OLD)
+        cr.poke(h, STUB, stub_code())
+        cr.poke(h, SITE, jump)
+        print(f"código atualizado ({len(stub_code())} bytes), estado mantido")
     elif action == "desfazer":
         cr.poke(h, SITE, OLD)
         print("original de volta (o filtro que estiver no conjunto fica)")
