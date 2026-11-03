@@ -267,7 +267,13 @@ def main() -> None:
     args = parser.parse_args()
     Central.max_age = args.idade
     Central.demo = args.demo
-    server = ThreadingHTTPServer(("127.0.0.1", args.porta), Central)
+    # sem SO_REUSEADDR: no Windows ele deixa um 2º servidor ocupar a mesma porta e o navegador
+    # continua falando com o antigo (03/11)
+    ThreadingHTTPServer.allow_reuse_address = False
+    try:
+        server = ThreadingHTTPServer(("127.0.0.1", args.porta), Central)
+    except OSError:
+        raise SystemExit(f"A porta {args.porta} já está em uso: feche a outra janela deste servidor (Ctrl+C) e rode de novo.")
     url = f"http://127.0.0.1:{args.porta}/"
     print(f"Central de Desenvolvimento em {url} (Ctrl+C para fechar)")
     if not args.demo:

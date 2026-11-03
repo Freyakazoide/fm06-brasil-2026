@@ -151,7 +151,13 @@ def main() -> None:
     if problems:
         raise SystemExit("Banco editorial inválido:\n- " + "\n- ".join(problems))
     url = f"http://127.0.0.1:{args.porta}"
-    server = ThreadingHTTPServer(("127.0.0.1", args.porta), PressRoom)
+    # sem SO_REUSEADDR: no Windows ele deixa um 2º servidor ocupar a mesma porta e o navegador
+    # continua falando com o antigo (03/11)
+    ThreadingHTTPServer.allow_reuse_address = False
+    try:
+        server = ThreadingHTTPServer(("127.0.0.1", args.porta), PressRoom)
+    except OSError:
+        raise SystemExit(f"A porta {args.porta} já está em uso: feche a outra janela deste servidor (Ctrl+C) e rode de novo.")
     print(f"Sala de Imprensa: {url}")
     print(f"Banco: {banco.stats()}")
     if args.jogo:
