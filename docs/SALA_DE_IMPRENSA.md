@@ -390,6 +390,16 @@ Antes de escrever, conferir:
 - valor antigo ainda igual ao lido;
 - novo valor dentro do intervalo válido.
 
+**03/11, moral no jogo (feito, a conferir no jogo):** `tools/imprensa/efeitos.py`. Ao dar a resposta
+no `--jogo`, o servidor aplica o efeito "Jogador" da simulação na moral do FM06 (u8 em `UID-184`,
+1 a 20; endereço CONFIRMED em `reverse/fmm/player_live_layout.json` e lido igual pelo leitor da
+Central: Leonan, Jhonnathan e Mailson = 9 pelos dois caminhos). Travas: ±4 por resposta, ±6 por
+semana do jogo por jogador (`efeitos.allowed`), valor final de 1 a 20, UID conferido e valor relido
+logo antes de gravar, releitura depois. Cada mudança vai para `eventos.jsonl` (`tipo: moral`, antes e
+depois) e para `estado.json` (`moral`). O botão mostra a prévia ("moral 9 → 11 no jogo") e o
+cartão mostra o resultado. `--sem-efeitos` desliga. Ainda não: resposta ao treino no jogo, relação
+treinador-jogador do FM06.
+
 ### 8.8 Gerar notícia de repercussão
 
 Depois da resposta, montar uma consequência com:

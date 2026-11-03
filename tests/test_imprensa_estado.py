@@ -40,3 +40,24 @@ def test_one_answer_per_topic_and_safe_names(tmp_path, monkeypatch) -> None:
     with pytest.raises(ValueError):
         estado.record("demo", entry(key="sem-jogador", player_id=None))
     assert estado.save_id("Figueirense", 301306) == "figueirense-301306"
+
+
+def test_morale_limits_per_answer_and_week() -> None:
+    import efeitos
+    history = [{"player_id": 7, "data": "2026-07-20", "delta": 4}]          # mesma semana ISO de 23/07
+    assert efeitos.allowed(9, 7, "2026-07-23", []) == 4                       # ±4 por resposta
+    assert efeitos.allowed(4, 7, "2026-07-23", history) == 2                  # 4 + 2 = 6 na semana
+    assert efeitos.allowed(4, 8, "2026-07-23", history) == 4                  # outro jogador
+    assert efeitos.allowed(4, 7, "2026-07-28", history) == 4                  # semana seguinte
+    assert efeitos.allowed(-9, 7, "2026-07-23", history) == -4
+    assert efeitos.preview(19, 4) == 20 and efeitos.preview(2, -4) == 1
+
+
+def test_note_morale_keeps_history(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(estado, "BASE", tmp_path)
+    estado.record("demo", entry())
+    state = estado.note_morale("demo", "noticia-965", 2115610, "2026-07-24", {"antes": 6, "depois": 9})
+    assert state["respostas"]["noticia-965"]["moral"] == {"antes": 6, "depois": 9}
+    assert state["moral"][0]["delta"] == 3
+    erro = estado.note_morale("demo", "noticia-965", 2115610, "2026-07-24", {"erro": "x"})
+    assert len(erro["moral"]) == 1

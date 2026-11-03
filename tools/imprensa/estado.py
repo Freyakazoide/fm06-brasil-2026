@@ -32,7 +32,7 @@ def folder(career: str) -> Path:
 
 def empty() -> dict:
     return {"respostas": {}, "relacao": {}, "credibilidade": {}, "elenco": 0, "torcida": 0, "diretoria": 0,
-            "treino": {}}
+            "treino": {}, "moral": []}
 
 
 def load(career: str) -> dict:
@@ -41,6 +41,21 @@ def load(career: str) -> dict:
         return {**empty(), **json.loads(path.read_text(encoding="utf-8"))}
     except (OSError, ValueError):
         return empty()
+
+
+def note_morale(career: str, key: str, player_id: int, date: str, result: dict) -> dict:
+    """Anota o efeito na moral do jogo (ou o motivo de não ter gravado) na resposta e no histórico."""
+    state = load(career)
+    state["respostas"][key]["moral"] = result
+    if "antes" in result and result["depois"] != result["antes"]:
+        state["moral"].append({"key": key, "player_id": player_id, "data": date, "antes": result["antes"],
+                               "depois": result["depois"], "delta": result["depois"] - result["antes"]})
+    target = folder(career)
+    with (target / "eventos.jsonl").open("a", encoding="utf-8") as log:
+        log.write(json.dumps({"tipo": "moral", "key": key, "player_id": player_id, "data_jogo": date, **result},
+                             ensure_ascii=False) + "\n")
+    (target / "estado.json").write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
+    return state
 
 
 def record(career: str, entry: dict) -> dict:

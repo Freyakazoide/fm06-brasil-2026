@@ -168,6 +168,18 @@ function impactRow(label, value) {
   return `<div class="impact-row"><span>${label}</span><div class="impact-track"><i class="${value < 0 ? "neg" : ""}" style="left:${left}%;width:${width}%"></i></div><b>${value === 0 ? "—" : signal}</b></div>`;
 }
 
+// moral no jogo (§8.7): o servidor aplica até ±4 por resposta e ±6 por semana; aqui só a prévia
+function moralePreview(effects, player) {
+  if (!data.info.mode_effects) return "";
+  const delta = Math.max(-4, Math.min(4, effects.player)), after = Math.max(1, Math.min(20, player.morale + delta));
+  return after === player.morale ? " · moral não muda" : ` · moral ${player.morale} → ${after} no jogo`;
+}
+function moraleLine(done, player) {
+  const m = done.moral;
+  if (!m) return "Fica no histórico da carreira; nada foi gravado no FM06.";
+  if (m.erro) return `A moral não foi gravada: ${esc(m.erro)}.`;
+  return m.depois === m.antes ? `A moral de ${esc(player.short_name)} no jogo ficou em ${m.antes} (limite da semana ou sem efeito).` : `Moral de ${esc(player.short_name)} no jogo: ${m.antes} → ${m.depois}.`;
+}
 // resposta já dada nesta carreira (estado.json no servidor; §8.6)
 function given(agenda) { return agenda && data.estado?.respostas?.[agenda.key]; }
 function impactCard(answer, player, situation, compact = false, done = null, live = false) {
@@ -178,8 +190,8 @@ function impactCard(answer, player, situation, compact = false, done = null, liv
   return `<section class="panel impact-card ${compact ? "compact" : ""}"><h3 class="section-title"><i></i> Reação simulada</h3><p class="impact-lead"><b>${esc(playerPhrase)}</b> A personalidade do jogador alterou o resultado-base desta resposta.</p>
     ${impactRow("Jogador", effects.player)}${impactRow("Elenco", effects.squad)}${impactRow("Torcida", effects.fans)}${impactRow("Diretoria", effects.board)}${impactRow("Imprensa", effects.media)}${impactRow("Resposta ao treino", effects.training)}
     <div class="impact-headline">MANCHETE PROVÁVEL · ${esc(headline)}</div><div class="follow-up"><b>Follow-up:</b> ${esc(fill(answer.follow_up, contextFor(player)))}</div>
-    ${done ? `<div class="answer-given">✓ Resposta dada${done.data_jogo ? ` em ${new Date(`${done.data_jogo}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}. Fica no histórico da carreira; nada é gravado no FM06.</div>`
-      : `${live ? `<button class="give-answer" data-give-answer type="button">Dar esta resposta</button>` : ""}<button class="reset-answer" data-reset-answer type="button">Testar outra resposta</button>`}</section>`;
+    ${done ? `<div class="answer-given">✓ Resposta dada${done.data_jogo ? ` em ${new Date(`${done.data_jogo}T12:00:00`).toLocaleDateString("pt-BR")}` : ""}. ${moraleLine(done, player)}</div>`
+      : `${live ? `<button class="give-answer" data-give-answer type="button">Dar esta resposta${moralePreview(effects, player)}</button>` : ""}<button class="reset-answer" data-reset-answer type="button">Testar outra resposta</button>`}</section>`;
 }
 
 function formClass(value) { return value < 6.3 ? "bad" : value < 7 ? "mid" : ""; }

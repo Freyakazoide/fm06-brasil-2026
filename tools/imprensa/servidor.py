@@ -24,6 +24,7 @@ sys.path.insert(0, str(HERE))
 
 import banco  # noqa: E402
 import demo  # noqa: E402
+import efeitos  # noqa: E402
 import estado  # noqa: E402
 import noticias  # noqa: E402
 import ponte  # noqa: E402
@@ -79,6 +80,7 @@ class PressRoom(BaseHTTPRequestHandler):
     server_version = "FM06PressRoom/1.0"
     live_club: str | None = None                                # --jogo: nome do clube humano
     watcher: NewsWatcher | None = None
+    effects = False                                             # --jogo sem --sem-efeitos: moral no jogo
     cache: tuple[float, dict] | None = None
     lock = threading.Lock()
 
@@ -104,6 +106,7 @@ class PressRoom(BaseHTTPRequestHandler):
         if path == "/dados":
             value = dict(self.data())                           # a resposta gravada não espera o cache
             value["estado"] = estado.load(value["info"].get("career", "demo"))
+            value["info"] = {**value["info"], "mode_effects": bool(self.effects and self.live_club)}
             self._json(200, value)
             return
         if path == "/evento":
@@ -133,8 +136,18 @@ class PressRoom(BaseHTTPRequestHandler):
             return
         try:
             body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0)) or 0) or b"{}")
-            career = self.data()["info"].get("career", "demo")
-            self._json(200, estado.record(career, body))
+            info = self.data()["info"]
+            career = info.get("career", "demo")
+            state = estado.record(career, body)
+            if self.effects and self.live_club and info.get("mode_effects"):
+                player, date = int(body["player_id"]), body.get("date") or info["date"]
+                delta = efeitos.allowed(state["respostas"][str(body["key"])]["effects"]["player"], player, date, state["moral"])
+                try:
+                    result = efeitos.apply_morale(player, delta)
+                except Exception as error:                      # jogo fechado no meio do caminho
+                    result = {"erro": f"jogo não respondeu: {error}"}
+                state = estado.note_morale(career, str(body["key"]), player, date, result)
+            self._json(200, state)
         except ValueError as error:
             self._json(400, {"erro": str(error)})
 
@@ -160,6 +173,7 @@ def main() -> None:
     parser.add_argument("--sem-navegador", action="store_true")
     parser.add_argument("--jogo", action="store_true", help="lê o elenco do FM06 aberto (só leitura)")
     parser.add_argument("--clube", default="Figueirense", help="nome do clube humano, para os veículos")
+    parser.add_argument("--sem-efeitos", action="store_true", help="--jogo sem mexer na moral do jogo")
     args = parser.parse_args()
     problems = banco.validate()
     if problems:
@@ -176,6 +190,7 @@ def main() -> None:
     print(f"Banco: {banco.stats()}")
     if args.jogo:
         PressRoom.live_club = args.clube
+        PressRoom.effects = not args.sem_efeitos
         PressRoom.watcher = NewsWatcher(url)
         threading.Thread(target=PressRoom.watcher.run, daemon=True).start()
         print(f"Modo jogo: lê o elenco do {args.clube} no FM06 aberto, sem gravar nada.")
