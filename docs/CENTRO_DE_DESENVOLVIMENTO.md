@@ -687,3 +687,10 @@ Conferido nos XML da Aurora e do jogo:
   `[[clube+0x28]+8]` (longo: Figueirense FC, Grêmio FBPA). A Central agora lista os jovens
   emprestados (filtro "Emprestado", aviso na Visão geral, data de volta no Contrato); adultos
   emprestados ficam de fora, como os adultos do B e do Sub-20.
+- 03/11, **filtro separado, retomado (estático + sonda só de leitura)**: `0x54AA10(tipo, id, nome)`
+  procura o conjunto de busca do humano: tipo 0 compara o nome (`+0xDC`, via `0xC4FA90`), tipo 3
+  compara um id (`+0x44`), os outros tipos (1 = jogadores, usado pela Central e pelo Pesquisar) pegam
+  o primeiro do tipo. Devolve -1 se não achar. O pedido em `0x786F25` não cria conjunto: só marca o
+  índice (`0x54AE50`). Sonda `tools/re/filtro_busca.py` (desvio em `0x786F32` que grava os conjuntos
+  na `.fm26+0xDC00`) para fotografar os conjuntos antes/depois de mudar um filtro e achar onde ele
+  fica, antes de qualquer escrita.
