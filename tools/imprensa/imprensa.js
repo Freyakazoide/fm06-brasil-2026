@@ -291,6 +291,23 @@ document.addEventListener("input", event => {
   if (event.target.id === "bank-search") { ui.bankSearch = event.target.value; renderBank(); requestAnimationFrame(() => { const input = $("#bank-search"); input?.focus(); input?.setSelectionRange(input.value.length,input.value.length); }); }
 });
 
+// --jogo: a notícia aberta no jogo vira a pauta "agora" (o servidor lê a caixa de entrada)
+let newsSeen = null;
+async function watchNews() {
+  try {
+    const {noticias} = await (await fetch("/evento", {cache:"no-store"})).json();
+    if (newsSeen !== null && noticias > newsSeen) {
+      data = await (await fetch("/dados", {cache:"no-store"})).json();
+      ui.agendaId = data.agenda.find(item => item.active)?.id || data.agenda[0]?.id;
+      ui.question = 0; ui.tab = "live"; renderAll(); window.focus();
+      const title = document.title; let blink = 0;
+      const timer = setInterval(() => { document.title = blink++ % 2 ? title : "📰 Nova pauta do jogo"; if (blink > 7) { clearInterval(timer); document.title = title; } }, 600);
+    }
+    newsSeen = noticias;
+  } catch {}
+}
+setInterval(watchNews, 2000);
+
 fetch("/dados", {cache:"no-store"}).then(response => {
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();

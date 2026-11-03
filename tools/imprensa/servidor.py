@@ -24,6 +24,7 @@ sys.path.insert(0, str(HERE))
 
 import banco  # noqa: E402
 import demo  # noqa: E402
+import noticias  # noqa: E402
 import ponte  # noqa: E402
 import veiculos  # noqa: E402
 
@@ -36,9 +37,47 @@ FILES = {
 PORT = 8629
 
 
+class NewsWatcher:
+    """--jogo: lê a caixa de entrada a cada 2 s; a notícia que passa a lida vira pauta "agora" e a
+    página se atualiza (ou abre no navegador, se não estiver aberta)."""
+
+    def __init__(self, url: str) -> None:
+        self.url, self.read, self.events = url, None, []
+        self.last_poll, self.opened_at = 0.0, 0.0
+
+    def run(self) -> None:
+        jogo = None
+        while True:
+            time.sleep(2)
+            try:
+                import leitor
+                jogo = jogo or leitor.Jogo()
+                items = noticias.inbox(jogo)
+            except Exception:                                   # jogo fechado ou carregando
+                jogo, self.read = None, None
+                continue
+            read_now = {n["serie"] for n in items if n["lida"]}
+            if self.read is None:                               # 1ª leitura: só a base
+                self.read = read_now
+                continue
+            fresh = [n for n in items if n["lida"] and n["serie"] not in self.read]
+            self.read = read_now
+            if not fresh:
+                continue
+            for item in sorted(fresh, key=lambda n: n["serie"]):
+                self.events.insert(0, item)
+            del self.events[10:]
+            with PressRoom.lock:
+                PressRoom.cache = None
+            if time.time() - self.last_poll > 5 and time.time() - self.opened_at > 8:
+                self.opened_at = time.time()
+                webbrowser.open(self.url)
+
+
 class PressRoom(BaseHTTPRequestHandler):
     server_version = "FM06PressRoom/1.0"
     live_club: str | None = None                                # --jogo: nome do clube humano
+    watcher: NewsWatcher | None = None
     cache: tuple[float, dict] | None = None
     lock = threading.Lock()
 
@@ -51,7 +90,7 @@ class PressRoom(BaseHTTPRequestHandler):
             if cls.cache and time.monotonic() - cls.cache[0] < 120:
                 return cls.cache[1]
             try:
-                value = ponte.live_payload(cls.live_club)
+                value = ponte.live_payload(cls.live_club, cls.watcher.events if cls.watcher else [])
             except Exception as error:                          # jogo fechado ou leitura falhou
                 value = demo.payload()
                 value["info"]["notice"] = f"FM06 não lido ({error}). Mostrando a demonstração."
@@ -63,6 +102,13 @@ class PressRoom(BaseHTTPRequestHandler):
         path = unquote(urlsplit(self.path).path)
         if path == "/dados":
             self._json(200, self.data())
+            return
+        if path == "/evento":
+            watcher = self.watcher
+            if watcher:
+                watcher.last_poll = time.time()
+            self._json(200, {"noticias": len(watcher.events) if watcher else 0,
+                             "serie": watcher.events[0]["serie"] if watcher and watcher.events else None})
             return
         if path == "/banco":
             self._json(200, {"stats": banco.stats(), "situations": banco.bank()})
@@ -110,7 +156,10 @@ def main() -> None:
     print(f"Banco: {banco.stats()}")
     if args.jogo:
         PressRoom.live_club = args.clube
+        PressRoom.watcher = NewsWatcher(url)
+        threading.Thread(target=PressRoom.watcher.run, daemon=True).start()
         print(f"Modo jogo: lê o elenco do {args.clube} no FM06 aberto, sem gravar nada.")
+        print("Ao abrir uma notícia na caixa de entrada do jogo, a pauta dela aparece aqui.")
     else:
         print("Modo demonstração: não lê nem escreve no save.")
     if not args.sem_navegador:

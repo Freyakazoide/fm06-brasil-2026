@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "tools" / "central"))
 
 import adjunto  # noqa: E402
 import banco  # noqa: E402
+import noticias  # noqa: E402
 import veiculos  # noqa: E402
 
 TRAITS = {"ambition": "Ambição", "professionalism": "Profissionalismo", "pressure": "Pressão",
@@ -80,11 +81,12 @@ def triggers(j: dict, p: dict, today: dt.date) -> list[tuple[str, int, str]]:
     out = []
     form, st = p["form"], j.get("estatisticas") or {}
     official = (st.get("jogos") or 0) + (st.get("banco") or 0)
-    # hipótese: Pfrm traz a nota mais recente primeiro (como a aba Forma do jogo)
-    if form and form[0] >= 8:
-        out.append(("match_star", 80, f"nota {form[0]:.0f} no último jogo"))
-    if form and form[0] <= 5:
-        out.append(("poor_match", 60, f"nota {form[0]:.0f} no último jogo"))
+    # Pfrm vem do jogo mais antigo para o mais recente (03/11: "Jhonnathan acusado de displicência"
+    # saiu com a forma 7, 7, 7, 6, 5; a nota do último jogo é a última)
+    if form and form[-1] >= 8:
+        out.append(("match_star", 80, f"nota {form[-1]:.0f} no último jogo"))
+    if form and form[-1] <= 5:
+        out.append(("poor_match", 60, f"nota {form[-1]:.0f} no último jogo"))
     if len(form) >= 5 and sum(v < 6.5 for v in form) >= 3 and sum(form) / len(form) < 6.3:
         out.append(("poor_streak", 70, "três notas abaixo de 6,5 nos últimos cinco jogos"))
     if (st.get("vermelhos") or 0) > 0:
@@ -120,18 +122,36 @@ def outlet_for(situation_id: str, club: str, outlets: list[dict], seed: str) -> 
     return pick(seed, medium or national)
 
 
-def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 7) -> dict:
+def news_candidates(news: list[dict], players: list[dict], situations: dict) -> list[tuple]:
+    """Notícias lidas no jogo (mais recente primeiro) viram pautas à frente de todas as outras."""
+    by_uid, out = {p["id"]: p for p in players}, []
+    for rank, item in enumerate(news):
+        p = by_uid.get(item["jogador"])
+        sid = noticias.situation_for(item, p)
+        if not sid or sid not in situations:
+            continue
+        if not p:
+            if situations[sid]["subject"] == "jogador" or not players:
+                continue                                        # jogador de outro clube
+            p = players[0]
+        day = dt.date.fromisoformat(item["data"]).strftime("%d/%m") if item.get("data") else "hoje"
+        out.append((1000 - rank, sid, p, f"notícia lida no jogo ({day}): {noticias.label(item['classe'])}",
+                    {"news_serial": item["serie"], "news_class": item["classe"]}))
+    return out
+
+
+def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 7, news: list[dict] = ()) -> dict:
     situations = {item["id"]: item for item in banco.bank()}
     outlets = veiculos.load_outlets()
     players = [player(j) for j in jovens]
-    candidates = []
+    candidates = news_candidates(list(news), players, situations)
     for j, p in zip(jovens, players):
         for situation_id, weight, reason in triggers(j, p, today):
             if situation_id in situations:
-                candidates.append((weight, situation_id, p, reason))
+                candidates.append((weight, situation_id, p, reason, {}))
     candidates.sort(key=lambda c: (-c[0], c[2]["name"]))
     agenda, used = [], set()
-    for weight, situation_id, p, reason in candidates:
+    for weight, situation_id, p, reason, extra in candidates:
         if p["id"] in used or len(agenda) >= limit:                 # um assunto por jogador
             continue
         used.add(p["id"])
@@ -144,7 +164,7 @@ def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 7) ->
             "journalist_id": pick(seed, outlet["journalists"])["id"], "player_id": p["id"],
             "when": SLOTS[index % len(SLOTS)], "active": index == 0,
             "status": "em andamento" if index == 0 else "agendada", "headline": situation["title"],
-            "urgency": situation["urgency"], "reason": reason, "weight": weight,
+            "urgency": situation["urgency"], "reason": reason, "weight": weight, **extra,
         })
     shown = {a["player_id"] for a in agenda}
     roster = [p for p in players if p["id"] in shown] + [p for p in players if p["id"] not in shown]
@@ -158,9 +178,11 @@ def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 7) ->
     }
 
 
-def live_payload(club: str) -> dict:
-    """Lê o elenco inteiro do clube humano no jogo aberto (todos os times, todas as idades)."""
+def live_payload(club: str, news: list[dict] = ()) -> dict:
+    """Lê o elenco inteiro do clube humano no jogo aberto (todos os times, todas as idades); as
+    notícias lidas (do observador do servidor) entram à frente da agenda."""
     import leitor
     jovens, info = leitor.jovens(max_age=99)
     year, month, day = (int(x) for x in info["data"].split("-"))
-    return payload([asdict(j) for j in jovens], today=dt.date(year, month, day), club=club)
+    return payload([asdict(j) for j in jovens], today=dt.date(year, month, day),
+                   club=info.get("clube_nome") or club, news=news)

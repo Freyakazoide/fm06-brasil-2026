@@ -49,3 +49,24 @@ def test_triggers_follow_the_data() -> None:
     assert {"poor_match", "poor_streak", "loan", "renewal", "mental_pressure", "youth_comparison"} <= found
     calm = dict(base, moral=15, pot=4, contrato_fim="2029-12-31", estatisticas={"jogos": 10, "banco": 0, "forma": [7, 7, 7, 7, 7]})
     assert not {t[0] for t in ponte.triggers(calm, ponte.player(calm), dt.date(2026, 8, 4))}
+
+
+def test_read_news_becomes_the_current_topic() -> None:
+    players = central_players()
+    uid = players[0]["uid"]
+    news = [{"serie": 965, "classe": "MEDIA_PLAYER_FORM_NEWS", "data": "2026-07-23", "lida": True, "jogador": uid},
+            {"serie": 900, "classe": "MEDIA_PLAYER_FORM_NEWS", "data": "2026-07-20", "lida": True, "jogador": 999999}]
+    data = ponte.payload(players, today=dt.date(2026, 8, 4), club="Figueirense", news=news)
+    first = data["agenda"][0]
+    assert first["active"] and first["news_serial"] == 965 and first["player_id"] == uid
+    assert "notícia lida no jogo (23/07)" in first["reason"]
+    assert all(a.get("news_serial") != 900 for a in data["agenda"])        # jogador de outro clube
+
+
+def test_form_news_reads_the_last_game() -> None:
+    import noticias
+    item = {"classe": "MEDIA_PLAYER_FORM_NEWS"}
+    assert noticias.situation_for(item, {"form": [7.0, 7.0, 7.0, 6.0, 5.0]}) == "poor_streak"
+    assert noticias.situation_for(item, {"form": [5.0, 6.0, 6.0, 7.0, 8.0]}) == "match_star"
+    assert noticias.situation_for({"classe": "RED_CARD_BAN_NEWS"}, None) == "red_card"
+    assert noticias.situation_for({"classe": "TESTE_DESCONHECIDO"}, None) is None

@@ -205,6 +205,18 @@ marcas (byte), `+0x1C` número de série crescente, e a pessoa num campo própri
 "Leonan suspenso por um jogo", "Gustagol informa sobre Mailson/João Ferro". Ferramenta:
 `tools/re/caixa_entrada.py` (foto/diff) para achar o bit de "lida".
 
+**03/11, notícia lida -> pauta (feito, sem patch):** a marca de lida é o bit 0 do byte `+0x22` da
+notícia (abrir "Jhonnathan acusado de displicência" mudou só esse byte, `0x10` -> `0x11`; as outras
+74 ficaram iguais). `tools/imprensa/noticias.py` lê a caixa (série, classe, data, lida, jogador = 1º
+ponteiro para jogador na notícia) e traduz a classe em situação do banco (`SITUATION`; ex.:
+`MEDIA_PLAYER_FORM_NEWS` -> sequência ruim ou grande atuação pela nota do último jogo,
+`RED_CARD_BAN_NEWS` -> cartão vermelho, `PHYSIO_REPORT_NEWS_ITEM` -> lesão, `CONTRACT_EXPIRES_SOON_NEWS`
+-> renovação). No `--jogo`, o observador do servidor lê a caixa a cada 2 s; a notícia que passa a lida
+entra à frente da agenda como pauta "agora" (motivo "notícia lida no jogo (dd/mm): ..."), a rota
+`/evento` conta essas notícias e a página se atualiza sozinha (ou o observador abre o navegador).
+Notícia de jogador de outro clube não vira pauta. As §8.2 e §8.3 (telemetria no exe) deixam de ser
+necessárias para isso.
+
 ### 8.2 Criar telemetria reservada
 
 Reservar no bloco `.fm26` campos equivalentes a:
@@ -275,7 +287,8 @@ jogo fechado, volta à demonstração e avisa no selo do topo). Mapeamento:
 
 - `stats`: jogos oficiais da temporada; sem nenhum, os **não oficiais** (Sub-20, amistosos), com
   `unofficial: true`. Minutos oficiais vêm do registro Global do objeto de estatísticas.
-- `form`: as 5 últimas notas inteiras do jogo (`Pfrm`). Hipótese: a primeira é a mais recente.
+- `form`: as 5 últimas notas inteiras do jogo (`Pfrm`), da mais antiga para a mais recente (03/11:
+  "Jhonnathan acusado de displicência" saiu com a forma 7, 7, 7, 6, 5).
 - `personality`: os traços do PData (1 a 20); `position`: nome da função do adjunto.
 
 Gatilhos reais (um assunto por jogador, até 7, ordenados por peso): `match_star` (nota ≥ 8 no último

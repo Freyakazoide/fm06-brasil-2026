@@ -1,0 +1,90 @@
+"""Caixa de entrada do FM06 aberto (só leitura) e a tradução de cada notícia em pauta da Sala.
+
+Mapeado em 03/11 (docs/SALA_DE_IMPRENSA.md, §8.1): a caixa do humano é o NEWS_ITEM_ARRAY (vtable
+0x010F6DD4) em [humano - 0x1E0], +4 dados, +8 quantidade. Cada notícia: vtable da classe (RTTI
+..._NEWS, mapa em noticias_classes.json), +0x14 data (u16 dia, u16 ano do motor), +0x1C número de
+série, byte +0x22 com o bit 0 = lida (conferido: abrir "Jhonnathan acusado de displicência" mudou só
+esse byte, 0x10 -> 0x11). A pessoa fica num campo próprio de cada classe; aqui se procura o primeiro
+ponteiro para jogador nos 0x80 bytes da notícia.
+"""
+
+from __future__ import annotations
+
+import datetime as dt
+import json
+import struct
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parents[1] / "tools" / "central"))
+
+import leitor  # noqa: E402
+
+ARRAY_VT, ARRAY_REL = 0x010F6DD4, -0x1E0
+DATE, SERIAL, STATUS, READ_BIT = 0x14, 0x1C, 0x22, 0x01
+CLASSES = {int(k, 16): v for k, v in json.loads((HERE / "noticias_classes.json").read_text(encoding="utf-8")).items()}
+
+# classe da notícia -> situação do banco editorial (só as que têm jogador ou assunto claro)
+SITUATION = {
+    "MEDIA_PLAYER_FORM_NEWS": "poor_streak", "MOM_SUMMARY_NEWS": "match_star", "MOM_FORM_NEWS": "match_star",
+    "RED_CARD_BAN_NEWS": "red_card", "ACCUMULATIVE_BAN_NEWS": "red_card",
+    "INJURY_INJURED_NEWS": "new_injury", "PHYSIO_REPORT_NEWS_ITEM": "new_injury", "MEDIA_INJURY_NEWS": "new_injury",
+    "BASIC_INJURY_NEWS": "new_injury", "QUIRKY_PLAYER_INJURY_NEWS": "new_injury",
+    "INJURY_FULL_TRAINING_NEWS": "return_injury", "INJURY_LIGHT_TRAINING_NEWS": "rehab_training",
+    "MEDIA_INJURY_CRISIS_NEWS": "fatigue",
+    "CONTRACT_EXPIRES_SOON_NEWS": "renewal", "BASIC_CONTRACT_EXPIRING_NEWS": "renewal",
+    "LOAN_CONTRACT_EXPIRES_SOON_NEWS": "loan",
+    "MEDIA_TRANSFER_SPECULATION_NEWS": "transfer_interest", "TRANSFER_OFFER_NEWS": "transfer_interest",
+    "TRANSFER_OFFER_REJECTED_NEWS": "bid_rejected", "BASIC_PLAYER_REQUESTS_LISTING_NEWS": "wants_leave",
+    "MEDIA_PLAYER_MORALE_NEWS": "mental_pressure", "BASIC_MORALE_NEWS": "mental_pressure",
+    "PLAYER_DISPUTE_NEWS": "player_conflict", "PLAYER_MISSED_TRAINING_NEWS_ITEM": "late_training",
+    "PLAYER_AWOL_NEWS_ITEM": "unauthorized_absence", "MEDIA_PENALTY_MISS_NEWS": "missed_penalty",
+    "PLAYER_FIRST_CAP_NEWS": "record", "PLAYER_SCORES_FIRST_INTERNATIONAL_GOAL_NEWS": "record",
+    "MANAGER_VOTE_OF_CONFIDENCE_NEWS": "manager_pressure", "BASIC_MANAGER_UNDER_PRESSURE_NEWS": "manager_pressure",
+    "MANAGER_ULTIMATUM_NEWS": "manager_pressure", "SUPPORTER_PROTEST_NEWS": "fan_protest",
+}
+LABEL = {"MEDIA_PLAYER_FORM_NEWS": "imprensa comenta a forma", "MOM_SUMMARY_NEWS": "melhor em campo",
+         "RED_CARD_BAN_NEWS": "suspensão", "PHYSIO_REPORT_NEWS_ITEM": "relatório do fisioterapeuta",
+         "INJURY_INJURED_NEWS": "lesão", "CONTRACT_EXPIRES_SOON_NEWS": "contrato perto do fim",
+         "MEDIA_TRANSFER_SPECULATION_NEWS": "especulação de transferência"}
+
+
+def inbox(jogo: leitor.Jogo) -> list[dict]:
+    people = jogo.table(leitor.PEOPLE)
+    human = next(p for p in people if p and jogo.u32(p) == leitor.HUMAN_VT)
+    array = human + ARRAY_REL
+    if jogo.u32(array) != ARRAY_VT:
+        raise RuntimeError("caixa de entrada não encontrada (NEWS_ITEM_ARRAY)")
+    data, count = jogo.u32(array + 4), jogo.u32(array + 8)
+    out = []
+    for p in struct.unpack(f"<{count}I", jogo.raw(data, 4 * count)) if count else ():
+        body = jogo.raw(p, 0x80)
+        words = struct.unpack("<32I", body)
+        day, year = struct.unpack_from("<HH", body, DATE)
+        player = 0
+        for w in words[1:]:                                        # 1º ponteiro para jogador
+            if 0x01000000 < w < 0x7FFF0000 and w != human:
+                try:
+                    if jogo.u32(w) == leitor.PLAYER_VT:
+                        player = jogo.u32(w + 0x14)
+                        break
+                except OSError:
+                    continue
+        kind = CLASSES.get(words[0], f"0x{words[0]:08X}")
+        date = (dt.date(year + leitor.YEAR_SHIFT, 1, 1) + dt.timedelta(days=day)).isoformat() if 1950 <= year <= 2100 else None
+        out.append({"serie": struct.unpack_from("<I", body, SERIAL)[0], "classe": kind, "data": date,
+                    "lida": bool(body[STATUS] & READ_BIT), "jogador": player})
+    return out
+
+
+def situation_for(news: dict, player: dict | None) -> str | None:
+    """Situação do banco para a notícia; a forma do jogador decide entre boa e má fase."""
+    sid = SITUATION.get(news["classe"])
+    if sid == "poor_streak" and player and player.get("form") and player["form"][-1] >= 7:   # último jogo
+        return "match_star"
+    return sid
+
+
+def label(kind: str) -> str:
+    return LABEL.get(kind, kind.removesuffix("_NEWS").removesuffix("_ITEM").replace("_", " ").lower())
