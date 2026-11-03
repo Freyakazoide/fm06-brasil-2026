@@ -408,8 +408,10 @@ neutro). Falta mapear as faixas das palavras (Ruim/OK/Boa...) para a página mos
 moral 9 (a escrita vale só na memória; **para durar, é preciso salvar no jogo** depois de responder).
 Teste de faixa (fora da Sala, `apply_morale` direto): Leonan 9 -> **15**, a ficha passou de "OK" para
 **"Bom"** (conferido pelo usuário); devolvido para 9 em seguida (relido: 9). Pontos conhecidos:
-9 = OK, 11 = OK, 15 = Bom. Limite exato entre OK e Bom (12, 13 ou 14) e as palavras abaixo de 9 e
-acima de 15 ainda não conferidos.
+9 = OK, 11 = OK, 15 = Bom. Depois 13 -> **Bom** e 12 -> **OK** (conferidos pelo usuário na ficha):
+**"Bom" começa em 13**; o neutro 12 da maioria dos jogadores é o topo de "OK". Leonan devolvido para 9
+(relido). Palavras abaixo de 9 e acima de 15 ainda não conferidas. A página mostra "OK (9) → Bom (13)"
+(`moraleWord`/`moraleText` em `imprensa.js`) e, fora de 9..15, só o número.
 
 ### 8.8 Gerar notícia de repercussão
 

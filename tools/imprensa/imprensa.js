@@ -169,16 +169,25 @@ function impactRow(label, value) {
 }
 
 // moral no jogo (§8.7): o servidor aplica até ±4 por resposta e ±6 por semana; aqui só a prévia
+// palavra da ficha do FM06, conferida em 03/11 com o Leonan: 9, 11, 12 = OK; 13, 15 = Bom.
+// Fora de 9..15 ainda não conferido: mostra só o número.
+function moraleWord(value) {
+  return value >= 13 && value <= 15 ? "Bom" : value >= 9 && value <= 12 ? "OK" : "";
+}
+function moraleText(value) {
+  const word = moraleWord(value);
+  return word ? `${word} (${value})` : String(value);
+}
 function moralePreview(effects, player) {
   if (!data.info.mode_effects) return "";
   const delta = Math.max(-4, Math.min(4, effects.player)), after = Math.max(1, Math.min(20, player.morale + delta));
-  return after === player.morale ? " · moral não muda" : ` · moral ${player.morale} → ${after} no jogo`;
+  return after === player.morale ? " · moral não muda" : ` · moral ${moraleText(player.morale)} → ${moraleText(after)} no jogo`;
 }
 function moraleLine(done, player) {
   const m = done.moral;
   if (!m) return "Fica no histórico da carreira; nada foi gravado no FM06.";
   if (m.erro) return `A moral não foi gravada: ${esc(m.erro)}.`;
-  return m.depois === m.antes ? `A moral de ${esc(player.short_name)} no jogo ficou em ${m.antes} (limite da semana ou sem efeito).` : `Moral de ${esc(player.short_name)} no jogo: ${m.antes} → ${m.depois}.`;
+  return m.depois === m.antes ? `A moral de ${esc(player.short_name)} no jogo ficou em ${moraleText(m.antes)} (limite da semana ou sem efeito).` : `Moral de ${esc(player.short_name)} no jogo: ${moraleText(m.antes)} → ${moraleText(m.depois)}. Salve o jogo para a mudança ficar no save.`;
 }
 // resposta já dada nesta carreira (estado.json no servidor; §8.6)
 function given(agenda) { return agenda && data.estado?.respostas?.[agenda.key]; }
@@ -221,7 +230,7 @@ function renderLive() {
     <div class="stage-top"><img src="${outlet.logo}" alt="${esc(outlet.name)}"><div><strong>${esc(outlet.name)}</strong><small>${esc(journalist.role)} · ${esc(outlet.city)} · ${esc(outlet.voice)}</small></div><span class="live-pill">AO VIVO</span></div>
     <div class="press-stage"><div class="journalist-block"><div class="portrait-frame">${portraitSVG(journalist, 94)}<span class="portrait-seed">ID ${String(journalist.seed).slice(-5)}</span></div><b>${esc(journalist.name)}</b><span>${esc(journalist.role)} · ${esc(outlet.name)}</span><em>${esc(journalist.approach)}</em></div>
       <div class="question-block"><span class="question-label"><i></i> pergunta ${ui.question + 1} de ${situation.questions.length}</span><blockquote class="question-text">${esc(fill(question, contextFor(player)))}</blockquote><div class="question-nav"><div class="question-dots">${situation.questions.map((_, index) => `<button class="question-dot ${index === ui.question ? "active" : ""}" data-question="${index}" aria-label="Pergunta ${index + 1}" type="button"></button>`).join("")}</div><span class="question-context"><b>Gatilho:</b> ${esc(situation.trigger)}</span></div></div>
-      <div class="subject-block"><div class="subject-head"><span class="player-token">${playerSprite(player)}</span><div><b>${esc(player.short_name)}</b><small>${player.age} anos · ${esc(player.position)}</small></div></div><span class="subject-status">${esc(player.status)}</span><div class="subject-stats"><div><b>${player.morale}</b><span>moral</span></div><div><b>${String(player.stats.rating).replace(".",",")}</b><span>nota</span></div><div><b>${player.stats.minutes}</b><span>minutos</span></div></div></div>
+      <div class="subject-block"><div class="subject-head"><span class="player-token">${playerSprite(player)}</span><div><b>${esc(player.short_name)}</b><small>${player.age} anos · ${esc(player.position)}</small></div></div><span class="subject-status">${esc(player.status)}</span><div class="subject-stats"><div><b>${moraleWord(player.morale) || player.morale}</b><span>moral ${player.morale}/20</span></div><div><b>${String(player.stats.rating).replace(".",",")}</b><span>nota</span></div><div><b>${player.stats.minutes}</b><span>minutos</span></div></div></div>
     </div><div class="answer-zone"><div class="answer-head"><div><strong>Escolha a intenção e o modo de falar</strong><small>O texto muda com o contexto; a consequência não é revelada antes da resposta.</small></div><span>8 caminhos disponíveis</span></div>${answerCards(situation, player, "live", selectedId)}</div>
   </section><aside class="context-stack">${whyCard(agenda, player, situation)}${answer ? impactCard(answer, player, situation, false, done, true) : contextCards(player) + impactCard(null, player, situation)}</aside></div>`;
 }
@@ -233,7 +242,7 @@ function renderPrivate() {
   const key = `private:${player.id}:${situation.id}`, selectedId = ui.answers[key];
   const answer = situation.intentions.find(item => item.id === selectedId);
   const coach = {name:data.info.manager, seed:63061979};
-  $("#view").innerHTML = `<div class="private-layout"><aside class="panel private-roster"><h3 class="section-title"><i></i> Escolha o jogador</h3>${data.players.map(item => `<button class="private-player ${item.id === player.id ? "active" : ""}" data-private-player="${item.id}" type="button"><span class="player-token">${playerSprite(item)}</span><b>${esc(item.short_name)}</b><small>${esc(item.status)} · moral ${item.morale}/20</small></button>`).join("")}</aside>
+  $("#view").innerHTML = `<div class="private-layout"><aside class="panel private-roster"><h3 class="section-title"><i></i> Escolha o jogador</h3>${data.players.map(item => `<button class="private-player ${item.id === player.id ? "active" : ""}" data-private-player="${item.id}" type="button"><span class="player-token">${playerSprite(item)}</span><b>${esc(item.short_name)}</b><small>${esc(item.status)} · moral ${moraleText(item.morale)}</small></button>`).join("")}</aside>
   <section class="panel private-main"><div class="conversation-hero"><div class="portrait-frame">${portraitSVG(coach, 94)}<span class="portrait-seed">TÉCNICO</span></div><div class="conversation-copy"><span class="screen-kicker">CONVERSA PARTICULAR / PORTA FECHADA</span><h2>${esc(data.info.manager)} → ${esc(player.short_name)}</h2><p>Neste modo, imprensa e torcida não recebem efeito direto. A escolha trabalha confiança, relação e resposta ao treinamento.</p><div class="tag-list"><span class="tag">${esc(player.position)}</span><span class="tag">moral ${player.morale}/20</span><span class="tag">${esc(player.status)}</span></div></div></div>
     <div class="topic-grid">${PRIVATE_TOPICS.map(id => { const item = situationBy(id); return `<button class="topic-card ${id === situation.id ? "active" : ""}" data-private-topic="${id}" type="button"><b>${esc(item.title)}</b><small>${esc(item.trigger)}</small></button>`; }).join("")}</div>
     <div class="private-answers"><div class="answer-head"><div><strong>${esc(situation.title)}</strong><small>Oito abordagens possíveis para esta conversa.</small></div><span>efeitos simulados</span></div>${answerCards(situation, player, "private", selectedId)}</div>${answer ? `<div style="margin-top:9px">${impactCard(answer, player, {...situation, public:false}, true)}</div>` : ""}
