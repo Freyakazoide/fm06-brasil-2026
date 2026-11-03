@@ -23,6 +23,7 @@ import leitor  # noqa: E402
 
 ARRAY_VT, ARRAY_REL = 0x010F6DD4, -0x1E0
 DATE, SERIAL, STATUS, READ_BIT = 0x14, 0x1C, 0x22, 0x01
+UNREAD = -4                                                         # u32 antes da caixa: não lidas
 CLASSES = {int(k, 16): v for k, v in json.loads((HERE / "noticias_classes.json").read_text(encoding="utf-8")).items()}
 
 # classe da notícia -> situação do banco editorial (só as que têm jogador ou assunto claro)
@@ -64,13 +65,19 @@ LABEL = {
 }
 
 
-def inbox(jogo: leitor.Jogo) -> list[dict]:
-    people = jogo.table(leitor.PEOPLE)
-    human = next(p for p in people if p and jogo.u32(p) == leitor.HUMAN_VT)
+def box(jogo: leitor.Jogo) -> tuple[int, int, int, int]:
+    """Endereço da caixa (NEWS_ITEM_ARRAY), dados, quantidade e capacidade."""
+    human = next(p for p in jogo.table(leitor.PEOPLE) if p and jogo.u32(p) == leitor.HUMAN_VT)
     array = human + ARRAY_REL
-    if jogo.u32(array) != ARRAY_VT:
+    vt, data, count, capacity = struct.unpack("<4I", jogo.raw(array, 16))
+    if vt != ARRAY_VT or not count <= capacity <= 10000:
         raise RuntimeError("caixa de entrada não encontrada (NEWS_ITEM_ARRAY)")
-    data, count = jogo.u32(array + 4), jogo.u32(array + 8)
+    return array, data, count, capacity
+
+
+def inbox(jogo: leitor.Jogo) -> list[dict]:
+    array, data, count, _ = box(jogo)
+    human = array - ARRAY_REL
     out = []
     for p in struct.unpack(f"<{count}I", jogo.raw(data, 4 * count)) if count else ():
         body = jogo.raw(p, 0x80)
@@ -90,6 +97,34 @@ def inbox(jogo: leitor.Jogo) -> list[dict]:
         out.append({"serie": struct.unpack_from("<I", body, SERIAL)[0], "classe": kind, "data": date,
                     "lida": bool(body[STATUS] & READ_BIT), "jogador": player})
     return out
+
+
+def exclusive(news: dict, squad: set[int], extra: frozenset[str] = frozenset()) -> bool:
+    """Modo exclusivo: notícia da imprensa (MEDIA_*) com pauta no banco e jogador do elenco. `extra`
+    acrescenta classes (teste: MOM_SUMMARY_NEWS chega a cada jogo)."""
+    kind = news["classe"]
+    return (kind.startswith("MEDIA_") or kind in extra) and kind in SITUATION and news["jogador"] in squad
+
+
+def remove(jogo: leitor.Jogo, serial: int) -> dict:
+    """Tira a notícia da caixa do jogo aberto (só a lista; o objeto fica na memória) e acerta o contador
+    de não lidas. Conferido em 03/11 com tools/re/caixa_remover.py: some da caixa e continua fora
+    depois de salvar e recarregar. Devolve o ponteiro, a posição e se estava lida."""
+    sys.path.insert(0, str(HERE.parents[1] / "tools" / "re"))
+    import chamada_remota as cr
+    array, data, count, _ = box(jogo)
+    items = list(struct.unpack(f"<{count}I", jogo.raw(data, 4 * count))) if count else []
+    index = next((i for i, p in enumerate(items) if jogo.u32(p + SERIAL) == serial), None)
+    if index is None:
+        raise LookupError(f"notícia {serial} não está na caixa")
+    item = items[index]
+    read = bool(jogo.raw(item + STATUS, 1)[0] & READ_BIT)
+    _, handle = cr.game()
+    cr.poke(handle, array + 8, struct.pack("<I", count - 1))           # quantidade primeiro: sem duplicata
+    cr.poke(handle, data, struct.pack(f"<{count}I", *(items[:index] + items[index + 1:]), 0))
+    if not read:
+        cr.poke(handle, array + UNREAD, struct.pack("<I", max(0, jogo.u32(array + UNREAD) - 1)))
+    return {"ponteiro": item, "posicao": index, "lida_no_jogo": read, "caixa": array}
 
 
 def situation_for(news: dict, player: dict | None) -> str | None:

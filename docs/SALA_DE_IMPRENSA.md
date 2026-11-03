@@ -453,6 +453,17 @@ com o bit de lida. `caixa_remover.py` agora baixa/sobe esse contador ao tirar/de
 lida. 8 notícias de 25-26/07 (odds, transferência, resumo, melhor em campo, fase das equipes x2,
 diretoria): nenhuma MEDIA_* nem do elenco do Figueirense; as de imprensa são raras (3 em duas semanas).
 
+**03/11, modo exclusivo (feito, a testar no jogo):** `servidor.py --jogo --exclusivo`. O observador
+da caixa (a cada 2 s), quando a quantidade fica parada entre duas leituras (jogo ocioso, não no meio
+do "Continuar"), procura notícia **chegada depois de a Sala ligar** que seja da imprensa (`MEDIA_*`),
+tenha pauta no banco e seja de jogador do elenco (`noticias.exclusive`). Para cada uma: guarda em
+`workspace/imprensa/<carreira>/capturadas.json` **antes** de mexer no jogo, tira da caixa
+(`noticias.remove`: quantidade, lista e contador de não lidas), relê a caixa para conferir e anota a
+remoção (`eventos.jsonl`, `tipo: captura`). Qualquer falha desliga o modo. As capturadas entram na
+agenda com o status "só na Sala". Limite: o texto da notícia é montado pelo jogo na hora de mostrar;
+a Sala mostra o tipo, o jogador e a data. Teste: `--exclusivo-classes MOM_SUMMARY_NEWS` acrescenta
+"melhor em campo" (chega a cada jogo). Notícias que já estavam na caixa nunca são tiradas.
+
 Há código de criação de notícia em `src/fm06patch/fornada.py` que pode servir como referência. Não
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
 de entrada.

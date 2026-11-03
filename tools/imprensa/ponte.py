@@ -144,10 +144,12 @@ def news_candidates(inbox: list[dict], just_read: set[int], players: list[dict],
                 continue                                        # jogador de outro clube
             p = players[0]
         day = dt.date.fromisoformat(item["data"]).strftime("%d/%m") if item.get("data") else "hoje"
-        reason = (f"notícia lida no jogo ({day}): " if item.get("lida") else f"notícia de {day}, ainda não aberta no jogo: ")             + noticias.label(item["classe"])
+        reason = (f"notícia de {day}, só na Sala (tirada da caixa do jogo): " if item.get("exclusiva")
+                  else f"notícia lida no jogo ({day}): " if item.get("lida") else f"notícia de {day}, ainda não aberta no jogo: ")             + noticias.label(item["classe"])
         weight = (1_000_000 if item["serie"] in just_read else 0) + item["serie"]
         out.append((weight, sid, p, reason, {"news_serial": item["serie"], "news_class": item["classe"],
-                                             "news_read": bool(item.get("lida")), "news_day": day}))
+                                             "news_read": bool(item.get("lida")), "news_day": day,
+                                             "news_exclusive": bool(item.get("exclusiva"))}))
     return out
 
 
@@ -180,7 +182,7 @@ def payload(jovens: list[dict], *, today: dt.date, club: str, limit: int = 10, n
             "id": f"press-{index + 1:03d}", "situation_id": situation_id, "outlet_id": outlet["id"], "key": seed,
             "journalist_id": pick(seed, outlet["journalists"])["id"], "player_id": p["id"],
             "when": "agora" if index == 0 else extra.get("news_day") or SLOTS[index % len(SLOTS)], "active": index == 0,
-            "status": "em andamento" if index == 0 else "lida no jogo" if read else "não lida no jogo" if read is False else "sugestão",
+            "status": "em andamento" if index == 0 else "só na Sala" if extra.get("news_exclusive") else "lida no jogo" if read else "não lida no jogo" if read is False else "sugestão",
             "headline": situation["title"], "urgency": situation["urgency"], "reason": reason, "weight": weight, **extra,
         })
     shown = {a["player_id"] for a in agenda}
@@ -202,5 +204,9 @@ def live_payload(club: str, news: list[dict] = ()) -> dict:
     jovens, info = leitor.jovens(max_age=99)
     year, month, day = (int(x) for x in info["data"].split("-"))
     club = info.get("clube_nome") or club
+    career = estado.save_id(club, info.get("time_uid"))
+    inbox = noticias.inbox(leitor.Jogo())
+    seen = {n["serie"] for n in inbox}
+    inbox += [n for n in estado.captures(career) if n["serie"] not in seen]   # modo exclusivo
     return payload([asdict(j) for j in jovens], today=dt.date(year, month, day), club=club, news=news,
-                   inbox=noticias.inbox(leitor.Jogo()), career=estado.save_id(club, info.get("time_uid")))
+                   inbox=inbox, career=career)

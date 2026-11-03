@@ -69,6 +69,29 @@ def note_repercussion(career: str, key: str, story: dict) -> dict:
     return state
 
 
+def captures(career: str) -> list[dict]:
+    """Notícias de imprensa tiradas da caixa do jogo no modo exclusivo (só existem na Sala)."""
+    try:
+        return json.loads((folder(career) / "capturadas.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return []
+
+
+def add_capture(career: str, news: dict, removed: dict | None) -> list[dict]:
+    """Guarda a notícia antes de tirá-la do jogo (removed=None) e anota a remoção depois."""
+    items = [n for n in captures(career) if n["serie"] != news["serie"]]
+    entry = {**news, "exclusiva": True, "capturada": dt.datetime.now().isoformat(timespec="seconds"),
+             "removida": removed}
+    items.append(entry)
+    target = folder(career)
+    target.mkdir(parents=True, exist_ok=True)
+    (target / "capturadas.json").write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
+    if removed:
+        with (target / "eventos.jsonl").open("a", encoding="utf-8") as log:
+            log.write(json.dumps({"tipo": "captura", **entry}, ensure_ascii=False) + "\n")
+    return items
+
+
 def record(career: str, entry: dict) -> dict:
     """Grava uma resposta dada. Uma pauta (chave) só recebe uma resposta."""
     for field in ("key", "situation_id", "answer_id", "player_id", "outlet_id"):

@@ -61,3 +61,14 @@ def test_note_morale_keeps_history(tmp_path, monkeypatch) -> None:
     assert state["moral"][0]["delta"] == 3
     erro = estado.note_morale("demo", "noticia-965", 2115610, "2026-07-24", {"erro": "x"})
     assert len(erro["moral"]) == 1
+
+
+def test_captures_keep_one_entry_per_news(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(estado, "BASE", tmp_path)
+    news = {"serie": 990, "classe": "MEDIA_PLAYER_FORM_NEWS", "data": "2026-07-28", "lida": False, "jogador": 7}
+    estado.add_capture("figueirense-301306", news, None)                 # antes de tirar do jogo
+    items = estado.add_capture("figueirense-301306", news, {"ponteiro": 1, "posicao": 80})
+    assert len(items) == 1 and items[0]["exclusiva"] and items[0]["removida"]["posicao"] == 80
+    assert estado.captures("figueirense-301306")[0]["serie"] == 990
+    log = (tmp_path / "figueirense-301306" / "eventos.jsonl").read_text(encoding="utf-8").splitlines()
+    assert len(log) == 1 and json.loads(log[0])["tipo"] == "captura"

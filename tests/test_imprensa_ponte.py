@@ -83,3 +83,15 @@ def test_agenda_uses_only_real_news_when_there_are_any() -> None:
     assert data["agenda"][0]["when"] == "agora" and data["agenda"][1]["status"] == "lida no jogo"
     assert "ainda não aberta" in data["agenda"][0]["reason"]
     assert not any(x["key"].startswith("2026") for x in data["agenda"])          # sem gatilho inventado
+
+
+def test_exclusive_news_shows_as_only_in_the_press_room() -> None:
+    players = central_players()
+    a, b = players[0]["uid"], players[1]["uid"]
+    inbox = [{"serie": 20, "classe": "RED_CARD_BAN_NEWS", "data": "2026-08-03", "lida": True, "jogador": a},
+             {"serie": 21, "classe": "MEDIA_PLAYER_FORM_NEWS", "data": "2026-08-02", "lida": False, "jogador": b,
+              "exclusiva": True}]
+    data = ponte.payload(players, today=dt.date(2026, 8, 4), club="Figueirense", inbox=inbox, news=[inbox[0]])
+    second = next(x for x in data["agenda"] if x["key"] == "noticia-21")
+    assert second["status"] == "só na Sala" and second["news_exclusive"]
+    assert "só na Sala" in second["reason"]

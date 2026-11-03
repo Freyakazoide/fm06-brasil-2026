@@ -53,3 +53,13 @@ def test_note_repercussion_persists(tmp_path, monkeypatch) -> None:
     state = estado.note_repercussion("demo", "k1", {"manchete": "x"})
     assert state["respostas"]["k1"]["repercussao"] == {"manchete": "x"}
     assert estado.load("demo")["respostas"]["k1"]["repercussao"]["manchete"] == "x"
+
+
+def test_exclusive_only_press_news_of_the_squad() -> None:
+    import noticias
+    news = {"serie": 1, "classe": "MEDIA_PLAYER_FORM_NEWS", "jogador": 7}
+    assert noticias.exclusive(news, {7})
+    assert not noticias.exclusive({**news, "jogador": 8}, {7})                    # de outro clube
+    assert not noticias.exclusive({**news, "classe": "MEDIA_COMMENT_NEWS_ITEM"}, {7})   # sem pauta
+    assert not noticias.exclusive({**news, "classe": "RED_CARD_BAN_NEWS"}, {7})   # não é da imprensa
+    assert noticias.exclusive({**news, "classe": "MOM_SUMMARY_NEWS"}, {7}, frozenset({"MOM_SUMMARY_NEWS"}))
