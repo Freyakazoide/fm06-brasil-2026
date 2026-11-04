@@ -5,7 +5,8 @@ Caminho da tela de Notícias (0x4DA130, conferido com sonda em 0x5EF4C0, 03/11):
 notícia->vtable[5](arg, &string, 0 = manchete / 1 = corpo). Depois disso a string já tem o texto
 final em UTF-16 (nó: u16, u16, u16 tamanho, u16 capacidade, ponteiro para o texto), com os links
 como registros "<record>...</record>" antes da palavra clicável (dref = objeto do jogo). A tela
-ainda passa a string por 0xC74DC0 (texto rico), que aqui não é preciso. Conferido: "Figueirense com
+ainda passa a string por 0xC74DC0 (texto rico), que aqui não é preciso. Só com a thread principal
+parada (laco.py): rodar isto ao lado dela corrompeu o alocador de strings (crash de 03/11). Conferido: "Figueirense com
 vitória gorda" e o corpo igual ao da tela. Thread remota; a string é destruída (0xC50B30) depois.
 
     python tools\re\texto_noticia.py 1019          (série da notícia)
@@ -23,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "tools" / "central"), str(ROOT / "tools" / "imprensa"), str(ROOT / "tools" / "re")]
 
 import chamada_remota as cr  # noqa: E402
+import laco  # noqa: E402
 import leitor  # noqa: E402
 import noticias  # noqa: E402
 
@@ -77,18 +79,15 @@ def news_text(jogo: leitor.Jogo, handle, news: int) -> tuple[str, str]:
         cr.kernel32.VirtualFreeEx(handle, page, 0, 0x8000)
 
 
-def text_of(jogo: leitor.Jogo, serial: int) -> dict:
-    """Manchete e corpo (texto da tela, sem os links) da notícia de série `serial` da caixa."""
+def text_of(jogo: leitor.Jogo, handle, serial: int) -> dict:
+    """Manchete e corpo (texto da tela, sem os links) da notícia de série `serial` da caixa. Só com a
+    thread principal parada no laço (laco.parked): as strings do jogo não aguentam duas threads."""
     _, data, count, _ = noticias.box(jogo)
     items = struct.unpack(f"<{count}I", jogo.raw(data, 4 * count)) if count else ()
     news = next((p for p in items if jogo.u32(p + noticias.SERIAL) == serial), None)
     if not news:
         raise LookupError(f"notícia {serial} não está na caixa")
-    _, handle = cr.game()
-    try:
-        headline, body = news_text(jogo, handle, news)
-    finally:
-        cr.kernel32.CloseHandle(handle)
+    headline, body = news_text(jogo, handle, news)
     return {"manchete": plain(headline), "corpo": plain(body)}
 
 
@@ -96,13 +95,14 @@ def main() -> None:
     jogo = leitor.Jogo()
     _, data, count, _ = noticias.box(jogo)
     items = struct.unpack(f"<{count}I", jogo.raw(data, 4 * count))
-    _, handle = cr.game()
+    pid, handle = cr.game()
     for serial in map(int, sys.argv[1:]):
         news = next((p for p in items if jogo.u32(p + noticias.SERIAL) == serial), None)
         if not news:
             print(f"{serial}: não está na caixa")
             continue
-        headline, body = news_text(jogo, handle, news)
+        with laco.parked(pid, handle):
+            headline, body = news_text(jogo, handle, news)
         print(f"{serial} [{noticias.CLASSES.get(jogo.u32(news), '?')}]\n  {plain(headline)}\n  {plain(body)}\n")
 
 

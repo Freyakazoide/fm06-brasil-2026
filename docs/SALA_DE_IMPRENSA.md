@@ -561,6 +561,19 @@ Falta, em ordem:
    classe desconhecida. Motivo da cautela: CONTRACT_DECISION (927/940/949) e PRE_MATCH_QUESTION
    (931/954) estão com -1, então nem toda notícia com ação usa o campo. Simulação na caixa de
    teste (97): sairiam 88, ficariam 9.
+   **Teste no jogo com `--exclusivo-todas` (03/11, save de teste): TRAVOU.** Dump
+   `FM 2006 v6.0.2.72973 (2026.11.03 21.02.52).dmp`: thread principal, C0000005 lendo 0x65766964
+   ("dive") em 0xC67285, `mov eax,[edx]` com edx = [esi+0x18], a cabeça da lista livre do
+   alocador de strings (0xC67270); chamado ao liberar uma string na tela de Notícias (0x4DBC28 →
+   0xC50B30). 4 threads de trabalho do jogo ativas (dia sendo processado). Causa provável (evidência,
+   não prova): o leitor de textos chamava 0xC50A00/0xC50B30 numa thread remota ao mesmo tempo que a
+   thread principal (8 textos a cada 2 s, mais a captura de cada notícia nova): o alocador não é
+   para duas threads. A remoção (escrever na lista de notícias) tinha o mesmo risco.
+   **Correção:** `tools/re/laco.py`, pausa no laço principal. Laço em 0xC68A50 (PeekMessage /
+   Translate / Dispatch, quadro do jogo em 0xC68B34 `mov ecx,[0x14EDD08]; call [edx+4]`, espera
+   mensagem). Gancho: 0xC68B34 vira jmp para uma página nossa que, com PARK ligado, marca PARKED e
+   espera; o jmp é gravado com todas as threads suspensas. O servidor só lê textos e tira notícias
+   dentro de `laco.parked` (uma pausa por volta, só quando há trabalho). Falta conferir no jogo.
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
 5. Categoria das 87 classes sem valor fixo.
 
