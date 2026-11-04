@@ -586,6 +586,8 @@ Falta, em ordem:
    causa do crash: a captura da 1057 no save que travou foi às 21:02:31, 21 s antes do dump.
    Capturadas de outra linha do tempo (data depois da data do jogo: 1036, 1045, 1057) não aparecem
    mais na Central nem na Sala (`central.current`).
+   Usuário saiu e voltou em Notícias (a 1027 sumiu da tela), salvou, fechou e abriu: continua
+   fora. Fechado.
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
 5. Categoria das 87 classes sem valor fixo.
 
