@@ -574,6 +574,11 @@ Falta, em ordem:
    mensagem). Gancho: 0xC68B34 vira jmp para uma página nossa que, com PARK ligado, marca PARKED e
    espera; o jmp é gravado com todas as threads suspensas. O servidor só lê textos e tira notícias
    dentro de `laco.parked` (uma pausa por volta, só quando há trabalho). Falta conferir no jogo.
+   **Conferido (03/11, save de teste reaberto):** `laco.py teste` instalou o gancho (0xC68B34 →
+   e9 ... 90, página 0x025D0000) e a thread principal parou em 47 ms e voltou; textos 1019/1018/1016
+   lidos dentro da pausa; servidor `--exclusivo-todas` leu os 75 textos da caixa em pausas de 8, jogo
+   seguiu aberto. O save reaberto era mais antigo (caixa até 1019): as séries se repetem entre
+   linhas do tempo, então o cache de textos passou a usar "série:classe:data".
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
 5. Categoria das 87 classes sem valor fixo.
 

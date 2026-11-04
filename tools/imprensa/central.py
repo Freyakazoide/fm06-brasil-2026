@@ -21,6 +21,12 @@ MODULES = [("imprensa", "Sala de Imprensa", {"Imprensa"}), ("medico", "Departame
 WAITING = {-2, -3, -4}
 
 
+def text_key(news: dict) -> str:
+    """Chave do texto guardado: a série se repete quando um save mais antigo é carregado, então vai
+    junto com a classe e a data."""
+    return f"{news['serie']}:{news['classe']}:{news.get('data')}"
+
+
 def module_of(category: str | None) -> str:
     return next(key for key, _, cats in MODULES if cats is None or category in cats)
 
@@ -41,7 +47,7 @@ def items(inbox: list[dict], captures: list[dict], texts: dict[str, dict]) -> li
     """Caixa do jogo + capturadas (a capturada que ainda aparece na caixa conta uma vez), mais nova primeiro."""
     seen = {n["serie"] for n in inbox}
     every = list(inbox) + [n for n in captures if n["serie"] not in seen]
-    out = [item(n, texts.get(str(n["serie"]))) for n in every]
+    out = [item(n, texts.get(text_key(n))) for n in every]
     return sorted(out, key=lambda n: (n["data"] or "", n["serie"]), reverse=True)
 
 

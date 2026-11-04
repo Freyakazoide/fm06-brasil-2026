@@ -93,14 +93,14 @@ def add_capture(career: str, news: dict, removed: dict | None) -> list[dict]:
 
 
 def texts(career: str) -> dict[str, dict]:
-    """Manchete e corpo das notícias da caixa, por série (Central de Notícias, §8.9)."""
+    """Manchete e corpo das notícias da caixa, por "série:classe:data" (Central de Notícias, §8.9)."""
     try:
         return json.loads((folder(career) / "textos.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
 
 
-def add_texts(career: str, new: dict[int, dict]) -> dict[str, dict]:
+def add_texts(career: str, new: dict[str, dict]) -> dict[str, dict]:
     items = {**texts(career), **{str(k): v for k, v in new.items()}}
     target = folder(career)
     target.mkdir(parents=True, exist_ok=True)

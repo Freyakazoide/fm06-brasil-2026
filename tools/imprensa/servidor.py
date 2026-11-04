@@ -95,7 +95,7 @@ class NewsWatcher:
 
     def missing_texts(self, items: list[dict]) -> list[int]:
         known = estado.texts(self.career)
-        return [n["serie"] for n in sorted(items, key=lambda n: -n["serie"]) if str(n["serie"]) not in known]
+        return [n for n in sorted(items, key=lambda n: -n["serie"]) if central.text_key(n) not in known]
 
     def wanted(self, items: list[dict]) -> list[dict]:
         if not self.exclusive:
@@ -124,11 +124,11 @@ class NewsWatcher:
         """Central de Notícias: lê manchete e corpo (função do jogo) das notícias que ainda não têm,
         algumas por volta. Uma falha só adia para a próxima volta."""
         new = {}
-        for serial in self.missing_texts(items)[:TEXTS_PER_TICK]:
+        for news in self.missing_texts(items)[:TEXTS_PER_TICK]:
             try:
-                new[serial] = texto_noticia.text_of(jogo, handle, serial)
+                new[central.text_key(news)] = texto_noticia.text_of(jogo, handle, news["serie"])
             except (Exception, SystemExit) as error:
-                print(f"[imprensa] texto da notícia {serial} não lido: {error}")
+                print(f"[imprensa] texto da notícia {news['serie']} não lido: {error}")
                 break
         if new:
             estado.add_texts(self.career, new)
