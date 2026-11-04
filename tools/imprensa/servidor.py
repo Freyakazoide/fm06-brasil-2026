@@ -293,13 +293,14 @@ class PressRoom(BaseHTTPRequestHandler):
         career = info.get("career", "demo")
         if not self.live_club or career == "demo":
             return central.payload([], [], {}, {**info, "aviso": "Sem jogo aberto: rode o servidor com --jogo."})
+        captures = central.current(estado.captures(career), info.get("date"))
         try:
             import leitor
             inbox = noticias.inbox(leitor.Jogo())
         except Exception as error:
-            return central.payload([], estado.captures(career), estado.texts(career),
+            return central.payload([], captures, estado.texts(career),
                                    {**info, "aviso": f"Caixa do jogo não lida ({error}); mostrando só as capturadas."})
-        return central.payload(inbox, estado.captures(career), estado.texts(career), info)
+        return central.payload(inbox, captures, estado.texts(career), info)
 
     def _repercussion(self, career: str, key: str, state: dict) -> dict:
         """Matéria do veículo sobre a resposta (§8.8); se faltar algum dado, a resposta fica sem ela."""

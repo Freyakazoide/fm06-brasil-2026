@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT / "tools" / "central"))
 
 import adjunto  # noqa: E402
 import banco  # noqa: E402
+import central  # noqa: E402
 import estado  # noqa: E402
 import noticias  # noqa: E402
 import veiculos  # noqa: E402
@@ -208,6 +209,7 @@ def live_payload(club: str, news: list[dict] = ()) -> dict:
     career = estado.save_id(club, info.get("time_uid"))
     inbox = noticias.inbox(leitor.Jogo())
     seen = {n["serie"] for n in inbox}
-    inbox += [n for n in estado.captures(career) if n["serie"] not in seen]   # modo exclusivo
+    today = dt.date(year, month, day).isoformat()
+    inbox += [n for n in central.current(estado.captures(career), today) if n["serie"] not in seen]   # modo exclusivo
     return payload([asdict(j) for j in jovens], today=dt.date(year, month, day), club=club, news=news,
                    inbox=inbox, career=career)

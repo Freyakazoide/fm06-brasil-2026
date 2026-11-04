@@ -579,6 +579,13 @@ Falta, em ordem:
    lidos dentro da pausa; servidor `--exclusivo-todas` leu os 75 textos da caixa em pausas de 8, jogo
    seguiu aberto. O save reaberto era mais antigo (caixa até 1019): as séries se repetem entre
    linhas do tempo, então o cache de textos passou a usar "série:classe:data".
+   **`--exclusivo-todas` conferido (03/11, save de teste, 1 dia avançado): deu certo, sem travar.**
+   Saíram 1021 INJURY_FULL_TRAINING ("Maílson volta a treinar sem limitações") e 1027
+   PRE_MATCH_ODDS ("Prevê-se uma vitória fácil para o Figueirense"), com texto; caixa na memória
+   75. A tela de Notícias aberta seguiu mostrando "76" e a 1027 até ser montada de novo. Reforço da
+   causa do crash: a captura da 1057 no save que travou foi às 21:02:31, 21 s antes do dump.
+   Capturadas de outra linha do tempo (data depois da data do jogo: 1036, 1045, 1057) não aparecem
+   mais na Central nem na Sala (`central.current`).
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
 5. Categoria das 87 classes sem valor fixo.
 

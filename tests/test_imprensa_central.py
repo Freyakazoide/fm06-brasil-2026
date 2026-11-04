@@ -49,3 +49,9 @@ def test_texts_cache(tmp_path, monkeypatch) -> None:
     estado.add_texts("demo", {"7:A:x": {"manchete": "a", "corpo": "b"}})
     estado.add_texts("demo", {"8:B:y": {"manchete": "c", "corpo": "d"}})
     assert set(estado.texts("demo")) == {"7:A:x", "8:B:y"}
+
+
+def test_captures_from_a_newer_save_are_hidden() -> None:
+    caps = [news(1036, "MOM_SUMMARY_NEWS", data="2026-08-09"), news(1027, "PRE_MATCH_ODDS_NEWS", data="2026-08-05")]
+    assert [n["serie"] for n in central.current(caps, "2026-08-05")] == [1027]
+    assert len(central.current(caps, None)) == 2

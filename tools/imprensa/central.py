@@ -27,6 +27,12 @@ def text_key(news: dict) -> str:
     return f"{news['serie']}:{news['classe']}:{news.get('data')}"
 
 
+def current(captures: list[dict], today: str | None) -> list[dict]:
+    """Capturadas que existem neste save: as de data depois da data do jogo vieram de outra linha do
+    tempo (save mais novo, depois recarregado um mais antigo)."""
+    return [n for n in captures if not today or not n.get("data") or n["data"] <= today]
+
+
 def module_of(category: str | None) -> str:
     return next(key for key, _, cats in MODULES if cats is None or category in cats)
 
