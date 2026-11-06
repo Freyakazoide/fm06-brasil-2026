@@ -23,8 +23,11 @@ WAITING = {-2, -3, -4}
 
 def text_key(news: dict) -> str:
     """Chave do texto guardado: a série se repete quando um save mais antigo é carregado, então vai
-    junto com a classe e a data."""
-    return f"{news['serie']}:{news['classe']}:{news.get('data')}"
+    junto com a classe e a data. O corpo muda com a resposta ("Você decidiu apelar..."), então o
+    estado da resposta entra na chave e a notícia é lida de novo."""
+    key = f"{news['serie']}:{news['classe']}:{news.get('data')}"
+    reply = news.get("resposta", noticias.NO_REPLY)
+    return key if reply == noticias.NO_REPLY else f"{key}:{reply}"
 
 
 def current(captures: list[dict], today: str | None) -> list[dict]:

@@ -632,6 +632,15 @@ navegador com dados reais (7 jogadores, 1 decisão de mentira só para ver o des
 Conferido no jogo: 1042, -3 → 9 com "Entregar à Fisioterapia". Qualquer chamada dessas só dentro
 de `laco.parked`.
 
+**Resposta pelo Python conferida (06/11, save de teste):** 1067 RED_CARD_BAN (Henrique, botões
+"Apelar Contra Suspensão" / "Não Apelar"), `+0x20 = -3`. A proteção segurou a notícia na caixa
+enquanto as vizinhas 1066 e 1068-1071 saíram. `tools/re/responder_noticia.py 1067 1` chamou o slot 22
+(0x5918C0; args resposta, aplicar; opção em resposta+0xE) com a thread principal parada: +0x20 = 1 e
+o corpo ganhou "Você decidiu apelar desta suspensão." Slot 21 (0x591800) grava 2 ("Não Apelar",
+como a 957); slot 19 grava 2 quando a data passa; slot 13 (0x4015D0) devolve +0x20. No relatório do
+fisioterapeuta o slot 22 é outro (0x5CF880, confere o tipo 7): ainda sem teste. O corpo muda com a
+resposta, então `central.text_key` leva o estado da resposta.
+
 ## 9. Entrevistas dos clubes controlados pela IA
 
 Executar em um tick diário ou semanal, nunca a cada quadro.

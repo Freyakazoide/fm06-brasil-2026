@@ -96,3 +96,17 @@ def test_medical_groups_by_player_and_puts_decisions_first() -> None:
     assert value["jogadores"][0]["situacao"] == "Decisão pendente" and not value["jogadores"][0]["no_elenco"]
     mailson = value["jogadores"][1]
     assert mailson["situacao"] == "Liberado" and len(mailson["noticias"]) == 2 and mailson["nome"] == "Mailson"
+
+
+def test_text_is_read_again_after_the_reply() -> None:
+    waiting, answered = news(1067, "RED_CARD_BAN_NEWS", resposta=-3), news(1067, "RED_CARD_BAN_NEWS", resposta=1)
+    assert central.text_key(news(1067, "RED_CARD_BAN_NEWS")) == "1067:RED_CARD_BAN_NEWS:2026-08-12"
+    assert central.text_key(waiting) != central.text_key(answered)
+
+
+def test_reply_code_calls_slot_22_with_apply_flag() -> None:
+    sys.path.insert(0, str(ROOT / "tools" / "re"))
+    import responder_noticia as r
+    code = r.reply_code(0x11223344, 0x55667788)
+    assert bytes.fromhex("6A01 6888776655 B944332211 8B01 FF5058") in code
+    assert code.endswith(bytes.fromhex("33C0C20400"))
