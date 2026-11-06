@@ -543,7 +543,8 @@ Falta, em ordem:
    PHYSIO_REPORT (Ezequiel, sem botões) = -1: a classe sozinha não diz se pede resposta, o campo diz.
    A Sala (modo exclusivo ligado) não tirou a 1042. O filtro "Apenas Não-Lidas e Pendentes" mostrou
    "0 de 94" mesmo com 5 não lidas e a 1042 pendente: não serve de prova (comportamento do jogo).
-   Hipótese: 995 = 10 é "Dar Injecção".
+   Hipótese errada, corrigida em 06/11: 995 = 10 não é "Dar Injecção"; o texto da 995 (Fabricio,
+   virose) termina com ele enviado para casa. O sentido do valor depende do relatório.
 3. Página da Central de Notícias com abas por categoria/módulo; a Sala de Imprensa continua para as
    de imprensa.
    **Feito (03/11):** `http://127.0.0.1:8629/noticias` (mesmo servidor da Sala, `--jogo`).
@@ -614,6 +615,22 @@ Falta, em ordem:
    Competições (`categorias_noticias.py` só reconhecia `mov al, N`). Sobram 39: as BASIC_* (classes
    base) e as de infraestrutura (NEWS_FILTER, NEWS_SCREEN etc.), que não são notícia; o slot 10
    delas é outra função. Na caixa de teste só a classe desconhecida 0x010B023C fica sem categoria.
+
+### 8.10 Departamento Médico (pedido do usuário, 06/11)
+
+Primeira versão em `http://127.0.0.1:8629/medico` (`medico.py`): notícias da categoria Lesões por
+jogador, decisões pendentes primeiro. A situação sai da última notícia, não do estado da lesão no
+jogo (campo ainda não lido). Responder continua no jogo.
+
+Achado para responder pelo Python (leitura do código, ainda sem teste). 1ª vtable de
+PHYSIO_REPORT_NEWS_ITEM (0xEA8FDC): slot 20 (0x5CFA60) recebe os comandos dos botões (`hpni`,
+`inj?`, `hpsi`); slot 22 (0x5CF880) grava a resposta em +0x20 a partir do argumento (+0xE) e liga
++0x22 bit 8; slot 21 (0x5CEFB0) tem um caminho que grava 9 e chama 0x6E84E0 ou 0x6E58C0, e outro que
+grava 10 (0x5CF060) e chama 0x6E83E0, com ecx = 0x132A2F0 (gerenciador de lesões, hipótese pelo uso).
+A 995 (virose, opções casa/fisioterapia) terminou com 10 e "enviado para casa". Página conferida no
+navegador com dados reais (7 jogadores, 1 decisão de mentira só para ver o destaque).
+Conferido no jogo: 1042, -3 → 9 com "Entregar à Fisioterapia". Qualquer chamada dessas só dentro
+de `laco.parked`.
 
 ## 9. Entrevistas dos clubes controlados pela IA
 

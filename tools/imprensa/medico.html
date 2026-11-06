@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Departamento Médico</title>
+  <link rel="stylesheet" href="/central.css">
+  <link rel="stylesheet" href="/noticias.css">
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/medico" title="Departamento Médico">
+      <span class="fm-mark" aria-hidden="true"><b>FM</b><i>06</i></span>
+      <span class="brand-copy"><small>FOOTBALL MANAGEMENT / MEDICAL CENTRE</small><strong>Departamento Médico</strong></span>
+    </a>
+    <span class="brand-divider"></span>
+    <img class="club-mark" src="/emblema.png" alt="">
+    <div class="header-summary" id="header-summary"></div>
+    <div class="header-actions">
+      <span id="when">—</span>
+      <a class="primary" href="/noticias"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 7l9 6 9-6"/></svg>Central de Notícias</a>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <aside class="talent-sidebar">
+      <div class="sidebar-title"><strong><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 7v10M7 12h10"/></svg>Jogadores</strong><span id="result-count">—</span></div>
+      <div id="cards" class="player-list"></div>
+    </aside>
+    <section class="workspace" id="workspace"><div class="loading">Lendo as notícias de lesão…</div></section>
+  </main>
+
+  <footer>A situação vem da última notícia do jogador. A resposta ao fisioterapeuta ainda é dada no jogo.</footer>
+  <script src="/medico.js"></script>
+</body>
+</html>

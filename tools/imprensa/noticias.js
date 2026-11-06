@@ -76,7 +76,8 @@ function renderReader() {
   const where = n.onde === "central" ? "Esta notícia saiu da caixa do jogo e existe só aqui."
     : n.pendente ? "Esta notícia pede uma escolha sua e fica na caixa do jogo: responda em <b>Técnico → Notícias</b>."
     : "Esta notícia ainda está também na caixa do jogo.";
-  const press = n.modulo === "imprensa" ? ` <a href="/">Ver a pauta na Sala de Imprensa ›</a>` : "";
+  const press = n.modulo === "imprensa" ? ` <a href="/">Ver a pauta na Sala de Imprensa ›</a>`
+    : n.modulo === "medico" ? ` <a href="/medico">Ver no Departamento Médico ›</a>` : "";
   $("workspace").innerHTML = `<header class="player-header news-header">
       <div class="news-icon">${icon(MODULE_ICON[n.modulo], 28)}</div>
       <div class="identity"><span class="screen-kicker">NEWS CENTRE / ${esc(module ? module.nome : "Geral")} / NOTÍCIA ${n.serie}</span>

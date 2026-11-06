@@ -83,3 +83,16 @@ def test_captured_news_is_read_only_in_the_central(tmp_path, monkeypatch) -> Non
     assert central.items([], [news_item], {}, frozenset(estado.reads("demo")))[0]["lida"] is True
     in_game = news(1016, "MATCH_SUMMARY_NEWS", lida=True)
     assert central.items([in_game], [], {})[0]["lida"] is True                       # na caixa: vale o jogo
+
+
+def test_medical_groups_by_player_and_puts_decisions_first() -> None:
+    import medico
+    items = central.items([news(1042, "PHYSIO_REPORT_NEWS_ITEM", jogador=7, resposta=-3),
+                           news(1021, "INJURY_FULL_TRAINING_NEWS", jogador=8, data="2026-08-03", lida=True),
+                           news(1000, "INJURY_INJURED_NEWS", jogador=8, data="2026-07-20", lida=True),
+                           news(1, "TEAM_FORM_NEWS")], [], {})
+    value = medico.payload(items, [{"id": 8, "short_name": "Mailson", "morale": 6}], {})
+    assert [p["id"] for p in value["jogadores"]] == [7, 8] and value["pendentes"] == 1
+    assert value["jogadores"][0]["situacao"] == "Decisão pendente" and not value["jogadores"][0]["no_elenco"]
+    mailson = value["jogadores"][1]
+    assert mailson["situacao"] == "Liberado" and len(mailson["noticias"]) == 2 and mailson["nome"] == "Mailson"

@@ -32,6 +32,7 @@ import ponte  # noqa: E402
 import repercussao  # noqa: E402
 import chamada_remota as cr  # noqa: E402
 import laco  # noqa: E402
+import medico  # noqa: E402
 import texto_noticia  # noqa: E402
 import veiculos  # noqa: E402
 
@@ -44,6 +45,8 @@ FILES = {
     "/noticias": (HERE / "noticias.html", "text/html; charset=utf-8"),
     "/noticias.js": (HERE / "noticias.js", "text/javascript; charset=utf-8"),
     "/noticias.css": (HERE / "noticias.css", "text/css; charset=utf-8"),
+    "/medico": (HERE / "medico.html", "text/html; charset=utf-8"),
+    "/medico.js": (HERE / "medico.js", "text/javascript; charset=utf-8"),
     # a Central de Notícias usa o visual da Central de Desenvolvimento
     "/central.css": (HERE.parent / "central" / "central.css", "text/css; charset=utf-8"),
     "/emblema.png": (ASSETS / "emblema-centro-desenvolvimento.png", "image/png"),
@@ -273,6 +276,10 @@ class PressRoom(BaseHTTPRequestHandler):
             if self.screens:
                 self.screens.last_poll = time.time()
             self._json(200, self.news_center())
+            return
+        if path == "/medico/dados":
+            value = self.news_center()
+            self._json(200, medico.payload(value["noticias"], self.data()["players"], value["info"]))
             return
         if path == "/evento":
             watcher = self.watcher
