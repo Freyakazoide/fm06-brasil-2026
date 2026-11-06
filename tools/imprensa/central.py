@@ -63,4 +63,4 @@ def payload(inbox: list[dict], captures: list[dict], texts: dict[str, dict], inf
                 "nao_lidas": sum(n["modulo"] == key and not n["lida"] for n in news),
                 "pendentes": sum(n["modulo"] == key and n["pendente"] for n in news)} for key, name, _ in MODULES]
     return {"info": info, "modulos": modules, "noticias": news,
-            "sem_texto": sum(n["manchete"] is None for n in news)}
+            "sem_texto": sum(n["manchete"] is None and n["onde"] == "jogo" for n in news)}

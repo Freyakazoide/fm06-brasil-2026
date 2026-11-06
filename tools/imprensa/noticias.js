@@ -62,7 +62,7 @@ function renderSidebar() {
   $("result-count").textContent = `${list.length} de ${data.noticias.length}`;
   const box = $("cards"), top = box.scrollTop;                        // a atualização a cada 6 s não pula a lista
   box.innerHTML = list.length ? list.map(n => `<button class="news-card ${n.lida ? "" : "unread"} ${n.serie === ui.selected ? "selected" : ""}" data-serie="${n.serie}" type="button">
-      <i class="dot"></i><span class="card-name ${n.manchete ? "" : "missing"}">${esc(n.manchete || `${n.assunto} (texto ainda não lido)`)}</span>
+      <i class="dot"></i><span class="card-name ${n.manchete ? "" : "missing"}">${esc(n.manchete || `${n.assunto} (${n.onde === "central" ? "sem texto" : "texto ainda não lido"})`)}</span>
       <span class="card-age">${dateBR(n.data)}</span><span class="card-role">${tags(n)}</span></button>`).join("")
     : `<div class="empty">Nenhuma notícia aqui.</div>`;
   box.scrollTop = top;
@@ -84,7 +84,7 @@ function renderReader() {
         <div class="bio">${icon("calendar", 11)} ${dateBR(n.data)} <i></i> ${esc(n.assunto)} <i></i> ${n.lida ? "lida no jogo" : "não lida"}</div>
         <div class="tag-row">${tags(n).replaceAll("mini-tag", "tag")}</div></div></header>
     <div class="news-body">
-      <section class="panel"><h3>${icon("mail", 13)} Notícia</h3><div class="news-text">${body || `<p class="card-name missing">O texto desta notícia ainda não foi lido do jogo. Ele chega em alguns segundos, com o jogo parado.</p>`}</div></section>
+      <section class="panel"><h3>${icon("mail", 13)} Notícia</h3><div class="news-text">${body || `<p class="card-name missing">${n.onde === "central" ? "Esta notícia saiu do jogo antes de a Central guardar os textos: o texto se perdeu." : "O texto desta notícia ainda não foi lido do jogo. Ele chega em alguns segundos, com o jogo parado."}</p>`}</div></section>
       <section class="panel news-where ${n.pendente ? "pending" : ""}"><h3>${icon("info", 13)} Onde está</h3><p>${where}${press}</p></section>
     </div>`;
 }

@@ -594,6 +594,12 @@ Falta, em ordem:
    `Pnws` (0x506E7773), lido no jogo. `servidor.ScreenWatcher` lê os dois a cada 0,7 s e abre
    `/noticias` se a página não respondeu nos últimos 15 s. Nada novo no exe. Falta ver se o jogo
    entra sozinho em `Pnws` (ao carregar, ao avançar o dia), o que abriria a página sem clique.
+   Teste (06/11): com a Central já aberta, entrar em Notícias não abriu outra aba (certo), mas a
+   Sala abriu sozinha: a tela marca a 1ª notícia como lida e o NewsWatcher abria o navegador.
+   Corrigido: só o ScreenWatcher abre o navegador. Caixa 75 na memória, 1028..1035 capturadas
+   (MANAGER_SACKING, FINAL_WARNING, BOARD_RESULT etc.), e a tela seguiu mostrando "80, 4 não
+   lidas": ela não atualiza sozinha. **Risco a conferir:** ler na tela uma notícia já tirada da
+   caixa pode descontar o contador de não lidas (0x4DA49F chama 0x4D76A0 com [+0x12] - 1) abaixo de 0.
 5. Categoria das 87 classes sem valor fixo.
 
 ## 9. Entrevistas dos clubes controlados pela IA

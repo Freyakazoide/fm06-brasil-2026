@@ -75,12 +75,12 @@ def background() -> bytes:
 
 class NewsWatcher:
     """--jogo: lê a caixa de entrada a cada 2 s; a notícia que passa a lida vira pauta "agora" e a
-    página se atualiza (ou abre no navegador, se não estiver aberta)."""
+    página da Sala, se estiver aberta, se atualiza. Quem abre o navegador é o ScreenWatcher: a
+    tela de Notícias do jogo já marca a 1ª notícia como lida, e isso abria a Sala sem pedir."""
 
-    def __init__(self, url: str, exclusive: bool = False, extra: frozenset[str] = frozenset(),
+    def __init__(self, exclusive: bool = False, extra: frozenset[str] = frozenset(),
                  every: bool = False) -> None:
-        self.url, self.read, self.events = url, None, []
-        self.last_poll, self.opened_at = 0.0, 0.0
+        self.read, self.events = None, []
         self.exclusive, self.count, self.squad, self.career = exclusive, None, None, None
         self.extra, self.every = extra, every                   # every: --exclusivo-todas
         self.since = None                                       # só notícias chegadas depois de ligar
@@ -198,9 +198,6 @@ class NewsWatcher:
             del self.events[10:]
             with PressRoom.lock:
                 PressRoom.cache = None
-            if time.time() - self.last_poll > 5 and time.time() - self.opened_at > 8:
-                self.opened_at = time.time()
-                webbrowser.open(self.url)
 
 
 class ScreenWatcher:
@@ -279,8 +276,6 @@ class PressRoom(BaseHTTPRequestHandler):
             return
         if path == "/evento":
             watcher = self.watcher
-            if watcher:
-                watcher.last_poll = time.time()
             self._json(200, {"noticias": len(watcher.events) if watcher else 0,
                              "serie": watcher.events[0]["serie"] if watcher and watcher.events else None})
             return
@@ -398,9 +393,9 @@ def main() -> None:
     if args.jogo:
         PressRoom.live_club = args.clube
         PressRoom.effects = not args.sem_efeitos
-        PressRoom.watcher = NewsWatcher(url, exclusive=args.exclusivo or args.exclusivo_todas,
-                                         extra=frozenset(c for c in args.exclusivo_classes.split(",") if c),
-                                         every=args.exclusivo_todas)
+        PressRoom.watcher = NewsWatcher(exclusive=args.exclusivo or args.exclusivo_todas,
+                                        extra=frozenset(c for c in args.exclusivo_classes.split(",") if c),
+                                        every=args.exclusivo_todas)
         threading.Thread(target=PressRoom.watcher.run, daemon=True).start()
         PressRoom.screens = ScreenWatcher(f"{url}/noticias")
         threading.Thread(target=PressRoom.screens.run, daemon=True).start()
