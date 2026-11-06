@@ -511,6 +511,13 @@ crashes com `dive`/`text` segue sem prova; a leitura aguentou o estresse, a remo
 Em aberto e encerradas (06/11, pedido do usuário ao ver a 995 do Fabricio, resolvida no jogo, ainda
 com resposta liberada): `ponte.is_open`. Em aberto: esperando decisão, ou até `OPEN_DAYS` (7) dias
 e sem resposta no jogo nem na Sala. O resto vai para a aba Encerradas, só consulta, sem coletiva.
+Usuário aprovou a separação em 06/11.
+
+Opções do relatório do fisioterapeuta, lidas no slot 22 (0x5CF880; leitura do código, sem teste de
+resposta pelo Python): 7 chama 0x6E84E0 (ou 0x6E58C0 se o tipo em [+0x2C]+0x10 não for 0x1A0D0), 8 chama
+0x6E98B0, 9 chama 0x6E84E0, 10 chama 0x6E83E0, todos em 0x132A2F0. Visto no jogo: 9 = "Entregar à
+Fisioterapia" (1042), 10 = enviado para casa (995). **Hipótese:** "Dar Injecção" é 7 ou 8. Botões de
+lesão só depois de ver esse número num relatório real; o slot 21 (0x5CEFB0) é o caminho padrão.
 Abaixo, o histórico da ideia.
 
 
