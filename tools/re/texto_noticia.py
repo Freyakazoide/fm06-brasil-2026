@@ -71,9 +71,9 @@ def news_text(jogo: leitor.Jogo, handle, news: int) -> tuple[str, str]:
         texts = []
         for flag in (HEADLINE, BODY):
             string = page + 0x40 * flag
-            cr.run(handle, build_code(news, flag, string))
+            laco.run_on_main(handle, build_code(news, flag, string))
             texts.append(read_string(jogo, string))
-            cr.run(handle, cr.call_code(STRING_FREE, hex(string), []))
+            laco.run_on_main(handle, cr.call_code(STRING_FREE, hex(string), []))
         return texts[0], texts[1]
     finally:
         cr.kernel32.VirtualFreeEx(handle, page, 0, 0x8000)

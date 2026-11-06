@@ -644,6 +644,17 @@ ou seja, processado de verdade. Central: botões para o que `noticias.REPLY_OPTI
 fisioterapeuta o slot 22 é outro (0x5CF880, confere o tipo 7): ainda sem teste. O corpo muda com a
 resposta, então `central.text_key` leva o estado da resposta.
 
+**2º crash (06/11, teste longo com `--exclusivo-todas`): TRAVOU.** Dumps `2026.11.06 07.52.16` e
+`07.52.17`: thread principal, C0000005 em 0xC67285, agora com `text` (0x74657874) na lista livre, ao
+montar uma tela; o 2º dump é o manipulador de erro do jogo. Última captura às 07:52:12 (1116), com
+vários dias passando rápido. O alocador (0xC67270, singleton 0xC60B20, sem trava) guarda pares
+{etiqueta, valor} e a lista livre ocupa a etiqueta: pedaço liberado duas vezes ou usado depois de
+liberado. A pausa do 03/11 não bastou; a causa segue sem prova. Hipóteses: estado por thread (rodávamos
+em thread remota), pausa em laço interno durante o processamento, efeito da remoção com notícias
+novas chegando. Fechado (`laco.py`, página FM06LAC2): código na thread principal, só no laço de fora,
+só com data, tela e caixa paradas por 6 s. `workspace/imprensa/pausas.log` registra cada passo.
+Se travar de novo, testar por partes: só textos, depois só remoção. Falta conferir no jogo.
+
 ## 9. Entrevistas dos clubes controlados pela IA
 
 Executar em um tick diário ou semanal, nunca a cada quadro.

@@ -117,3 +117,12 @@ def test_only_waiting_news_of_a_known_kind_offers_buttons() -> None:
     assert [o["id"] for o in waiting["opcoes"]] == [1, 2] and waiting["pendente"]
     assert central.item(news(1067, "RED_CARD_BAN_NEWS", resposta=1), None)["opcoes"] == []
     assert central.item(news(1042, "PHYSIO_REPORT_NEWS_ITEM", resposta=-3), None)["opcoes"] == []   # ainda no jogo
+
+
+def test_park_code_runs_the_job_on_the_main_thread() -> None:
+    sys.path.insert(0, str(ROOT / "tools" / "re"))
+    import laco
+    code = laco.cave_code(0x30000000)
+    assert code.startswith(laco.SIGNATURE)
+    assert bytes.fromhex("6A00FFD0") in code and code[laco.CODE:].count(laco.ORIGINAL) == 1
+    assert code.endswith(((laco.RESUME_AT - (0x30000000 + len(code))) & 0xFFFFFFFF).to_bytes(4, "little"))

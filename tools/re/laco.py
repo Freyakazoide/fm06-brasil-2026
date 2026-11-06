@@ -12,6 +12,13 @@ original e volta para 0xC68B3A. Nesse ponto a thread principal não está no mei
 O jmp é gravado com todas as threads do jogo suspensas (o EIP de uma thread suspensa só pode estar
 no início de 0xC68B34, que vira o jmp inteiro, ou em 0xC68B3A, que não muda).
 
+2º crash (06/11, dumps 07.52.16/17): mesmo ponto, com "text" na lista livre, mesmo com a pausa. Cada
+pedaço do alocador é {etiqueta, valor} e o ponteiro da lista livre ocupa a etiqueta: um pedaço liberado
+duas vezes, ou liberado e ainda em uso, dá isso. Causa ainda não provada. Fechadas três brechas: o
+código nosso roda na própria thread principal (`run_on_main`, não mais em thread remota); a pausa só
+vale no laço de fora (esp igual ao maior visto; o laço pode rodar dentro de um processamento); e o
+servidor só age com o jogo parado por 6 s.
+
     python tools\re\laco.py estado | instalar | desfazer
 """
 
@@ -31,8 +38,8 @@ import chamada_remota as cr  # noqa: E402
 k32 = cr.kernel32
 HOOK_AT, RESUME_AT, FRAME_OBJ = 0x00C68B34, 0x00C68B3A, 0x014EDD08
 ORIGINAL = bytes.fromhex("8B0D08DD4E01")                                 # mov ecx, [0x14EDD08]
-SIGNATURE = b"FM06LACO"
-PARK, PARKED, CODE = 0x10, 0x14, 0x20                                    # deslocamentos na página
+SIGNATURE = b"FM06LAC2"
+PARK, PARKED, JOB, STACK, CODE = 0x10, 0x14, 0x18, 0x1C, 0x20                # deslocamentos na página
 
 TH32CS_SNAPTHREAD, THREAD_SUSPEND_RESUME = 0x00000004, 0x0002
 
@@ -60,12 +67,15 @@ def read(handle, address: int, size: int) -> bytes:
 
 
 def cave_code(page: int) -> bytes:
-    park, parked = page + PARK, page + PARKED
+    park, parked, job, stack = (page + x for x in (PARK, PARKED, JOB, STACK))
     is_parked = b"\x83\x3D" + park.to_bytes(4, "little") + b"\x00"        # cmp dword [park], 0
-    spin = b"\xF3\x90" + is_parked                                        # spin: pause ; cmp
+    run_job = b"\x6A\x00\xFF\xD0" + b"\xC7\x05" + job.to_bytes(4, "little") + bytes(4)   # push 0; call eax; [job] = 0
+    spin = b"\xF3\x90" + b"\xA1" + job.to_bytes(4, "little") + b"\x85\xC0"   # spin: pause; mov eax, [job]; test
+    spin += b"\x74" + bytes([len(run_job)]) + run_job + is_parked         # jz sem_job; job; sem_job: cmp
     spin += b"\x75" + bytes([(-(len(spin) + 2)) & 0xFF])                  # jne spin
-    body = b"\xC7\x05" + parked.to_bytes(4, "little") + (1).to_bytes(4, "little")  # mov [parked], 1
-    body += spin + b"\xC7\x05" + parked.to_bytes(4, "little") + bytes(4)  # ... ; mov [parked], 0
+    body = b"\x60\x89\x25" + stack.to_bytes(4, "little")                 # pushad; mov [stack], esp
+    body += b"\xC7\x05" + parked.to_bytes(4, "little") + (1).to_bytes(4, "little")  # mov [parked], 1
+    body += spin + b"\xC7\x05" + parked.to_bytes(4, "little") + bytes(4) + b"\x61"  # [parked] = 0; popad
     c = bytearray(SIGNATURE) + bytes(CODE - len(SIGNATURE))
     c += is_parked + b"\x74" + bytes([len(body)]) + body                  # je done
     c += ORIGINAL                                                         # done: mov ecx, [0x14EDD08]
@@ -141,10 +151,14 @@ def uninstall(pid: int, handle) -> None:
         _write_frozen(pid, handle, HOOK_AT, ORIGINAL)                    # a página fica (pode estar em uso)
 
 
+_outer_stack: dict[int, int] = {}                                        # página -> maior esp visto
+
+
 @contextmanager
 def parked(pid: int, handle, timeout: float = 3.0):
-    """Para a thread principal no laço e só entra no bloco quando ela confirmou que parou. Se ela
-    não parar a tempo (jogo processando um quadro longo), levanta TimeoutError sem mexer em nada."""
+    """Para a thread principal no laço e só entra no bloco quando ela confirmou que parou, no laço de
+    fora. Se não der (quadro longo, ou laço interno de um processamento), levanta TimeoutError sem
+    mexer em nada."""
     page = install(pid, handle)
     cr.poke(handle, page + PARK, (1).to_bytes(4, "little"))
     try:
@@ -153,9 +167,31 @@ def parked(pid: int, handle, timeout: float = 3.0):
             if time.monotonic() > end:
                 raise TimeoutError("a thread principal do jogo não parou no laço")
             time.sleep(0.005)
+        stack = struct.unpack("<I", read(handle, page + STACK, 4))[0]
+        outer = _outer_stack[page] = max(stack, _outer_stack.get(page, 0))
+        if stack != outer:
+            raise TimeoutError(f"laço interno (esp 0x{stack:08X}, fora 0x{outer:08X})")
         yield
     finally:
         cr.poke(handle, page + PARK, bytes(4))
+
+
+def run_on_main(handle, code: bytes, timeout: float = 10.0) -> None:
+    """Roda `code` (ret 4, como os de chamada_remota) na thread principal parada. Só dentro de `parked`."""
+    page = page_of(handle)
+    if not page or read(handle, page + PARKED, 4) != (1).to_bytes(4, "little"):
+        raise RuntimeError("a thread principal não está parada")
+    area = k32.VirtualAllocEx(handle, None, 0x1000, cr.MEM_COMMIT_RESERVE, cr.PAGE_EXECUTE_READWRITE)
+    if not area:
+        raise OSError(ctypes.get_last_error(), "VirtualAllocEx falhou")
+    cr.poke(handle, area, code)
+    cr.poke(handle, page + JOB, area.to_bytes(4, "little"))
+    end = time.monotonic() + timeout
+    while read(handle, page + JOB, 4) != bytes(4):
+        if time.monotonic() > end:
+            raise RuntimeError("a função não voltou na thread principal")      # a página fica: pode estar em uso
+        time.sleep(0.001)
+    k32.VirtualFreeEx(handle, area, 0, cr.MEM_RELEASE)
 
 
 def main() -> None:
@@ -170,6 +206,10 @@ def main() -> None:
         start = time.monotonic()
         with parked(pid, handle):
             print(f"thread principal parada em {1000 * (time.monotonic() - start):.0f} ms")
+            page = page_of(handle)
+            print(f"esp 0x{struct.unpack('<I', read(handle, page + STACK, 4))[0]:08X}")
+            run_on_main(handle, b"\x33\xC0\xC2\x04\x00")                   # xor eax, eax; ret 4
+            print("função vazia rodou na thread principal")
         print("liberada")
     page = page_of(handle)
     print(f"0x{HOOK_AT:08X}: {read(handle, HOOK_AT, 6).hex()} ({'gancho em 0x%08X' % page if page else 'original'})")

@@ -55,7 +55,7 @@ def answer(jogo: leitor.Jogo, pid: int, handle, serial: int, option: int) -> int
     try:
         cr.poke(handle, page + OPTION_AT, option.to_bytes(2, "little"))
         with laco.parked(pid, handle):
-            cr.run(handle, reply_code(news, page))
+            laco.run_on_main(handle, reply_code(news, page))
     finally:
         cr.kernel32.VirtualFreeEx(handle, page, 0, 0x8000)
     return struct.unpack("<h", jogo.raw(news + noticias.REPLY, 2))[0]

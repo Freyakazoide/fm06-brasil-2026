@@ -77,6 +77,9 @@ def background() -> bytes:
     return _BACKGROUND
 
 
+IDLE_POLLS = 3                                                  # voltas de 2 s com o jogo sem mudar nada
+DATE_A, DATE_B = 0x014ED680, 0x014EAB38                         # datas lidas pelo slot 19 das notícias
+LOG = HERE.parents[1] / "workspace" / "imprensa" / "pausas.log"
 GAME = threading.Lock()                                         # uma pausa do jogo por vez (laco.py)
 
 
@@ -88,6 +91,7 @@ class NewsWatcher:
     def __init__(self, exclusive: bool = False, extra: frozenset[str] = frozenset(),
                  every: bool = False) -> None:
         self.read, self.events = None, []
+        self.mark, self.polls = None, 0
         self.exclusive, self.count, self.squad, self.career = exclusive, None, None, None
         self.extra, self.every = extra, every                   # every: --exclusivo-todas
         self.since = None                                       # só notícias chegadas depois de ligar
@@ -103,6 +107,19 @@ class NewsWatcher:
             self.squad = {j.uid for j in jovens}
             self.career = estado.save_id(info.get("clube_nome") or PressRoom.live_club, info.get("time_uid"))
         return True
+
+    @staticmethod
+    def note(text: str) -> None:
+        """Registro antes de cada passo: se o jogo cair, a última linha diz o que estava em curso."""
+        with LOG.open("a", encoding="utf-8") as log:
+            log.write(f"{time.strftime('%H:%M:%S')} {text}\n")
+
+    def idle(self, jogo, items: list[dict]) -> bool:
+        """Jogo parado de verdade: mesma data, mesma tela e mesma caixa por IDLE_POLLS voltas."""
+        mark = (jogo.raw(DATE_A, 4), jogo.raw(DATE_B, 4), jogo.u32(OPENINGS), [n["serie"] for n in items])
+        self.polls = self.polls + 1 if mark == self.mark else 0
+        self.mark = mark
+        return self.polls >= IDLE_POLLS
 
     def missing_texts(self, items: list[dict]) -> list[int]:
         known = estado.texts(self.career)
@@ -122,11 +139,15 @@ class NewsWatcher:
         pid, handle = cr.game()
         try:
             with GAME, laco.parked(pid, handle):
+                self.note(f"pausa: captura {[n['serie'] for n in self.wanted(items)]}, "
+                          f"textos {[n['serie'] for n in self.missing_texts(items)[:TEXTS_PER_TICK]]}")
                 taken = self.capture(jogo, handle, items)
                 gone = {n["serie"] for n in taken}
                 self.fill_texts(jogo, handle, [n for n in items if n["serie"] not in gone])
+                self.note("pausa: fim")
                 return taken
-        except TimeoutError:
+        except TimeoutError as error:
+            self.note(f"pausa recusada: {error}")
             return []
         finally:
             cr.kernel32.CloseHandle(handle)
@@ -189,7 +210,7 @@ class NewsWatcher:
             taken = []
             if self.since is None:
                 self.since = max((n["serie"] for n in items), default=0)
-            if self.count == len(items):                            # caixa parada há 2 s: jogo ocioso
+            if self.idle(jogo, items):
                 taken = self.with_game_parked(jogo, items)
             self.count = len(items) - len(taken)
             read_now = {n["serie"] for n in items if n["lida"]}
