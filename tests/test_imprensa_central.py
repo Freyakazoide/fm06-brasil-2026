@@ -26,7 +26,7 @@ def test_items_merge_inbox_captures_and_texts() -> None:
              news(995, "PHYSIO_REPORT_NEWS_ITEM", resposta=10, data="2026-07-30")]
     captures = [news(1036, "MOM_SUMMARY_NEWS", exclusiva=True, manchete="Breno em forma", corpo="..."),
                 news(1043, "PHYSIO_REPORT_NEWS_ITEM", exclusiva=True)]            # ainda na caixa: conta uma vez
-    texts = {"1042:PHYSIO_REPORT_NEWS_ITEM:2026-08-12": {"manchete": "Gustagol informa sobre Zé Carlos", "corpo": "costela"},
+    texts = {"1042:PHYSIO_REPORT_NEWS_ITEM:2026-08-12:-3": {"manchete": "Gustagol informa sobre Zé Carlos", "corpo": "costela"},
              "1043:TEAM_FORM_NEWS:2026-08-12": {"manchete": "de outro save", "corpo": "x"}}   # mesma série, outra notícia
     out = central.items(inbox, captures, texts)
     assert [n["serie"] for n in out] == [1043, 1042, 1036, 995]
