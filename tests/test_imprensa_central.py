@@ -110,3 +110,10 @@ def test_reply_code_calls_slot_22_with_apply_flag() -> None:
     code = r.reply_code(0x11223344, 0x55667788)
     assert bytes.fromhex("6A01 6888776655 B944332211 8B01 FF5058") in code
     assert code.endswith(bytes.fromhex("33C0C20400"))
+
+
+def test_only_waiting_news_of_a_known_kind_offers_buttons() -> None:
+    waiting = central.item(news(1067, "RED_CARD_BAN_NEWS", resposta=-3), None)
+    assert [o["id"] for o in waiting["opcoes"]] == [1, 2] and waiting["pendente"]
+    assert central.item(news(1067, "RED_CARD_BAN_NEWS", resposta=1), None)["opcoes"] == []
+    assert central.item(news(1042, "PHYSIO_REPORT_NEWS_ITEM", resposta=-3), None)["opcoes"] == []   # ainda no jogo

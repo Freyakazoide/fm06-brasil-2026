@@ -30,6 +30,7 @@ import estado  # noqa: E402
 import noticias  # noqa: E402
 import ponte  # noqa: E402
 import repercussao  # noqa: E402
+import responder_noticia  # noqa: E402
 import chamada_remota as cr  # noqa: E402
 import laco  # noqa: E402
 import medico  # noqa: E402
@@ -76,6 +77,9 @@ def background() -> bytes:
     return _BACKGROUND
 
 
+GAME = threading.Lock()                                         # uma pausa do jogo por vez (laco.py)
+
+
 class NewsWatcher:
     """--jogo: lê a caixa de entrada a cada 2 s; a notícia que passa a lida vira pauta "agora" e a
     página da Sala, se estiver aberta, se atualiza. Quem abre o navegador é o ScreenWatcher: a
@@ -117,7 +121,7 @@ class NewsWatcher:
             return []
         pid, handle = cr.game()
         try:
-            with laco.parked(pid, handle):
+            with GAME, laco.parked(pid, handle):
                 taken = self.capture(jogo, handle, items)
                 gone = {n["serie"] for n in taken}
                 self.fill_texts(jogo, handle, [n for n in items if n["serie"] not in gone])
@@ -310,6 +314,9 @@ class PressRoom(BaseHTTPRequestHandler):
             estado.add_read(self.data()["info"].get("career", "demo"), str(body.get("chave", "")))
             self._json(200, {"ok": True})
             return
+        if path == "/noticia/responder":
+            self._answer_news()
+            return
         if path != "/resposta":
             self._reply(404, b"nao encontrado", "text/plain; charset=utf-8")
             return
@@ -332,6 +339,27 @@ class PressRoom(BaseHTTPRequestHandler):
             self._json(200, state)
         except ValueError as error:
             self._json(400, {"erro": str(error)})
+
+    def _answer_news(self) -> None:
+        """Botão da Central: responde pela função do próprio jogo (responder_noticia.py)."""
+        if not self.live_club:
+            self._json(400, {"erro": "sem jogo aberto"})
+            return
+        body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0)) or 0) or b"{}")
+        import leitor
+        try:
+            pid, handle = cr.game()
+        except SystemExit as error:                             # jogo fechado
+            self._json(400, {"erro": str(error)})
+            return
+        try:
+            with GAME:
+                state = responder_noticia.answer(leitor.Jogo(), pid, handle, int(body["serie"]), int(body["opcao"]))
+            self._json(200, {"resposta": state})
+        except (ValueError, LookupError, TimeoutError, OSError, KeyError) as error:
+            self._json(400, {"erro": str(error)})
+        finally:
+            cr.kernel32.CloseHandle(handle)
 
     def news_center(self) -> dict:
         """Central de Notícias: caixa do jogo (lida agora) + capturadas + textos guardados."""

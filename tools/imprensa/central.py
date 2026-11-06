@@ -52,6 +52,8 @@ def item(news: dict, text: dict | None, read: frozenset[str] = frozenset()) -> d
             "lida": text_key(news) in read if news.get("exclusiva") else bool(news.get("lida")),
             "jogador": news.get("jogador") or None,
             "pendente": reply in WAITING, "respondida": reply >= 0,
+            "opcoes": ([{"id": k, "nome": v} for k, v in noticias.REPLY_OPTIONS.get(news["classe"], {}).items()]
+                       if reply in WAITING else []),
             "onde": "central" if news.get("exclusiva") else "jogo",
             "manchete": news.get("manchete") or text.get("manchete"), "corpo": news.get("corpo") or text.get("corpo")}
 

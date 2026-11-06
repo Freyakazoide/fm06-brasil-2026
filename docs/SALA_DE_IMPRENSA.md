@@ -637,7 +637,10 @@ de `laco.parked`.
 enquanto as vizinhas 1066 e 1068-1071 saíram. `tools/re/responder_noticia.py 1067 1` chamou o slot 22
 (0x5918C0; args resposta, aplicar; opção em resposta+0xE) com a thread principal parada: +0x20 = 1 e
 o corpo ganhou "Você decidiu apelar desta suspensão." Slot 21 (0x591800) grava 2 ("Não Apelar",
-como a 957); slot 19 grava 2 quando a data passa; slot 13 (0x4015D0) devolve +0x20. No relatório do
+como a 957); slot 19 grava 2 quando a data passa; depois de reabrir, os botões sumiram e a frase
+ficou, e em 20/08 o jogo trouxe "Federação pondera suspensão de Henrique": apelo julgado e negado,
+ou seja, processado de verdade. Central: botões para o que `noticias.REPLY_OPTIONS` conhece
+(POST /noticia/responder, sob `servidor.GAME`, uma pausa por vez; falta testar com suspensão nova); slot 13 (0x4015D0) devolve +0x20. No relatório do
 fisioterapeuta o slot 22 é outro (0x5CF880, confere o tipo 7): ainda sem teste. O corpo muda com a
 resposta, então `central.text_key` leva o estado da resposta.
 

@@ -24,7 +24,6 @@ import leitor  # noqa: E402
 import noticias  # noqa: E402
 
 REPLY_SLOT, OPTION_AT = 0x58, 0xE
-OPTIONS = {"RED_CARD_BAN_NEWS": {1: "Apelar Contra Suspensão", 2: "Não Apelar"}}
 WAITING = (-2, -3, -4)
 
 
@@ -46,7 +45,7 @@ def answer(jogo: leitor.Jogo, pid: int, handle, serial: int, option: int) -> int
         raise LookupError(f"notícia {serial} não está na caixa")
     kind = noticias.CLASSES.get(jogo.u32(news))
     state = struct.unpack("<h", jogo.raw(news + noticias.REPLY, 2))[0]
-    if option not in OPTIONS.get(kind, {}):
+    if option not in noticias.REPLY_OPTIONS.get(kind, {}):
         raise ValueError(f"{kind}: opção {option} desconhecida")
     if state not in WAITING:
         raise ValueError(f"notícia {serial} não está esperando resposta (+0x20 = {state})")

@@ -29,6 +29,8 @@ UNREAD = -4                                                         # u32 antes 
 # sempre e -3/-4 enquanto não lida (o ícone da linha, 0x4D7500, usa os mesmos valores); >= 0 visto
 # num relatório do fisioterapeuta já respondido (995: 10). Conferido no código, 03/11.
 REPLY, NO_REPLY = 0x20, -1
+# Opções que o Python sabe responder (tools/re/responder_noticia.py; conferido no jogo, 06/11).
+REPLY_OPTIONS = {"RED_CARD_BAN_NEWS": {1: "Apelar Contra Suspensão", 2: "Não Apelar"}}
 # Cautela além do campo (só conferido no relatório do fisioterapeuta): tipo cujo nome indica ação
 # fica no jogo mesmo com +0x20 = -1 (33 classes; algumas só informam, como TRANSFER_OFFER_ACCEPTED).
 ACTION_NAME = re.compile(r"OFFER|DECISION|REQUEST|QUESTION|INVITATION|APPROACH|CONFIRMATION|CLAUSE|"

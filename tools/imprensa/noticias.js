@@ -74,6 +74,7 @@ function renderReader() {
   const module = data.modulos.find(m => m.id === n.modulo);
   const body = (n.corpo || "").split(/\n+/).filter(Boolean).map(line => `<p>${esc(line)}</p>`).join("");
   const where = n.onde === "central" ? "Esta notícia saiu da caixa do jogo e existe só aqui."
+    : n.opcoes.length ? "Esta notícia pede uma escolha sua. Ela fica na caixa do jogo até você responder."
     : n.pendente ? "Esta notícia pede uma escolha sua e fica na caixa do jogo: responda em <b>Técnico → Notícias</b>."
     : "Esta notícia ainda está também na caixa do jogo.";
   const press = n.modulo === "imprensa" ? ` <a href="/">Ver a pauta na Sala de Imprensa ›</a>`
@@ -86,7 +87,7 @@ function renderReader() {
         <div class="tag-row">${tags(n).replaceAll("mini-tag", "tag")}</div></div></header>
     <div class="news-body">
       <section class="panel"><h3>${icon("mail", 13)} Notícia</h3><div class="news-text">${body || `<p class="card-name missing">${n.onde === "central" ? "Esta notícia saiu do jogo antes de a Central guardar os textos: o texto se perdeu." : "O texto desta notícia ainda não foi lido do jogo. Ele chega em alguns segundos, com o jogo parado."}</p>`}</div></section>
-      <section class="panel news-where ${n.pendente ? "pending" : ""}"><h3>${icon("info", 13)} Onde está</h3><p>${where}${press}</p></section>
+      <section class="panel news-where ${n.pendente ? "pending" : ""}"><h3>${icon("info", 13)} Onde está</h3><p>${where}${press}</p>${n.opcoes.length ? `<div class="news-actions">${n.opcoes.map(o => `<button class="primary" data-reply="${o.id}" type="button">${esc(o.nome)}</button>`).join("")}</div><p class="news-error" id="reply-error"></p>` : ""}</section>
     </div>`;
 }
 
@@ -101,7 +102,16 @@ async function load() {
   }
 }
 
+async function reply(option) {
+  const response = await fetch("/noticia/responder", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({serie: ui.selected, opcao: option})});
+  const result = await response.json();
+  if (!response.ok) { $("reply-error").textContent = result.erro || "O jogo não aceitou a resposta."; return; }
+  load();
+}
+
 document.addEventListener("click", event => {
+  const answer = event.target.closest("[data-reply]");
+  if (answer) { answer.disabled = true; reply(Number(answer.dataset.reply)); return; }
   const target = event.target.closest("[data-module],[data-filter],[data-serie]");
   if (!target || !data) return;
   if (target.dataset.module) ui.module = target.dataset.module;
