@@ -38,7 +38,7 @@ import chamada_remota as cr  # noqa: E402
 k32 = cr.kernel32
 HOOK_AT, RESUME_AT, FRAME_OBJ = 0x00C68B34, 0x00C68B3A, 0x014EDD08
 ORIGINAL = bytes.fromhex("8B0D08DD4E01")                                 # mov ecx, [0x14EDD08]
-SIGNATURE = b"FM06LAC3"
+SIGNATURE = b"FM06LAC4"
 PARK, PARKED, JOB, STACK, CODE, JOB_CODE = 0x10, 0x14, 0x18, 0x1C, 0x20, 0x100   # deslocamentos na página
 
 TH32CS_SNAPTHREAD, THREAD_SUSPEND_RESUME = 0x00000004, 0x0002
@@ -69,8 +69,11 @@ def read(handle, address: int, size: int) -> bytes:
 def cave_code(page: int) -> bytes:
     park, parked, job, stack = (page + x for x in (PARK, PARKED, JOB, STACK))
     is_parked = b"\x83\x3D" + park.to_bytes(4, "little") + b"\x00"        # cmp dword [park], 0
-    run_job = b"\x6A\x00\xFF\xD0" + b"\xC7\x05" + job.to_bytes(4, "little") + bytes(4)   # push 0; call eax; [job] = 0
-    spin = b"\xF3\x90" + b"\xA1" + job.to_bytes(4, "little") + b"\x85\xC0"   # spin: pause; mov eax, [job]; test
+    # JOB é um byte: WriteProcessMemory não é atômica, e um ponteiro de 4 bytes foi lido pela metade
+    # (dumps 07.58.19 e 08.01.00: 0x023F0100 virou 0x003F0100).
+    run_job = b"\x6A\x00\xB8" + (page + JOB_CODE).to_bytes(4, "little") + b"\xFF\xD0"   # push 0; mov eax, código; call eax
+    run_job += b"\xC6\x05" + job.to_bytes(4, "little") + b"\x00"          # mov byte [job], 0
+    spin = b"\xF3\x90" + b"\x80\x3D" + job.to_bytes(4, "little") + b"\x00"   # spin: pause; cmp byte [job], 0
     spin += b"\x74" + bytes([len(run_job)]) + run_job + is_parked         # jz sem_job; job; sem_job: cmp
     spin += b"\x75" + bytes([(-(len(spin) + 2)) & 0xFF])                  # jne spin
     body = b"\x60\x89\x25" + stack.to_bytes(4, "little")                 # pushad; mov [stack], esp
@@ -183,13 +186,13 @@ def run_on_main(handle, code: bytes, timeout: float = 10.0) -> None:
         raise RuntimeError("a thread principal não está parada")
     if len(code) > 0x1000 - JOB_CODE:
         raise ValueError("código grande demais para a página do gancho")
-    if read(handle, page + JOB, 4) != bytes(4):
+    if read(handle, page + JOB, 1) != b"\x00":
         raise RuntimeError("ainda há uma função rodando na thread principal")
-    cr.poke(handle, page + JOB_CODE, code)              # área fixa: uma página por função já derrubou o jogo (0xB0000)
+    cr.poke(handle, page + JOB_CODE, code)
     k32.FlushInstructionCache(handle, ctypes.c_void_p(page + JOB_CODE), len(code))
-    cr.poke(handle, page + JOB, (page + JOB_CODE).to_bytes(4, "little"))
+    cr.poke(handle, page + JOB, b"\x01")
     end = time.monotonic() + timeout
-    while read(handle, page + JOB, 4) != bytes(4):
+    while read(handle, page + JOB, 1) != b"\x00":
         if time.monotonic() > end:
             raise RuntimeError("a função não voltou na thread principal")
         time.sleep(0.001)

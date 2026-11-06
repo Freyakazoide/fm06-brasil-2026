@@ -124,5 +124,5 @@ def test_park_code_runs_the_job_on_the_main_thread() -> None:
     import laco
     code = laco.cave_code(0x30000000)
     assert code.startswith(laco.SIGNATURE)
-    assert bytes.fromhex("6A00FFD0") in code and code[laco.CODE:].count(laco.ORIGINAL) == 1
+    assert bytes.fromhex("6A00B800013030FFD0") in code and code[laco.CODE:].count(laco.ORIGINAL) == 1
     assert code.endswith(((laco.RESUME_AT - (0x30000000 + len(code))) & 0xFFFFFFFF).to_bytes(4, "little"))

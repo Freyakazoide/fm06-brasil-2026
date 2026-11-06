@@ -655,10 +655,11 @@ novas chegando. Fechado (`laco.py`, página FM06LAC2): código na thread princip
 só com data, tela e caixa paradas por 6 s. `workspace/imprensa/pausas.log` registra cada passo.
 Se travar de novo, testar por partes: só textos, depois só remoção. Falta conferir no jogo.
 Conferido sem Sala: 6 pausas com esp 0x001AFD94 (laço de fora), textos 1019/1018/1016 lidos na thread
-principal. O estresse de leitura derrubou o jogo (dump `07.58.19`), mas por bug da pausa nova:
-eip = eax = 0xB0000, esp 0x1AFD8C, a entrada do trabalho numa página temporária inválida; a memória
-de strings não estava envolvida, então **não** prova nada sobre a leitura. Mecanismo exato não
-visto. Corrigido com área fixa de código na página do gancho (FM06LAC3).
+principal. O estresse de leitura derrubou o jogo duas vezes (dumps `07.58.19`, eip 0xB0000, e
+`08.01.00`, eip 0x3F0100 com a página em 0x023F0000), por bug da pausa nova: escrita rasgada.
+WriteProcessMemory não é atômica, e a thread principal, girando, leu o ponteiro de 4 bytes pela metade.
+A memória de strings não estava envolvida, então isso **não** prova nada sobre a leitura. Corrigido
+(FM06LAC4): o sinal é um byte e o endereço do código é fixo.
 
 ## 9. Entrevistas dos clubes controlados pela IA
 
