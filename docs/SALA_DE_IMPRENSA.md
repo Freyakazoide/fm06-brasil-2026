@@ -600,6 +600,11 @@ Falta, em ordem:
    (MANAGER_SACKING, FINAL_WARNING, BOARD_RESULT etc.), e a tela seguiu mostrando "80, 4 não
    lidas": ela não atualiza sozinha. **Risco a conferir:** ler na tela uma notícia já tirada da
    caixa pode descontar o contador de não lidas (0x4DA49F chama 0x4D76A0 com [+0x12] - 1) abaixo de 0.
+   **Conferido (06/11, save de teste): sem dano.** Clique em 1035 "Grêmio despede Gaúcho" (já fora
+   da caixa, não lida, ainda na lista velha da tela): texto abriu, a linha ficou branca e a tela foi
+   de "4" para "3 não lidas", mas box-4 seguiu 00 00 00 00 e a caixa 75, sem crash. **Sem
+   explicação ainda:** o objeto 1035 seguiu com +0x22 = 0x10 (bit de lida desligado), diferente do
+   que li em 0x4DA496; a tela parece guardar o estado da própria lista.
 5. Categoria das 87 classes sem valor fixo.
 
 ## 9. Entrevistas dos clubes controlados pela IA
