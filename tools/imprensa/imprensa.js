@@ -118,6 +118,8 @@ function renderFilters() {
   $("#medium-filters").innerHTML = media.map(item => `<button class="filter-chip ${ui.medium === item ? "active" : ""}" data-medium="${esc(item)}" type="button">${item}</button>`).join("");
 }
 
+const KIND = {expulsao: "Expulsão", lesao: "Lesão", imprensa: "Imprensa"};
+
 function renderAgenda() {
   const term = ui.agendaSearch.trim().toLocaleLowerCase("pt-BR");
   const list = data.agenda.filter(item => {
@@ -129,9 +131,10 @@ function renderAgenda() {
   $("#agenda-count").textContent = list.length;
   $("#agenda-list").innerHTML = list.length ? list.map(item => {
     const outlet = outletBy(item.outlet_id), player = playerBy(item.player_id);
-    return `<button class="agenda-card ${item.id === ui.agendaId ? "active" : ""}" data-agenda="${item.id}" type="button">
+    const kind = item.news_kind || "imprensa";
+    return `<button class="agenda-card kind-${kind} ${item.id === ui.agendaId ? "active" : ""}" data-agenda="${item.id}" type="button">
       <img class="agenda-logo" src="${outlet.logo}" alt="${esc(outlet.name)}">
-      <span class="agenda-outlet">${esc(outlet.name)}</span><span class="agenda-time">${esc(item.when)}</span>
+      <span class="agenda-outlet"><b class="kind-chip">${KIND[kind]}</b>${esc(outlet.name)}</span><span class="agenda-time">${esc(item.when)}</span>
       <strong class="agenda-title">${esc(item.headline)}</strong>
       <span class="agenda-meta"><i class="urgency ${esc(item.urgency)}"></i>${esc(player.short_name)} · ${esc(outlet.medium)} · ${given(item) ? "✓ respondida" : esc(item.status)}</span>
       ${item.reason ? `<span class="agenda-reason">${esc(item.reason)}</span>` : ""}
@@ -225,10 +228,37 @@ function contextCards(player) {
 function whyCard(agenda, player, situation) {
   const source = player.stats.unofficial ? `Números de jogos <b>não oficiais</b> (${esc(player.team || "base")}): ${player.stats.matches} jogos, nota ${String(player.stats.rating).replace(".", ",")}.` : "";
   return `<section class="panel context-card why-card"><h3 class="section-title"><i></i> Por que esta pauta</h3>
-    <p class="why-fact">${esc(agenda.reason || situation.trigger)}</p>${agenda.news_headline ? `
+    <p class="why-fact">${esc(agenda.reason || situation.trigger)}</p>${agenda.news_headline && (agenda.news_kind || "imprensa") === "imprensa" ? `
     <article class="news-text"><b>${esc(agenda.news_headline)}</b>${(agenda.news_body || "").split(/\n+/).filter(Boolean).map(line => `<p>${esc(line)}</p>`).join("")}</article>` : ""}
     <p class="why-rule"><b>Regra:</b> ${esc(situation.trigger)} · urgência ${esc(situation.urgency)}</p>${source ? `<p class="why-rule">${source}</p>` : ""}</section>`;
 }
+// expulsão e lesão: a notícia do jogo vem primeiro, com a decisão; os botões respondem pelo próprio jogo
+function decisionCard(agenda) {
+  const kind = agenda.news_kind || "imprensa";
+  if (kind === "imprensa" || !agenda.news_serial) return "";
+  const body = (agenda.news_body || "").split(/\n+/).filter(Boolean).map(line => `<p>${esc(line)}</p>`).join("");
+  const options = agenda.news_options || [];
+  const note = options.length ? "" : agenda.news_waiting ? "Esta notícia pede uma escolha sua: por enquanto, responda em Técnico → Notícias, no jogo." : "";
+  return `<div class="decision-card"><span class="kind-chip">${KIND[kind]}${agenda.news_waiting ? " · decisão pendente" : ""}</span>
+    <h3>${esc(agenda.news_headline || "Lendo o texto do jogo…")}</h3>${body}
+    ${options.length ? `<div class="decision-actions">${options.map(o => `<button class="decision-button" data-reply="${o.id}" data-serial="${agenda.news_serial}" type="button">${esc(o.nome)}</button>`).join("")}</div>` : ""}
+    ${note ? `<p class="decision-note">${esc(note)}</p>` : ""}</div>`;
+}
+
+async function replyNews(serial, option) {
+  const response = await fetch("/noticia/responder", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({serie: serial, opcao: option})});
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) { alert(result.erro || "O jogo não aceitou a resposta."); return; }
+  await reloadData();
+}
+
+async function reloadData() {
+  const serial = selectedAgenda().news_serial;
+  data = await (await fetch("/dados", {cache: "no-store"})).json();
+  ui.agendaId = data.agenda.find(item => serial && item.news_serial === serial)?.id || ui.agendaId;
+  renderAll();
+}
+
 function renderLive() {
   const agenda = selectedAgenda(), outlet = outletBy(agenda.outlet_id), journalist = journalistBy(outlet, agenda.journalist_id);
   const player = playerBy(agenda.player_id), situation = situationBy(agenda.situation_id), question = situation.questions[ui.question % situation.questions.length];
@@ -236,7 +266,7 @@ function renderLive() {
   if (done) ui.question = done.question;
   const answerKey = `${agenda.id}:${ui.question}`, selectedId = done ? done.answer_id : ui.answers[answerKey];
   const answer = situation.intentions.find(item => item.id === selectedId);
-  $("#view").innerHTML = `<div class="live-layout"><section class="panel stage">
+  $("#view").innerHTML = `<div class="live-layout"><section class="panel stage kind-${agenda.news_kind || "imprensa"}">${decisionCard(agenda)}
     <div class="stage-top"><img src="${outlet.logo}" alt="${esc(outlet.name)}"><div><strong>${esc(outlet.name)}</strong><small>${esc(journalist.role)} · ${esc(outlet.city)} · ${esc(outlet.voice)}</small></div><span class="live-pill">AO VIVO</span></div>
     <div class="press-stage"><div class="journalist-block"><div class="portrait-frame">${portraitSVG(journalist, 94)}<span class="portrait-seed">ID ${String(journalist.seed).slice(-5)}</span></div><b>${esc(journalist.name)}</b><span>${esc(journalist.role)} · ${esc(outlet.name)}</span><em>${esc(journalist.approach)}</em></div>
       <div class="question-block"><span class="question-label"><i></i> pergunta ${ui.question + 1} de ${situation.questions.length}</span><blockquote class="question-text">${esc(fill(question, contextFor(player)))}</blockquote><div class="question-nav"><div class="question-dots">${situation.questions.map((_, index) => `<button class="question-dot ${index === ui.question ? "active" : ""}" data-question="${index}" aria-label="Pergunta ${index + 1}" type="button"></button>`).join("")}</div><span class="question-context"><b>Gatilho:</b> ${esc(situation.trigger)}</span></div></div>
@@ -300,6 +330,8 @@ function renderAll() {
 }
 
 document.addEventListener("click", event => {
+  const reply = event.target.closest("[data-reply]");
+  if (reply) { reply.disabled = true; replyNews(Number(reply.dataset.serial), Number(reply.dataset.reply)); return; }
   const button = event.target.closest("button");
   if (!button || !data) return;
   if (button.dataset.tab) { ui.tab = button.dataset.tab; renderView(); return; }
@@ -343,10 +375,12 @@ async function giveAnswer() {
 }
 
 // --jogo: a notícia aberta no jogo vira a pauta "agora" (o servidor lê a caixa de entrada)
-let newsSeen = null;
+let newsSeen = null, textsSeen = null;
 async function watchNews() {
   try {
-    const {noticias} = await (await fetch("/evento", {cache:"no-store"})).json();
+    const {noticias, textos} = await (await fetch("/evento", {cache:"no-store"})).json();
+    if (textsSeen !== null && textos !== textsSeen) await reloadData();          // textos novos do jogo
+    textsSeen = textos;
     if (newsSeen !== null && noticias > newsSeen) {
       data = await (await fetch("/dados", {cache:"no-store"})).json();
       ui.agendaId = data.agenda.find(item => item.active)?.id || data.agenda[0]?.id;

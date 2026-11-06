@@ -86,14 +86,3 @@ def test_captured_text_reaches_the_agenda() -> None:
     out = ponte.news_candidates([news], set(), players, situations, dt.date(2026, 3, 2))
     assert out and out[0][4]["news_headline"] == "Imprensa questiona Leonan"
     assert out[0][4]["news_body"] == "Linha 1\n\nLinha 2"
-
-
-def test_exclusive_any_keeps_action_news_in_game() -> None:
-    import noticias
-    base = {"serie": 1, "jogador": 0, "resposta": -1}
-    assert noticias.exclusive_any({**base, "classe": "TEAM_FORM_NEWS"})
-    assert noticias.exclusive_any({**base, "classe": "PHYSIO_REPORT_NEWS_ITEM"})         # Ezequiel: sem botões
-    assert not noticias.exclusive_any({**base, "classe": "PHYSIO_REPORT_NEWS_ITEM", "resposta": -3})
-    assert not noticias.exclusive_any({**base, "classe": "TRANSFER_OFFER_NEWS"})        # nome indica ação
-    assert not noticias.exclusive_any({**base, "classe": "CONTRACT_DECISION_NEWS"})
-    assert not noticias.exclusive_any({**base, "classe": "0x0110AAAA"})                   # classe desconhecida

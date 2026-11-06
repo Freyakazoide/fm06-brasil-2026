@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-import re
 import struct
 import sys
 from pathlib import Path
@@ -29,12 +28,9 @@ UNREAD = -4                                                         # u32 antes 
 # sempre e -3/-4 enquanto não lida (o ícone da linha, 0x4D7500, usa os mesmos valores); >= 0 visto
 # num relatório do fisioterapeuta já respondido (995: 10). Conferido no código, 03/11.
 REPLY, NO_REPLY = 0x20, -1
+WAITING = frozenset({-2, -3, -4})
 # Opções que o Python sabe responder (tools/re/responder_noticia.py; conferido no jogo, 06/11).
 REPLY_OPTIONS = {"RED_CARD_BAN_NEWS": {1: "Apelar Contra Suspensão", 2: "Não Apelar"}}
-# Cautela além do campo (só conferido no relatório do fisioterapeuta): tipo cujo nome indica ação
-# fica no jogo mesmo com +0x20 = -1 (33 classes; algumas só informam, como TRANSFER_OFFER_ACCEPTED).
-ACTION_NAME = re.compile(r"OFFER|DECISION|REQUEST|QUESTION|INVITATION|APPROACH|CONFIRMATION|CLAUSE|"
-                         r"TERMINATION|BID|ENQUIRY|INTEREST|NEGOTIAT|PROPOS|APPEAL|INTERVIEW|MEETING|JOB")
 CLASSES = {int(k, 16): v for k, v in json.loads((HERE / "noticias_classes.json").read_text(encoding="utf-8")).items()}
 
 # classe da notícia -> situação do banco editorial (só as que têm jogador ou assunto claro)
@@ -111,13 +107,6 @@ def inbox(jogo: leitor.Jogo) -> list[dict]:
     return out
 
 
-def exclusive_any(news: dict) -> bool:
-    """--exclusivo-todas: qualquer notícia conhecida sem resposta e cujo tipo não indique ação."""
-    kind = news["classe"]
-    return (news.get("resposta", NO_REPLY) == NO_REPLY and not kind.startswith("0x")
-            and not ACTION_NAME.search(kind))
-
-
 def exclusive(news: dict, squad: set[int], extra: frozenset[str] = frozenset()) -> bool:
     """Modo exclusivo: notícia da imprensa (MEDIA_*) com pauta no banco e jogador do elenco. `extra`
     acrescenta classes (teste: MOM_SUMMARY_NEWS chega a cada jogo). Notícia com resposta (pendente ou
@@ -154,6 +143,44 @@ def situation_for(news: dict, player: dict | None) -> str | None:
     if sid == "poor_streak" and player and player.get("form") and player["form"][-1] >= 7:   # último jogo
         return "match_star"
     return sid
+
+
+def kind_of(kind: str) -> str:
+    """Tipo da pauta na tela: cada um tem o seu visual."""
+    if kind in ("RED_CARD_BAN_NEWS", "ACCUMULATIVE_BAN_NEWS"):
+        return "expulsao"
+    if not kind.startswith("MEDIA_") and SITUATION.get(kind) in ("new_injury", "return_injury", "rehab_training"):
+        return "lesao"
+    return "imprensa"
+
+
+def waiting(news: dict) -> bool:
+    return news.get("resposta", NO_REPLY) in WAITING
+
+
+def options(news: dict) -> list[dict]:
+    """Botões da decisão: só com a notícia esperando e de um tipo que o Python sabe responder."""
+    if not waiting(news):
+        return []
+    return [{"id": k, "nome": v} for k, v in REPLY_OPTIONS.get(news["classe"], {}).items()]
+
+
+def on_the_agenda(news: dict, squad: set[int]) -> bool:
+    return news["classe"] in SITUATION and (not news["jogador"] or news["jogador"] in squad)
+
+
+def text_key(news: dict) -> str:
+    """Chave do texto guardado. A série se repete quando um save mais antigo é carregado, e o corpo
+    muda com a resposta ("Você decidiu apelar..."), então classe, data e resposta entram na chave."""
+    key = f"{news['serie']}:{news['classe']}:{news.get('data')}"
+    reply = news.get("resposta", NO_REPLY)
+    return key if reply == NO_REPLY else f"{key}:{reply}"
+
+
+def current(captures: list[dict], today: str | None) -> list[dict]:
+    """Capturadas que existem neste save: as de data depois da data do jogo vieram de outra linha do
+    tempo (save mais novo, depois recarregado um mais antigo)."""
+    return [n for n in captures if not today or not n.get("data") or n["data"] <= today]
 
 
 def label(kind: str) -> str:

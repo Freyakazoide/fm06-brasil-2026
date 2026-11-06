@@ -9,6 +9,7 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import threading
 import time
@@ -23,7 +24,6 @@ HERE = Path(__file__).resolve().parent
 sys.path[:0] = [str(HERE), str(HERE.parent / "re")]
 
 import banco  # noqa: E402
-import central  # noqa: E402
 import demo  # noqa: E402
 import efeitos  # noqa: E402
 import estado  # noqa: E402
@@ -33,48 +33,21 @@ import repercussao  # noqa: E402
 import responder_noticia  # noqa: E402
 import chamada_remota as cr  # noqa: E402
 import laco  # noqa: E402
-import medico  # noqa: E402
 import texto_noticia  # noqa: E402
 import veiculos  # noqa: E402
 
 
-ASSETS = HERE.parents[1] / "data" / "brasil" / "telas" / "centro_desenvolvimento" / "assets"
 FILES = {
     "/": (HERE / "pagina.html", "text/html; charset=utf-8"),
     "/imprensa.css": (HERE / "imprensa.css", "text/css; charset=utf-8"),
     "/imprensa.js": (HERE / "imprensa.js", "text/javascript; charset=utf-8"),
-    "/noticias": (HERE / "noticias.html", "text/html; charset=utf-8"),
-    "/noticias.js": (HERE / "noticias.js", "text/javascript; charset=utf-8"),
-    "/noticias.css": (HERE / "noticias.css", "text/css; charset=utf-8"),
-    "/medico": (HERE / "medico.html", "text/html; charset=utf-8"),
-    "/medico.js": (HERE / "medico.js", "text/javascript; charset=utf-8"),
-    # a Central de Notícias usa o visual da Central de Desenvolvimento
-    "/central.css": (HERE.parent / "central" / "central.css", "text/css; charset=utf-8"),
-    "/emblema.png": (ASSETS / "emblema-centro-desenvolvimento.png", "image/png"),
 }
 # O desvio de abertura de tela do exe (patch centro_colunas, centro.open_code) anota a seção aberta e
 # conta as aberturas; tela de Notícias = 'Pnws' (lido no jogo em Técnico -> Notícias, 03/11).
 SECTION_NOW, OPENINGS, NEWS_SECTION = 0x015C17F4, 0x015C17F8, 0x506E7773
-PAGE_ALIVE = 15                                                 # s sem /central: a página está fechada
+PAGE_ALIVE = 15                                                 # s sem /evento: a página está fechada
 TEXTS_PER_TICK = 8                                              # textos lidos por volta, só com o jogo parado
 PORT = 8629
-
-
-_BACKGROUND: bytes | None = None
-
-
-def background() -> bytes:
-    """O campo de treino da Central de Desenvolvimento em JPG leve (feito uma vez)."""
-    global _BACKGROUND
-    if _BACKGROUND is None:
-        import io
-        from PIL import Image
-        image = Image.open(ASSETS / "fundo-centro-treinamento.png").convert("RGB")
-        image.thumbnail((1600, 1600))
-        buffer = io.BytesIO()
-        image.save(buffer, "JPEG", quality=80, optimize=True)
-        _BACKGROUND = buffer.getvalue()
-    return _BACKGROUND
 
 
 IDLE_POLLS = 3                                                  # voltas de 2 s com o jogo sem mudar nada
@@ -88,12 +61,12 @@ class NewsWatcher:
     página da Sala, se estiver aberta, se atualiza. Quem abre o navegador é o ScreenWatcher: a
     tela de Notícias do jogo já marca a 1ª notícia como lida, e isso abria a Sala sem pedir."""
 
-    def __init__(self, exclusive: bool = False, extra: frozenset[str] = frozenset(),
-                 every: bool = False) -> None:
+    def __init__(self, exclusive: bool = False, extra: frozenset[str] = frozenset()) -> None:
         self.read, self.events = None, []
         self.mark, self.polls = None, 0
         self.exclusive, self.count, self.squad, self.career = exclusive, None, None, None
-        self.extra, self.every = extra, every                   # every: --exclusivo-todas
+        self.extra, self.waiting = extra, None                  # waiting: séries esperando decisão
+        self.changes, self.text_changes = 0, 0                  # contadores que a página acompanha
         self.since = None                                       # só notícias chegadas depois de ligar
 
     def know_squad(self) -> bool:
@@ -122,14 +95,17 @@ class NewsWatcher:
         return self.polls >= IDLE_POLLS
 
     def missing_texts(self, items: list[dict]) -> list[int]:
-        known = estado.texts(self.career)
-        return [n for n in sorted(items, key=lambda n: -n["serie"]) if central.text_key(n) not in known]
+        """Só das notícias que viram pauta recente: as outras ficam no jogo."""
+        known, latest = estado.texts(self.career), max((n["data"] or "" for n in items), default="")
+        since = (dt.date.fromisoformat(latest) - dt.timedelta(days=ponte.NEWS_DAYS)).isoformat() if latest else ""
+        return [n for n in sorted(items, key=lambda n: -n["serie"])
+                if noticias.on_the_agenda(n, self.squad) and (n["data"] or "") >= since
+                and noticias.text_key(n) not in known]
 
     def wanted(self, items: list[dict]) -> list[dict]:
         if not self.exclusive:
             return []
-        test = noticias.exclusive_any if self.every else lambda n: noticias.exclusive(n, self.squad, self.extra)
-        return [n for n in items if n["serie"] > self.since and test(n)]
+        return [n for n in items if n["serie"] > self.since and noticias.exclusive(n, self.squad, self.extra)]
 
     def with_game_parked(self, jogo, items: list[dict]) -> list[dict]:
         """Captura e textos numa pausa só da thread principal do jogo (laco.py); sem trabalho, não
@@ -153,17 +129,20 @@ class NewsWatcher:
             cr.kernel32.CloseHandle(handle)
 
     def fill_texts(self, jogo, handle, items: list[dict]) -> None:
-        """Central de Notícias: lê manchete e corpo (função do jogo) das notícias que ainda não têm,
+        """Lê manchete e corpo (função do jogo) das pautas que ainda não têm,
         algumas por volta. Uma falha só adia para a próxima volta."""
         new = {}
         for news in self.missing_texts(items)[:TEXTS_PER_TICK]:
             try:
-                new[central.text_key(news)] = texto_noticia.text_of(jogo, handle, news["serie"])
+                new[noticias.text_key(news)] = texto_noticia.text_of(jogo, handle, news["serie"])
             except (Exception, SystemExit) as error:
                 print(f"[imprensa] texto da notícia {news['serie']} não lido: {error}")
                 break
         if new:
             estado.add_texts(self.career, new)
+            self.text_changes += 1
+            with PressRoom.lock:
+                PressRoom.cache = None
 
     def capture(self, jogo, handle, items: list[dict]) -> list[dict]:
         """--exclusivo: guarda a notícia de imprensa do elenco (com manchete e corpo, montados pelo
@@ -214,13 +193,16 @@ class NewsWatcher:
                 taken = self.with_game_parked(jogo, items)
             self.count = len(items) - len(taken)
             read_now = {n["serie"] for n in items if n["lida"]}
+            waiting_now = {n["serie"] for n in items if noticias.waiting(n)}
             if self.read is None:                               # 1ª leitura: só a base
-                self.read = read_now
+                self.read, self.waiting = read_now, waiting_now
                 continue
-            fresh = [n for n in items if n["lida"] and n["serie"] not in self.read] + taken
-            self.read = read_now
+            fresh = [n for n in items if (n["lida"] and n["serie"] not in self.read)
+                     or (n["serie"] in waiting_now and n["serie"] not in self.waiting)] + taken
+            self.read, self.waiting = read_now, waiting_now
             if not fresh:
                 continue
+            self.changes += 1
             for item in sorted(fresh, key=lambda n: n["serie"]):
                 self.events.insert(0, item)
             del self.events[10:]
@@ -229,15 +211,15 @@ class NewsWatcher:
 
 
 class ScreenWatcher:
-    """Abre a Central de Notícias no navegador ao entrar na tela de Notícias do jogo, a não ser que a
-    página já esteja aberta (como o Watcher da Central de Desenvolvimento)."""
+    """Abre a Sala no navegador ao entrar na tela de Notícias do jogo com uma decisão esperando, a não
+    ser que a página já esteja aberta (como o Watcher da Central de Desenvolvimento)."""
 
     def __init__(self, url: str) -> None:
         self.url, self.seen, self.last_poll, self.opened_at = url, None, 0.0, 0.0
 
-    def step(self, section: int, count: int, now: float) -> bool:
+    def step(self, section: int, count: int, now: float, wanted: bool = True) -> bool:
         """True quando é para abrir a página."""
-        entered = self.seen is not None and count != self.seen and section == NEWS_SECTION
+        entered = self.seen is not None and count != self.seen and section == NEWS_SECTION and wanted
         self.seen = count
         if entered and now - self.last_poll > PAGE_ALIVE and now - self.opened_at > 8:
             self.opened_at = now
@@ -255,7 +237,7 @@ class ScreenWatcher:
             except Exception:                                   # jogo fechado ou exe sem o desvio
                 jogo, self.seen = None, None
                 continue
-            if self.step(section, count, time.time()):
+            if self.step(section, count, time.time(), bool(PressRoom.watcher and PressRoom.watcher.waiting)):
                 webbrowser.open(self.url)
 
 
@@ -297,18 +279,11 @@ class PressRoom(BaseHTTPRequestHandler):
             value["info"] = {**value["info"], "mode_effects": bool(self.effects and self.live_club)}
             self._json(200, value)
             return
-        if path == "/central":
-            if self.screens:
-                self.screens.last_poll = time.time()
-            self._json(200, self.news_center())
-            return
-        if path == "/medico/dados":
-            value = self.news_center()
-            self._json(200, medico.payload(value["noticias"], self.data()["players"], value["info"]))
-            return
         if path == "/evento":
             watcher = self.watcher
-            self._json(200, {"noticias": len(watcher.events) if watcher else 0,
+            if self.screens:
+                self.screens.last_poll = time.time()
+            self._json(200, {"noticias": watcher.changes if watcher else 0, "textos": watcher.text_changes if watcher else 0,
                              "serie": watcher.events[0]["serie"] if watcher and watcher.events else None})
             return
         if path == "/banco":
@@ -319,9 +294,6 @@ class PressRoom(BaseHTTPRequestHandler):
             if body is not None:
                 self._reply(200, body, "image/svg+xml; charset=utf-8")
                 return
-        if path == "/fundo.jpg":
-            self._reply(200, background(), "image/jpeg")
-            return
         if path in FILES:
             file, content_type = FILES[path]
             self._reply(200, file.read_bytes(), content_type)
@@ -330,11 +302,6 @@ class PressRoom(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         path = urlsplit(self.path).path
-        if path == "/central/lida":
-            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0)) or 0) or b"{}")
-            estado.add_read(self.data()["info"].get("career", "demo"), str(body.get("chave", "")))
-            self._json(200, {"ok": True})
-            return
         if path == "/noticia/responder":
             self._answer_news()
             return
@@ -362,7 +329,7 @@ class PressRoom(BaseHTTPRequestHandler):
             self._json(400, {"erro": str(error)})
 
     def _answer_news(self) -> None:
-        """Botão da Central: responde pela função do próprio jogo (responder_noticia.py)."""
+        """Botão da decisão: responde pela função do próprio jogo (responder_noticia.py)."""
         if not self.live_club:
             self._json(400, {"erro": "sem jogo aberto"})
             return
@@ -376,27 +343,13 @@ class PressRoom(BaseHTTPRequestHandler):
         try:
             with GAME:
                 state = responder_noticia.answer(leitor.Jogo(), pid, handle, int(body["serie"]), int(body["opcao"]))
+            with PressRoom.lock:
+                PressRoom.cache = None
             self._json(200, {"resposta": state})
         except (ValueError, LookupError, TimeoutError, OSError, KeyError) as error:
             self._json(400, {"erro": str(error)})
         finally:
             cr.kernel32.CloseHandle(handle)
-
-    def news_center(self) -> dict:
-        """Central de Notícias: caixa do jogo (lida agora) + capturadas + textos guardados."""
-        info = self.data()["info"]
-        career = info.get("career", "demo")
-        if not self.live_club or career == "demo":
-            return central.payload([], [], {}, {**info, "aviso": "Sem jogo aberto: rode o servidor com --jogo."})
-        captures = central.current(estado.captures(career), info.get("date"))
-        read = frozenset(estado.reads(career))
-        try:
-            import leitor
-            inbox = noticias.inbox(leitor.Jogo())
-        except Exception as error:
-            return central.payload([], captures, estado.texts(career),
-                                   {**info, "aviso": f"Caixa do jogo não lida ({error}); mostrando só as capturadas."}, read)
-        return central.payload(inbox, captures, estado.texts(career), info, read)
 
     def _repercussion(self, career: str, key: str, state: dict) -> dict:
         """Matéria do veículo sobre a resposta (§8.8); se faltar algum dado, a resposta fica sem ela."""
@@ -437,8 +390,6 @@ def main() -> None:
     parser.add_argument("--exclusivo", action="store_true",
                         help="--jogo: notícia de imprensa do elenco sai da caixa do jogo e fica só na Sala")
     parser.add_argument("--exclusivo-classes", default="", help="teste: classes a mais, ex. MOM_SUMMARY_NEWS")
-    parser.add_argument("--exclusivo-todas", action="store_true",
-                        help="--jogo: toda notícia nova sem resposta sai da caixa do jogo e fica só na Central de Notícias")
     args = parser.parse_args()
     problems = banco.validate()
     if problems:
@@ -456,18 +407,15 @@ def main() -> None:
     if args.jogo:
         PressRoom.live_club = args.clube
         PressRoom.effects = not args.sem_efeitos
-        PressRoom.watcher = NewsWatcher(exclusive=args.exclusivo or args.exclusivo_todas,
-                                        extra=frozenset(c for c in args.exclusivo_classes.split(",") if c),
-                                        every=args.exclusivo_todas)
+        PressRoom.watcher = NewsWatcher(exclusive=args.exclusivo,
+                                        extra=frozenset(c for c in args.exclusivo_classes.split(",") if c))
         threading.Thread(target=PressRoom.watcher.run, daemon=True).start()
-        PressRoom.screens = ScreenWatcher(f"{url}/noticias")
+        PressRoom.screens = ScreenWatcher(url)
         threading.Thread(target=PressRoom.screens.run, daemon=True).start()
         print(f"Modo jogo: lê o elenco do {args.clube} no FM06 aberto; a resposta mexe só na moral do jogador (--sem-efeitos desliga).")
         print("Ao abrir uma notícia na caixa de entrada do jogo, a pauta dela aparece aqui.")
-        print(f"Técnico -> Notícias no jogo abre a Central de Notícias: {url}/noticias")
-        if args.exclusivo_todas:
-            print("Modo exclusivo (todas): toda notícia nova sem resposta sai da caixa do jogo e fica só na Central de Notícias (salve o jogo para manter).")
-        elif args.exclusivo:
+        print("Expulsões, lesões e imprensa do elenco aparecem aqui; as outras notícias ficam só no jogo.")
+        if args.exclusivo:
             print("Modo exclusivo: notícia de imprensa do elenco sai da caixa do jogo e fica só aqui (salve o jogo para manter).")
     else:
         print("Modo demonstração: não lê nem escreve no save.")

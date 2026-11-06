@@ -498,7 +498,18 @@ Há código de criação de notícia em `src/fm06patch/fornada.py` que pode serv
 reutilizar cegamente: primeiro confirmar o tipo do objeto, ciclo de vida e campos exigidos pela caixa
 de entrada.
 
-### 8.9 Central de Notícias (pedido do usuário, 03/11)
+### 8.9 Central de Notícias (pedido do usuário, 03/11): abandonada em 06/11
+
+**Decisão do usuário (06/11): não queremos todas as notícias fora do jogo.** Uma tela só, a da Sala
+de Imprensa, com o que pede decisão: expulsões, lesões e imprensa do elenco, cada tipo com o seu
+visual (`noticias.kind_of`, cores em `imprensa.css`). As outras notícias ficam só no jogo e nada sai da
+caixa por padrão (`--exclusivo-todas` removido; `--exclusivo` segue como opção). Central e
+Departamento Médico saíram do código (estão no histórico: commit 57c9775). Fica o que se aprendeu:
+ler o texto, o campo de resposta, responder pela função do jogo e a pausa no laço. O texto só é
+lido das pautas recentes, e a Sala abre em Técnico → Notícias só com uma decisão esperando. A causa dos
+crashes com `dive`/`text` segue sem prova; a leitura aguentou o estresse, a remoção ficou suspeita.
+Abaixo, o histórico da ideia.
+
 
 Todas as notícias saem da caixa do jogo e vão para o Python; **Técnico → Notícias** abre a página
 (como a Central de Desenvolvimento); cada categoria cai no seu módulo: Imprensa → Sala de Imprensa,

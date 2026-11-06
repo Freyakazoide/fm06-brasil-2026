@@ -108,24 +108,6 @@ def add_texts(career: str, new: dict[str, dict]) -> dict[str, dict]:
     return items
 
 
-def reads(career: str) -> list[str]:
-    """Notícias "só na Central" já abertas na Central (chave central.text_key)."""
-    try:
-        return json.loads((folder(career) / "lidas.json").read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return []
-
-
-def add_read(career: str, key: str) -> list[str]:
-    items = reads(career)
-    if key not in items:
-        items.append(key)
-        target = folder(career)
-        target.mkdir(parents=True, exist_ok=True)
-        (target / "lidas.json").write_text(json.dumps(items, ensure_ascii=False, indent=0), encoding="utf-8")
-    return items
-
-
 def record(career: str, entry: dict) -> dict:
     """Grava uma resposta dada. Uma pauta (chave) só recebe uma resposta."""
     for field in ("key", "situation_id", "answer_id", "player_id", "outlet_id"):

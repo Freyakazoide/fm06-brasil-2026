@@ -24,7 +24,6 @@ import leitor  # noqa: E402
 import noticias  # noqa: E402
 
 REPLY_SLOT, OPTION_AT = 0x58, 0xE
-WAITING = (-2, -3, -4)
 
 
 def reply_code(news: int, answer: int) -> bytes:
@@ -47,7 +46,7 @@ def answer(jogo: leitor.Jogo, pid: int, handle, serial: int, option: int) -> int
     state = struct.unpack("<h", jogo.raw(news + noticias.REPLY, 2))[0]
     if option not in noticias.REPLY_OPTIONS.get(kind, {}):
         raise ValueError(f"{kind}: opção {option} desconhecida")
-    if state not in WAITING:
+    if state not in noticias.WAITING:
         raise ValueError(f"notícia {serial} não está esperando resposta (+0x20 = {state})")
     page = cr.kernel32.VirtualAllocEx(handle, None, 0x1000, cr.MEM_COMMIT_RESERVE, 0x04)
     if not page:
