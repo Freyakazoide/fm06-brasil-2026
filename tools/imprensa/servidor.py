@@ -297,7 +297,13 @@ class PressRoom(BaseHTTPRequestHandler):
         self._reply(404, b"nao encontrado", "text/plain; charset=utf-8")
 
     def do_POST(self) -> None:
-        if urlsplit(self.path).path != "/resposta":
+        path = urlsplit(self.path).path
+        if path == "/central/lida":
+            body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0)) or 0) or b"{}")
+            estado.add_read(self.data()["info"].get("career", "demo"), str(body.get("chave", "")))
+            self._json(200, {"ok": True})
+            return
+        if path != "/resposta":
             self._reply(404, b"nao encontrado", "text/plain; charset=utf-8")
             return
         try:
@@ -327,13 +333,14 @@ class PressRoom(BaseHTTPRequestHandler):
         if not self.live_club or career == "demo":
             return central.payload([], [], {}, {**info, "aviso": "Sem jogo aberto: rode o servidor com --jogo."})
         captures = central.current(estado.captures(career), info.get("date"))
+        read = frozenset(estado.reads(career))
         try:
             import leitor
             inbox = noticias.inbox(leitor.Jogo())
         except Exception as error:
             return central.payload([], captures, estado.texts(career),
-                                   {**info, "aviso": f"Caixa do jogo não lida ({error}); mostrando só as capturadas."})
-        return central.payload(inbox, captures, estado.texts(career), info)
+                                   {**info, "aviso": f"Caixa do jogo não lida ({error}); mostrando só as capturadas."}, read)
+        return central.payload(inbox, captures, estado.texts(career), info, read)
 
     def _repercussion(self, career: str, key: str, state: dict) -> dict:
         """Matéria do veículo sobre a resposta (§8.8); se faltar algum dado, a resposta fica sem ela."""

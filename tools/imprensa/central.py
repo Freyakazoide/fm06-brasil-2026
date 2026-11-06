@@ -37,28 +37,33 @@ def module_of(category: str | None) -> str:
     return next(key for key, _, cats in MODULES if cats is None or category in cats)
 
 
-def item(news: dict, text: dict | None) -> dict:
+def item(news: dict, text: dict | None, read: frozenset[str] = frozenset()) -> dict:
+    """`read`: abertas na Central. Na capturada só isso conta: o jogo abre sozinho a 1ª notícia do dia e
+    a marca como lida antes de ela sair da caixa."""
     category = CATEGORIES.get(news["classe"])
     reply = news.get("resposta", noticias.NO_REPLY)
     text = text or {}
     return {"serie": news["serie"], "classe": news["classe"], "assunto": noticias.label(news["classe"]),
             "categoria": category or "Outras", "modulo": module_of(category), "data": news.get("data"),
-            "lida": bool(news.get("lida")), "jogador": news.get("jogador") or None,
+            "chave": text_key(news),
+            "lida": text_key(news) in read if news.get("exclusiva") else bool(news.get("lida")),
+            "jogador": news.get("jogador") or None,
             "pendente": reply in WAITING, "respondida": reply >= 0,
             "onde": "central" if news.get("exclusiva") else "jogo",
             "manchete": news.get("manchete") or text.get("manchete"), "corpo": news.get("corpo") or text.get("corpo")}
 
 
-def items(inbox: list[dict], captures: list[dict], texts: dict[str, dict]) -> list[dict]:
+def items(inbox: list[dict], captures: list[dict], texts: dict[str, dict], read: frozenset[str] = frozenset()) -> list[dict]:
     """Caixa do jogo + capturadas (a capturada que ainda aparece na caixa conta uma vez), mais nova primeiro."""
     seen = {n["serie"] for n in inbox}
     every = list(inbox) + [n for n in captures if n["serie"] not in seen]
-    out = [item(n, texts.get(text_key(n))) for n in every]
+    out = [item(n, texts.get(text_key(n)), read) for n in every]
     return sorted(out, key=lambda n: (n["data"] or "", n["serie"]), reverse=True)
 
 
-def payload(inbox: list[dict], captures: list[dict], texts: dict[str, dict], info: dict) -> dict:
-    news = items(inbox, captures, texts)
+def payload(inbox: list[dict], captures: list[dict], texts: dict[str, dict], info: dict,
+            read: frozenset[str] = frozenset()) -> dict:
+    news = items(inbox, captures, texts, read)
     modules = [{"id": key, "nome": name, "total": sum(n["modulo"] == key for n in news),
                 "nao_lidas": sum(n["modulo"] == key and not n["lida"] for n in news),
                 "pendentes": sum(n["modulo"] == key and n["pendente"] for n in news)} for key, name, _ in MODULES]

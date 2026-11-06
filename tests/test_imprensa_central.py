@@ -70,3 +70,16 @@ def test_news_screen_opens_the_page_once() -> None:
     w.last_poll = 1030.0
     w.step(other, 10, 1032.0)
     assert not w.step(news_screen, 11, 1033.0)                      # página já aberta
+
+
+def test_captured_news_is_read_only_in_the_central(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(estado, "BASE", tmp_path)
+    news_item = news(1037, "MEDIA_COMMENT_NEWS_ITEM", exclusiva=True, lida=True)     # o jogo abriu sozinho
+    assert central.items([], [news_item], {})[0]["lida"] is False
+    key = central.text_key(news_item)
+    estado.add_read("demo", key)
+    estado.add_read("demo", key)
+    assert estado.reads("demo") == [key]
+    assert central.items([], [news_item], {}, frozenset(estado.reads("demo")))[0]["lida"] is True
+    in_game = news(1016, "MATCH_SUMMARY_NEWS", lida=True)
+    assert central.items([in_game], [], {})[0]["lida"] is True                       # na caixa: vale o jogo

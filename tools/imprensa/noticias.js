@@ -81,7 +81,7 @@ function renderReader() {
       <div class="news-icon">${icon(MODULE_ICON[n.modulo], 28)}</div>
       <div class="identity"><span class="screen-kicker">NEWS CENTRE / ${esc(module ? module.nome : "Geral")} / NOTÍCIA ${n.serie}</span>
         <h1>${esc(n.manchete || n.assunto)}</h1>
-        <div class="bio">${icon("calendar", 11)} ${dateBR(n.data)} <i></i> ${esc(n.assunto)} <i></i> ${n.lida ? "lida no jogo" : "não lida"}</div>
+        <div class="bio">${icon("calendar", 11)} ${dateBR(n.data)} <i></i> ${esc(n.assunto)} <i></i> ${n.lida ? (n.onde === "central" ? "lida" : "lida no jogo") : "não lida"}</div>
         <div class="tag-row">${tags(n).replaceAll("mini-tag", "tag")}</div></div></header>
     <div class="news-body">
       <section class="panel"><h3>${icon("mail", 13)} Notícia</h3><div class="news-text">${body || `<p class="card-name missing">${n.onde === "central" ? "Esta notícia saiu do jogo antes de a Central guardar os textos: o texto se perdeu." : "O texto desta notícia ainda não foi lido do jogo. Ele chega em alguns segundos, com o jogo parado."}</p>`}</div></section>
@@ -106,6 +106,11 @@ document.addEventListener("click", event => {
   if (target.dataset.module) ui.module = target.dataset.module;
   if (target.dataset.filter) ui.filter = target.dataset.filter;
   ui.selected = target.dataset.serie ? Number(target.dataset.serie) : null;
+  const opened = data.noticias.find(n => n.serie === ui.selected);
+  if (target.dataset.serie && opened?.onde === "central" && !opened.lida) {
+    opened.lida = true;
+    fetch("/central/lida", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({chave: opened.chave})});
+  }
   render();
 });
 $("search").addEventListener("input", event => { ui.search = event.target.value; if (data) render(); });
