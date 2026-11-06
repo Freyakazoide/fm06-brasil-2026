@@ -338,8 +338,8 @@
  "CLUB_INSTRUCTIONS_IGNORED_RESPONSE_NEWS": {
   "vtable": "0xfc97e4",
   "tipo": 423,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005BFF40",
   "slot11_proprio": false
  },
@@ -394,16 +394,16 @@
  "COMP_ODDS_NEWS": {
   "vtable": "0x10b0754",
   "tipo": 13,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00580E10",
   "slot11_proprio": false
  },
  "COMP_PRIZE_MONEY_NEWS": {
   "vtable": "0x10afe4c",
   "tipo": 14,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057ED40",
   "slot11_proprio": false
  },
@@ -418,16 +418,16 @@
  "COMP_QUALIFICATION_NEWS": {
   "vtable": "0xed4b0c",
   "tipo": 28,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005804F0",
   "slot11_proprio": false
  },
  "COMP_STATS_NEWS": {
   "vtable": "0x10afd3c",
   "tipo": 6,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057D2B0",
   "slot11_proprio": false
  },
@@ -498,24 +498,24 @@
  "CUP_DRAW_SUMMARY_NEWS": {
   "vtable": "0x10b00a4",
   "tipo": 26,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00580270",
   "slot11_proprio": false
  },
  "CUP_QUALIFICATION_NEWS": {
   "vtable": "0x10afdc4",
   "tipo": 5,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00582880",
   "slot11_proprio": false
  },
  "CUP_ROUND_DRAW_NEWS": {
   "vtable": "0x10afcb4",
   "tipo": 1,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057E010",
   "slot11_proprio": false
  },
@@ -530,8 +530,8 @@
  "DRAFT_PLAYERS_SELECTED_NEWS": {
   "vtable": "0x10ae194",
   "tipo": 25,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057FF00",
   "slot11_proprio": false
  },
@@ -562,16 +562,16 @@
  "EUROPEAN_FAIR_PLAY_NATION_ANNOUNCE_NEWS": {
   "vtable": "0x10b06cc",
   "tipo": 29,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00583960",
   "slot11_proprio": false
  },
  "EUROPEAN_FAIR_PLAY_RESULT_NEWS": {
   "vtable": "0x10adf74",
   "tipo": 30,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00583C50",
   "slot11_proprio": false
  },
@@ -626,8 +626,8 @@
  "FIXTURE_REARRANGED_NEWS": {
   "vtable": "0x10afed4",
   "tipo": 16,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057F2D0",
   "slot11_proprio": false
  },
@@ -658,24 +658,24 @@
  "FRIENDLY_CANCELLATION_NEWS": {
   "vtable": "0xeb3b74",
   "tipo": 12,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00593A40",
   "slot11_proprio": false
  },
  "FRIENDLY_INVITATION_DECISION_NEWS": {
   "vtable": "0x10ae2a4",
   "tipo": 11,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00593700",
   "slot11_proprio": false
  },
  "FRIENDLY_INVITATION_NEWS": {
   "vtable": "0x10b149c",
   "tipo": 10,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00594310",
   "slot11_proprio": false
  },
@@ -698,16 +698,16 @@
  "GROUP_DRAW_NEWS": {
   "vtable": "0x10b0644",
   "tipo": 4,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00580A90",
   "slot11_proprio": false
  },
  "GROUP_DRAW_SUMMARY_NEWS": {
   "vtable": "0x10b08ec",
   "tipo": 27,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00584DA0",
   "slot11_proprio": false
  },
@@ -810,32 +810,32 @@
  "INTERNATIONAL_RETIREMENT_NEWS": {
   "vtable": "0x10b17bc",
   "tipo": 1602,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C51E0",
   "slot11_proprio": false
  },
  "LEAGUE_FATE_DECIDED_NEWS": {
   "vtable": "0x10ade64",
   "tipo": 2,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057E1E0",
   "slot11_proprio": false
  },
  "LEAGUE_POINTS_DEDUCTED_NEWS": {
   "vtable": "0x10b001c",
   "tipo": 23,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057FD40",
   "slot11_proprio": false
  },
  "LEAGUE_QUALIFICATION_NEWS": {
   "vtable": "0x10adeec",
   "tipo": 3,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057E4F0",
   "slot11_proprio": false
  },
@@ -882,8 +882,8 @@
  "MAJOR_COMP_ODDS_NEWS": {
   "vtable": "0x10b07dc",
   "tipo": 18,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00581310",
   "slot11_proprio": false
  },
@@ -994,16 +994,16 @@
  "MEDIA_COMMENT_ON_SQUAD_SELECTION_NEWS": {
   "vtable": "0x10b0ec4",
   "tipo": 425,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C3DD0",
   "slot11_proprio": false
  },
  "MEDIA_COMMENT_PLAYER_REJECTED_CALLUP_NEWS": {
   "vtable": "0x10b11f4",
   "tipo": 1600,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C2D30",
   "slot11_proprio": false
  },
@@ -1090,8 +1090,8 @@
  "MEDIA_POST_MATCH_NEWS": {
   "vtable": "0x10af4b4",
   "tipo": 1601,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C2EA0",
   "slot11_proprio": false
  },
@@ -1106,8 +1106,8 @@
  "MEDIA_PRE_MATCH_NEWS": {
   "vtable": "0x10af42c",
   "tipo": 426,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C0AD0",
   "slot11_proprio": false
  },
@@ -1138,8 +1138,8 @@
  "MLS_SUPPORTERS_SHIELD_NEWS": {
   "vtable": "0x10ae21c",
   "tipo": 32,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00584E80",
   "slot11_proprio": false
  },
@@ -1170,8 +1170,8 @@
  "NATIONAL_TEAM_INJURY_NEWS": {
   "vtable": "0x10af294",
   "tipo": 422,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C0120",
   "slot11_proprio": false
  },
@@ -1186,24 +1186,24 @@
  "NATIONAL_TEAM_REPLACEMENT_NEWS": {
   "vtable": "0x10b0f4c",
   "tipo": 438,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C0420",
   "slot11_proprio": false
  },
  "NATIONAL_TEAM_SQUAD_SELECTION_NEWS": {
   "vtable": "0x10b0e3c",
   "tipo": 9,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C8520",
   "slot11_proprio": false
  },
  "NATION_CONTINENTAL_QUALIFICATION_NEWS": {
   "vtable": "0x10b18ec",
   "tipo": 24,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00584880",
   "slot11_proprio": false
  },
@@ -1346,8 +1346,8 @@
  "NEW_LEAGUE_SEASON_NEWS": {
   "vtable": "0x10b1a1c",
   "tipo": 31,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005808A0",
   "slot11_proprio": false
  },
@@ -1434,8 +1434,8 @@
  "PLAYER_COMMENT_ON_NATIONAL_TEAM_NEWS": {
   "vtable": "0x10b10e4",
   "tipo": 431,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C1F30",
   "slot11_proprio": false
  },
@@ -1450,16 +1450,16 @@
  "PLAYER_FIRST_CAP_NEWS": {
   "vtable": "0x10b0fd4",
   "tipo": 427,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C14C0",
   "slot11_proprio": false
  },
  "PLAYER_GAINED_NATIONALITY_NEWS": {
   "vtable": "0x10a0444",
   "tipo": 1603,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C3130",
   "slot11_proprio": false
  },
@@ -1474,16 +1474,16 @@
  "PLAYER_INVOLVED_IN_INTERNATIONAL_MATCH_NEWS": {
   "vtable": "0x10a84d4",
   "tipo": 424,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C9BD0",
   "slot11_proprio": false
  },
  "PLAYER_IN_NATIONAL_SQUAD_NEWS": {
   "vtable": "0x10ad2cc",
   "tipo": 416,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C5C60",
   "slot11_proprio": false
  },
@@ -1498,32 +1498,32 @@
  "PLAYER_PRAISES_NATIONAL_TEAM_BOSS_NEWS": {
   "vtable": "0x10a7d24",
   "tipo": 430,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C1E00",
   "slot11_proprio": false
  },
  "PLAYER_REJECTING_CALLUP_COMMENT_NEWS": {
   "vtable": "0x10b116c",
   "tipo": 432,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C2AA0",
   "slot11_proprio": false
  },
  "PLAYER_REJECTS_CALLUP_NEWS": {
   "vtable": "0xeaa2ec",
   "tipo": 428,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C1860",
   "slot11_proprio": false
  },
  "PLAYER_SCORES_FIRST_INTERNATIONAL_GOAL_NEWS": {
   "vtable": "0x10b105c",
   "tipo": 429,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005C1A20",
   "slot11_proprio": false
  },
@@ -1538,8 +1538,8 @@
  "POTENTIAL_CUP_DRAW_NEWS": {
   "vtable": "0x10b0864",
   "tipo": 19,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x005843A0",
   "slot11_proprio": false
  },
@@ -1770,24 +1770,24 @@
  "SQUAD_NUMBERS_NEWS": {
   "vtable": "0x10adffc",
   "tipo": 15,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057F010",
   "slot11_proprio": false
  },
  "SQUAD_NUMBER_WINDOW_NEWS": {
   "vtable": "0x10ae084",
   "tipo": 20,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057F910",
   "slot11_proprio": false
  },
  "SQUAD_SELECTION_NEWS": {
   "vtable": "0x10b16fc",
   "tipo": 8,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x0057E800",
   "slot11_proprio": false
  },
@@ -1866,16 +1866,16 @@
  "TELEVISED_FIXTURE_NEWS": {
   "vtable": "0xed4804",
   "tipo": 22,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00581B40",
   "slot11_proprio": false
  },
  "TEST_NEWS_ITEM": {
   "vtable": "0x10a241c",
   "tipo": null,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x006E1270",
   "slot11_proprio": false
  },
@@ -2010,8 +2010,8 @@
  "UEFA_COEFFICIENT_POSITION_NEWS": {
   "vtable": "0x10ae10c",
   "tipo": 21,
-  "categoria": null,
-  "categoria_nome": null,
+  "categoria": 0,
+  "categoria_nome": "Competições",
   "texto": "0x00584520",
   "slot11_proprio": false
  },

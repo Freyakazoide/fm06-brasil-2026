@@ -606,6 +606,10 @@ Falta, em ordem:
    explicação ainda:** o objeto 1035 seguiu com +0x22 = 0x10 (bit de lida desligado), diferente do
    que li em 0x4DA496; a tela parece guardar o estado da própria lista.
 5. Categoria das 87 classes sem valor fixo.
+   **Resolvido em parte (06/11):** 48 das 87 tinham o slot 10 `xor al, al; ret`, categoria 0
+   Competições (`categorias_noticias.py` só reconhecia `mov al, N`). Sobram 39: as BASIC_* (classes
+   base) e as de infraestrutura (NEWS_FILTER, NEWS_SCREEN etc.), que não são notícia; o slot 10
+   delas é outra função. Na caixa de teste só a classe desconhecida 0x010B023C fica sem categoria.
 
 ## 9. Entrevistas dos clubes controlados pela IA
 

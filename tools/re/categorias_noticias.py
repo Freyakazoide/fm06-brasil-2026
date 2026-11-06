@@ -2,8 +2,8 @@ r"""Categoria de cada classe de notícia, lida do executável (sem o jogo aberto
 
 1ª vtable de cada classe (tools/imprensa/noticias_classes.json): slot 6 devolve o tipo (`mov ax, N`),
 slot 10 a categoria da coluna "Tipo" da caixa (`mov al, N`; conferido: 1 Mensagens, 2 Transf.,
-4 Imprensa, 7 Lesões, na ordem do filtro do jogo; as BASIC_* e algumas outras não têm categoria
-fixa: deve vir de um campo). `slot11_proprio`: o slot 11 não é o padrão 0xCEF260 (devolve 0). NÃO
+4 Imprensa, 7 Lesões, na ordem do filtro do jogo; 0 Competições vem como `xor al, al`; as BASIC_*
+e NEWS_FILTER etc. não têm categoria aqui: o slot 10 delas é outra função). `slot11_proprio`: o slot 11 não é o padrão 0xCEF260 (devolve 0). NÃO
 indica notícia com ação: TRANSFER_OFFER e CONTRACT_DECISION ficam no padrão (03/11). Grava
 tools/imprensa/noticias_categorias.json.
 
@@ -39,6 +39,8 @@ def small_return(exe: bytes, f: int) -> int | None:
         return struct.unpack_from("<H", code, 2)[0]
     if code[0] == 0xB0 and code[2] == 0xC3:                                 # mov al, N ; ret
         return code[1]
+    if code[:3] == bytes.fromhex("32C0C3"):                                 # xor al, al ; ret
+        return 0
     return None
 
 
