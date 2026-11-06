@@ -4,6 +4,7 @@ let data = null;
 const ui = {
   tab: "live",
   agendaId: null,
+  closed: false,
   agendaSearch: "",
   medium: "todos",
   question: 0,
@@ -108,12 +109,20 @@ function renderHeader() {
   $("#agenda-foot").textContent = data.mode === "jogo" ? "Pautas tiradas da caixa de entrada do jogo (últimos 14 dias). As respostas ficam no histórico da carreira." : "As escolhas desta demonstração ficam apenas nesta página.";
   $("#current-date").textContent = new Date(`${data.info.date}T12:00:00`).toLocaleDateString("pt-BR");
   const s = data.bank_stats;
-  $("#header-summary").innerHTML = `<div class="header-kpi"><b>${data.agenda.length}</b><span>pautas</span></div><div class="header-kpi"><b>${data.outlets.length}</b><span>veículos</span></div><div class="header-kpi"><b>${s.situations}</b><span>situações</span></div><div class="header-kpi"><b>${s.response_combinations}</b><span>respostas</span></div>`;
+  $("#header-summary").innerHTML = `<div class="header-kpi"><b>${data.agenda.filter(isOpen).length}</b><span>em aberto</span></div><div class="header-kpi"><b>${data.outlets.length}</b><span>veículos</span></div><div class="header-kpi"><b>${s.situations}</b><span>situações</span></div><div class="header-kpi"><b>${s.response_combinations}</b><span>respostas</span></div>`;
   $("#footer-stats").textContent = `${s.situations} situações · ${s.questions} perguntas · ${s.response_combinations} combinações de resposta`;
   $("#footer-mode").textContent = data.info.mode_effects ? "Conectado ao FM06 · a resposta mexe na moral" : data.info.career && data.info.career !== "demo" ? "Conectado ao FM06 · só leitura" : "Demonstração: sem conexão com o jogo";
 }
 
+// em aberto: pede algo seu; encerrada: só consulta (o jogo já resolveu, passou o prazo ou você respondeu)
+function isOpen(item) { return item.news_open !== false && !given(item); }
+function inView(item) { return isOpen(item) !== ui.closed; }
+function firstInView() { return data.agenda.find(item => item.active && inView(item))?.id || data.agenda.find(inView)?.id || null; }
+
 function renderFilters() {
+  const open = data.agenda.filter(isOpen).length;
+  $("#state-filters").innerHTML = `<button class="filter-chip ${ui.closed ? "" : "active"}" data-closed="" type="button">Em aberto (${open})</button>`
+    + `<button class="filter-chip ${ui.closed ? "active" : ""}" data-closed="1" type="button">Encerradas (${data.agenda.length - open})</button>`;
   const media = ["todos", ...new Set(data.outlets.map(outlet => outlet.medium))];
   $("#medium-filters").innerHTML = media.map(item => `<button class="filter-chip ${ui.medium === item ? "active" : ""}" data-medium="${esc(item)}" type="button">${item}</button>`).join("");
 }
@@ -126,7 +135,7 @@ function renderAgenda() {
     const outlet = outletBy(item.outlet_id);
     const matchesMedium = ui.medium === "todos" || outlet.medium === ui.medium;
     const haystack = `${item.headline} ${outlet.name} ${playerBy(item.player_id).name}`.toLocaleLowerCase("pt-BR");
-    return matchesMedium && (!term || haystack.includes(term));
+    return (inView(item) || item.id === ui.agendaId) && matchesMedium && (!term || haystack.includes(term));
   });
   $("#agenda-count").textContent = list.length;
   $("#agenda-list").innerHTML = list.length ? list.map(item => {
@@ -139,7 +148,7 @@ function renderAgenda() {
       <span class="agenda-meta"><i class="urgency ${esc(item.urgency)}"></i>${esc(player.short_name)} · ${esc(outlet.medium)} · ${given(item) ? "✓ respondida" : esc(item.status)}</span>
       ${item.reason ? `<span class="agenda-reason">${esc(item.reason)}</span>` : ""}
     </button>`;
-  }).join("") : `<div class="loading">Nenhuma pauta encontrada.</div>`;
+  }).join("") : `<div class="loading">${ui.closed ? "Nenhuma pauta encerrada." : "Nada em aberto: nenhuma decisão esperando por você."}</div>`;
 }
 
 function answerCards(situation, player, scope, selectedId) {
@@ -234,12 +243,12 @@ function whyCard(agenda, player, situation) {
 }
 // expulsão e lesão: a notícia do jogo vem primeiro, com a decisão; os botões respondem pelo próprio jogo
 function decisionCard(agenda) {
-  const kind = agenda.news_kind || "imprensa";
-  if (kind === "imprensa" || !agenda.news_serial) return "";
+  const kind = agenda.news_kind || "imprensa", closed = !isOpen(agenda);
+  if ((kind === "imprensa" && !closed) || !agenda.news_serial) return "";
   const body = (agenda.news_body || "").split(/\n+/).filter(Boolean).map(line => `<p>${esc(line)}</p>`).join("");
   const options = agenda.news_options || [];
   const note = options.length ? "" : agenda.news_waiting ? "Esta notícia pede uma escolha sua: por enquanto, responda em Técnico → Notícias, no jogo." : "";
-  return `<div class="decision-card"><span class="kind-chip">${KIND[kind]}${agenda.news_waiting ? " · decisão pendente" : ""}</span>
+  return `<div class="decision-card"><span class="kind-chip">${KIND[kind]}${agenda.news_waiting ? " · decisão pendente" : closed ? " · encerrada" : ""}</span>
     <h3>${esc(agenda.news_headline || "Lendo o texto do jogo…")}</h3>${body}
     ${options.length ? `<div class="decision-actions">${options.map(o => `<button class="decision-button" data-reply="${o.id}" data-serial="${agenda.news_serial}" type="button">${esc(o.nome)}</button>`).join("")}</div>` : ""}
     ${note ? `<p class="decision-note">${esc(note)}</p>` : ""}</div>`;
@@ -253,13 +262,19 @@ async function replyNews(serial, option) {
 }
 
 async function reloadData() {
-  const serial = selectedAgenda().news_serial;
+  const serial = ui.agendaId && selectedAgenda().news_serial;
   data = await (await fetch("/dados", {cache: "no-store"})).json();
-  ui.agendaId = data.agenda.find(item => serial && item.news_serial === serial)?.id || ui.agendaId;
+  ui.agendaId = data.agenda.find(item => serial && item.news_serial === serial)?.id || ui.agendaId || firstInView();
   renderAll();
 }
 
 function renderLive() {
+  if (!ui.agendaId) { $("#view").innerHTML = `<div class="loading big">Nada em aberto. Quando uma expulsão, lesão ou pauta da imprensa pedir algo seu, ela aparece aqui.</div>`; return; }
+  const closedView = selectedAgenda();
+  if (!given(closedView) && !isOpen(closedView)) {
+    $("#view").innerHTML = `<div class="live-layout"><section class="panel stage kind-${closedView.news_kind || "imprensa"}">${decisionCard(closedView)}<p class="closed-note">Encerrada: ${closedView.news_day ? `notícia de ${esc(closedView.news_day)}, ` : ""}já não pede resposta. Fica aqui só para consulta.</p></section><aside class="context-stack">${contextCards(playerBy(closedView.player_id))}</aside></div>`;
+    return;
+  }
   const agenda = selectedAgenda(), outlet = outletBy(agenda.outlet_id), journalist = journalistBy(outlet, agenda.journalist_id);
   const player = playerBy(agenda.player_id), situation = situationBy(agenda.situation_id), question = situation.questions[ui.question % situation.questions.length];
   const done = given(agenda);
@@ -336,6 +351,7 @@ document.addEventListener("click", event => {
   if (!button || !data) return;
   if (button.dataset.tab) { ui.tab = button.dataset.tab; renderView(); return; }
   if (button.dataset.agenda) { ui.agendaId = button.dataset.agenda; ui.question = 0; ui.tab = "live"; renderAgenda(); renderView(); return; }
+  if (button.dataset.closed !== undefined) { ui.closed = Boolean(button.dataset.closed); ui.agendaId = firstInView(); ui.question = 0; ui.tab = "live"; renderAll(); return; }
   if (button.dataset.medium) { ui.medium = button.dataset.medium; renderFilters(); renderAgenda(); return; }
   if (button.dataset.question !== undefined) { ui.question = Number(button.dataset.question); renderView(); return; }
   if (button.hasAttribute("data-give-answer")) { giveAnswer(); return; }
@@ -383,7 +399,7 @@ async function watchNews() {
     textsSeen = textos;
     if (newsSeen !== null && noticias > newsSeen) {
       data = await (await fetch("/dados", {cache:"no-store"})).json();
-      ui.agendaId = data.agenda.find(item => item.active)?.id || data.agenda[0]?.id;
+      ui.closed = false; ui.agendaId = firstInView();
       ui.question = 0; ui.tab = "live"; renderAll(); window.focus();
       const title = document.title; let blink = 0;
       const timer = setInterval(() => { document.title = blink++ % 2 ? title : "📰 Nova pauta do jogo"; if (blink > 7) { clearInterval(timer); document.title = title; } }, 600);
@@ -398,7 +414,7 @@ fetch("/dados", {cache:"no-store"}).then(response => {
   return response.json();
 }).then(payload => {
   data = payload;
-  ui.agendaId = data.agenda.find(item => item.active)?.id || data.agenda[0]?.id;
+  ui.agendaId = firstInView();
   ui.privatePlayer = data.players[0]?.id;
   ui.bankSituation = data.situations[0]?.id;
   renderAll();

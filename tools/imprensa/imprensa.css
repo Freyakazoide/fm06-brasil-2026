@@ -90,3 +90,4 @@ footer{height:23px;display:flex;align-items:center;justify-content:space-between
 .decision-button:hover{filter:brightness(1.1)}.decision-button:disabled{opacity:.55;cursor:wait}
 .decision-note{color:#ffe48a!important;font-size:13px}
 .agenda-card{flex:none}
+.closed-note{margin:0;padding:12px 16px;color:var(--muted);font-size:13px}

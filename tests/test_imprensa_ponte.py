@@ -56,7 +56,7 @@ def test_read_news_becomes_the_current_topic() -> None:
     uid = players[0]["uid"]
     news = [{"serie": 965, "classe": "MEDIA_PLAYER_FORM_NEWS", "data": "2026-07-23", "lida": True, "jogador": uid},
             {"serie": 900, "classe": "MEDIA_PLAYER_FORM_NEWS", "data": "2026-07-20", "lida": True, "jogador": 999999}]
-    data = ponte.payload(players, today=dt.date(2026, 8, 4), club="Figueirense", news=news)
+    data = ponte.payload(players, today=dt.date(2026, 7, 25), club="Figueirense", news=news)
     first = data["agenda"][0]
     assert first["active"] and first["news_serial"] == 965 and first["player_id"] == uid
     assert "notícia lida no jogo (23/07)" in first["reason"]

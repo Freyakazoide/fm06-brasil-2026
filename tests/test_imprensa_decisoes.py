@@ -84,3 +84,18 @@ def test_reply_code_calls_slot_22_with_apply_flag() -> None:
     import responder_noticia as r
     code = r.reply_code(0x11223344, 0x55667788)
     assert bytes.fromhex("6A01 6888776655 B944332211 8B01 FF5058") in code
+
+
+def test_open_news_needs_something_from_you() -> None:
+    today = dt.date(2026, 8, 5)
+    assert ponte.is_open(news(1, "RED_CARD_BAN_NEWS", data="2026-06-01", resposta=-3), today)    # esperando decisão
+    assert not ponte.is_open(news(995, "PHYSIO_REPORT_NEWS_ITEM", data="2026-08-04", resposta=10), today)  # resolvida no jogo
+    assert ponte.is_open(news(2, "MOM_SUMMARY_NEWS", data="2026-08-01"), today)                  # recente, sem resposta
+    assert not ponte.is_open(news(3, "MOM_SUMMARY_NEWS", data="2026-07-23"), today)              # passou do prazo
+
+
+def test_open_news_comes_before_closed_news_of_the_same_player() -> None:
+    closed = news(995, "PHYSIO_REPORT_NEWS_ITEM", data="2026-08-11", resposta=10)
+    fresh = news(990, "MOM_SUMMARY_NEWS", data="2026-08-11")
+    out = ponte.news_candidates([closed, fresh], set(), PLAYERS, SITUATIONS, dt.date(2026, 8, 12))
+    assert max(out, key=lambda c: c[0])[4]["news_serial"] == 990

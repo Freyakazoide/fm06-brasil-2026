@@ -508,6 +508,9 @@ Departamento Médico saíram do código (estão no histórico: commit 57c9775). 
 ler o texto, o campo de resposta, responder pela função do jogo e a pausa no laço. O texto só é
 lido das pautas recentes, e a Sala abre em Técnico → Notícias só com uma decisão esperando. A causa dos
 crashes com `dive`/`text` segue sem prova; a leitura aguentou o estresse, a remoção ficou suspeita.
+Em aberto e encerradas (06/11, pedido do usuário ao ver a 995 do Fabricio, resolvida no jogo, ainda
+com resposta liberada): `ponte.is_open`. Em aberto: esperando decisão, ou até `OPEN_DAYS` (7) dias
+e sem resposta no jogo nem na Sala. O resto vai para a aba Encerradas, só consulta, sem coletiva.
 Abaixo, o histórico da ideia.
 
 
