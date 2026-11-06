@@ -589,6 +589,11 @@ Falta, em ordem:
    Usuário saiu e voltou em Notícias (a 1027 sumiu da tela), salvou, fechou e abriu: continua
    fora. Fechado.
 4. Técnico → Notícias abre a página (mesmo caminho da Central de Desenvolvimento).
+   **Feito no código (06/11), falta conferir no jogo:** o desvio de abertura de tela que já está no
+   exe (patch centro_colunas) anota a seção em 0x015C17F4 e conta em 0x015C17F8. Tela de Notícias =
+   `Pnws` (0x506E7773), lido no jogo. `servidor.ScreenWatcher` lê os dois a cada 0,7 s e abre
+   `/noticias` se a página não respondeu nos últimos 15 s. Nada novo no exe. Falta ver se o jogo
+   entra sozinho em `Pnws` (ao carregar, ao avançar o dia), o que abriria a página sem clique.
 5. Categoria das 87 classes sem valor fixo.
 
 ## 9. Entrevistas dos clubes controlados pela IA

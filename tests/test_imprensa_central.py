@@ -55,3 +55,18 @@ def test_captures_from_a_newer_save_are_hidden() -> None:
     caps = [news(1036, "MOM_SUMMARY_NEWS", data="2026-08-09"), news(1027, "PRE_MATCH_ODDS_NEWS", data="2026-08-05")]
     assert [n["serie"] for n in central.current(caps, "2026-08-05")] == [1027]
     assert len(central.current(caps, None)) == 2
+
+
+def test_news_screen_opens_the_page_once() -> None:
+    import servidor
+    other, news_screen = 0x63736670, servidor.NEWS_SECTION
+    w = servidor.ScreenWatcher("http://x/noticias")
+    assert not w.step(news_screen, 5, 1000.0)                      # 1ª leitura: só a base
+    assert not w.step(other, 6, 1001.0)                             # outra tela
+    assert w.step(news_screen, 7, 1002.0)                           # entrou em Notícias
+    assert not w.step(news_screen, 7, 1003.0)                       # continua nela
+    w.step(other, 8, 1020.0)
+    assert w.step(news_screen, 9, 1021.0)                           # voltou, sem página aberta
+    w.last_poll = 1030.0
+    w.step(other, 10, 1032.0)
+    assert not w.step(news_screen, 11, 1033.0)                      # página já aberta

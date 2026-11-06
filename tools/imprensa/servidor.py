@@ -48,6 +48,10 @@ FILES = {
     "/central.css": (HERE.parent / "central" / "central.css", "text/css; charset=utf-8"),
     "/emblema.png": (ASSETS / "emblema-centro-desenvolvimento.png", "image/png"),
 }
+# O desvio de abertura de tela do exe (patch centro_colunas, centro.open_code) anota a seção aberta e
+# conta as aberturas; tela de Notícias = 'Pnws' (lido no jogo em Técnico -> Notícias, 03/11).
+SECTION_NOW, OPENINGS, NEWS_SECTION = 0x015C17F4, 0x015C17F8, 0x506E7773
+PAGE_ALIVE = 15                                                 # s sem /central: a página está fechada
 TEXTS_PER_TICK = 8                                              # textos lidos por volta, só com o jogo parado
 PORT = 8629
 
@@ -199,10 +203,42 @@ class NewsWatcher:
                 webbrowser.open(self.url)
 
 
+class ScreenWatcher:
+    """Abre a Central de Notícias no navegador ao entrar na tela de Notícias do jogo, a não ser que a
+    página já esteja aberta (como o Watcher da Central de Desenvolvimento)."""
+
+    def __init__(self, url: str) -> None:
+        self.url, self.seen, self.last_poll, self.opened_at = url, None, 0.0, 0.0
+
+    def step(self, section: int, count: int, now: float) -> bool:
+        """True quando é para abrir a página."""
+        entered = self.seen is not None and count != self.seen and section == NEWS_SECTION
+        self.seen = count
+        if entered and now - self.last_poll > PAGE_ALIVE and now - self.opened_at > 8:
+            self.opened_at = now
+            return True
+        return False
+
+    def run(self) -> None:
+        jogo = None
+        while True:
+            time.sleep(0.7)
+            try:
+                import leitor
+                jogo = jogo or leitor.Jogo()
+                section, count = jogo.u32(SECTION_NOW), jogo.u32(OPENINGS)
+            except Exception:                                   # jogo fechado ou exe sem o desvio
+                jogo, self.seen = None, None
+                continue
+            if self.step(section, count, time.time()):
+                webbrowser.open(self.url)
+
+
 class PressRoom(BaseHTTPRequestHandler):
     server_version = "FM06PressRoom/1.0"
     live_club: str | None = None                                # --jogo: nome do clube humano
     watcher: NewsWatcher | None = None
+    screens: ScreenWatcher | None = None
     effects = False                                             # --jogo sem --sem-efeitos: moral no jogo
     cache: tuple[float, dict] | None = None
     lock = threading.Lock()
@@ -237,6 +273,8 @@ class PressRoom(BaseHTTPRequestHandler):
             self._json(200, value)
             return
         if path == "/central":
+            if self.screens:
+                self.screens.last_poll = time.time()
             self._json(200, self.news_center())
             return
         if path == "/evento":
@@ -364,8 +402,11 @@ def main() -> None:
                                          extra=frozenset(c for c in args.exclusivo_classes.split(",") if c),
                                          every=args.exclusivo_todas)
         threading.Thread(target=PressRoom.watcher.run, daemon=True).start()
+        PressRoom.screens = ScreenWatcher(f"{url}/noticias")
+        threading.Thread(target=PressRoom.screens.run, daemon=True).start()
         print(f"Modo jogo: lê o elenco do {args.clube} no FM06 aberto; a resposta mexe só na moral do jogador (--sem-efeitos desliga).")
         print("Ao abrir uma notícia na caixa de entrada do jogo, a pauta dela aparece aqui.")
+        print(f"Técnico -> Notícias no jogo abre a Central de Notícias: {url}/noticias")
         if args.exclusivo_todas:
             print("Modo exclusivo (todas): toda notícia nova sem resposta sai da caixa do jogo e fica só na Central de Notícias (salve o jogo para manter).")
         elif args.exclusivo:

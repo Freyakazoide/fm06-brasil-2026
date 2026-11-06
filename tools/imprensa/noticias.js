@@ -109,5 +109,5 @@ document.addEventListener("click", event => {
   render();
 });
 $("search").addEventListener("input", event => { ui.search = event.target.value; if (data) render(); });
-setInterval(() => { if (!document.hidden) load(); }, 6000);
+setInterval(load, 6000);                                 // também escondida: o servidor sabe que a página está aberta
 load();
