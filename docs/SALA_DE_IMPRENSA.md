@@ -608,7 +608,7 @@ Falta, em ordem:
    Teste (06/11): reentrar em Notícias mostrou "75 de 80" (a lista foi refeita, capturadas fora) e
    Técnico → Notícias reabriu a Central. Ao avançar o dia o jogo foi sozinho para Notícias e abriu
    a 1ª notícia (1037): `Pnws` também ocorre sem clique. Por isso a capturada chegava "lida".
-   Agora a capturada só conta como lida se aberta na Central (`lidas.json`, POST /central/lida).
+   Agora a capturada só conta como lida se aberta na Central (`lidas.json`, POST /central/lida). Conferido na página: 1037 aberta na Central ficou "lida", sem o ponto verde.
 5. Categoria das 87 classes sem valor fixo.
    **Resolvido em parte (06/11):** 48 das 87 tinham o slot 10 `xor al, al; ret`, categoria 0
    Competições (`categorias_noticias.py` só reconhecia `mov al, N`). Sobram 39: as BASIC_* (classes
