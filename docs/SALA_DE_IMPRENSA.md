@@ -661,7 +661,8 @@ WriteProcessMemory não é atômica, e a thread principal, girando, leu o pontei
 A memória de strings não estava envolvida, então isso **não** prova nada sobre a leitura. Corrigido
 (FM06LAC4): o sinal é um byte e o endereço do código é fixo.
 Estresse só de leitura com FM06LAC4 (06/11): 225 textos, 0 vazios, 41,5 s, jogo de pé; memória do processo
-de 310,4 para 313,7 MB (ainda não sei se é vazamento). Falta navegar pelas telas e avançar dias sem Sala.
+de 310,4 para 313,7 MB (ainda não sei se é vazamento). Depois disso o usuário navegou e avançou os dias, sem Sala, sem crash: a leitura na
+thread principal saiu da suspeita (um teste só). Próximo: Sala com `--exclusivo-todas`, que testa a remoção.
 
 ## 9. Entrevistas dos clubes controlados pela IA
 
