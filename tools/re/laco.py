@@ -38,8 +38,8 @@ import chamada_remota as cr  # noqa: E402
 k32 = cr.kernel32
 HOOK_AT, RESUME_AT, FRAME_OBJ = 0x00C68B34, 0x00C68B3A, 0x014EDD08
 ORIGINAL = bytes.fromhex("8B0D08DD4E01")                                 # mov ecx, [0x14EDD08]
-SIGNATURE = b"FM06LAC2"
-PARK, PARKED, JOB, STACK, CODE = 0x10, 0x14, 0x18, 0x1C, 0x20                # deslocamentos na página
+SIGNATURE = b"FM06LAC3"
+PARK, PARKED, JOB, STACK, CODE, JOB_CODE = 0x10, 0x14, 0x18, 0x1C, 0x20, 0x100   # deslocamentos na página
 
 TH32CS_SNAPTHREAD, THREAD_SUSPEND_RESUME = 0x00000004, 0x0002
 
@@ -181,17 +181,18 @@ def run_on_main(handle, code: bytes, timeout: float = 10.0) -> None:
     page = page_of(handle)
     if not page or read(handle, page + PARKED, 4) != (1).to_bytes(4, "little"):
         raise RuntimeError("a thread principal não está parada")
-    area = k32.VirtualAllocEx(handle, None, 0x1000, cr.MEM_COMMIT_RESERVE, cr.PAGE_EXECUTE_READWRITE)
-    if not area:
-        raise OSError(ctypes.get_last_error(), "VirtualAllocEx falhou")
-    cr.poke(handle, area, code)
-    cr.poke(handle, page + JOB, area.to_bytes(4, "little"))
+    if len(code) > 0x1000 - JOB_CODE:
+        raise ValueError("código grande demais para a página do gancho")
+    if read(handle, page + JOB, 4) != bytes(4):
+        raise RuntimeError("ainda há uma função rodando na thread principal")
+    cr.poke(handle, page + JOB_CODE, code)              # área fixa: uma página por função já derrubou o jogo (0xB0000)
+    k32.FlushInstructionCache(handle, ctypes.c_void_p(page + JOB_CODE), len(code))
+    cr.poke(handle, page + JOB, (page + JOB_CODE).to_bytes(4, "little"))
     end = time.monotonic() + timeout
     while read(handle, page + JOB, 4) != bytes(4):
         if time.monotonic() > end:
-            raise RuntimeError("a função não voltou na thread principal")      # a página fica: pode estar em uso
+            raise RuntimeError("a função não voltou na thread principal")
         time.sleep(0.001)
-    k32.VirtualFreeEx(handle, area, 0, cr.MEM_RELEASE)
 
 
 def main() -> None:

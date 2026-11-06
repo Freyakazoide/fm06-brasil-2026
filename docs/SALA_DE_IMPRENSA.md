@@ -654,6 +654,11 @@ em thread remota), pausa em laço interno durante o processamento, efeito da rem
 novas chegando. Fechado (`laco.py`, página FM06LAC2): código na thread principal, só no laço de fora,
 só com data, tela e caixa paradas por 6 s. `workspace/imprensa/pausas.log` registra cada passo.
 Se travar de novo, testar por partes: só textos, depois só remoção. Falta conferir no jogo.
+Conferido sem Sala: 6 pausas com esp 0x001AFD94 (laço de fora), textos 1019/1018/1016 lidos na thread
+principal. O estresse de leitura derrubou o jogo (dump `07.58.19`), mas por bug da pausa nova:
+eip = eax = 0xB0000, esp 0x1AFD8C, a entrada do trabalho numa página temporária inválida; a memória
+de strings não estava envolvida, então **não** prova nada sobre a leitura. Mecanismo exato não
+visto. Corrigido com área fixa de código na página do gancho (FM06LAC3).
 
 ## 9. Entrevistas dos clubes controlados pela IA
 
